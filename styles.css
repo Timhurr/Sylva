@@ -464,3 +464,9 @@ html[data-theme="nuit"] .chap{border:1px solid var(--line)}
 html[data-theme="nuit"] .g-nav .btn{background:var(--amber);color:#0C110E}
 
 @media (min-width:700px){ .hscroll{margin:0;padding:0 0 6px} }
+
+/* Illustrations gravées */
+.engr{margin:0 0 16px;border-radius:22px;overflow:hidden;box-shadow:var(--shadow);background:#E9D9B5}
+.engr img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
+.item-illus img,.chap-illus img{width:100%;height:100%;object-fit:cover;display:block}
+html[data-theme="nuit"] .engr img,html[data-theme="nuit"] .item-illus img,html[data-theme="nuit"] .chap-illus img{filter:brightness(.82)}

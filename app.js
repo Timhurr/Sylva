@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.0";
+  var VERSION = "0.9.1";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -553,6 +553,7 @@
   function prefetchPhotos(verbose) {
     if (prefetching || !navigator.onLine) { if (verbose && !navigator.onLine) toast("Pas de réseau"); return; }
     prefetching = true;
+    Object.keys(IMGS).forEach(function (k) { var im = new Image(); im.src = IMGS[k]; });
     var list = allLatins(), i = 0, ok = 0;
     (function next() {
       if (i >= list.length) {
@@ -726,6 +727,14 @@
 
   // ---------- Techniques ----------
   var ILLUS = window.SYLVA_ILLUS || {};
+  var IMGS = {}; (window.SYLVA_IMAGES || []).forEach(function (k) { IMGS[k] = "img/" + k + ".webp"; });
+  function thumbOf(key, illus) {
+    return IMGS[key] ? '<img src="' + IMGS[key] + '" alt="" loading="lazy">' : (ILLUS[illus] || "");
+  }
+  function heroIllus(key, illus, alt) {
+    if (IMGS[key]) return '<figure class="engr"><img src="' + IMGS[key] + '" alt="' + esc(alt) + '"></figure>';
+    return ILLUS[illus] ? '<div class="illus">' + ILLUS[illus] + "</div>" : "";
+  }
   var CATS = window.SYLVA_CATEGORIES || [];
   var ficheCat = "";
   function renderTechniques() {
@@ -745,7 +754,7 @@
         h += '<button class="item" data-tech="' + esc(t.id) + '">' +
           (t.wiki && photoOf(t.wiki)
             ? '<span class="item-illus item-photo" aria-hidden="true"><img src="' + esc(photoOf(t.wiki).src) + '" alt="" loading="lazy"></span>'
-            : '<span class="item-illus" aria-hidden="true">' + (ILLUS[t.illus] || "") + "</span>") +
+            : '<span class="item-illus" aria-hidden="true">' + thumbOf(t.id, t.illus) + "</span>") +
           '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.intro) + "</span></span></button>";
       });
       h += "</div>";
@@ -756,7 +765,7 @@
     var t = TECHS.filter(function (x) { return x.id === id; })[0]; if (!t) return;
     var tp = t.wiki && photoOf(t.wiki), n = t.etapes.length;
     var h = (t.wiki ? '<div id="heroSlot" class="knot">' + (tp ? heroHtml(tp, t.titre) : "") + "</div>"
-                    : (ILLUS[t.illus] ? '<div class="illus">' + ILLUS[t.illus] + "</div>" : "")) +
+                    : heroIllus(t.id, t.illus, t.titre)) +
       '<div class="chap-k">' + esc(t.cat) + " · " + n + ' étapes</div><h1 id="sheetTitle">' + esc(t.titre) + "</h1><p>" + esc(t.intro) + "</p>" +
       '<div class="steps" data-cur="0" data-n="' + n + '">' +
       '<div class="step-bar" aria-hidden="true">' + t.etapes.map(function (x, i) { return '<span' + (i === 0 ? ' class="on"' : "") + "></span>"; }).join("") + "</div>" +
@@ -811,7 +820,7 @@
       if (q) h += '<div class="section-title">Chapitres (' + chaps.length + ")</div>";
       h += chaps.map(function (c) {
         return '<button class="chap" data-chap="' + esc(c.id) + '">' +
-          '<span class="chap-illus" aria-hidden="true">' + (ILLUS[c.illus] || "") + "</span>" +
+          '<span class="chap-illus" aria-hidden="true">' + thumbOf("chap_" + c.id, c.illus) + "</span>" +
           '<span class="chap-main"><span class="chap-k">Chapitre ' + (GUIDE.indexOf(c) + 1) + " · " + minutes(c) + " min" + (lus[c.id] ? ' · <b class="chap-lu">Lu ✓</b>' : "") + "</span>" +
           '<span class="chap-t">' + esc(c.titre) + '</span><span class="chap-r">' + esc(c.resume) + "</span></span></button>";
       }).join("") || '<p class="muted">Aucun chapitre ne correspond.</p>';
@@ -823,7 +832,7 @@
       if (q) {
         var fl = TECHS.filter(function (t) { return norm(t.titre + " " + t.intro + " " + t.etapes.join(" ")).indexOf(q) !== -1; });
         $("#listTechniques").innerHTML = '<div class="section-title">Fiches pratiques (' + fl.length + ')</div><div class="list">' + fl.map(function (t) {
-          return '<button class="item" data-tech="' + esc(t.id) + '"><span class="item-illus" aria-hidden="true">' + (ILLUS[t.illus] || "") + "</span>" +
+          return '<button class="item" data-tech="' + esc(t.id) + '"><span class="item-illus" aria-hidden="true">' + thumbOf(t.id, t.illus) + "</span>" +
             '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.cat) + "</span></span></button>";
         }).join("") + "</div>";
       } else renderTechniques();
@@ -850,7 +859,7 @@
     var idx = -1;
     GUIDE.forEach(function (c, i) { if (c.id === id) idx = i; });
     var c = GUIDE[idx]; if (!c) return;
-    var h = (ILLUS[c.illus] ? '<div class="illus">' + ILLUS[c.illus] + "</div>" : "") +
+    var h = heroIllus("chap_" + c.id, c.illus, c.titre) +
       '<div class="chap-k">Chapitre ' + (idx + 1) + " · " + minutes(c) + ' min de lecture</div><h1 id="sheetTitle">' + esc(c.titre) + "</h1>" +
       '<p class="g-lead">' + esc(c.resume) + "</p>" +
       '<nav class="g-toc" aria-label="Sommaire">' + c.sections.map(function (x, i) {
@@ -860,7 +869,7 @@
     if (c.fiches && c.fiches.length) {
       h += '<h2 class="g-more">Fiches pratiques</h2><div class="list">' + c.fiches.map(function (fid) {
         var t = TECHS.filter(function (x) { return x.id === fid; })[0]; if (!t) return "";
-        return '<button class="item" data-tech="' + esc(t.id) + '"><span class="item-illus" aria-hidden="true">' + (ILLUS[t.illus] || "") + "</span>" +
+        return '<button class="item" data-tech="' + esc(t.id) + '"><span class="item-illus" aria-hidden="true">' + thumbOf(t.id, t.illus) + "</span>" +
           '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.cat) + "</span></span></button>";
       }).join("") + "</div>";
     }
@@ -1435,12 +1444,12 @@
     var fi = TECHS.filter(function (t) { return norm(t.titre + " " + t.intro + " " + t.etapes.join(" ")).indexOf(q) !== -1; }).slice(0, 10);
     var h = "";
     if (fi.length) h += '<div class="section-title">Fiches pratiques</div><div class="list">' + fi.map(function (t) {
-      return '<button class="item" data-tech="' + esc(t.id) + '"><span class="item-illus" aria-hidden="true">' + (ILLUS[t.illus] || "") + "</span>" +
+      return '<button class="item" data-tech="' + esc(t.id) + '"><span class="item-illus" aria-hidden="true">' + thumbOf(t.id, t.illus) + "</span>" +
         '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.cat) + "</span></span></button>";
     }).join("") + "</div>";
     if (esp.length) h += '<div class="section-title">Espèces</div><div class="list">' + esp.map(itemEsp).join("") + "</div>";
     if (ch.length) h += '<div class="section-title">Chapitres du guide</div><div class="list">' + ch.map(function (c) {
-      return '<button class="item" data-chap="' + esc(c.id) + '"><span class="item-illus" aria-hidden="true">' + (ILLUS[c.illus] || "") + "</span>" +
+      return '<button class="item" data-chap="' + esc(c.id) + '"><span class="item-illus" aria-hidden="true">' + thumbOf("chap_" + c.id, c.illus) + "</span>" +
         '<span class="item-main"><span class="item-name">' + esc(c.titre) + '</span><span class="item-sub">Chapitre ' + (GUIDE.indexOf(c) + 1) + "</span></span></button>";
     }).join("") + "</div>";
     $("#learnResults").innerHTML = h || '<p class="muted">Rien trouvé pour « ' + esc(this.value) + " ».</p>";

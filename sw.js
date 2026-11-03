@@ -1,12 +1,12 @@
 /* Sylva – service worker : appli et fiches hors-ligne, tuiles de carte vues gardées en cache */
-var VERSION = "sylva-v0.9.0";
+var VERSION = "sylva-v0.9.1";
 var SHELL = VERSION + "-shell";
 var TILES = "sylva-tiles";
 var PHOTOS = "sylva-photos";
 var MAX_TILES = 2500;
 
 var LOCAL = [
-  "./", "index.html", "styles.css", "app.js", "data.js", "especes_plus.js", "especes_champignons.js", "especes_regions.js", "techniques_plus.js", "illus.js", "guide.js", "manifest.webmanifest",
+  "./", "index.html", "styles.css", "app.js", "data.js", "especes_plus.js", "especes_champignons.js", "especes_regions.js", "techniques_plus.js", "illus.js", "images.js", "guide.js", "manifest.webmanifest",
   "icons/icon-180.png", "icons/icon-192.png", "icons/icon-512.png"
 ];
 var CDN = [
@@ -69,6 +69,16 @@ self.addEventListener("fetch", function (e) {
           if (res && (res.ok || res.type === "opaque")) c.put(req, res.clone());
           return res;
         });
+      });
+    }));
+    return;
+  }
+
+  // Illustrations de l'appli : cache d'abord, gardées d'une version à l'autre
+  if (url.origin === self.location.origin && url.pathname.indexOf("/img/") !== -1) {
+    e.respondWith(caches.open(PHOTOS).then(function (c) {
+      return c.match(req).then(function (hit) {
+        return hit || fetch(req).then(function (res) { if (res && res.ok) c.put(req, res.clone()); return res; });
       });
     }));
     return;
