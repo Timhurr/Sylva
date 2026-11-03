@@ -40,7 +40,7 @@ main{position:fixed;top:calc(var(--head-h) + var(--top));bottom:calc(var(--tab-h
 .pad{padding:16px 16px 32px;max-width:640px;margin:0 auto}
 
 /* Barre d'onglets */
-.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:1000;height:calc(var(--tab-h) + var(--bottom));padding-bottom:var(--bottom);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));background:var(--bg);border-top:1px solid var(--line)}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:1000;height:calc(var(--tab-h) + var(--bottom));padding-bottom:var(--bottom);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));background:var(--bg);border-top:1px solid var(--line)}
 .tab{border:0;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:11px;font-weight:500;cursor:pointer}
 .tab.active{color:var(--accent);font-weight:700}
 
@@ -174,3 +174,32 @@ main{position:fixed;top:calc(var(--head-h) + var(--top));bottom:calc(var(--tab-h
 .item-illus.item-photo{background:#fff}
 .item-illus.item-photo img{object-fit:contain}
 .knot .photo img{object-fit:contain;background:#fff}
+
+/* Bivouac */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;margin:8px 0}
+.meteo-days{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px}
+.day{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:3px;align-items:flex-start}
+.day .d{font-size:12px;color:var(--muted);font-weight:600;text-transform:capitalize}
+.day .w{font-size:13px;font-weight:600}
+.day .tt{font-size:18px;font-weight:800}
+.day .tt small{font-size:13px;color:var(--muted);font-weight:600}
+.day .x{font-size:12px;color:var(--muted)}
+.sun{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;margin-top:2px}
+.sun b{font-weight:700}
+.meteo-alert{margin:10px 0 0}
+.meteo-meta{font-size:11px;color:var(--muted);margin-top:10px}
+.progress-row{display:flex;justify-content:space-between;align-items:center;font-weight:700}
+.link-btn{background:none;border:0;color:var(--accent);font-weight:600;font-size:13px;padding:8px 0;cursor:pointer}
+.progress{height:8px;border-radius:8px;background:var(--bg);overflow:hidden;margin:6px 0 4px}
+.progress span{display:block;height:100%;width:0;background:var(--ok);transition:width .2s}
+.check-group{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:14px 0 2px}
+.check{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);font-size:15px;cursor:pointer}
+.check:last-child{border-bottom:0}
+.check input{width:22px;height:22px;accent-color:var(--ok);flex:none}
+.check.done span{color:var(--muted);text-decoration:line-through}
+.carnet-item{display:flex;gap:12px;align-items:center;padding:12px 0;border:0;border-bottom:1px solid var(--line);background:transparent;width:100%;text-align:left;cursor:pointer}
+.carnet-thumb{width:64px;height:64px;border-radius:12px;object-fit:cover;flex:none;background:var(--surface2)}
+.carnet-pin{width:64px;height:64px;border-radius:12px;flex:none;display:grid;place-items:center;font-weight:800;font-size:20px;color:#0E1612}
+.spot-preview{width:100%;max-height:200px;object-fit:cover;border-radius:12px;margin-top:8px}
+.popup-photo{width:100%;max-width:220px;border-radius:10px;margin-top:8px;display:block}
+.tab{font-size:10px}

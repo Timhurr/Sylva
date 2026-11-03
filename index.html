@@ -124,6 +124,27 @@
     </div>
   </section>
 
+  <!-- BIVOUAC -->
+  <section class="view" id="view-bivouac" aria-label="Bivouac">
+    <div class="pad">
+      <h1>Mon bivouac</h1>
+      <p class="muted" id="bivPlace">Vallée de l'Ourthe</p>
+
+      <div class="section-title">Météo</div>
+      <div id="meteo" class="card"><p class="muted">Chargement…</p></div>
+
+      <div class="section-title">Checklist du sac</div>
+      <div class="card">
+        <div class="progress-row"><span id="checkCount">0 / 0</span><button class="link-btn" id="btnResetCheck" type="button">Tout décocher</button></div>
+        <div class="progress"><span id="checkBar"></span></div>
+        <div id="checklist"></div>
+      </div>
+
+      <div class="section-title">Carnet de spots</div>
+      <div id="carnet"></div>
+    </div>
+  </section>
+
   <!-- TECHNIQUES -->
   <section class="view" id="view-techniques" aria-label="Techniques">
     <div class="pad">
@@ -175,6 +196,15 @@
         <option value="autre">Autre</option>
       </select>
     </label>
+    <div class="field">
+      <span class="field-label">Photo (facultative)</span>
+      <label class="btn" for="spotPhoto" id="spotPhotoBtn">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="4"/></svg>
+        Ajouter une photo
+      </label>
+      <input type="file" id="spotPhoto" accept="image/*" hidden>
+      <img id="spotPhotoPreview" class="spot-preview" alt="Aperçu de la photo du spot" hidden>
+    </div>
     <label class="field">
       <span class="field-label">Note</span>
       <textarea id="spotNote" rows="3" placeholder="Ex. : châtaigniers au bord du sentier, beaucoup de bogues au sol"></textarea>
@@ -216,6 +246,9 @@
 <nav class="tabbar" aria-label="Navigation principale">
   <button class="tab active" data-view="carte">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>Carte
+  </button>
+  <button class="tab" data-view="bivouac">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 20L12 5l9 15z"/><path d="M12 20l-3-5h6z"/></svg>Bivouac
   </button>
   <button class="tab" data-view="scan">
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><circle cx="12" cy="12" r="3"/></svg>Scanner

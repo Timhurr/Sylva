@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.2.1";
+  var VERSION = "0.3.0";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -63,6 +63,7 @@
     $all(".tab").forEach(function (t) { t.classList.toggle("active", t.dataset.view === name); });
     $all(".view").forEach(function (v) { v.classList.toggle("active", v.id === "view-" + name); });
     if (name === "carte" && map) setTimeout(function () { map.invalidateSize(); }, 50);
+    if (name === "bivouac") renderBivouac();
   }
 
   // ---------- Modales & fiche ----------
@@ -140,6 +141,8 @@
     });
 
     map.on("popupopen", function (e) {
+      var img = e.popup.getElement().querySelector("[data-spot-photo]");
+      if (img) spotPhotoUrl(img.getAttribute("data-spot-photo")).then(function (u) { if (u) { img.src = u; img.hidden = false; e.popup.update(); } });
       var btn = e.popup.getElement().querySelector("[data-del-spot]");
       if (btn) btn.addEventListener("click", function () { deleteSpot(btn.getAttribute("data-del-spot")); map.closePopup(); });
     });
@@ -270,35 +273,55 @@
     danger: ["#F07A5A", "!", "Danger"], animal: ["#C7B9DE", "A", "Animal"], autre: ["#EEE9DD", "•", "Autre"]
   };
   function getSpots() { return load("sylva_spots", []); }
+  var spotMarkers = {};
   function renderSpots() {
     if (!map) return;
-    layers.spots.clearLayers();
+    layers.spots.clearLayers(); spotMarkers = {};
     getSpots().forEach(function (s) {
       var ty = SPOT_TYPES[s.type] || SPOT_TYPES.autre;
       var html = "<b>" + esc(ty[2]) + "</b><br>" + esc(s.note || "(sans note)") +
+        (s.photo ? '<img class="popup-photo" data-spot-photo="' + esc(s.id) + '" alt="Photo du spot" hidden>' : "") +
         '<br><span style="color:#A9B3A6;font-size:12px">' + esc(new Date(s.date).toLocaleString("fr-BE")) + "</span>" +
         '<br><br><button data-del-spot="' + esc(s.id) + '" style="background:none;border:0;color:#FFB4A1;font-weight:600;padding:0;cursor:pointer">Supprimer</button>';
-      layers.spots.addLayer(L.marker([s.lat, s.lon], { icon: pinIcon(ty[0], ty[1]) }).bindPopup(html));
+      var mk = L.marker([s.lat, s.lon], { icon: pinIcon(ty[0], ty[1]) }).bindPopup(html);
+      spotMarkers[s.id] = mk; layers.spots.addLayer(mk);
     });
   }
   function deleteSpot(id) {
     save("sylva_spots", getSpots().filter(function (s) { return s.id !== id; }));
+    idbDo("readwrite", function (st) { return st.delete(id); }).catch(function () {});
     renderSpots(); toast("Spot supprimé");
   }
-  var pendingSpotPos = null;
+  var pendingSpotPos = null, pendingSpotBlob = null;
+  $("#spotPhoto").addEventListener("change", function (e) {
+    var file = e.target.files && e.target.files[0]; e.target.value = "";
+    if (!file) return;
+    resizeImage(file).then(function (blob) {
+      pendingSpotBlob = blob;
+      var pv = $("#spotPhotoPreview"); pv.src = URL.createObjectURL(blob); pv.hidden = false;
+    }).catch(function () { toast("Photo illisible"); });
+  });
   $("#btnAddSpot").addEventListener("click", function () {
     if (!map) return;
     if (me) { pendingSpotPos = [me[0], me[1]]; $("#spotPosInfo").textContent = "Position GPS actuelle (± " + Math.round(me[2]) + " m)"; }
     else { var c = map.getCenter(); pendingSpotPos = [c.lat, c.lng]; $("#spotPosInfo").textContent = "Pas de GPS : le spot sera placé au centre de la carte."; }
     $("#spotNote").value = "";
+    pendingSpotBlob = null; $("#spotPhotoPreview").hidden = true;
     openModal("#modalSpot");
   });
   $("#formSpot").addEventListener("submit", function (e) {
     e.preventDefault();
     var spots = getSpots();
-    spots.push({ id: String(Date.now()), lat: pendingSpotPos[0], lon: pendingSpotPos[1], type: $("#spotType").value, note: $("#spotNote").value.trim(), date: Date.now() });
+    var id = String(Date.now()), blob = pendingSpotBlob;
+    spots.push({ id: id, lat: pendingSpotPos[0], lon: pendingSpotPos[1], type: $("#spotType").value, note: $("#spotNote").value.trim(), date: Date.now(), photo: !!blob });
     save("sylva_spots", spots);
-    renderSpots(); closeModal($("#modalSpot")); toast("Spot enregistré");
+    closeModal($("#modalSpot"));
+    var done = function () { renderSpots(); toast("Spot enregistré"); };
+    if (blob) idbDo("readwrite", function (st) { return st.put(blob, id); }).then(done, function () {
+      var all = getSpots(); all.forEach(function (x) { if (x.id === id) x.photo = false; }); save("sylva_spots", all);
+      done(); toast("Spot enregistré sans photo (stockage indisponible)");
+    });
+    else done();
   });
   $("#btnLocate").addEventListener("click", function () {
     clearPlace();
@@ -713,6 +736,161 @@
   $("#scanResults").addEventListener("click", function (e) {
     var b = e.target.closest("[data-esp]"); if (b) openEspece(b.getAttribute("data-esp"));
   });
+
+  // ---------- Photos des spots (IndexedDB, restent sur le téléphone) ----------
+  var idbP = null, spotUrls = {};
+  function idb() {
+    if (idbP) return idbP;
+    idbP = new Promise(function (res, rej) {
+      if (!window.indexedDB) { rej(new Error("indisponible")); return; }
+      var r = indexedDB.open("sylva", 1);
+      r.onupgradeneeded = function () { r.result.createObjectStore("photos"); };
+      r.onsuccess = function () { res(r.result); };
+      r.onerror = function () { rej(r.error); };
+    });
+    return idbP;
+  }
+  function idbDo(mode, fn) {
+    return idb().then(function (d) {
+      return new Promise(function (res, rej) {
+        var tx = d.transaction("photos", mode), req = fn(tx.objectStore("photos"));
+        tx.oncomplete = function () { res(req && req.result); };
+        tx.onerror = function () { rej(tx.error); };
+      });
+    });
+  }
+  function spotPhotoUrl(id) {
+    if (spotUrls[id]) return Promise.resolve(spotUrls[id]);
+    return idbDo("readonly", function (st) { return st.get(id); }).then(function (blob) {
+      if (!blob) return null;
+      spotUrls[id] = URL.createObjectURL(blob); return spotUrls[id];
+    }).catch(function () { return null; });
+  }
+
+  // ---------- Météo (Open-Meteo) ----------
+  var WMO = {
+    0: "Ciel clair", 1: "Peu nuageux", 2: "Éclaircies", 3: "Couvert", 45: "Brouillard", 48: "Brouillard givrant",
+    51: "Bruine", 53: "Bruine", 55: "Bruine forte", 56: "Bruine verglaçante", 57: "Bruine verglaçante",
+    61: "Pluie faible", 63: "Pluie", 65: "Forte pluie", 66: "Pluie verglaçante", 67: "Pluie verglaçante",
+    71: "Neige faible", 73: "Neige", 75: "Forte neige", 77: "Grains de neige", 80: "Averses", 81: "Averses", 82: "Fortes averses",
+    85: "Averses de neige", 86: "Averses de neige", 95: "Orage", 96: "Orage et grêle", 99: "Orage et grêle"
+  };
+  function hm(iso) { return String(iso || "").slice(11, 16).replace(":", " h "); }
+  function placeLabel() {
+    if (focusPoint) return $("#placeInput").value || "Lieu recherché";
+    if (me) return "Autour de ma position";
+    return ZONE.nom;
+  }
+  function renderMeteo(data, when) {
+    var d = data.daily, h = "";
+    var days = [0, 1, 2].filter(function (i) { return d.time && d.time[i]; });
+    var minAll = Math.min.apply(null, days.map(function (i) { return d.temperature_2m_min[i]; }));
+    var rainMax = Math.max.apply(null, days.map(function (i) { return d.precipitation_sum[i] || 0; }));
+    var gustMax = Math.max.apply(null, days.map(function (i) { return d.wind_gusts_10m_max[i] || 0; }));
+    var sunset = d.sunset[0], sunrise = d.sunrise[0];
+    var setH = parseInt(String(sunset).slice(11, 13), 10), setM = String(sunset).slice(14, 16);
+    h += '<div class="sun"><span>Lever <b>' + hm(sunrise) + '</b></span><span>Coucher <b>' + hm(sunset) + "</b></span></div>" +
+      '<p class="tiny muted" style="margin:4px 0 0">Rafales en km/h. Monter le camp avant ' + (setH - 1) + " h " + setM + ", tant qu'il fait jour.</p>";
+    h += '<div class="meteo-days">' + days.map(function (i) {
+      var date = new Date(d.time[i] + "T12:00:00");
+      var label = i === 0 ? "Aujourd'hui" : date.toLocaleDateString("fr-BE", { weekday: "long" });
+      return '<div class="day"><span class="d">' + esc(label) + '</span><span class="w">' + esc(WMO[d.weather_code[i]] || "—") + "</span>" +
+        '<span class="tt">' + Math.round(d.temperature_2m_max[i]) + "° <small>/ " + Math.round(d.temperature_2m_min[i]) + "°</small></span>" +
+        '<span class="x">💧 ' + (d.precipitation_sum[i] || 0).toFixed(0) + " mm · " + (d.precipitation_probability_max[i] == null ? "–" : d.precipitation_probability_max[i]) + "%</span>" +
+        '<span class="x">Rafales ' + Math.round(d.wind_gusts_10m_max[i] || 0) + "</span></div>";
+    }).join("") + "</div>";
+    var alerts = [];
+    if (minAll <= 0) alerts.push(["danger", "Gel la nuit (" + Math.round(minAll) + " °C)", "Sac de couchage confort sous 0 °C, bonnet pour dormir, gourde dans le sac pour qu'elle ne gèle pas."]);
+    else if (minAll <= 5) alerts.push(["warn", "Nuit froide (" + Math.round(minAll) + " °C)", "Couche chaude et matelas bien isolant. Voir « Prévenir l'hypothermie »."]);
+    if (rainMax >= 10) alerts.push(["warn", "Fortes pluies annoncées", "Bâche, vêtements de rechange au sec dans un sac étanche, éviter le bord de la rivière (montée des eaux)."]);
+    if (gustMax >= 60) alerts.push(["danger", "Rafales de " + Math.round(gustMax) + " km/h", "Ne pas camper sous les arbres : risque de chute de branches."]);
+    alerts.forEach(function (a) {
+      h += '<div class="alert alert-' + a[0] + ' meteo-alert"><strong>' + esc(a[1]) + "</strong><span>" + esc(a[2]) + "</span></div>";
+    });
+    var mins = Math.round((Date.now() - when) / 60000);
+    h += '<p class="meteo-meta">' + (mins < 2 ? "Mis à jour à l'instant" : "Mis à jour il y a " + (mins < 60 ? mins + " min" : Math.round(mins / 60) + " h")) +
+      ' · Données <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a></p>';
+    $("#meteo").innerHTML = h;
+  }
+  function loadMeteo() {
+    var c = refPoint();
+    $("#bivPlace").textContent = placeLabel();
+    var cached = load("sylva_meteo", null);
+    var fresh = cached && Date.now() - cached.t < 3600e3 && distKm(cached.c, c) < 5;
+    if (cached) renderMeteo(cached.data, cached.t);
+    if (fresh || !navigator.onLine) {
+      if (!cached) $("#meteo").innerHTML = '<p class="muted">Pas de réseau : ouvrez cet onglet une fois connecté pour garder la météo en mémoire.</p>';
+      return;
+    }
+    fetch("https://api.open-meteo.com/v1/forecast?latitude=" + c[0].toFixed(3) + "&longitude=" + c[1].toFixed(3) +
+      "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_gusts_10m_max,sunrise,sunset" +
+      "&timezone=Europe%2FBrussels&forecast_days=3")
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (data) { save("sylva_meteo", { t: Date.now(), c: c, data: data }); renderMeteo(data, Date.now()); })
+      .catch(function () { if (!cached) $("#meteo").innerHTML = '<p class="muted">Météo indisponible pour le moment.</p>'; });
+  }
+
+  // ---------- Checklist du sac ----------
+  var CHECKLIST = [
+    ["Abri et couchage", ["Tente ou bâche + 10 m de cordelette", "Sac de couchage confort ≤ 0 °C", "Matelas isolant (R ≥ 3)", "Couverture de survie", "Sacs poubelle (déchets + rangement étanche)"]],
+    ["Vêtements", ["Sous-couche laine ou synthétique (pas de coton)", "Polaire ou doudoune", "Veste et pantalon imperméables", "Bonnet et gants", "2 paires de chaussettes de rechange", "Tenue sèche réservée à la nuit", "Chaussures de marche imperméables"]],
+    ["Eau et repas", ["Gourdes (2 L minimum)", "Réchaud + combustible + casserole", "Briquet + pierre à feu", "Pastilles ou filtre à eau", "Repas + en-cas énergétiques"]],
+    ["Sécurité et orientation", ["Téléphone chargé + batterie externe", "Lampe frontale + piles", "Carte papier et boussole", "Sifflet", "Trousse de secours + tire-tique", "Couteau"]],
+    ["Avant de partir", ["Prévenir quelqu'un : itinéraire et heure de retour", "Vérifier la météo (ci-dessus)", "Parcourir la zone sur la carte (cache hors-ligne)", "Télécharger les photos (réglages)", "Vérifier les règles de l'aire de bivouac"]]
+  ];
+  function renderChecklist() {
+    var st = load("sylva_check", {}), total = 0, done = 0, h = "";
+    CHECKLIST.forEach(function (g, gi) {
+      h += '<div class="check-group">' + esc(g[0]) + "</div>";
+      g[1].forEach(function (label, ii) {
+        var id = gi + "-" + ii, on = !!st[id]; total++; if (on) done++;
+        h += '<label class="check' + (on ? " done" : "") + '"><input type="checkbox" data-check="' + id + '"' + (on ? " checked" : "") + "><span>" + esc(label) + "</span></label>";
+      });
+    });
+    $("#checklist").innerHTML = h;
+    $("#checkCount").textContent = done + " / " + total + (done === total ? " · sac prêt ✓" : "");
+    $("#checkBar").style.width = Math.round(done / total * 100) + "%";
+  }
+  $("#checklist").addEventListener("change", function (e) {
+    var id = e.target.getAttribute("data-check"); if (!id) return;
+    var st = load("sylva_check", {}); st[id] = e.target.checked; save("sylva_check", st); renderChecklist();
+  });
+  $("#btnResetCheck").addEventListener("click", function () { save("sylva_check", {}); renderChecklist(); });
+
+  // ---------- Carnet ----------
+  function renderCarnet() {
+    var spots = getSpots().slice().sort(function (a, b) { return b.date - a.date; });
+    if (!spots.length) {
+      $("#carnet").innerHTML = '<div class="card"><p class="muted" style="margin:0">Aucun spot pour l\'instant. Sur la carte, touchez le bouton <b>+</b> pour noter une trouvaille, avec une photo si vous voulez.</p></div>';
+      return;
+    }
+    $("#carnet").innerHTML = '<div class="list">' + spots.map(function (s) {
+      var ty = SPOT_TYPES[s.type] || SPOT_TYPES.autre;
+      var dist = me ? " · " + fmtKm(distKm([me[0], me[1]], [s.lat, s.lon])) : "";
+      return '<button class="carnet-item" data-goto-spot="' + esc(s.id) + '">' +
+        (s.photo ? '<img class="carnet-thumb" data-spot-photo="' + esc(s.id) + '" alt="" hidden><span class="carnet-pin" data-ph="' + esc(s.id) + '" style="background:' + ty[0] + '">' + esc(ty[1]) + "</span>"
+                 : '<span class="carnet-pin" style="background:' + ty[0] + '">' + esc(ty[1]) + "</span>") +
+        '<span class="item-main"><span class="item-name">' + esc(ty[2]) + '</span><span class="item-sub">' + esc(s.note || "(sans note)") + "</span>" +
+        '<span class="item-sub">' + esc(new Date(s.date).toLocaleString("fr-BE", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })) + esc(dist) + "</span></span></button>";
+    }).join("") + "</div>";
+    $all("#carnet [data-spot-photo]").forEach(function (img) {
+      var id = img.getAttribute("data-spot-photo");
+      spotPhotoUrl(id).then(function (u) {
+        if (!u) return;
+        img.src = u; img.hidden = false;
+        var pin = document.querySelector('#carnet [data-ph="' + id + '"]'); if (pin) pin.remove();
+      });
+    });
+  }
+  $("#carnet").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-goto-spot]"); if (!b || !map) return;
+    var id = b.getAttribute("data-goto-spot");
+    var s = getSpots().filter(function (x) { return x.id === id; })[0]; if (!s) return;
+    showView("carte");
+    setTimeout(function () { map.setView([s.lat, s.lon], 16); if (spotMarkers[id]) spotMarkers[id].openPopup(); }, 120);
+  });
+
+  function renderBivouac() { loadMeteo(); renderChecklist(); renderCarnet(); }
 
   // ---------- Démarrage ----------
   renderEspeces();
