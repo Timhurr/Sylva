@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.8.0";
+  var VERSION = "0.9.0";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -15,7 +15,7 @@
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
   }
-  function norm(s) { return String(s || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, ""); }
+  function norm(s) { return String(s || "").toLowerCase().replace(/œ/g, "oe").replace(/æ/g, "ae").normalize("NFD").replace(/[̀-ͯ]/g, ""); }
   function load(key, fallback) {
     try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
   }
@@ -45,7 +45,6 @@
     document.body.removeChild(ta);
   }
 
-  $("#zoneName").textContent = ZONE.nom;
   $("#appVersion").textContent = "Sylva v" + VERSION + " · test terrain";
 
   // ---------- Réseau ----------
@@ -64,7 +63,37 @@
     $all(".view").forEach(function (v) { v.classList.toggle("active", v.id === "view-" + name); });
     if (name === "carte" && map) setTimeout(function () { map.invalidateSize(); }, 50);
     if (name === "bivouac") renderBivouac();
+    if (name === "accueil") renderAccueil();
+    var v = $("#view-" + name); if (v) v.scrollTop = 0;
   }
+  $all("[data-goto]").forEach(function (b) { b.addEventListener("click", function () { showView(b.getAttribute("data-goto")); }); });
+
+  // ---------- Thème jour / nuit ----------
+  var themePref = load("sylva_theme", "auto");
+  function isNight() {
+    var now = new Date(), m = load("sylva_meteo", null);
+    if (m && m.data && m.data.daily && m.data.daily.time) {
+      var today = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
+      var i = m.data.daily.time.indexOf(today);
+      if (i !== -1) {
+        var rise = new Date(m.data.daily.sunrise[i]), set = new Date(m.data.daily.sunset[i]);
+        return now < rise || now > set;
+      }
+    }
+    var h = now.getHours(); return h < 7 || h >= 18;
+  }
+  function applyTheme() {
+    var night = themePref === "nuit" || (themePref === "auto" && isNight());
+    document.documentElement.setAttribute("data-theme", night ? "nuit" : "jour");
+    var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute("content", night ? "#0C110E" : "#F5F3EE");
+    $all("#themeChips .chip").forEach(function (c) { c.classList.toggle("on", c.getAttribute("data-theme-opt") === themePref); });
+  }
+  applyTheme();
+  setInterval(applyTheme, 60000);
+  $("#themeChips").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-theme-opt]"); if (!b) return;
+    themePref = b.getAttribute("data-theme-opt"); save("sylva_theme", themePref); applyTheme();
+  });
 
   // ---------- Modales & fiche ----------
   function openModal(id) { $(id).hidden = false; }
@@ -75,11 +104,12 @@
     });
   });
   var sheetStack = [], lectureChap = null;
-  function openSheet(kicker, html) {
+  function openSheet(kicker, html, opts) {
     if (!$("#sheet").hidden) {
-      sheetStack.push({ k: $("#sheetKicker").textContent, h: $("#sheetBody").innerHTML, s: $("#sheetBody").scrollTop, c: lectureChap });
+      sheetStack.push({ k: $("#sheetKicker").textContent, h: $("#sheetBody").innerHTML, s: $("#sheetBody").scrollTop, c: lectureChap, hero: $("#sheet").classList.contains("has-hero") });
     }
     lectureChap = null;
+    $("#sheet").classList.toggle("has-hero", !!(opts && opts.hero));
     $("#sheetKicker").textContent = kicker;
     $("#sheetBody").innerHTML = html;
     $("#sheetBody").scrollTop = 0;
@@ -89,6 +119,7 @@
     var prev = sheetStack.pop();
     if (prev) {
       $("#sheetKicker").textContent = prev.k; $("#sheetBody").innerHTML = prev.h; lectureChap = prev.c;
+      $("#sheet").classList.toggle("has-hero", !!prev.hero);
       setTimeout(function () { $("#sheetBody").scrollTop = prev.s; }, 0);
     } else { $("#sheet").hidden = true; lectureChap = null; }
   });
@@ -583,7 +614,7 @@
   });
   $("#btnRegionOk").addEventListener("click", function () {
     region = draft; save("sylva_region", region); closeModal($("#modalRegion"));
-    renderRegionBtn(); renderEspeces(); toast("Région : " + PAYS[region.pays].nom);
+    renderRegionBtn(); renderEspeces(); renderLearnCounts(); toast("Région : " + PAYS[region.pays].nom);
   });
   var MOIS_NOMS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
   function lvClass(n) { return "lv-" + (n || "info"); }
@@ -601,10 +632,10 @@
     var lastCat = null;
     list.forEach(function (s) {
       if ((curCat === "tout" || curCat === "saison") && s.cat !== lastCat) { html += '<div class="section-title">' + esc(CAT_PLURAL[s.cat]) + "</div>"; lastCat = s.cat; }
-      var ic = CAT_ICO[s.cat], ph = photoOf(s.latin);
+      var ph = photoOf(s.latin);
       html += '<button class="item" data-esp="' + esc(s.id) + '">' +
         (ph ? '<span class="item-ico item-photo"><img src="' + esc(ph.src) + '" alt="" loading="lazy"></span>'
-            : '<span class="item-ico" style="background:' + ic[0] + ";color:" + ic[1] + '">' + esc(s.nom.charAt(0)) + "</span>") +
+            : '<span class="item-ico ico-' + esc(s.cat) + '">' + esc(s.nom.charAt(0)) + "</span>") +
         '<span class="item-main"><span class="item-name">' + esc(s.nom) + '</span><span class="item-sub">' + esc(s.saison) + "</span></span>" +
         '<span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + "</span></button>";
     });
@@ -633,12 +664,36 @@
     return p ? '<img class="sosie-img" src="' + esc(p.src) + '" alt="' + esc(x.nom) + '">' : "";
   }
 
+  var VERDICT_ICO = { ok: "✓", caution: "!", danger: "✕", info: "i" };
+  var VERDICT_SUB = {
+    ok: "Vérifie toujours plusieurs critères avant de cueillir.",
+    caution: "Comestible sous conditions : lis les consignes.",
+    danger: "Ne pas consommer, ne pas porter à la bouche.",
+    info: "Infos et conduite à tenir."
+  };
+  function verdictHtml(s) {
+    var n = s.niveau || "info";
+    return '<div class="verdict v-' + esc(n) + '"><span class="v-ico" aria-hidden="true">' + VERDICT_ICO[n] + "</span><span><b>" + esc(s.statut) + "</b><span>" + esc(VERDICT_SUB[n]) + "</span></span></div>";
+  }
+  function ficheHeroHtml(p, s) {
+    return p ? '<img src="' + esc(p.src) + '" alt="' + esc(s.nom) + '"><figcaption>' + photoCredit(p) + "</figcaption>"
+             : '<span class="ph-letter" aria-hidden="true">' + esc(s.nom.charAt(0)) + "</span>";
+  }
+  function cmpHtml(nom, latin, niveau, txt, tag, self) {
+    var p = latin && photoOf(latin);
+    return '<div class="cmp ' + (self ? "self" : esc(niveau || "caution")) + '"><span class="cmp-img">' +
+      (p ? '<img src="' + esc(p.src) + '" alt="' + esc(nom) + '" loading="lazy">' : esc(nom.charAt(0))) + "</span>" +
+      '<span class="tag">' + esc(tag) + "</span><b>" + esc(nom) + "</b>" + esc(txt) + "</div>";
+  }
+  var SOSIE_TAG = { danger: "Dangereux", caution: "Prudence", ok: "Sans danger" };
+
   function openEspece(id) {
     var s = ESPECES.filter(function (x) { return x.id === id; })[0]; if (!s) return;
     var ph = photoOf(s.latin);
-    var h = '<div id="heroSlot">' + (ph ? heroHtml(ph, s.nom) : "") + "</div>" +
-      '<h1 id="sheetTitle">' + esc(s.nom) + '</h1><div class="latin">' + esc(s.latin) + "</div>" +
-      '<div class="row" style="flex-wrap:wrap;gap:6px;margin:0 0 12px"><span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + '</span><span class="badge lv-info">' + esc(s.saison) + "</span></div>" +
+    var h = '<figure class="fiche-hero" id="heroSlot">' + ficheHeroHtml(ph, s) + "</figure>" +
+      '<div class="fiche-card"><h1 id="sheetTitle">' + esc(s.nom) + '</h1><div class="latin">' + esc(s.latin) + " · " + esc(CAT_LABEL[s.cat]) + "</div>" +
+      verdictHtml(s) +
+      '<div class="facts"><span class="fact"><span>Saison</span><b>' + esc(s.saison) + '</b></span><span class="fact"><span>Catégorie</span><b>' + esc(CAT_LABEL[s.cat]) + "</b></span></div>" +
       "<p>" + esc(s.resume) + "</p>" +
       (s.notes && s.notes[region.pays] ? '<div class="alert alert-warn note-pays"><strong>En ' + esc(PAYS[region.pays].nom) + "</strong><span>" + esc(s.notes[region.pays]) + "</span></div>" : "");
     if (s.identification && s.identification.length) {
@@ -646,23 +701,25 @@
     }
     if (s.sosies && s.sosies.length) {
       var credits = [];
-      h += "<h3>Ne pas confondre</h3>" + s.sosies.map(function (x) {
-        var p = x.latin && photoOf(x.latin);
-        if (p) credits.push(esc(x.nom.split(" (")[0]) + " — " + photoCredit(p));
-        return '<div class="sosie ' + esc(x.niveau) + '">' + sosieThumb(x) + '<div><b>' + esc(x.nom) + "</b>" + esc(x.diff) + "</div></div>";
-      }).join("");
+      h += "<h3>" + (s.niveau === "danger" ? "Ne pas la confondre avec" : "Elle ou son sosie ?") + '</h3><div class="compare">' +
+        (s.niveau !== "danger" ? cmpHtml(s.nom, s.latin, s.niveau, (s.identification && s.identification[0]) || s.resume, "La bonne", true) : "") +
+        s.sosies.map(function (x) {
+          var p = x.latin && photoOf(x.latin);
+          if (p) credits.push(esc(x.nom.split(" (")[0]) + " — " + photoCredit(p));
+          return cmpHtml(x.nom, x.latin, x.niveau, x.diff, SOSIE_TAG[x.niveau] || "Sosie", false);
+        }).join("") + "</div>";
       if (credits.length) h += '<p class="tiny muted credits">' + credits.join("<br>") + "</p>";
     }
     if (s.usages && s.usages.length) {
       h += "<h3>" + (s.cat === "animal" ? "Conseils" : s.niveau === "danger" ? "Consignes" : "Usages") + "</h3><ul>" +
         s.usages.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
     }
-    h += '<p class="disclaimer">Contenu éducatif. Ne consommez jamais une plante ou un champignon sans certitude absolue de son identité. La photo montre l\'espèce en général : comparez toujours plusieurs critères.</p>';
-    openSheet(CAT_LABEL[s.cat], h);
+    h += '<p class="disclaimer">Contenu éducatif. Ne consommez jamais une plante ou un champignon sans certitude absolue de son identité. La photo montre l\'espèce en général : comparez toujours plusieurs critères.</p></div>';
+    openSheet(CAT_LABEL[s.cat], h, { hero: true });
     if (!ph && navigator.onLine) {
       fetchPhoto(s.latin).then(function (p) {
         var slot = document.getElementById("heroSlot");
-        if (p && slot && !$("#sheet").hidden) slot.innerHTML = heroHtml(p, s.nom);
+        if (p && slot && !$("#sheet").hidden) slot.innerHTML = ficheHeroHtml(p, s);
       }).catch(function () {});
     }
   }
@@ -670,15 +727,17 @@
   // ---------- Techniques ----------
   var ILLUS = window.SYLVA_ILLUS || {};
   var CATS = window.SYLVA_CATEGORIES || [];
+  var ficheCat = "";
   function renderTechniques() {
     var h = "";
     TECHS.forEach(function (t) {
-      if (t.priorite) {
+      if (t.priorite && (!ficheCat || t.cat === ficheCat)) {
         h += '<button class="tech-card' + (t.id === "froid" ? " cold" : "") + '" data-tech="' + esc(t.id) + '">' +
           '<span class="k">Priorité</span><span class="t">' + esc(t.titre) + "</span><p>" + esc(t.intro) + "</p></button>";
       }
     });
     CATS.forEach(function (cat) {
+      if (ficheCat && cat !== ficheCat) return;
       var items = TECHS.filter(function (t) { return t.cat === cat && !t.priorite; });
       if (!items.length) return;
       h += '<div class="section-title">' + esc(cat) + '</div><div class="list">';
@@ -695,11 +754,17 @@
   }
   function openTechnique(id) {
     var t = TECHS.filter(function (x) { return x.id === id; })[0]; if (!t) return;
-    var tp = t.wiki && photoOf(t.wiki);
+    var tp = t.wiki && photoOf(t.wiki), n = t.etapes.length;
     var h = (t.wiki ? '<div id="heroSlot" class="knot">' + (tp ? heroHtml(tp, t.titre) : "") + "</div>"
                     : (ILLUS[t.illus] ? '<div class="illus">' + ILLUS[t.illus] + "</div>" : "")) +
-      '<h1 id="sheetTitle">' + esc(t.titre) + "</h1><p>" + esc(t.intro) + "</p><h3>Étapes</h3><ol>" +
-      t.etapes.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ol>";
+      '<div class="chap-k">' + esc(t.cat) + " · " + n + ' étapes</div><h1 id="sheetTitle">' + esc(t.titre) + "</h1><p>" + esc(t.intro) + "</p>" +
+      '<div class="steps" data-cur="0" data-n="' + n + '">' +
+      '<div class="step-bar" aria-hidden="true">' + t.etapes.map(function (x, i) { return '<span' + (i === 0 ? ' class="on"' : "") + "></span>"; }).join("") + "</div>" +
+      t.etapes.map(function (x, i) {
+        return '<div class="step' + (i === 0 ? " on" : "") + '"><span class="step-k"><span class="step-n">' + (i + 1) + "</span>Étape " + (i + 1) + " sur " + n + "</span><p>" + esc(x) + "</p></div>";
+      }).join("") +
+      '<div class="step-nav"><button type="button" class="btn" data-step="-1" disabled>Précédent</button><button type="button" class="btn btn-next" data-step="1">' + (n > 1 ? "Étape suivante" : "Terminé ✓") + "</button></div>" +
+      '<button type="button" class="link-btn steps-toggle" data-step-all>Voir toutes les étapes</button></div>';
     (t.attention || []).forEach(function (a) { h += '<div class="alert alert-warn"><span>' + esc(a) + "</span></div>"; });
     if (t.source) h += '<p class="disclaimer">Source : ' + esc(t.source) + ". Illustration Sylva.</p>";
     openSheet(t.cat, h);
@@ -709,6 +774,16 @@
         if (p && slot && !$("#sheet").hidden) slot.innerHTML = heroHtml(p, t.titre);
       }).catch(function () {});
     }
+  }
+  function stepGo(box, delta) {
+    var n = +box.getAttribute("data-n"), cur = +box.getAttribute("data-cur") + delta;
+    if (cur >= n) { toast("Bien joué ✓"); box.classList.add("all"); box.querySelector("[data-step-all]").textContent = "Revenir au pas à pas"; return; }
+    cur = Math.max(0, cur); box.setAttribute("data-cur", cur);
+    Array.prototype.forEach.call(box.querySelectorAll(".step"), function (el, i) { el.classList.toggle("on", i === cur); });
+    Array.prototype.forEach.call(box.querySelectorAll(".step-bar span"), function (el, i) { el.classList.toggle("on", i <= cur); });
+    box.querySelector('[data-step="-1"]').disabled = cur === 0;
+    box.querySelector('[data-step="1"]').textContent = cur === n - 1 ? "Terminé ✓" : "Étape suivante";
+    var sb = $("#sheetBody"), top = box.offsetTop - 90; if (sb.scrollTop > top) sb.scrollTo({ top: top, behavior: "smooth" });
   }
   $("#listTechniques").addEventListener("click", function (e) {
     var b = e.target.closest("[data-tech]"); if (b) openTechnique(b.getAttribute("data-tech"));
@@ -757,7 +832,7 @@
   $("#searchGuide").addEventListener("input", renderGuide);
   $("#guideMode").addEventListener("click", function (e) {
     var b = e.target.closest("[data-mode]"); if (!b) return;
-    guideMode = b.dataset.mode; renderGuide();
+    guideMode = b.dataset.mode; ficheCat = ""; $("#guideTitle").textContent = "Guide de survie"; renderGuide();
   });
   $("#listGuide").addEventListener("click", function (e) {
     var b = e.target.closest("[data-chap]"); if (b) openChapitre(b.getAttribute("data-chap"));
@@ -802,6 +877,15 @@
     lectureChap = c.id;
   }
   $("#sheetBody").addEventListener("click", function (e) {
+    var st = e.target.closest("[data-step],[data-step-all]");
+    if (st) {
+      var box = st.closest(".steps");
+      if (st.hasAttribute("data-step-all")) {
+        var all = box.classList.toggle("all");
+        st.textContent = all ? "Revenir au pas à pas" : "Voir toutes les étapes";
+      } else stepGo(box, +st.getAttribute("data-step"));
+      return;
+    }
     var b = e.target.closest("[data-anchor],[data-tech],[data-esp],[data-chap]"); if (!b) return;
     if (b.hasAttribute("data-anchor")) {
       var el = document.getElementById(b.getAttribute("data-anchor"));
@@ -815,7 +899,7 @@
     var sb = $("#sheetBody");
     if (sb.scrollTop + sb.clientHeight >= sb.scrollHeight - 120) {
       var lus = load("sylva_lus", {});
-      if (!lus[lectureChap]) { lus[lectureChap] = true; save("sylva_lus", lus); toast("Chapitre lu ✓"); renderGuide(); }
+      if (!lus[lectureChap]) { lus[lectureChap] = true; save("sylva_lus", lus); toast("Chapitre lu ✓"); renderGuide(); renderLearnGuide(); }
     }
   });
 
@@ -899,16 +983,17 @@
   function renderScanResults(results) {
     if (!results.length) { $("#scanResults").innerHTML = '<p class="muted">Aucun résultat.</p>'; return; }
     var dangerHit = null, umbel = false, html = "";
-    results.forEach(function (r) {
+    results.forEach(function (r, i) {
       var sp = r.species || {};
       var latin = sp.scientificNameWithoutAuthor || "";
       var fam = sp.family && sp.family.scientificNameWithoutAuthor;
       if (fam === "Apiaceae") umbel = true;
       var local = LATIN_INDEX[norm(latin)];
       if (local && local.niveau === "danger" && !dangerHit) dangerHit = local;
+      if (i === 0) return;
       var common = (sp.commonNames && sp.commonNames[0]) || latin;
       var pct = Math.round((r.score || 0) * 100);
-      html += '<div class="result"><span class="score" style="color:' + (local && local.niveau === "danger" ? "#FFB4A1" : "#EEE9DD") + '">' + pct + " %</span>" +
+      html += '<div class="result"><span class="score' + (local && local.niveau === "danger" ? " dz" : "") + '">' + pct + " %</span>" +
         '<span class="names"><span>' + esc(common) + "</span><i>" + esc(latin) + "</i>" +
         (local ? '<button class="link" data-esp="' + esc(local.id) + '">Voir la fiche et les sosies</button>' : "") + "</span>" +
         (local ? '<span class="badge ' + lvClass(local.niveau) + '">' + esc(local.statut) + "</span>" : "") + "</div>";
@@ -917,7 +1002,13 @@
     if (dangerHit) head += '<div class="alert alert-danger"><strong>Espèce toxique possible : ' + esc(dangerHit.nom) + "</strong><span>Ne touchez pas à la bouche, ne consommez rien.</span></div>";
     if (umbel) head += '<div class="alert alert-danger"><strong>Ombellifère détectée</strong><span>Cette famille compte des plantes mortelles (ciguës, œnanthe). Ne jamais consommer sans expert.</span></div>';
     if (results[0].score < 0.5) head += '<div class="alert alert-warn"><strong>Identification incertaine</strong><span>Score faible : reprenez une photo plus nette, d\'un autre organe.</span></div>';
-    $("#scanResults").innerHTML = head + "<h3>Correspondances possibles</h3>" + html;
+    var r0 = results[0], sp0 = r0.species || {}, lat0 = sp0.scientificNameWithoutAuthor || "", loc0 = LATIN_INDEX[norm(lat0)];
+    var p0 = loc0 && photoOf(loc0.latin);
+    var top = '<div class="res-top"><div class="rt-head"><span class="rt-img">' + (p0 ? '<img src="' + esc(p0.src) + '" alt="">' : $("#scanImg").src ? '<img src="' + esc($("#scanImg").src) + '" alt="">' : "") + "</span>" +
+      '<span><span class="rt-k">CORRESPONDANCE ' + Math.round((r0.score || 0) * 100) + ' %</span><span class="rt-n">' + esc(loc0 ? loc0.nom : ((sp0.commonNames && sp0.commonNames[0]) || lat0)) + "</span><i>" + esc(lat0) + "</i></span></div>" +
+      (loc0 ? verdictHtml(loc0) + '<button class="btn btn-primary" data-esp="' + esc(loc0.id) + '">Voir la fiche complète</button>'
+            : '<div class="verdict"><span class="v-ico" aria-hidden="true">?</span><span><b>Pas de fiche Sylva</b><span>Espèce inconnue de l\'appli : ne la consomme pas.</span></span></div>') + "</div>";
+    $("#scanResults").innerHTML = head + top + (html ? '<div class="section-title">Autres possibilités</div><div class="list">' + html + "</div>" : "");
   }
   $("#scanResults").addEventListener("click", function (e) {
     var b = e.target.closest("[data-esp]"); if (b) openEspece(b.getAttribute("data-esp"));
@@ -1000,7 +1091,7 @@
   }
   function loadMeteo() {
     var c = refPoint();
-    $("#bivPlace").textContent = placeLabel();
+    if ($("#bivPlace")) $("#bivPlace").textContent = placeLabel();
     var cached = load("sylva_meteo", null);
     var fresh = cached && Date.now() - cached.t < 3600e3 && distKm(cached.c, c) < 5;
     if (cached) renderMeteo(cached.data, cached.t);
@@ -1010,9 +1101,9 @@
     }
     fetch("https://api.open-meteo.com/v1/forecast?latitude=" + c[0].toFixed(3) + "&longitude=" + c[1].toFixed(3) +
       "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_gusts_10m_max,sunrise,sunset" +
-      "&timezone=Europe%2FBrussels&forecast_days=3")
+      "&current=temperature_2m,weather_code&timezone=Europe%2FBrussels&forecast_days=3")
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
-      .then(function (data) { save("sylva_meteo", { t: Date.now(), c: c, data: data }); renderMeteo(data, Date.now()); })
+      .then(function (data) { save("sylva_meteo", { t: Date.now(), c: c, data: data }); renderMeteo(data, Date.now()); renderHero(); applyTheme(); })
       .catch(function () { if (!cached) $("#meteo").innerHTML = '<p class="muted">Météo indisponible pour le moment.</p>'; });
   }
 
@@ -1077,8 +1168,11 @@
         '<button class="link-btn" id="btnDefaultCheck" type="button">Revenir à la liste par défaut</button>';
     }
     $("#checklist").innerHTML = h;
-    $("#checkCount").textContent = done + " / " + total + (total && done === total ? " · sac prêt ✓" : "");
-    $("#checkBar").style.width = (total ? Math.round(done / total * 100) : 0) + "%";
+    $("#checkCount").textContent = done + " sur " + total + " prêts" + (total && done === total ? " · sac prêt ✓" : " · " + (total - done) + " à faire");
+    var pct = total ? Math.round(done / total * 100) : 0;
+    $("#checkBar").style.width = pct + "%";
+    $("#checkPct").textContent = pct + " %";
+    $("#checkRing").style.strokeDasharray = (pct / 100 * 201).toFixed(1) + " 201";
     $("#btnEditCheck").textContent = checkEdit ? "Terminé" : "Modifier";
     $("#btnResetCheck").hidden = checkEdit;
     $all("#checklist [data-check-photo]").forEach(function (img) {
@@ -1183,12 +1277,189 @@
     setTimeout(function () { map.setView([s.lat, s.lon], 16); if (spotMarkers[id]) spotMarkers[id].openPopup(); }, 120);
   });
 
-  function renderBivouac() { loadMeteo(); renderChecklist(); renderCarnet(); }
+  function renderBivouac() { renderTrip(); loadMeteo(); renderChecklist(); renderCarnet(); }
+
+  // ---------- Aujourd'hui ----------
+  var MOIS_COURTS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
+  function checkStats() {
+    var done = 0, total = 0;
+    getChecklist().forEach(function (g) { g.items.forEach(function (it) { total++; if (it.done) done++; }); });
+    return { done: done, total: total, pct: total ? Math.round(done / total * 100) : 0 };
+  }
+  function getTrip() { return load("sylva_trip", { lieu: "", date: "" }); }
+  function tripDays(t) {
+    if (!t.date) return null;
+    var d = new Date(t.date + "T00:00:00"), n = new Date(); n.setHours(0, 0, 0, 0);
+    return Math.round((d - n) / 864e5);
+  }
+  function tripWhenTxt(t) {
+    var j = tripDays(t);
+    if (j === null) return "Prochaine sortie";
+    if (j > 1) return "Dans " + j + " jours";
+    if (j === 1) return "Demain";
+    if (j === 0) return "Aujourd'hui";
+    return "Il y a " + (-j) + " jour" + (j < -1 ? "s" : "");
+  }
+  function renderTrip() {
+    var t = getTrip();
+    $("#tripWhen").textContent = tripWhenTxt(t);
+    $("#tripName").textContent = t.lieu || "Mon bivouac";
+    $("#btnTrip").textContent = t.date || t.lieu ? "Modifier la sortie" : "Choisir la date et le lieu";
+  }
+  $("#btnTrip").addEventListener("click", function () {
+    var t = getTrip(); $("#tripLieu").value = t.lieu || ""; $("#tripDate").value = t.date || ""; openModal("#modalTrip");
+  });
+  $("#formTrip").addEventListener("submit", function (e) {
+    e.preventDefault();
+    save("sylva_trip", { lieu: $("#tripLieu").value.trim(), date: $("#tripDate").value });
+    closeModal($("#modalTrip")); renderTrip(); renderAccueil(); toast("Sortie enregistrée");
+  });
+  function renderHero() {
+    var m = load("sylva_meteo", null);
+    $("#heroPlace").textContent = placeLabel();
+    $("#homeAlerts").innerHTML = "";
+    if (!m || !m.data || !m.data.daily) {
+      $("#heroTemp").textContent = "–°";
+      $("#heroSky").textContent = navigator.onLine ? "Météo en chargement…" : "Météo disponible avec du réseau";
+      $("#heroSun").hidden = true; return;
+    }
+    var d = m.data.daily, cur = m.data.current;
+    var night = isNight();
+    var temp = cur && cur.temperature_2m != null ? cur.temperature_2m : d.temperature_2m_max[0];
+    var code = cur && cur.weather_code != null ? cur.weather_code : d.weather_code[0];
+    var nmin = Math.min(d.temperature_2m_min[0], d.temperature_2m_min[1] != null ? d.temperature_2m_min[1] : 99);
+    $("#heroTemp").textContent = Math.round(temp) + "°";
+    $("#heroSky").textContent = (WMO[code] || "—") + " · nuit à " + Math.round(nmin) + " °C";
+    $("#heroSun").hidden = false;
+    $("#heroSun").textContent = night ? "Lever du soleil " + hm(d.sunrise[d.sunrise.length > 1 && new Date() > new Date(d.sunset[0]) ? 1 : 0]) : "Coucher du soleil " + hm(d.sunset[0]);
+    var al = [], rain = Math.max(d.precipitation_sum[0] || 0, d.precipitation_sum[1] || 0), gust = Math.max(d.wind_gusts_10m_max[0] || 0, d.wind_gusts_10m_max[1] || 0);
+    if (nmin <= 0) al.push(["", "Gel cette nuit", "Duvet confort sous 0 °C, bonnet pour dormir, gourde dans le duvet."]);
+    else if (nmin <= 5) al.push(["warn", "Nuit froide (" + Math.round(nmin) + " °C)", "Couche chaude et matelas bien isolant."]);
+    if (gust >= 60) al.push(["", "Rafales de " + Math.round(gust) + " km/h", "Ne campe pas sous les arbres : chute de branches."]);
+    if (rain >= 10) al.push(["warn", "Fortes pluies", "Bâche, rechange au sec, éloigne-toi du bord de l'eau."]);
+    $("#homeAlerts").innerHTML = al.map(function (a) {
+      return '<div class="notice ' + a[0] + '"><span class="n-ico"><svg viewBox="0 0 24 24" aria-hidden="true">' +
+        (a[1].indexOf("Gel") === 0 || a[1].indexOf("Nuit") === 0 ? '<path d="M12 2v20M4 6l16 12M20 6L4 18"/>' : '<path d="M12 3L2 20h20z"/><path d="M12 10v4M12 17h.01"/>') +
+        "</svg></span><span><b>" + esc(a[1]) + "</b><span>" + esc(a[2]) + "</span></span></div>";
+    }).join("");
+  }
+  function guideNext() {
+    var lus = load("sylva_lus", {}), nb = 0, next = null;
+    GUIDE.forEach(function (c) { if (lus[c.id]) nb++; else if (!next) next = c; });
+    return { lus: nb, next: next || GUIDE[0] };
+  }
+  function resumeHtml() {
+    var g = guideNext(); if (!g.next) return "";
+    var i = GUIDE.indexOf(g.next);
+    return '<span class="r-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/></svg></span>' +
+      '<span class="tc-main"><span class="s">GUIDE · CHAPITRE ' + (i + 1) + " SUR " + GUIDE.length + "</span><b>" + esc(g.next.titre) + "</b>" +
+      '<span class="bar"><span style="width:' + Math.round(g.lus / Math.max(1, GUIDE.length) * 100) + '%"></span></span></span>' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>';
+  }
+  function renderLearnGuide() { $("#learnGuide").innerHTML = resumeHtml(); $("#homeGuide").innerHTML = resumeHtml(); }
+  function openNextChap() { var g = guideNext(); if (g.next) openChapitre(g.next.id); }
+  $("#learnGuide").addEventListener("click", openNextChap);
+  $("#homeGuide").addEventListener("click", openNextChap);
+  function renderAccueil() {
+    var now = new Date(), h = now.getHours();
+    var j = now.toLocaleDateString("fr-BE", { weekday: "long", day: "numeric", month: "long" });
+    $("#todayDate").textContent = j.charAt(0).toUpperCase() + j.slice(1);
+    $("#hello").textContent = h < 5 || h >= 18 ? "Bonsoir" : "Bonjour";
+    renderHero();
+    var t = getTrip(), st = checkStats(), d = t.date ? new Date(t.date + "T12:00:00") : null;
+    $("#tripCard").innerHTML = '<span class="date-box">' + (d ? "<b>" + d.getDate() + "</b><span>" + MOIS_COURTS[d.getMonth()] + "</span>" : "<b>+</b><span>date</span>") + "</span>" +
+      '<span class="tc-main"><b>' + esc(t.lieu || (t.date ? "Prochaine sortie" : "Planifie ta prochaine sortie")) + "</b>" +
+      '<span class="s">' + (d ? esc(tripWhenTxt(t)) + " · " : "") + "Sac prêt à " + st.pct + " % · " + st.done + " / " + st.total + "</span>" +
+      '<span class="bar"><span style="width:' + st.pct + '%"></span></span></span>';
+    var mois = now.getMonth() + 1;
+    var sais = ESPECES.filter(function (s) { return inRegion(s) && s.mois && s.mois.indexOf(mois) !== -1 && s.cat !== "animal"; });
+    sais.sort(function (a, b) { return (photoOf(b.latin) ? 1 : 0) - (photoOf(a.latin) ? 1 : 0); });
+    $("#homeSeason").innerHTML = sais.slice(0, 12).map(function (s) {
+      var p = photoOf(s.latin);
+      return '<button class="season-card" type="button" data-esp="' + esc(s.id) + '"><span class="season-img">' +
+        (p ? '<img src="' + esc(p.src) + '" alt="" loading="lazy">' : esc(s.nom.charAt(0))) +
+        '<span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + "</span></span><b>" + esc(s.nom) + "</b></button>";
+    }).join("") || '<p class="muted">Rien de particulier ce mois-ci.</p>';
+    renderLearnGuide();
+  }
+  $("#homeSeason").addEventListener("click", function (e) { var b = e.target.closest("[data-esp]"); if (b) openEspece(b.getAttribute("data-esp")); });
+  $("#tripCard").addEventListener("click", function () { showView("bivouac"); });
+  $("#heroMeteo").addEventListener("click", function () { showView("bivouac"); });
+
+  // ---------- Apprendre ----------
+  function learnShow(which) {
+    $("#learnHome").hidden = which !== "home";
+    $("#panelEspeces").hidden = which !== "especes";
+    $("#panelGuide").hidden = which !== "guide";
+    $("#view-apprendre").scrollTop = 0;
+  }
+  function setCat(cat) {
+    curCat = cat;
+    $all("#catChips .chip").forEach(function (x) { x.classList.toggle("on", x.dataset.cat === cat); });
+    renderEspeces();
+  }
+  function renderLearnCounts() {
+    $all("[data-count]").forEach(function (el) {
+      var c = el.getAttribute("data-count");
+      el.textContent = ESPECES.filter(function (s) { return s.cat === c && inRegion(s); }).length;
+    });
+  }
+  $("#view-apprendre").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-learn],[data-learn-cat],[data-learn-fiches],[data-open-tech],[data-open-chap]");
+    if (!b || b.closest("#learnResults")) return;
+    if (b.hasAttribute("data-learn")) {
+      var w = b.getAttribute("data-learn");
+      if (w === "guide") { guideMode = "chapitres"; ficheCat = ""; $("#guideTitle").textContent = "Guide de survie"; renderGuide(); }
+      learnShow(w);
+    } else if (b.hasAttribute("data-learn-cat")) { setCat(b.getAttribute("data-learn-cat")); learnShow("especes"); }
+    else if (b.hasAttribute("data-learn-fiches")) {
+      ficheCat = b.getAttribute("data-learn-fiches"); guideMode = "fiches"; $("#searchGuide").value = "";
+      $("#guideTitle").textContent = ficheCat || "Fiches pratiques"; renderGuide(); learnShow("guide");
+    } else if (b.hasAttribute("data-open-tech")) openTechnique(b.getAttribute("data-open-tech"));
+    else if (b.hasAttribute("data-open-chap")) openChapitre(b.getAttribute("data-open-chap"));
+  });
+  $("#btnAllSeason").addEventListener("click", function () { setCat("saison"); learnShow("especes"); showView("apprendre"); });
+  function itemEsp(s) {
+    var ph = photoOf(s.latin);
+    return '<button class="item" data-esp="' + esc(s.id) + '">' +
+      (ph ? '<span class="item-ico item-photo"><img src="' + esc(ph.src) + '" alt="" loading="lazy"></span>' : '<span class="item-ico ico-' + esc(s.cat) + '">' + esc(s.nom.charAt(0)) + "</span>") +
+      '<span class="item-main"><span class="item-name">' + esc(s.nom) + '</span><span class="item-sub">' + esc(CAT_LABEL[s.cat]) + "</span></span>" +
+      '<span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + "</span></button>";
+  }
+  $("#searchAll").addEventListener("input", function () {
+    var q = norm(this.value.trim());
+    $("#learnTiles").hidden = !!q; $("#learnResults").hidden = !q;
+    if (!q) return;
+    var esp = ESPECES.filter(function (s) { return norm(s.nom + " " + s.latin + " " + s.resume).indexOf(q) !== -1; }).slice(0, 10);
+    var ch = GUIDE.filter(function (c) { return norm(chapText(c)).indexOf(q) !== -1; }).slice(0, 6);
+    var fi = TECHS.filter(function (t) { return norm(t.titre + " " + t.intro + " " + t.etapes.join(" ")).indexOf(q) !== -1; }).slice(0, 10);
+    var h = "";
+    if (fi.length) h += '<div class="section-title">Fiches pratiques</div><div class="list">' + fi.map(function (t) {
+      return '<button class="item" data-tech="' + esc(t.id) + '"><span class="item-illus" aria-hidden="true">' + (ILLUS[t.illus] || "") + "</span>" +
+        '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.cat) + "</span></span></button>";
+    }).join("") + "</div>";
+    if (esp.length) h += '<div class="section-title">Espèces</div><div class="list">' + esp.map(itemEsp).join("") + "</div>";
+    if (ch.length) h += '<div class="section-title">Chapitres du guide</div><div class="list">' + ch.map(function (c) {
+      return '<button class="item" data-chap="' + esc(c.id) + '"><span class="item-illus" aria-hidden="true">' + (ILLUS[c.illus] || "") + "</span>" +
+        '<span class="item-main"><span class="item-name">' + esc(c.titre) + '</span><span class="item-sub">Chapitre ' + (GUIDE.indexOf(c) + 1) + "</span></span></button>";
+    }).join("") + "</div>";
+    $("#learnResults").innerHTML = h || '<p class="muted">Rien trouvé pour « ' + esc(this.value) + " ».</p>";
+  });
+  $("#learnResults").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-esp],[data-chap],[data-tech]"); if (!b) return;
+    if (b.hasAttribute("data-esp")) openEspece(b.getAttribute("data-esp"));
+    else if (b.hasAttribute("data-chap")) openChapitre(b.getAttribute("data-chap"));
+    else openTechnique(b.getAttribute("data-tech"));
+  });
 
   // ---------- Démarrage ----------
   renderRegionBtn();
   renderEspeces();
   renderGuide();
+  renderLearnCounts();
+  renderLearnGuide();
+  renderAccueil();
+  loadMeteo();
   setTimeout(function () { prefetchPhotos(false); }, 3000);
   initMap();
   startGeo();

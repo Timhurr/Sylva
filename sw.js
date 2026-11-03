@@ -1,5 +1,5 @@
 /* Sylva – service worker : appli et fiches hors-ligne, tuiles de carte vues gardées en cache */
-var VERSION = "sylva-v0.8.0";
+var VERSION = "sylva-v0.9.0";
 var SHELL = VERSION + "-shell";
 var TILES = "sylva-tiles";
 var PHOTOS = "sylva-photos";
@@ -75,10 +75,10 @@ self.addEventListener("fetch", function (e) {
   }
 
   // Bibliothèque carte (version figée) : cache d'abord
-  if (url.hostname === "unpkg.com") {
+  if (url.hostname === "unpkg.com" || url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com") {
     e.respondWith(caches.open(SHELL).then(function (c) {
       return c.match(req).then(function (hit) {
-        return hit || fetch(req).then(function (res) { if (res && res.ok) c.put(req, res.clone()); return res; });
+        return hit || fetch(req).then(function (res) { if (res && (res.ok || res.type === "opaque")) c.put(req, res.clone()); return res; });
       });
     }));
     return;
