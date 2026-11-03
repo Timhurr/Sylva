@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.6.0";
+  var VERSION = "0.7.0";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -737,7 +737,7 @@
       h += chaps.map(function (c) {
         return '<button class="chap" data-chap="' + esc(c.id) + '">' +
           '<span class="chap-illus" aria-hidden="true">' + (ILLUS[c.illus] || "") + "</span>" +
-          '<span class="chap-main"><span class="chap-k">Chapitre ' + c.num + " · " + minutes(c) + " min" + (lus[c.id] ? ' · <b class="chap-lu">Lu ✓</b>' : "") + "</span>" +
+          '<span class="chap-main"><span class="chap-k">Chapitre ' + (GUIDE.indexOf(c) + 1) + " · " + minutes(c) + " min" + (lus[c.id] ? ' · <b class="chap-lu">Lu ✓</b>' : "") + "</span>" +
           '<span class="chap-t">' + esc(c.titre) + '</span><span class="chap-r">' + esc(c.resume) + "</span></span></button>";
       }).join("") || '<p class="muted">Aucun chapitre ne correspond.</p>';
     }
@@ -776,7 +776,7 @@
     GUIDE.forEach(function (c, i) { if (c.id === id) idx = i; });
     var c = GUIDE[idx]; if (!c) return;
     var h = (ILLUS[c.illus] ? '<div class="illus">' + ILLUS[c.illus] + "</div>" : "") +
-      '<div class="chap-k">Chapitre ' + c.num + " · " + minutes(c) + ' min de lecture</div><h1 id="sheetTitle">' + esc(c.titre) + "</h1>" +
+      '<div class="chap-k">Chapitre ' + (idx + 1) + " · " + minutes(c) + ' min de lecture</div><h1 id="sheetTitle">' + esc(c.titre) + "</h1>" +
       '<p class="g-lead">' + esc(c.resume) + "</p>" +
       '<nav class="g-toc" aria-label="Sommaire">' + c.sections.map(function (x, i) {
         return '<button class="chip" data-anchor="gsec' + i + '">' + esc(x.titre) + "</button>";

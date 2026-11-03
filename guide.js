@@ -112,6 +112,12 @@ window.SYLVA_GUIDE = [];
                  "Dormir avec un bonnet, des chaussettes sèches et la tenue sèche réservée à la nuit.",
                  "Glisser dans le sac de couchage une gourde d'eau chaude bien fermée (bouillotte).",
                  "Ne jamais dormir avec des vêtements humides de la journée."] },
+      { titre: "La règle COLD",
+        p: ["Les manuels militaires de grand froid résument l'art de rester au chaud en quatre lettres :"],
+        liste: ["C, propre : la saleté et la graisse écrasent les poches d'air des vêtements, qui isolent alors moins bien.",
+                "O, éviter de trop chauffer : ouvrir et enlever une couche dès qu'on transpire, car la sueur refroidit en séchant.",
+                "L, amples et en couches : rien de serré, plusieurs couches fines plutôt qu'une épaisse.",
+                "D, au sec : protéger ses vêtements de l'eau, faire sécher chaussettes et gants contre le corps ou sur le sac."] },
       { titre: "Gérer l'humidité",
         p: ["L'humidité est l'ennemie numéro un en bivouac sous nos climats. La condensation se forme à l'intérieur de la tente quand l'air chaud et humide de la respiration touche la toile froide."],
         liste: ["Garder une aération ouverte, même par froid.",
@@ -121,7 +127,7 @@ window.SYLVA_GUIDE = [];
       { titre: "Lever le camp",
         p: ["Le matin, on démonte dans l'ordre inverse, on vérifie que le feu est totalement éteint, on remporte tout, et on remet l'emplacement dans l'état où on l'a trouvé : herbes redressées, feuilles éparpillées. Le meilleur bivouac est celui dont personne ne peut deviner l'existence."] }
     ],
-    fiches: ["abri", "froid", "bache", "tendeur", "traces"], especes: ["sanglier", "renard", "processionnaire"]
+    fiches: ["abri", "froid", "cold", "bache", "tendeur", "traces"], especes: ["sanglier", "renard", "processionnaire"]
   });
 
   // =====================================================================
@@ -185,6 +191,20 @@ window.SYLVA_GUIDE = [];
                  "Allumer au ras du sol, protéger la flamme du vent avec son corps.",
                  "Ajouter progressivement du bois plus gros sans écraser la structure, souffler doucement à la base.",
                  "Ne jamais laisser un feu sans surveillance."] },
+      { titre: "Les autres structures de feu",
+        p: ["Selon la météo et l'usage, d'autres montages font mieux que le tipi. Chacun a sa fiche détaillée avec schéma :"],
+        liste: ["Le feu en appentis : un bâton vert incliné à 30° face au vent protège l'amadou. Idéal par vent ou bruine.",
+                "La tranchée en croix : une croix creusée sous l'amadou crée un appel d'air quand il n'y a pas de vent.",
+                "La pyramide : des couches de bûches croisées, allumées par le haut. Le feu descend lentement et chauffe toute la nuit sans surveillance constante.",
+                "Le trou dakota : un feu enterré avec une arrivée d'air. Discret, peu sensible au vent, économe en bois, parfait pour une casserole.",
+                "Le mur réflecteur : des bûches empilées derrière le feu renvoient la chaleur vers soi et coupent le vent."] },
+      { titre: "Allumer sans briquet",
+        p: ["Les méthodes « à l'ancienne » marchent, à condition de les avoir pratiquées avant. Elles reposent toutes sur un bon matériau qui attrape la braise."],
+        liste: ["Le tissu charbonné : des carrés de coton cuits sans air dans une boîte en métal. Il prend la moindre étincelle et se prépare à la maison pour le kit de survie.",
+                "L'amadouvier : ce champignon en sabot de cheval pousse sur les hêtres et bouleaux morts. Sa couche feutrée, bien séchée et battue, garde une braise longtemps.",
+                "L'arc à feu : un foret qu'on fait tourner avec un archet sur une planchette de bois tendre jusqu'à obtenir une braise. La méthode par friction la plus fiable, mais physique.",
+                "La loupe ou un fond de canette poli : uniquement en plein soleil."],
+        encadre: { type: "astuce", titre: "Astuce", texte: "Garde quelques carrés de tissu charbonné dans une boîte étanche avec ta pierre à feu : c'est le duo le plus fiable par tous les temps." } },
       { titre: "Par temps humide",
         liste: ["Chercher le sec : brindilles mortes sous les conifères, écorce de bouleau, intérieur des souches mortes.",
                 "Fendre le bois mort : le cœur est sec même quand l'extérieur est trempé.",
@@ -205,7 +225,7 @@ window.SYLVA_GUIDE = [];
                  "Disperser les cendres froides et effacer les traces."],
         encadre: { type: "danger", titre: "Attention", texte: "Un feu « éteint » couvert de terre peut couver des heures sous le sol et repartir. Toujours noyer et remuer." } }
     ],
-    fiches: ["feu", "tipi", "cabane", "ferro", "feupluie"], especes: ["hetre", "pin"]
+    fiches: ["feu", "tipi", "cabane", "feu_appentis", "feu_croix", "feu_pyramide", "feu_dakota", "reflecteur", "ferro", "tissu_charbonne", "arc_feu", "feupluie"], especes: ["hetre", "pin", "tilleul"]
   });
 })();
 
@@ -236,7 +256,8 @@ window.SYLVA_GUIDE = [];
         liste: ["L'ébullition : 1 minute à gros bouillons (3 minutes au-dessus de 2 000 m). La seule méthode improvisée totalement sûre contre les microbes.",
                 "Le filtre de randonnée : efficace contre bactéries et parasites, pas toujours contre les virus selon le modèle.",
                 "Les pastilles (chlore, dioxyde de chlore) : respecter le temps d'attente indiqué, plus long si l'eau est froide.",
-                "Le préfiltrage (tissu, filtre sable-charbon) : clarifie l'eau trouble mais ne la désinfecte pas. Toujours bouillir après."],
+                "Le préfiltrage (tissu, filtre sable-charbon) : clarifie l'eau trouble mais ne la désinfecte pas. Toujours bouillir après.",
+                "Sans casserole : des pierres sèches chauffées au feu, plongées une à une dans un récipient, font bouillir l'eau (voir la fiche dédiée)."],
         encadre: { type: "retenir", titre: "À retenir", texte: "Aucune méthode improvisée ne retire les polluants chimiques. Dans le doute sur l'origine d'une eau, chercher une autre source." } },
       { titre: "Les méthodes de récupération",
         p: ["Quand il n'y a pas d'eau courante, on peut en récupérer un peu. Selon une revue scientifique de 2025, voici ce qu'on peut en attendre :"],
@@ -245,7 +266,7 @@ window.SYLVA_GUIDE = [];
                 "Alambic solaire (trou + plastique) : 0,3 à 0,6 litre par jour, en dépensant beaucoup d'énergie à creuser. Rarement rentable sous nos climats.",
                 "Rosée : de l'ordre d'un verre. Un simple complément."] }
     ],
-    fiches: ["eau", "filtre", "pluie", "transpiration", "rosee"], especes: ["cresson"]
+    fiches: ["eau", "filtre", "pluie", "transpiration", "rosee", "alambic", "pierres_chaudes"], especes: ["cresson"]
   });
 
   // =====================================================================
@@ -335,6 +356,12 @@ window.SYLVA_GUIDE = [];
                 "La montre à aiguilles donne le sud par beau temps.",
                 "L'étoile polaire donne le nord la nuit.",
                 "La mousse « au nord » des arbres n'est PAS fiable : elle pousse surtout du côté humide, qui varie selon le relief."] },
+      { titre: "Naviguer avec précision",
+        liste: ["Compter ses pas : la plupart des adultes font 60 à 70 doubles pas pour 100 m. S'étalonner avant de partir.",
+                "Le recoupement : deux visées à la boussole sur deux repères connus donnent ta position exacte sur la carte.",
+                "La main courante : suivre un élément linéaire (chemin, rivière, lisière) plutôt que couper à travers bois.",
+                "La visée décalée : viser volontairement d'un côté de la cible pour savoir de quel côté tourner en arrivant.",
+                "La limite d'arrêt : un élément au-delà du but qui signale qu'on est allé trop loin."] },
       { titre: "Quand on est perdu",
         etapes: ["S'arrêter (méthode STOP) : continuer à marcher au hasard aggrave presque toujours la situation.",
                  "Regarder la position GPS dans Sylva : elle fonctionne sans réseau, et la carte reste visible si la zone a été affichée avant.",
@@ -343,7 +370,36 @@ window.SYLVA_GUIDE = [];
                  "Si la nuit approche, s'arrêter, faire un abri et se signaler : on repartira de jour."],
         encadre: { type: "retenir", titre: "À retenir", texte: "Si quelqu'un sait où tu es, rester sur place est presque toujours plus sûr que d'errer." } }
     ],
-    fiches: ["orientation", "baton", "polaire"], especes: []
+    fiches: ["orientation", "baton", "polaire", "pas", "recoupement", "navigation"], especes: []
+  });
+
+  // =====================================================================
+  G.push({
+    id: "deplacement", num: 10, titre: "Se déplacer en sécurité", illus: "traversee",
+    resume: "Rythme de marche, terrain difficile, marche de nuit et traversée des cours d'eau.",
+    sections: [
+      { titre: "Le bon rythme",
+        liste: ["Marcher à un rythme où l'on peut encore parler : si on est essoufflé, on transpire et on s'épuise.",
+                "Une courte pause toutes les heures pour boire, manger un peu et vérifier ses pieds.",
+                "En groupe, le plus lent marche devant et donne le rythme.",
+                "Compter environ 4 km par heure sur chemin plat, beaucoup moins en forêt, en montée ou avec un sac lourd. Ajouter une heure pour 300 à 400 m de montée."] },
+      { titre: "Terrains difficiles",
+        liste: ["Descente : petits pas, genoux légèrement fléchis, bâtons en avant. La plupart des entorses arrivent en descendant, fatigué.",
+                "Sol glissant (racines, rochers mouillés, feuilles) : poser le pied à plat, jamais sur une racine en biais.",
+                "Végétation dense : contourner plutôt que forcer, protéger ses yeux des branches, garder une main libre.",
+                "Pierriers et pentes raides : un à la fois, jamais l'un au-dessus de l'autre."] },
+      { titre: "Marcher de nuit",
+        p: ["De nuit, la vitesse est divisée par deux et le risque de chute ou d'erreur d'orientation explose. Ne marcher de nuit que sur un chemin connu, frontale allumée, avec des piles de rechange. Sinon, le plus sûr est de s'arrêter, de faire un abri et de repartir au lever du jour."] },
+      { titre: "Traverser un cours d'eau",
+        p: ["C'est l'une des situations les plus dangereuses en randonnée. Un courant qui arrive aux genoux suffit à faire tomber un adulte."],
+        etapes: ["Se demander d'abord si on peut l'éviter : un pont plus loin, un détour, attendre que le niveau baisse (le matin, après un orage).",
+                 "Choisir l'endroit : large, peu profond, divisé en plusieurs bras, sans rochers glissants, en amont d'un banc de sable.",
+                 "Garder ses chaussures, détacher les sangles du sac.",
+                 "Traverser face au courant, appuyé sur un bâton côté amont, en biais vers l'aval.",
+                 "À plusieurs, se tenir épaule contre épaule, le plus solide en amont."],
+        encadre: { type: "danger", titre: "Attention", texte: "Jamais au-dessus d'une chute ou de rapides, jamais dans une eau très froide ou en crue. En cas de chute : sur le dos, pieds en avant à la surface, nager en biais vers la rive." } }
+    ],
+    fiches: ["riviere", "pas", "navigation", "ps_entorse"], especes: []
   });
 
   // =====================================================================
@@ -378,7 +434,7 @@ window.SYLVA_GUIDE = [];
                 "Ne jamais traverser une rivière en crue ou dont l'eau dépasse les genoux.",
                 "Par vent fort (rafales au-delà de 60 km/h, alertes de l'onglet Bivouac) : éviter la forêt et ne jamais dormir sous les arbres."] }
     ],
-    fiches: ["froid", "signaux", "urgence"], especes: []
+    fiches: ["froid", "cold", "signaux", "urgence"], especes: []
   });
 })();
 
@@ -410,6 +466,8 @@ window.SYLVA_GUIDE = [];
         liste: ["La scie pliante est plus sûre et plus efficace que la hache pour du bois de bivouac.",
                 "Pour fendre une bûche au couteau (le « batonnage ») : poser la lame sur le bout de la bûche verticale et frapper le dos de la lame avec un autre bâton. Seulement avec un couteau à lame fixe et solide.",
                 "Ne jamais couper de bois vivant : il ne brûle pas et c'est interdit."] },
+      { titre: "Fabriquer sa cordelette",
+        p: ["Sans corde, la nature en fournit : les longues tiges d'ortie et l'écorce intérieure du tilleul donnent des fibres solides. On les assemble par « torsion inversée » : deux brins tordus chacun vers soi puis croisés en les éloignant. Le résultat tient étonnamment bien pour attacher, ligaturer ou suspendre."] },
       { titre: "Les nœuds indispensables",
         p: ["Cinq nœuds couvrent presque tous les besoins du bivouac. Leurs fiches détaillées, avec photo, sont dans la catégorie Nœuds."],
         liste: ["Le nœud de chaise : une boucle fixe qui ne glisse pas.",
@@ -418,7 +476,7 @@ window.SYLVA_GUIDE = [];
                 "Le nœud tendeur : régler la tension des haubans de la bâche.",
                 "Le Prusik : un point d'attache qui coulisse sur une corde tendue."] }
     ],
-    fiches: ["chaise", "tourmort", "camionneur", "tendeur", "prusik", "cabestan", "brelagecarre", "feupluie"], especes: []
+    fiches: ["chaise", "tourmort", "camionneur", "tendeur", "prusik", "cabestan", "brelagecarre", "cordelette", "feupluie"], especes: ["ortie", "tilleul"]
   });
 
   // =====================================================================
@@ -431,7 +489,8 @@ window.SYLVA_GUIDE = [];
         liste: ["Garder les pieds secs : changer de chaussettes dès qu'elles sont mouillées, faire sécher la paire humide sur soi ou au soleil.",
                 "Traiter les zones qui chauffent AVANT l'ampoule.",
                 "Le soir, laver, sécher et aérer ses pieds, et vérifier qu'il n'y a ni ampoule ni tique.",
-                "Couper ses ongles courts avant de partir."] },
+                "Couper ses ongles courts avant de partir.",
+                "Des pieds mouillés et froids pendant des heures, plusieurs jours de suite, peuvent provoquer un « pied d'immersion » (pieds blancs, gonflés, engourdis puis douloureux). Les sécher et les réchauffer chaque soir, et consulter si la sensibilité ne revient pas."] },
       { titre: "Mains, dents et toilette",
         liste: ["Se laver les mains après les toilettes et avant de manger : la plupart des diarrhées de bivouac viennent des mains, pas de l'eau.",
                 "Se brosser les dents avec de l'eau bouillie ou filtrée, cracher loin des points d'eau.",
@@ -475,7 +534,7 @@ window.SYLVA_GUIDE = [];
                 "Convenir d'un horaire d'allumage avec les secours si on est en contact."] },
       { titre: "Se rendre visible",
         liste: ["Tout ce qui va par trois signifie détresse : 3 coups de sifflet, 3 éclats de lampe, 3 feux en triangle.",
-                "Au sol, dans une clairière : un grand V (besoin d'aide) ou X (besoin d'assistance médicale) de 3 m en branches, pierres ou vêtements.",
+                "Au sol, dans une clairière : un grand V (besoin d'aide) ou X (besoin d'assistance médicale), d'au moins 4 × 6 m, avec des traits de 1 m de large, en branches, pierres ou vêtements bien contrastés.",
                 "Un vêtement ou une couverture de survie de couleur vive, étalé dans un endroit dégagé.",
                 "Un miroir ou l'écran du téléphone pour renvoyer le soleil vers un avion ou un hélicoptère.",
                 "De jour, une fumée blanche (feuilles vertes sur le feu) ; de nuit, une flamme vive ou la frontale."] },
@@ -484,7 +543,7 @@ window.SYLVA_GUIDE = [];
                 "Attacher ou ranger tout ce qui peut s'envoler (bâche, sacs, couverture de survie).",
                 "Ne jamais s'approcher de l'appareil sans le signe de l'équipage, et toujours par l'avant, dans le champ de vision du pilote."] }
     ],
-    fiches: ["urgence", "signaux"], especes: []
+    fiches: ["urgence", "signaux", "solair", "miroir"], especes: []
   });
 
   // =====================================================================

@@ -62,3 +62,28 @@ Leurs espèces et leurs sosies ne correspondent pas à la Belgique : **ne jamais
 - OpenStreetMap (© contributeurs OSM, ODbL) : carte, aires de bivouac, points d'eau, recherche de lieux.
 - Open-Meteo.com (CC BY 4.0) : météo. Usage gratuit non commercial : prévoir l'offre payante au lancement.
 - Pl@ntNet (API) : identification des plantes.
+
+## Tri de la page TruePrepper « Survival PDFs downloads »
+
+La page rassemble des PDF de sources très différentes. La mention « All rights reserved » du site couvre son propre contenu ;
+chaque PDF garde le statut de son auteur.
+
+### ✅ Utilisés comme références (domaine public)
+
+| Document | Statut | Usage dans Sylva (contenu réécrit) |
+|---|---|---|
+| FM 3-05.70 *Survival* (2002) et FM 21-76 | Armée américaine | Structures de feu (appentis, croix, pyramide, trou dakota, mur réflecteur), arc à feu, tissu charbonné, alambic solaire, codes sol-air, miroir de signalisation, traversée de cours d'eau, règle COLD, cordelette naturelle |
+| ATP 3-50.21 *Survival*, FM 31-70 *Basic Cold Weather*, USMC Summer/Winter Survival | Armée et Marines américains | Références pour le froid et la survie générale |
+| FM 3-25.26 / FM 21-26 *Map Reading and Land Navigation* | Armée américaine | Comptage des pas, recoupement, techniques de navigation |
+| FM 21-10 *Field Hygiene*, FM 21-60 *Visual Signals*, FM 4-25.11 *First Aid* | Armée américaine | Hygiène, signaux, contrôle croisé des premiers secours |
+| *Boy Scout Handbook* (1911), Seton *The Book of Woodcraft* (1913), Beard (1916), Harding (1907) | Publiés avant 1929 | Références de techniques traditionnelles |
+
+### ⚠️ Non utilisés
+
+- **Listes de contrôle TruePrepper** (Bug Out Bag, Everyday Carry…) : contenu propre au site, protégé.
+- **Where There Is No Doctor / No Dentist** (Hesperian) : licence non commerciale.
+- **Down But Not Out** et **Canadian Military Fieldcraft** : droit d'auteur de la Couronne canadienne.
+- **Paleo-Pocalypse** et autres livres récents : protégés.
+- Guides nationaux de préparation aux crises (Suède, Norvège, Estonie) : publications d'État étrangères, statut à vérifier, hors sujet pour le bivouac.
+- **Manuels de combat, munitions improvisées, contre-pistage, opérations militaires** : hors sujet et contraires aux règles des magasins d'applications.
+- **Universal Edibility Test** : volontairement écarté, car dangereux en Europe (voir le chapitre « Se nourrir »).
