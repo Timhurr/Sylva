@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.2.0";
+  var VERSION = "0.2.1";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -440,10 +440,11 @@
       })
       .catch(function () { return { artist: "", license: "", commons: false }; });
   }
-  function fetchPhoto(latin) {
+  function fetchPhoto(latin, langs) {
     var name = latinMain(latin), key = norm(name);
+    langs = langs || ["fr", "en"];
     if (PHOTOS[key]) return Promise.resolve(PHOTOS[key].src ? PHOTOS[key] : null);
-    return wikiThumb("fr", name).then(function (r) { return r || wikiThumb("en", name); }).then(function (r) {
+    return wikiThumb(langs[0], name).then(function (r) { return r || (langs[1] ? wikiThumb(langs[1], name) : null); }).then(function (r) {
       if (!r) { PHOTOS[key] = { none: true }; save("sylva_photos", PHOTOS); return null; }
       return commonsMeta(r.file).then(function (m) {
         r.artist = m.artist; r.license = m.license; r.commons = m.commons;
@@ -460,9 +461,10 @@
   function allLatins() {
     var out = [];
     ESPECES.forEach(function (s) {
-      out.push(s.latin);
-      (s.sosies || []).forEach(function (x) { if (x.latin) out.push(x.latin); });
+      out.push([s.latin]);
+      (s.sosies || []).forEach(function (x) { if (x.latin) out.push([x.latin]); });
     });
+    TECHS.forEach(function (t) { if (t.wiki) out.push([t.wiki, ["en"]]); });
     return out;
   }
   var prefetching = false;
@@ -472,12 +474,12 @@
     var list = allLatins(), i = 0, ok = 0;
     (function next() {
       if (i >= list.length) {
-        prefetching = false; renderEspeces();
+        prefetching = false; renderEspeces(); renderTechniques();
         if (verbose) toast(ok + " photos prêtes pour le hors-ligne");
         return;
       }
-      var latin = list[i++];
-      fetchPhoto(latin).then(function (p) {
+      var it = list[i++];
+      fetchPhoto(it[0], it[1]).then(function (p) {
         if (p) { ok++; var img = new Image(); img.src = p.src; }
       }).catch(function () {}).then(function () { setTimeout(next, 250); });
     })();
@@ -580,7 +582,9 @@
       h += '<div class="section-title">' + esc(cat) + '</div><div class="list">';
       items.forEach(function (t) {
         h += '<button class="item" data-tech="' + esc(t.id) + '">' +
-          '<span class="item-illus" aria-hidden="true">' + (ILLUS[t.illus] || "") + "</span>" +
+          (t.wiki && photoOf(t.wiki)
+            ? '<span class="item-illus item-photo" aria-hidden="true"><img src="' + esc(photoOf(t.wiki).src) + '" alt="" loading="lazy"></span>'
+            : '<span class="item-illus" aria-hidden="true">' + (ILLUS[t.illus] || "") + "</span>") +
           '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.intro) + "</span></span></button>";
       });
       h += "</div>";
@@ -590,12 +594,20 @@
   $("#listTechniques").addEventListener("click", function (e) {
     var b = e.target.closest("[data-tech]"); if (!b) return;
     var t = TECHS.filter(function (x) { return x.id === b.getAttribute("data-tech"); })[0]; if (!t) return;
-    var h = (ILLUS[t.illus] ? '<div class="illus">' + ILLUS[t.illus] + "</div>" : "") +
+    var tp = t.wiki && photoOf(t.wiki);
+    var h = (t.wiki ? '<div id="heroSlot" class="knot">' + (tp ? heroHtml(tp, t.titre) : "") + "</div>"
+                    : (ILLUS[t.illus] ? '<div class="illus">' + ILLUS[t.illus] + "</div>" : "")) +
       '<h1 id="sheetTitle">' + esc(t.titre) + "</h1><p>" + esc(t.intro) + "</p><h3>Étapes</h3><ol>" +
       t.etapes.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ol>";
     (t.attention || []).forEach(function (a) { h += '<div class="alert alert-warn"><span>' + esc(a) + "</span></div>"; });
     if (t.source) h += '<p class="disclaimer">Source : ' + esc(t.source) + ". Illustration Sylva.</p>";
     openSheet(t.cat, h);
+    if (t.wiki && !tp && navigator.onLine) {
+      fetchPhoto(t.wiki, ["en"]).then(function (p) {
+        var slot = document.getElementById("heroSlot");
+        if (p && slot && !$("#sheet").hidden) slot.innerHTML = heroHtml(p, t.titre);
+      }).catch(function () {});
+    }
   });
 
   // ---------- Scanner ----------

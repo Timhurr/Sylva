@@ -354,7 +354,7 @@ window.SYLVA_ESPECES = [
 var SRC_FM = "Manuel de survie de l'armée américaine FM 21-76 / FM 3-05.70 (domaine public)";
 var SRC_EAU = "OMS ; revue « Improvised Water Procurement in Wilderness Medicine » (medRxiv, 2025)";
 
-window.SYLVA_CATEGORIES = ["Priorités", "Eau", "Feu", "Abri", "Orientation", "Secours", "Nourriture", "Éthique"];
+window.SYLVA_CATEGORIES = ["Priorités", "Eau", "Feu", "Abri", "Nœuds", "Orientation", "Secours", "Nourriture", "Éthique"];
 
 window.SYLVA_TECHNIQUES = [
   // ===== PRIORITÉS =====
@@ -659,3 +659,171 @@ window.SYLVA_TECHNIQUES = [
     source: "Principes « Leave No Trace »"
   }
 ];
+
+// ---------- NŒUDS ----------
+// Photos : article Wikipédia (anglais) du nœud, image sous licence libre.
+var SRC_NOEUDS = "The Ashley Book of Knots ; manuels scouts ; " + SRC_FM;
+[
+  {
+    id: "chaise", titre: "Nœud de chaise", wiki: "Bowline",
+    intro: "LA boucle fixe : elle ne coulisse pas et se défait facilement après charge. Pour attacher une corde à un arbre ou faire une boucle de sauvetage autour de la taille.",
+    etapes: [
+      "Faire une petite boucle sur la partie dormante (le « terrier »), le brin libre passant par-dessus.",
+      "Passer le brin libre dans la petite boucle par en dessous : « le lapin sort du terrier ».",
+      "Le faire passer derrière la partie dormante : « il fait le tour de l'arbre ».",
+      "Le redescendre dans la petite boucle : « il rentre dans le terrier ».",
+      "Serrer en tenant le brin libre et la grande boucle, puis tirer la partie dormante. Laisser une queue d'au moins 10 cm."
+    ],
+    attention: ["Peut se desserrer s'il n'est pas chargé : bloquer la queue avec une demi-clé."]
+  },
+  {
+    id: "tendeur", titre: "Nœud tendeur", wiki: "Taut-line hitch",
+    intro: "Le nœud des haubans : il coulisse pour régler la tension et bloque sous charge. Idéal pour tendre une bâche ou une tente.",
+    etapes: [
+      "Passer la corde autour du piquet ou de l'arbre.",
+      "Avec le brin libre, faire deux tours autour de la partie tendue, en allant vers le piquet (à l'intérieur de la boucle).",
+      "Faire un troisième tour autour de la partie tendue, cette fois à l'extérieur des deux premiers.",
+      "Serrer : faire glisser le nœud pour tendre ou détendre."
+    ],
+    attention: ["Sur cordelette très glissante (dyneema), ajouter un tour de plus à l'intérieur."]
+  },
+  {
+    id: "cabestan", titre: "Nœud de cabestan", wiki: "Clove hitch",
+    intro: "Rapide pour fixer une corde sur une perche ou un piquet, et point de départ de tous les brêlages.",
+    etapes: [
+      "Faire un tour complet autour de la perche.",
+      "Croiser par-dessus la partie dormante et faire un second tour à côté du premier.",
+      "Glisser le brin libre sous ce second tour, entre la perche et la corde.",
+      "Serrer en tirant les deux brins en sens opposés."
+    ],
+    attention: ["Peut glisser si le support tourne : ajouter une demi-clé par sécurité."]
+  },
+  {
+    id: "tourmort", titre: "Tour mort et deux demi-clés", wiki: "Round turn and two half-hitches",
+    intro: "Amarre solide d'une corde sur un arbre, facile à défaire même après une forte charge. Parfait pour une ligne faîtière.",
+    etapes: [
+      "Faire deux tours complets autour de l'arbre (le « tour mort » absorbe l'effort).",
+      "Faire une demi-clé autour de la partie tendue.",
+      "Faire une seconde demi-clé dans le même sens que la première.",
+      "Pousser les clés contre le tour mort et serrer."
+    ],
+    attention: []
+  },
+  {
+    id: "camionneur", titre: "Nœud de camionneur", wiki: "Trucker's hitch",
+    intro: "Une poulie improvisée qui double la force : pour tendre une ligne faîtière comme une corde de guitare.",
+    etapes: [
+      "Attacher une extrémité au premier arbre (tour mort et deux demi-clés).",
+      "Vers le second arbre, former une boucle fixe dans la corde (huit en boucle ou boucle coulissante bloquée) : c'est la « poulie ».",
+      "Passer le brin libre autour du second arbre, revenir et le passer dans la boucle.",
+      "Tirer le brin libre vers l'arbre : la tension augmente fortement.",
+      "Bloquer avec deux demi-clés juste sous la boucle."
+    ],
+    attention: ["Ne pas surtendre sur une branche fragile ou un arbre mort."]
+  },
+  {
+    id: "huit", titre: "Nœud de huit", wiki: "Figure-eight knot",
+    intro: "Le nœud d'arrêt de référence en bout de corde, et, fait sur une corde doublée, une boucle fixe très sûre (huit en boucle).",
+    etapes: [
+      "Faire une boucle avec le brin libre.",
+      "Faire passer le brin libre autour de la partie dormante.",
+      "Le glisser dans la boucle par le dessus : la corde dessine un « 8 ».",
+      "Serrer. Pour une boucle : doubler la corde et faire exactement le même nœud avec le double."
+    ],
+    attention: []
+  },
+  {
+    id: "plat", titre: "Nœud plat", wiki: "Reef knot",
+    intro: "Pour nouer les deux bouts d'un bandage, d'un sac ou d'un fagot. Pas pour relier deux cordes qui portent une charge.",
+    etapes: [
+      "Croiser le bout gauche par-dessus le droit et le passer dessous (premier nœud simple).",
+      "Croiser le bout droit par-dessus le gauche et le passer dessous (second nœud).",
+      "Vérifier que chaque bout ressort du même côté que sa propre corde : le nœud est plat et symétrique.",
+      "Serrer."
+    ],
+    attention: ["Si les bouts ressortent en biais, c'est un « nœud de vache » qui glisse : le refaire.", "Jamais pour l'escalade ou le sauvetage."]
+  },
+  {
+    id: "ecoute", titre: "Nœud d'écoute", wiki: "Sheet bend",
+    intro: "Relie deux cordes, même de diamètres différents. Pour rallonger une corde trop courte.",
+    etapes: [
+      "Former un U (une ganse) avec le bout de la corde la plus épaisse.",
+      "Passer le bout de la corde fine dans le U, par en dessous.",
+      "Lui faire faire le tour derrière les deux brins du U.",
+      "Le repasser sous lui-même, sans traverser le U.",
+      "Serrer : les deux bouts libres doivent ressortir du même côté."
+    ],
+    attention: ["Pour plus de sécurité, faire deux tours au lieu d'un : nœud d'écoute double."]
+  },
+  {
+    id: "pecheur", titre: "Double nœud de pêcheur", wiki: "Double fisherman's knot",
+    intro: "Relie solidement deux cordes, ou ferme une cordelette en anneau (pour un Prusik). Ne se défait pas tout seul.",
+    etapes: [
+      "Superposer les deux bouts côte à côte, en sens opposés.",
+      "Avec le premier bout, faire deux tours autour des deux cordes en revenant vers soi, puis le passer dans ces deux tours.",
+      "Faire la même chose avec le second bout, dans l'autre sens.",
+      "Tirer sur les deux cordes : les deux nœuds glissent et se bloquent l'un contre l'autre."
+    ],
+    attention: ["Très difficile à défaire après une forte charge."]
+  },
+  {
+    id: "prusik", titre: "Nœud de Prusik", wiki: "Prusik",
+    intro: "Un anneau de cordelette qui coulisse à la main sur une corde et bloque sous charge. Pour tendre une bâche sur une faîtière ou remonter le long d'une corde.",
+    etapes: [
+      "Prendre une cordelette plus fine que la corde principale, fermée en anneau (double nœud de pêcheur).",
+      "Passer l'anneau derrière la corde principale.",
+      "Faire passer l'anneau dans lui-même autour de la corde, trois fois.",
+      "Ranger les tours bien parallèles et serrer : pousser le nœud pour le déplacer, tirer l'anneau pour le bloquer."
+    ],
+    attention: ["Plus la cordelette est fine par rapport à la corde, plus il bloque fort."]
+  },
+  {
+    id: "bois", titre: "Nœud de bois", wiki: "Timber hitch",
+    intro: "Pour traîner un tronc ou porter un fagot de bois. Tient par la tension et se défait d'un geste.",
+    etapes: [
+      "Passer la corde autour du tronc ou du fagot.",
+      "Faire une demi-clé autour de la partie dormante.",
+      "Enrouler le brin libre trois fois autour de lui-même, le long de la boucle.",
+      "Tirer pour serrer. Pour traîner un long tronc, ajouter une demi-clé plus loin vers le bout."
+    ],
+    attention: []
+  },
+  {
+    id: "constricteur", titre: "Nœud constricteur", wiki: "Constrictor knot",
+    intro: "Le nœud qui serre le plus : fermer un sac, ligoter un fagot, faire une ligature d'urgence sur une perche.",
+    etapes: [
+      "Faire un tour autour de l'objet.",
+      "Croiser par-dessus et faire un second tour, comme un cabestan.",
+      "Glisser le brin libre sous le croisement en X, pour qu'il ressorte entre les deux brins.",
+      "Serrer fort en tirant les deux bouts."
+    ],
+    attention: ["Quasi impossible à défaire une fois serré : prévoir de le couper."]
+  },
+  {
+    id: "brelagecarre", titre: "Brêlage carré", wiki: "Square lashing",
+    intro: "Assembler deux perches en croix pour une structure d'abri, une table ou un séchoir.",
+    etapes: [
+      "Croiser les deux perches à angle droit.",
+      "Faire un nœud de cabestan sur la perche verticale, juste sous la traverse.",
+      "Faire 3 à 4 tours : par-dessus la traverse, derrière la verticale, par-dessus la traverse de l'autre côté, derrière la verticale.",
+      "Faire 2 à 3 tours de serrage entre les deux perches, autour des tours précédents.",
+      "Terminer par un nœud de cabestan sur la traverse."
+    ],
+    attention: ["Uniquement avec du bois mort, et démonter avant de partir."]
+  },
+  {
+    id: "brelagetrepied", titre: "Brêlage en bigue ou trépied", wiki: "Shear lashing",
+    intro: "Relier deux ou trois perches pour faire un trépied (suspendre une casserole, dresser une perche faîtière).",
+    etapes: [
+      "Poser les perches côte à côte, extrémités alignées.",
+      "Faire un nœud de cabestan sur une perche extérieure.",
+      "Faire 8 à 10 tours lâches autour de toutes les perches.",
+      "Faire 2 tours de serrage entre chaque perche.",
+      "Terminer par un cabestan, puis écarter les pieds : les tours se serrent tout seuls."
+    ],
+    attention: []
+  }
+].forEach(function (k) {
+  k.cat = "Nœuds"; k.illus = "noeud"; k.source = SRC_NOEUDS;
+  window.SYLVA_TECHNIQUES.push(k);
+});

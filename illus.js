@@ -253,5 +253,10 @@
     t(20, 40, "Tout remporter,", "start", C.clair) + t(20, 56, "même le papier", "start", C.clair)
   );
 
+  I.noeud = svg(
+    '<path d="M30 120 C80 120 90 60 140 60 C190 60 200 120 160 128 C120 136 110 90 150 84 C190 78 230 120 290 120" fill="none" stroke="' + C.bois + '" stroke-width="10" stroke-linecap="round"/>' +
+    '<path d="M30 120 C80 120 90 60 140 60" fill="none" stroke="' + C.feu + '" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>'
+  );
+
   window.SYLVA_ILLUS = I;
 })();

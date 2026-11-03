@@ -171,3 +171,6 @@ main{position:fixed;top:calc(var(--head-h) + var(--top));bottom:calc(var(--tab-h
 .sosie{display:flex;gap:12px;align-items:flex-start}
 .sosie-img{width:72px;height:72px;object-fit:cover;border-radius:10px;flex:none}
 .credits{line-height:1.5}
+.item-illus.item-photo{background:#fff}
+.item-illus.item-photo img{object-fit:contain}
+.knot .photo img{object-fit:contain;background:#fff}
