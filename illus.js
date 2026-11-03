@@ -264,5 +264,80 @@
     t(160, 166, "Urgence : 112, partout en Europe", "middle", C.clair)
   );
 
+  I.stop = svg(
+    [["S", "S'arrêter"], ["T", "Penser"], ["O", "Observer"], ["P", "Planifier"]].map(function (d, i) {
+      var x = 44 + i * 77;
+      return '<path d="M' + (x - 13) + ' 50 h26 l13 13 v26 l-13 13 h-26 l-13 -13 v-26z" fill="#C2412A"/>' +
+        '<text x="' + x + '" y="85" font-size="28" font-weight="800" font-family="-apple-system,Inter,sans-serif" fill="#fff" text-anchor="middle">' + d[0] + "</text>" +
+        t(x, 128, d[1], "middle", C.clair);
+    }).join("") + t(160, 160, "5 minutes de calme valent mieux qu'une heure perdue", "middle")
+  );
+
+  I.kit = svg(
+    '<rect x="40" y="40" width="240" height="110" rx="16" fill="' + C.sol2 + '" stroke="' + C.muted + '" stroke-width="2"/>' +
+    '<rect x="60" y="58" width="16" height="34" rx="4" fill="' + C.feu + '"/>' + t(68, 110, "briquet", "middle", C.clair) +
+    '<rect x="96" y="54" width="8" height="42" rx="3" fill="' + C.muted + '"/>' + t(100, 124, "pierre", "middle", C.clair) +
+    '<rect x="120" y="58" width="40" height="34" rx="4" fill="#D8C27A"/>' + t(140, 110, "couverture", "middle", C.clair) +
+    '<circle cx="186" cy="74" r="12" fill="none" stroke="' + C.clair + '" stroke-width="3"/>' + t(186, 110, "sifflet", "middle", C.clair) +
+    '<rect x="214" y="62" width="10" height="28" rx="3" fill="' + C.boisF + '"/><path d="M219 62 l0 -16" stroke="' + C.muted + '" stroke-width="5" stroke-linecap="round"/>' + t(222, 124, "couteau", "middle", C.clair) +
+    '<rect x="244" y="62" width="22" height="26" rx="4" fill="' + C.eau + '"/>' + t(255, 110, "pastilles", "middle", C.clair) +
+    t(160, 142, "+ frontale · cordelette · pansements · barre", "middle") +
+    t(160, 28, "Le kit qui ne quitte jamais la poche", "middle", C.feu)
+  );
+
+  I.camp = svg(
+    ground(0) + '<rect x="0" y="0" width="320" height="180" rx="14" fill="' + C.sol + '"/>' +
+    '<path d="M20 26 h60" stroke="' + C.clair + '" stroke-width="2"/><path d="M80 26 l-8 -5 v10z" fill="' + C.clair + '"/>' + t(20, 20, "vent", "start", C.clair) +
+    '<path d="M40 110 l24 -32 l24 32z" fill="' + C.bache + '"/>' + t(64, 128, "couchage", "middle", C.clair) + t(64, 142, "(au vent)", "middle") +
+    '<circle cx="170" cy="96" r="14" fill="' + C.sol2 + '"/>' + flame(170, 104, 0.5) + t(170, 128, "feu / cuisine", "middle", C.clair) + t(170, 142, "(sous le vent)", "middle") +
+    '<rect x="196" y="70" width="34" height="8" rx="4" fill="' + C.boisF + '"/><rect x="198" y="80" width="30" height="8" rx="4" fill="' + C.boisF + '"/>' + t(213, 62, "bois", "middle", C.clair) +
+    '<path d="M110 66 h6 v-6 h6 v6 h6" stroke="' + C.feuille2 + '" stroke-width="2" fill="none"/>' + t(120, 54, "nourriture fermée", "middle", C.feuille2) +
+    '<rect x="262" y="140" width="36" height="20" rx="6" fill="' + C.eau + '"/>' + t(280, 132, "eau", "middle", C.eau) +
+    '<path d="M275 40 q8 -10 16 0 q-8 8 -16 0z" fill="' + C.muted + '"/>' + t(283, 64, "toilettes", "middle", C.clair) + t(283, 76, "> 50 m", "middle") +
+    '<path d="M100 96 h52" stroke="' + C.muted + '" stroke-dasharray="3 4"/>' + t(126, 90, "≥ 3 m", "middle")
+  );
+
+  I.cueillette = svg(
+    ground(140) +
+    '<path d="M50 140 q4 -40 -6 -70 M50 140 q10 -30 30 -50" stroke="' + C.feuille + '" stroke-width="4" fill="none"/>' +
+    [[44, 70], [80, 90], [60, 100], [36, 96]].map(function (p) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="6" fill="#3A2F5A"/>'; }).join("") +
+    t(60, 160, "1 · identifier", "middle", C.clair) +
+    '<rect x="128" y="62" width="64" height="64" rx="12" fill="none" stroke="' + C.feu + '" stroke-width="3"/><path d="M146 94 l10 10 l20 -24" stroke="' + C.feuille2 + '" stroke-width="5" fill="none" stroke-linecap="round"/>' +
+    t(160, 160, "2 · tous les critères", "middle", C.clair) +
+    '<circle cx="262" cy="94" r="30" fill="none" stroke="' + C.danger + '" stroke-width="4"/><path d="M241 115 l42 -42" stroke="' + C.danger + '" stroke-width="4"/>' +
+    t(262, 160, "3 · un doute = non", "middle", C.danger) +
+    t(160, 30, "Pas de certitude, pas de cueillette", "middle", C.feu)
+  );
+
+  I.boussole = svg(
+    '<rect x="40" y="30" width="110" height="140" rx="12" fill="#CFE3EA" opacity=".9"/>' +
+    '<circle cx="95" cy="110" r="40" fill="' + C.sol2 + '" stroke="' + C.clair + '" stroke-width="3"/>' +
+    '<path d="M95 76 l9 34 h-18z" fill="#C2412A"/><path d="M95 144 l9 -34 h-18z" fill="' + C.clair + '"/>' +
+    t(95, 66, "N", "middle", C.clair) + '<path d="M95 30 v-0" stroke="none"/>' +
+    '<path d="M95 40 v20" stroke="' + C.feu + '" stroke-width="4" stroke-linecap="round"/><path d="M95 36 l-7 10 h14z" fill="' + C.feu + '"/>' +
+    t(180, 70, "1. bord de la boussole :", "start", C.clair) + t(190, 84, "départ → arrivée", "start") +
+    t(180, 108, "2. cadran aligné sur", "start", C.clair) + t(190, 122, "le nord de la carte", "start") +
+    t(180, 146, "3. aiguille rouge dans", "start", C.clair) + t(190, 160, "la flèche : avancer", "start")
+  );
+
+  I.orage = svg(
+    '<path d="M60 60 q0 -30 40 -30 q20 -20 50 0 q40 -6 46 30z" fill="' + C.muted + '"/>' +
+    '<path d="M120 62 l-14 36 h16 l-12 34 l34 -48 h-16 l12 -22z" fill="' + C.feu + '"/>' +
+    ground(150) +
+    '<circle cx="250" cy="112" r="8" fill="' + C.clair + '"/><path d="M242 120 q8 18 16 0 l4 22 h-24z" fill="' + C.clair + '"/>' +
+    '<rect x="232" y="142" width="36" height="6" rx="3" fill="' + C.bache + '"/>' +
+    t(250, 163, "accroupi, pieds joints,", "middle", C.clair) + t(250, 175, "sur son sac", "middle", C.clair) +
+    t(30, 130, "< 30 s entre éclair", "start", C.danger) + t(30, 144, "et tonnerre = abri !", "start", C.danger)
+  );
+
+  I.plume = svg(
+    ground(150) + '<rect x="40" y="128" width="110" height="22" rx="8" fill="' + C.boisF + '"/>' +
+    '<rect x="150" y="40" width="16" height="110" rx="4" transform="rotate(30 158 150)" fill="' + C.bois + '"/>' +
+    [0, 1, 2, 3, 4, 5].map(function (i) { var y = 120 - i * 12; return '<path d="M' + (140 - i * 6) + " " + y + ' q-22 6 -26 22" stroke="#E8D3B0" stroke-width="3" fill="none" stroke-linecap="round"/>'; }).join("") +
+    '<path d="M196 40 l-30 70" stroke="' + C.muted + '" stroke-width="6" stroke-linecap="round"/><rect x="192" y="22" width="12" height="26" rx="4" transform="rotate(23 198 35)" fill="' + C.boisF + '"/>' +
+    t(312, 80, "copeaux fins,", "end", C.clair) + t(312, 94, "restent attachés", "end", C.clair) +
+    t(312, 124, "lame vers le bas,", "end", C.feu) + t(312, 138, "loin du corps", "end", C.feu)
+  );
+
   window.SYLVA_ILLUS = I;
 })();

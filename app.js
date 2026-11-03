@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.5.1";
+  var VERSION = "0.6.0";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -74,13 +74,24 @@
       if (e.target === m || e.target.hasAttribute("data-close")) closeModal(m);
     });
   });
+  var sheetStack = [], lectureChap = null;
   function openSheet(kicker, html) {
+    if (!$("#sheet").hidden) {
+      sheetStack.push({ k: $("#sheetKicker").textContent, h: $("#sheetBody").innerHTML, s: $("#sheetBody").scrollTop, c: lectureChap });
+    }
+    lectureChap = null;
     $("#sheetKicker").textContent = kicker;
     $("#sheetBody").innerHTML = html;
     $("#sheetBody").scrollTop = 0;
     $("#sheet").hidden = false;
   }
-  $("#sheetClose").addEventListener("click", function () { $("#sheet").hidden = true; });
+  $("#sheetClose").addEventListener("click", function () {
+    var prev = sheetStack.pop();
+    if (prev) {
+      $("#sheetKicker").textContent = prev.k; $("#sheetBody").innerHTML = prev.h; lectureChap = prev.c;
+      setTimeout(function () { $("#sheetBody").scrollTop = prev.s; }, 0);
+    } else { $("#sheet").hidden = true; lectureChap = null; }
+  });
 
   // ---------- Position ----------
   var me = null; // [lat, lon, accuracy]
@@ -514,7 +525,7 @@
     var list = allLatins(), i = 0, ok = 0;
     (function next() {
       if (i >= list.length) {
-        prefetching = false; renderEspeces(); renderTechniques();
+        prefetching = false; renderEspeces(); renderGuide();
         if (verbose) toast(ok + " photos prêtes pour le hors-ligne");
         return;
       }
@@ -682,9 +693,8 @@
     });
     $("#listTechniques").innerHTML = h;
   }
-  $("#listTechniques").addEventListener("click", function (e) {
-    var b = e.target.closest("[data-tech]"); if (!b) return;
-    var t = TECHS.filter(function (x) { return x.id === b.getAttribute("data-tech"); })[0]; if (!t) return;
+  function openTechnique(id) {
+    var t = TECHS.filter(function (x) { return x.id === id; })[0]; if (!t) return;
     var tp = t.wiki && photoOf(t.wiki);
     var h = (t.wiki ? '<div id="heroSlot" class="knot">' + (tp ? heroHtml(tp, t.titre) : "") + "</div>"
                     : (ILLUS[t.illus] ? '<div class="illus">' + ILLUS[t.illus] + "</div>" : "")) +
@@ -698,6 +708,114 @@
         var slot = document.getElementById("heroSlot");
         if (p && slot && !$("#sheet").hidden) slot.innerHTML = heroHtml(p, t.titre);
       }).catch(function () {});
+    }
+  }
+  $("#listTechniques").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-tech]"); if (b) openTechnique(b.getAttribute("data-tech"));
+  });
+
+  // ---------- Guide de survie (chapitres) ----------
+  var GUIDE = window.SYLVA_GUIDE || [];
+  var guideMode = "chapitres";
+  function chapText(c) {
+    return c.titre + " " + c.resume + " " + c.sections.map(function (x) {
+      return [x.titre].concat(x.p || [], x.liste || [], x.etapes || [], x.encadre ? [x.encadre.texte] : []).join(" ");
+    }).join(" ");
+  }
+  function minutes(c) { return Math.max(2, Math.round(chapText(c).split(/\s+/).length / 200)); }
+  function renderGuide() {
+    var lus = load("sylva_lus", {}), q = norm($("#searchGuide").value.trim());
+    var nbLus = GUIDE.filter(function (c) { return lus[c.id]; }).length;
+    $("#guideSub").textContent = GUIDE.length + " chapitres · " + TECHS.length + " fiches pratiques · " + nbLus + " chapitre" + (nbLus > 1 ? "s" : "") + " lu" + (nbLus > 1 ? "s" : "");
+    $("#guideBar").style.width = Math.round(nbLus / Math.max(1, GUIDE.length) * 100) + "%";
+    $all("#guideMode .chip").forEach(function (c) { c.classList.toggle("on", c.dataset.mode === guideMode); });
+    var chaps = GUIDE.filter(function (c) { return !q || norm(chapText(c)).indexOf(q) !== -1; });
+    var showChaps = q || guideMode === "chapitres", showFiches = q || guideMode === "fiches";
+    var h = "";
+    if (showChaps) {
+      if (q) h += '<div class="section-title">Chapitres (' + chaps.length + ")</div>";
+      h += chaps.map(function (c) {
+        return '<button class="chap" data-chap="' + esc(c.id) + '">' +
+          '<span class="chap-illus" aria-hidden="true">' + (ILLUS[c.illus] || "") + "</span>" +
+          '<span class="chap-main"><span class="chap-k">Chapitre ' + c.num + " · " + minutes(c) + " min" + (lus[c.id] ? ' · <b class="chap-lu">Lu ✓</b>' : "") + "</span>" +
+          '<span class="chap-t">' + esc(c.titre) + '</span><span class="chap-r">' + esc(c.resume) + "</span></span></button>";
+      }).join("") || '<p class="muted">Aucun chapitre ne correspond.</p>';
+    }
+    $("#listGuide").innerHTML = h;
+    $("#listGuide").hidden = !showChaps;
+    $("#listTechniques").hidden = !showFiches;
+    if (showFiches) {
+      if (q) {
+        var fl = TECHS.filter(function (t) { return norm(t.titre + " " + t.intro + " " + t.etapes.join(" ")).indexOf(q) !== -1; });
+        $("#listTechniques").innerHTML = '<div class="section-title">Fiches pratiques (' + fl.length + ')</div><div class="list">' + fl.map(function (t) {
+          return '<button class="item" data-tech="' + esc(t.id) + '"><span class="item-illus" aria-hidden="true">' + (ILLUS[t.illus] || "") + "</span>" +
+            '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.cat) + "</span></span></button>";
+        }).join("") + "</div>";
+      } else renderTechniques();
+    }
+  }
+  $("#searchGuide").addEventListener("input", renderGuide);
+  $("#guideMode").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-mode]"); if (!b) return;
+    guideMode = b.dataset.mode; renderGuide();
+  });
+  $("#listGuide").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-chap]"); if (b) openChapitre(b.getAttribute("data-chap"));
+  });
+
+  function sectionHtml(x, i) {
+    var h = '<section class="g-sec" id="gsec' + i + '"><h2>' + esc(x.titre) + "</h2>";
+    (x.p || []).forEach(function (t) { h += "<p>" + esc(t) + "</p>"; });
+    if (x.liste) h += "<ul>" + x.liste.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ul>";
+    if (x.etapes) h += '<ol class="g-steps">' + x.etapes.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ol>";
+    if (x.encadre) h += '<div class="encadre enc-' + esc(x.encadre.type) + '"><strong>' + esc(x.encadre.titre) + "</strong><span>" + esc(x.encadre.texte) + "</span></div>";
+    return h + "</section>";
+  }
+  function openChapitre(id) {
+    var idx = -1;
+    GUIDE.forEach(function (c, i) { if (c.id === id) idx = i; });
+    var c = GUIDE[idx]; if (!c) return;
+    var h = (ILLUS[c.illus] ? '<div class="illus">' + ILLUS[c.illus] + "</div>" : "") +
+      '<div class="chap-k">Chapitre ' + c.num + " · " + minutes(c) + ' min de lecture</div><h1 id="sheetTitle">' + esc(c.titre) + "</h1>" +
+      '<p class="g-lead">' + esc(c.resume) + "</p>" +
+      '<nav class="g-toc" aria-label="Sommaire">' + c.sections.map(function (x, i) {
+        return '<button class="chip" data-anchor="gsec' + i + '">' + esc(x.titre) + "</button>";
+      }).join("") + "</nav>" +
+      c.sections.map(sectionHtml).join("");
+    if (c.fiches && c.fiches.length) {
+      h += '<h2 class="g-more">Fiches pratiques</h2><div class="list">' + c.fiches.map(function (fid) {
+        var t = TECHS.filter(function (x) { return x.id === fid; })[0]; if (!t) return "";
+        return '<button class="item" data-tech="' + esc(t.id) + '"><span class="item-illus" aria-hidden="true">' + (ILLUS[t.illus] || "") + "</span>" +
+          '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.cat) + "</span></span></button>";
+      }).join("") + "</div>";
+    }
+    if (c.especes && c.especes.length) {
+      h += '<h2 class="g-more">Espèces liées</h2><div class="chips">' + c.especes.map(function (eid) {
+        var e = ESPECES.filter(function (x) { return x.id === eid; })[0]; if (!e) return "";
+        return '<button class="chip" data-esp="' + esc(e.id) + '">' + esc(e.nom) + "</button>";
+      }).join("") + "</div>";
+    }
+    var next = GUIDE[idx + 1];
+    h += '<div class="g-nav">' + (next ? '<button class="btn btn-primary btn-big" data-chap="' + esc(next.id) + '">Chapitre suivant : ' + esc(next.titre) + " →</button>" : "") + "</div>" +
+      '<p class="disclaimer">Guide rédigé pour Sylva à partir des manuels de survie de l\'armée américaine (domaine public), des consignes de premiers secours grand public et des réglementations nationales. Il ne remplace pas une formation.</p>';
+    openSheet("Guide de survie", h);
+    lectureChap = c.id;
+  }
+  $("#sheetBody").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-anchor],[data-tech],[data-esp],[data-chap]"); if (!b) return;
+    if (b.hasAttribute("data-anchor")) {
+      var el = document.getElementById(b.getAttribute("data-anchor"));
+      if (el) $("#sheetBody").scrollTo({ top: el.offsetTop - 8, behavior: "smooth" });
+    } else if (b.hasAttribute("data-tech")) openTechnique(b.getAttribute("data-tech"));
+    else if (b.hasAttribute("data-esp") && !b.closest(".result")) openEspece(b.getAttribute("data-esp"));
+    else if (b.hasAttribute("data-chap")) openChapitre(b.getAttribute("data-chap"));
+  });
+  $("#sheetBody").addEventListener("scroll", function () {
+    if (!lectureChap) return;
+    var sb = $("#sheetBody");
+    if (sb.scrollTop + sb.clientHeight >= sb.scrollHeight - 120) {
+      var lus = load("sylva_lus", {});
+      if (!lus[lectureChap]) { lus[lectureChap] = true; save("sylva_lus", lus); toast("Chapitre lu ✓"); renderGuide(); }
     }
   });
 
@@ -1070,7 +1188,7 @@
   // ---------- Démarrage ----------
   renderRegionBtn();
   renderEspeces();
-  renderTechniques();
+  renderGuide();
   setTimeout(function () { prefetchPhotos(false); }, 3000);
   initMap();
   startGeo();

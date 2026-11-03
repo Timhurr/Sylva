@@ -153,11 +153,22 @@
   </section>
 
   <!-- TECHNIQUES -->
-  <section class="view" id="view-techniques" aria-label="Techniques">
+  <section class="view" id="view-techniques" aria-label="Guide de survie">
     <div class="pad">
-      <h1>Techniques</h1>
-      <p class="muted">Disponibles hors-ligne.</p>
-      <div id="listTechniques"></div>
+      <h1>Guide de survie</h1>
+      <p class="muted" id="guideSub">Disponible hors-ligne</p>
+      <div class="progress"><span id="guideBar"></span></div>
+      <label class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <span class="sr">Rechercher dans le guide</span>
+        <input type="search" id="searchGuide" placeholder="Feu, abri, orage, nœud, eau…">
+      </label>
+      <div class="chips" id="guideMode" role="group" aria-label="Affichage">
+        <button class="chip on" data-mode="chapitres">Chapitres</button>
+        <button class="chip" data-mode="fiches">Fiches pratiques</button>
+      </div>
+      <div id="listGuide"></div>
+      <div id="listTechniques" hidden></div>
     </div>
   </section>
 </main>
@@ -283,7 +294,7 @@
     <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c8 0 14-6 14-14C11 5 5 11 5 19z"/><path d="M5 19l7-7"/></svg>Espèces
   </button>
   <button class="tab" data-view="techniques">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c2 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-3-1-5 1-8z"/></svg>Techniques
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2z"/><path d="M4 21V5"/><path d="M8 7h7M8 11h5"/></svg>Guide
   </button>
 </nav>
 
@@ -293,6 +304,7 @@
 <script src="especes_champignons.js"></script>
 <script src="especes_regions.js"></script>
 <script src="illus.js"></script>
+<script src="guide.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
