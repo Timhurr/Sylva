@@ -485,5 +485,51 @@
     t(160, 140, "fibres d'ortie ou d'écorce de tilleul", "middle")
   );
 
+  I.pls = svg(
+    ground(140) +
+    '<circle cx="98" cy="112" r="14" fill="' + C.clair + '"/>' +
+    '<path d="M112 108 h90 a12 12 0 0 1 0 24 h-90z" fill="' + C.bache + '"/>' +
+    '<path d="M150 120 l-20 30" stroke="' + C.bache + '" stroke-width="12" stroke-linecap="round"/>' +
+    '<path d="M196 130 l30 0 l10 10" stroke="#3D5E6A" stroke-width="12" stroke-linecap="round" fill="none"/><path d="M200 120 l40 -16" stroke="' + C.bache + '" stroke-width="12" stroke-linecap="round"/>' +
+    '<path d="M110 116 q-8 4 -6 12" stroke="#E8D3B0" stroke-width="8" stroke-linecap="round" fill="none"/>' +
+    '<path d="M86 126 l-6 10" stroke="' + C.eau + '" stroke-width="2" stroke-dasharray="3 3"/>' +
+    t(80, 160, "bouche vers le sol", "middle", C.eau) + t(230, 160, "jambe du dessus à 90°", "middle", C.clair) +
+    t(160, 40, "Inconscient qui respire : sur le côté", "middle", C.feu)
+  );
+
+  I.attelle = svg(
+    '<path d="M60 96 h200" stroke="#E8D3B0" stroke-width="26" stroke-linecap="round"/>' +
+    '<path d="M70 76 h180 M70 116 h180" stroke="' + C.boisF + '" stroke-width="8" stroke-linecap="round"/>' +
+    [90, 130, 190, 230].map(function (x) { return '<rect x="' + (x - 6) + '" y="70" width="12" height="52" rx="3" fill="' + C.bache + '"/>'; }).join("") +
+    '<path d="M154 84 l12 24 M166 84 l-12 24" stroke="' + C.danger + '" stroke-width="3"/>' +
+    t(160, 50, "Bloquer l'articulation au-dessus ET en dessous", "middle", C.clair) + t(160, 150, "attaches de part et d'autre, jamais sur la blessure", "middle")
+  );
+
+  I.brancard = svg(
+    ground(150) + '<path d="M30 110 h260 M30 136 h260" stroke="' + C.boisF + '" stroke-width="7" stroke-linecap="round"/>' +
+    '<path d="M70 108 h180 v30 h-180z" fill="' + C.bache + '"/>' +
+    '<path d="M110 108 v30 M160 108 v30 M210 108 v30" stroke="#3D5E6A" stroke-width="3"/>' +
+    t(160, 70, "2 perches + vestes fermées", "middle", C.clair) + t(160, 86, "(manches retournées) ou bâche repliée", "middle", C.clair) +
+    t(160, 172, "Tester avant d'y installer le blessé", "middle", C.feu)
+  );
+
+  I.ombre = svg(
+    '<circle cx="280" cy="30" r="14" fill="' + C.feu + '"/>' + ground(150) +
+    '<path d="M60 70 h200 M70 90 h180" stroke="' + C.bache + '" stroke-width="6"/>' +
+    '<path d="M60 70 v80 M260 70 v80" stroke="' + C.bois + '" stroke-width="4"/>' +
+    '<path d="M268 46 l-30 20 M276 50 l-24 18" stroke="' + C.feu + '" stroke-width="2" stroke-dasharray="4 4"/>' +
+    '<path d="M110 136 h60 a6 6 0 0 1 0 12 h-60z" fill="' + C.clair + '"/>' +
+    '<path d="M40 120 q40 -10 80 0 M200 118 q40 -10 80 0" stroke="' + C.eau + '" stroke-width="2" fill="none" stroke-dasharray="4 4"/>' +
+    t(160, 60, "2 toiles espacées de 20 à 30 cm", "middle", C.clair) + t(160, 172, "à 50 cm du sol au moins : l'air circule", "middle")
+  );
+
+  I.contourner = svg(
+    '<ellipse cx="160" cy="80" rx="60" ry="34" fill="' + C.eauF + '"/>' + t(160, 84, "marécage", "middle", C.clair) +
+    '<path d="M160 170 V126 H250 V34 H160 V14" stroke="' + C.feu + '" stroke-width="3" fill="none" stroke-dasharray="6 5" stroke-linejoin="round"/>' +
+    '<path d="M160 14 l-6 10 h12z" fill="' + C.feu + '"/>' +
+    t(205, 146, "90° + N pas", "middle", C.clair) + t(205, 26, "90° + N pas", "middle", C.clair) + t(262, 84, "cap", "start", C.clair) +
+    t(60, 172, "même nombre de pas à l'aller et au retour", "start")
+  );
+
   window.SYLVA_ILLUS = I;
 })();

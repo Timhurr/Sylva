@@ -188,3 +188,21 @@
   ];
   plus.forEach(function (s) { window.SYLVA_ESPECES.push(s); });
 })();
+
+// ---------- v0.8 : plantes des milieux humides ----------
+(function () {
+  window.SYLVA_ESPECES.push(
+    { cat: "plante", id: "massette", nom: "Massette", latin: "Typha latifolia", niveau: "caution", statut: "Comestible · eau propre",
+      saison: "Pousses avril-juin, rhizomes toute l'année", mois: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      zones: ["temperee", "montagne", "mediterranee", "littoral"],
+      resume: "Le « roseau à cigare » des étangs et fossés. Presque toute la plante se mange, mais elle concentre aussi les polluants de l'eau.",
+      identification: ["Grandes feuilles rubanées, épaisses et spongieuses, gainées les unes dans les autres à la base", "Épi brun en forme de saucisse au sommet d'une longue tige en été", "Pousse les pieds dans l'eau, en grandes colonies"],
+      sosies: [{ nom: "Iris des marais (Iris pseudacorus)", latin: "Iris pseudacorus", niveau: "danger", diff: "Feuilles plates disposées en éventail, plus raides, sans gaine spongieuse ; grandes fleurs jaunes au printemps. Toxique." }],
+      usages: ["Jeunes pousses du printemps : le cœur blanc, cru ou cuit.", "Rhizomes : épluchés et cuits, riches en amidon.", "Uniquement dans une eau propre, loin des routes, champs et rejets."] },
+    { cat: "toxique", id: "iris", nom: "Iris des marais", latin: "Iris pseudacorus", niveau: "danger", statut: "Toxique", saison: "Toute l'année", mois: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+      zones: ["temperee", "montagne", "mediterranee", "littoral"],
+      resume: "Pousse au même endroit que la massette, avec laquelle il se confond hors floraison.",
+      identification: ["Feuilles plates et raides, en éventail", "Grandes fleurs jaunes en mai-juin", "Rhizome épais"],
+      sosies: [], usages: ["Ne rien consommer. La sève peut irriter la peau."] }
+  );
+})();

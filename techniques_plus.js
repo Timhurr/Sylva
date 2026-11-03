@@ -186,3 +186,108 @@
     });
   });
 })();
+
+// ---------- v0.8 : premiers secours avancés, nuit sans duvet, chaleur, bois, navigation ----------
+(function () {
+  var SRC_PS = "Consignes grand public de premiers secours (Croix-Rouge, ERC) recoupées avec le manuel FM 4-25.11 (domaine public)";
+  var SRC_FM = "Manuel de survie de l'armée américaine FM 3-05.70 (domaine public), réécrit pour Sylva";
+  [
+    // ===== PREMIERS SECOURS =====
+    { id: "ps_pls", cat: "Premiers secours", titre: "Position latérale de sécurité (PLS)", illus: "pls", source: SRC_PS,
+      intro: "Pour une personne inconsciente qui respire : sur le côté, sa langue ne bloque plus sa gorge et elle ne s'étouffe pas si elle vomit.",
+      etapes: [
+        "Vérifier qu'elle ne répond pas mais respire normalement (regarder le ventre se soulever, écouter, sentir le souffle pendant 10 secondes).",
+        "Si elle ne respire pas ou respire mal : appeler le 112 et commencer le massage cardiaque si tu es formé.",
+        "Mettre le bras le plus proche de toi à angle droit, paume vers le haut.",
+        "Placer le dos de son autre main contre sa joue, de ton côté, et la maintenir.",
+        "Relever son genou le plus éloigné, pied au sol, et tirer sur ce genou pour la faire rouler vers toi sur le côté.",
+        "Ajuster la jambe du dessus à angle droit et basculer légèrement la tête en arrière, bouche vers le sol.",
+        "Appeler le 112, couvrir la personne et vérifier sa respiration régulièrement jusqu'à l'arrivée des secours."],
+      attention: ["En cas de chute importante avec suspicion de blessure à la nuque, ne la bouger que si elle risque de s'étouffer ou si l'endroit est dangereux."] },
+    { id: "ps_choc", cat: "Premiers secours", titre: "État de choc", illus: "premiers_secours", source: SRC_PS,
+      intro: "Après une hémorragie, une brûlure étendue, une fracture ou une forte réaction allergique, le corps peut ne plus irriguer correctement les organes. C'est une urgence vitale.",
+      etapes: [
+        "Reconnaître les signes : peau pâle, froide et moite, pouls rapide et faible, respiration rapide, soif, angoisse, faiblesse, puis confusion.",
+        "Traiter la cause si possible (arrêter un saignement par compression).",
+        "Allonger la victime sur le dos, l'isoler du sol, la couvrir.",
+        "Si aucune blessure des jambes, du bassin ou du dos : lui surélever les jambes d'environ 30 cm.",
+        "Ne rien lui donner à boire ni à manger, lui parler, la rassurer.",
+        "Appeler le 112 et surveiller sa respiration en continu."],
+      attention: ["Une victime en état de choc peut s'aggraver très vite : ne jamais la laisser seule si c'est possible."] },
+    { id: "ps_attelle", cat: "Premiers secours", titre: "Immobiliser un membre (attelle de fortune)", illus: "attelle", source: SRC_PS,
+      intro: "En cas de fracture ou d'entorse grave, immobiliser le membre limite la douleur et les lésions pendant l'attente ou le transport.",
+      etapes: [
+        "Ne pas chercher à remettre un os ou une articulation en place : immobiliser dans la position trouvée.",
+        "Préparer deux attelles rigides (bâtons, bâtons de marche, matelas mousse roulé, carton) assez longues pour bloquer l'articulation au-dessus ET en dessous de la blessure.",
+        "Rembourrer avec des vêtements, surtout aux os qui dépassent (chevilles, genoux, poignets).",
+        "Attacher avec des bandes, foulards ou cordelette, au-dessus et en dessous de la blessure, jamais directement dessus.",
+        "Bras : après l'attelle, soutenir l'avant-bras plié en écharpe (veste, foulard) contre le corps.",
+        "Vérifier toutes les 15 minutes que les doigts ou orteils restent chauds, roses et sensibles : sinon, desserrer."],
+      attention: ["Fracture ouverte (os visible) : couvrir la plaie d'un tissu propre sans appuyer sur l'os, et appeler le 112."] },
+    { id: "ps_brancard", cat: "Premiers secours", titre: "Brancard de fortune", illus: "brancard", source: SRC_PS,
+      intro: "Transporter un blessé est épuisant et risqué : à faire seulement si les secours ne peuvent pas venir ou si l'endroit est dangereux.",
+      etapes: [
+        "Trouver deux perches solides de 2 m environ (bois mort sain, bâtons de randonnée assemblés).",
+        "Méthode des vestes : fermer 2 ou 3 vestes, retourner les manches à l'intérieur et enfiler les perches dans les manches.",
+        "Méthode de la bâche : poser une perche au tiers de la bâche, replier, poser la seconde perche, replier le reste par-dessus : le poids du blessé bloque le tissu.",
+        "Tester le brancard avec une personne valide avant d'y installer le blessé.",
+        "Porter à 4 si possible (2 suffisent sur terrain facile), en marchant en décalé, et faire des pauses fréquentes.",
+        "En pente, garder la tête du blessé vers le haut. Le couvrir et vérifier sa respiration à chaque pause."],
+      attention: ["Ne pas déplacer une victime qui a pu se blesser à la colonne vertébrale, sauf danger immédiat."] },
+    { id: "ps_laisser", cat: "Premiers secours", titre: "Laisser une victime pour chercher les secours", illus: "urgence", source: SRC_PS,
+      intro: "Si personne ne peut appeler et que tu es seul avec un blessé, il faudra peut-être partir chercher de l'aide. Bien préparer ce départ peut lui sauver la vie.",
+      etapes: [
+        "D'abord, tout essayer pour appeler : 112, SMS, monter sur un point haut, attendre un passage sur le sentier.",
+        "Installer la victime : à l'abri, isolée du sol, couverte (couverture de survie, vêtements secs), en PLS si elle est inconsciente.",
+        "Laisser à portée de main : eau, nourriture, lampe, sifflet, un vêtement chaud supplémentaire.",
+        "Noter sa position exacte (coordonnées GPS dans le bouton SOS, ou repères précis) et l'écrire.",
+        "Laisser un mot visible : heure de départ, état de la victime, direction prise.",
+        "Baliser le chemin (branches, rubalise) pour guider les secours au retour, et partir vers l'endroit le plus proche où appeler."],
+      attention: ["Si le groupe compte au moins trois personnes : une reste avec la victime, les deux autres partent ensemble."] },
+
+    // ===== ABRI =====
+    { id: "nuit_sans_duvet", cat: "Abri", titre: "Passer la nuit sans sac de couchage", illus: "abri_debris", source: SRC_FM,
+      intro: "Une nuit imprévue dehors, sans duvet : l'objectif est de ne pas perdre sa chaleur, ni par le sol, ni par le vent, ni par l'humidité.",
+      etapes: [
+        "S'arrêter avant la nuit et avant d'être épuisé, pour avoir le temps de préparer.",
+        "Isoler du sol en priorité : une couche épaisse (20 à 30 cm tassés) de feuilles mortes, fougères ou branchages fins, ou le sac à dos vidé.",
+        "Se mettre à l'abri du vent : creux de terrain, gros tronc, rocher, abri de bâche ou de branchages.",
+        "Enfiler tous ses vêtements secs. Bourrer de feuilles sèches l'espace entre deux couches de vêtements : elles emprisonnent l'air comme un duvet.",
+        "S'envelopper dans la couverture de survie ou un grand sac poubelle, la tête couverte.",
+        "Manger et boire avant de dormir, et bouger (contracter les muscles) dès que le froid réveille.",
+        "Se serrer les uns contre les autres si on est plusieurs."],
+      attention: ["Si un feu est possible et autorisé : un feu le long du corps avec un mur réflecteur derrière soi, à bonne distance de l'abri."] },
+    { id: "chaleur", cat: "Abri", titre: "Se protéger de la chaleur", illus: "ombre", source: SRC_FM,
+      intro: "En été, la chaleur et le soleil épuisent plus vite que le froid. L'ombre et le calme sont les meilleurs alliés.",
+      etapes: [
+        "Marcher tôt le matin et en fin de journée, s'arrêter à l'ombre pendant les heures chaudes.",
+        "Couvrir la tête et la nuque, porter des vêtements amples et clairs, garder les manches longues contre le soleil.",
+        "Faire une ombre efficace : tendre une bâche à au moins 50 cm du sol pour laisser circuler l'air. Avec deux toiles superposées et espacées de 20 à 30 cm, l'ombre est nettement plus fraîche.",
+        "Ne pas s'allonger à même le sol brûlant : s'isoler avec le sac ou des branchages.",
+        "Boire régulièrement avant d'avoir soif, et manger salé.",
+        "Mouiller un foulard ou un t-shirt : l'évaporation rafraîchit."],
+      attention: ["Peau chaude et sèche, maux de tête violents, confusion : coup de chaleur, urgence vitale. Ombre, eau sur la peau, ventiler, 112."] },
+
+    // ===== FEU =====
+    { id: "essences_bois", cat: "Feu", titre: "Choisir son bois de chauffe", illus: "feu_preparation", source: SRC_FM,
+      intro: "Toutes les essences ne brûlent pas pareil. Savoir lesquelles choisir économise du bois et de l'énergie.",
+      etapes: [
+        "Pour démarrer : bouleau (son écorce brûle même humide), brindilles d'épicéa et de pin (résineuses, elles prennent vite), noisetier fin.",
+        "Pour durer et faire de la braise : hêtre, chêne, charme et frêne, des bois durs qui brûlent longtemps et donnent une chaleur régulière.",
+        "À éviter en bûches : les résineux (pin, épicéa), qui crépitent, projettent des étincelles et noircissent les casseroles ; le peuplier, le saule et l'aulne, qui brûlent trop vite.",
+        "Reconnaître le bois sec : il est léger, sonne clair quand on cogne deux morceaux, casse net, et l'écorce se détache facilement.",
+        "Ne jamais brûler d'if, de laurier-rose, de laurier-cerise ni de bois traité ou peint : leurs fumées sont toxiques."],
+      attention: ["Toujours du bois mort ramassé au sol ou sec sur pied, jamais d'arbre vivant."] },
+
+    // ===== DÉPLACEMENT =====
+    { id: "contourner", cat: "Déplacement", titre: "Contourner un obstacle sans perdre le cap", illus: "contourner", source: "Manuels de lecture de carte et navigation de l'armée américaine (domaine public), réécrits pour Sylva",
+      intro: "Un marécage ou un ravin sur ta route ? Avec la boussole et tes pas, tu peux le contourner et retrouver exactement ta direction.",
+      etapes: [
+        "Arrivé à l'obstacle, tourner de 90° (à droite par exemple) et marcher en comptant ses pas jusqu'à avoir dépassé l'obstacle.",
+        "Reprendre ta direction d'origine et marcher jusqu'à dépasser l'obstacle de l'autre côté.",
+        "Tourner de 90° dans l'autre sens (à gauche) et marcher le MÊME nombre de pas qu'à l'aller.",
+        "Reprendre ta direction d'origine : tu es de nouveau sur ta ligne de marche.",
+        "Plus simple quand on voit loin : repérer un arbre ou un rocher de l'autre côté de l'obstacle, sur la ligne, en faire le tour et viser à nouveau depuis ce repère."],
+      attention: [] }
+  ].forEach(function (t) { window.SYLVA_TECHNIQUES.push(t); });
+})();

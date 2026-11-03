@@ -33,6 +33,13 @@ window.SYLVA_GUIDE = [];
         p: ["Si quelqu'un connaît ton itinéraire et ton heure de retour, rester sur place est presque toujours la meilleure décision : les secours cherchent d'abord autour du trajet prévu, et une personne immobile et visible se retrouve beaucoup plus vite.",
             "Partir se justifie si l'endroit est dangereux (crue, chute de pierres, froid extrême sans abri possible), si personne ne te cherchera, ou si tu sais exactement où aller et que tu peux y arriver avant la nuit."],
         encadre: { type: "astuce", titre: "Astuce", texte: "Si tu pars, laisse un message bien visible (branches en flèche, mot sous une pierre) indiquant ta direction et l'heure." } },
+      { titre: "Évaluer un risque avant d'agir",
+        p: ["Traverser ce ruisseau, descendre ce raidillon, marcher encore une heure avant la nuit : chaque décision se pèse avec deux questions simples. Quelle est la probabilité que ça tourne mal ? Et si ça tourne mal, quelle est la gravité ?"],
+        liste: ["Probable ET grave (traverser une rivière en crue) : on renonce.",
+                "Peu probable mais grave (bivouaquer sous un arbre mort par vent fort) : on change d'option, c'est souvent facile.",
+                "Probable mais bénin (se mouiller les pieds) : on accepte, en prévoyant de quoi y remédier (chaussettes sèches).",
+                "Toute précaution a un coût (temps, énergie, poids) : on la choisit en fonction du risque réel, pas de la peur."],
+        encadre: { type: "danger", titre: "Ce qui fausse le jugement", texte: "La fatigue, le manque de sommeil, le froid, la faim, la déshydratation et l'envie de « finir quand même » (surtout en groupe) font prendre de mauvaises décisions. Si tu reconnais l'un d'eux, ralentis et choisis l'option la plus prudente." } },
       { titre: "Garder le moral",
         liste: ["Se fixer de petits objectifs atteignables : ramasser le bois, puis monter l'abri, puis faire bouillir l'eau.",
                 "Garder une routine : manger à heure fixe, ranger son camp, entretenir le feu.",
@@ -75,6 +82,13 @@ window.SYLVA_GUIDE = [];
                  "Couche chaude : polaire ou doudoune.",
                  "Coque : veste et pantalon imperméables et coupe-vent."],
         encadre: { type: "astuce", titre: "Astuce", texte: "Enlever une couche AVANT de transpirer en montée, la remettre DÈS l'arrêt. Garder une tenue sèche dans un sac étanche, uniquement pour la nuit." } },
+      { titre: "Les matières, en bref",
+        liste: ["Coton : agréable au sec, mais il garde l'eau et refroidit dès qu'il est mouillé. À bannir par temps frais et humide.",
+                "Laine (mérinos) : chaude même un peu humide, ne garde pas les odeurs. Idéale en sous-couche et chaussettes.",
+                "Polaire : légère, sèche vite, chaude même humide, mais laisse passer le vent.",
+                "Duvet (plumes) : le meilleur rapport chaleur/poids… tant qu'il reste sec. Mouillé, il ne chauffe presque plus.",
+                "Synthétique (ouate de polyester) : un peu plus lourd que le duvet, mais il garde une bonne partie de sa chaleur humide. Le bon choix sous nos climats pluvieux.",
+                "Membranes imper-respirantes : coupent pluie et vent tout en laissant sortir une partie de la vapeur. Ouvrir les aérations pendant l'effort."] },
       { titre: "Le sac de bivouac",
         p: ["La checklist complète, modifiable et avec tes photos, se trouve dans l'onglet Bivouac. Les essentiels : abri (tente ou bâche), couchage adapté à la température de la nuit, matelas isolant, réchaud, eau, frontale, trousse de secours, téléphone chargé et batterie externe."] }
     ],
@@ -156,10 +170,12 @@ window.SYLVA_GUIDE = [];
                 "Le sac à dos vidé sous les jambes et les pieds, pour isoler du sol.",
                 "Le creux au pied d'un gros conifère : les branches basses forment un toit naturel."],
         encadre: { type: "danger", titre: "Attention", texte: "Une couverture de survie sans isolation du sol ne suffit pas : on perd beaucoup de chaleur par contact avec le sol froid et mouillé." } },
+      { titre: "Une nuit sans sac de couchage",
+        p: ["Une nuit imprévue sans duvet se gère avec trois priorités : s'isoler du sol, se protéger du vent et emprisonner de l'air autour du corps. Des feuilles mortes sèches glissées entre deux couches de vêtements font un isolant étonnamment efficace. La fiche « Passer la nuit sans sac de couchage » détaille la marche à suivre."] },
       { titre: "Isoler le sol, toujours",
         p: ["Quel que soit l'abri, la couche sous le corps compte autant que le toit. Feuilles mortes sèches, fougères, aiguilles de pin ou branchages fins : il en faut 20 à 30 cm, car elles se tassent sous le poids. Une couche qui paraît énorme le soir fait souvent 5 cm le matin."] }
     ],
-    fiches: ["bache", "appentis", "debris", "abri", "camionneur", "tendeur", "tourmort"], especes: []
+    fiches: ["bache", "appentis", "debris", "nuit_sans_duvet", "abri", "camionneur", "tendeur", "tourmort"], especes: []
   });
 
   // =====================================================================
@@ -225,7 +241,7 @@ window.SYLVA_GUIDE = [];
                  "Disperser les cendres froides et effacer les traces."],
         encadre: { type: "danger", titre: "Attention", texte: "Un feu « éteint » couvert de terre peut couver des heures sous le sol et repartir. Toujours noyer et remuer." } }
     ],
-    fiches: ["feu", "tipi", "cabane", "feu_appentis", "feu_croix", "feu_pyramide", "feu_dakota", "reflecteur", "ferro", "tissu_charbonne", "arc_feu", "feupluie"], especes: ["hetre", "pin", "tilleul"]
+    fiches: ["feu", "essences_bois", "tipi", "cabane", "feu_appentis", "feu_croix", "feu_pyramide", "feu_dakota", "reflecteur", "ferro", "tissu_charbonne", "arc_feu", "feupluie"], especes: ["hetre", "pin", "tilleul"]
   });
 })();
 
@@ -291,13 +307,14 @@ window.SYLVA_GUIDE = [];
         liste: ["Fruits faciles et sans sosie dangereux : mûres, framboises, myrtilles, fraises des bois, noisettes, châtaignes (en vérifiant le marron d'Inde).",
                 "Feuilles abondantes et sûres : ortie (cuite), pissenlit, plantain, ail des ours (avec une extrême prudence face au muguet et au colchique).",
                 "Fruits d'automne et d'hiver : cynorrhodons, prunelles après les gelées, faînes grillées.",
+                "Milieux humides : la massette (pousses et rhizomes cuits), uniquement dans une eau propre, en se méfiant de l'iris des marais.",
                 "Champignons : uniquement si un mycologue a vérifié la récolte. En vraie situation de survie, l'énergie qu'ils apportent ne vaut pas le risque."] },
       { titre: "Les insectes",
         p: ["Riches en protéines, ils sont la ressource animale la plus accessible et la plus sûre en vraie situation de détresse. Les sauterelles, criquets, grillons et larves de bois se mangent toujours cuits (grillés), en retirant pattes et ailes. On écarte les insectes aux couleurs vives, poilus, piqueurs ou qui sentent fort, ainsi que les chenilles."] },
       { titre: "Pêche, chasse et pièges : la loi",
         p: ["En Belgique comme en France, en Suisse ou en Allemagne, pêcher demande un permis ou une carte de pêche, et chasser ou poser des pièges sans autorisation relève du braconnage. Les collets et assommoirs décrits dans les manuels de survie ne sont donc à envisager qu'en cas de détresse vitale réelle, et à démonter avant de partir."] }
     ],
-    fiches: ["piege", "ps_intox"], especes: ["ortie", "pissenlit", "mure", "chataignier", "aildesours", "noisetier", "eglantier", "cigue", "oenanthe"]
+    fiches: ["piege", "ps_intox"], especes: ["ortie", "pissenlit", "mure", "chataignier", "aildesours", "noisetier", "eglantier", "massette", "cigue", "oenanthe", "iris"]
   });
 
   // =====================================================================
@@ -362,6 +379,11 @@ window.SYLVA_GUIDE = [];
                 "La main courante : suivre un élément linéaire (chemin, rivière, lisière) plutôt que couper à travers bois.",
                 "La visée décalée : viser volontairement d'un côté de la cible pour savoir de quel côté tourner en arrivant.",
                 "La limite d'arrêt : un élément au-delà du but qui signale qu'on est allé trop loin."] },
+      { titre: "Le GPS : atouts et limites",
+        liste: ["La position GPS du téléphone fonctionne sans réseau : seule la carte doit avoir été chargée avant (dans Sylva, en parcourant la zone).",
+                "La précision baisse sous un couvert forestier dense, au fond des gorges et près des falaises : on peut être décalé de plusieurs dizaines de mètres.",
+                "Le froid et le GPS vident vite la batterie : garder le téléphone au chaud, en mode avion, et emporter une batterie externe.",
+                "Le GPS dit où l'on est, pas par où passer : une carte, une boussole et l'habitude de lire le terrain restent indispensables."] },
       { titre: "Quand on est perdu",
         etapes: ["S'arrêter (méthode STOP) : continuer à marcher au hasard aggrave presque toujours la situation.",
                  "Regarder la position GPS dans Sylva : elle fonctionne sans réseau, et la carte reste visible si la zone a été affichée avant.",
@@ -370,7 +392,7 @@ window.SYLVA_GUIDE = [];
                  "Si la nuit approche, s'arrêter, faire un abri et se signaler : on repartira de jour."],
         encadre: { type: "retenir", titre: "À retenir", texte: "Si quelqu'un sait où tu es, rester sur place est presque toujours plus sûr que d'errer." } }
     ],
-    fiches: ["orientation", "baton", "polaire", "pas", "recoupement", "navigation"], especes: []
+    fiches: ["orientation", "baton", "polaire", "pas", "recoupement", "navigation", "contourner"], especes: []
   });
 
   // =====================================================================
@@ -399,7 +421,7 @@ window.SYLVA_GUIDE = [];
                  "À plusieurs, se tenir épaule contre épaule, le plus solide en amont."],
         encadre: { type: "danger", titre: "Attention", texte: "Jamais au-dessus d'une chute ou de rapides, jamais dans une eau très froide ou en crue. En cas de chute : sur le dos, pieds en avant à la surface, nager en biais vers la rive." } }
     ],
-    fiches: ["riviere", "pas", "navigation", "ps_entorse"], especes: []
+    fiches: ["riviere", "pas", "navigation", "contourner", "ps_entorse", "ps_brancard"], especes: []
   });
 
   // =====================================================================
@@ -434,7 +456,7 @@ window.SYLVA_GUIDE = [];
                 "Ne jamais traverser une rivière en crue ou dont l'eau dépasse les genoux.",
                 "Par vent fort (rafales au-delà de 60 km/h, alertes de l'onglet Bivouac) : éviter la forêt et ne jamais dormir sous les arbres."] }
     ],
-    fiches: ["froid", "cold", "signaux", "urgence"], especes: []
+    fiches: ["froid", "cold", "chaleur", "signaux", "urgence"], especes: []
   });
 })();
 
@@ -595,10 +617,17 @@ window.SYLVA_GUIDE = [];
                  "Secourir : faire les gestes adaptés en attendant les secours, et ne plus laisser la victime seule."] },
       { titre: "Isolé, tout prend plus de temps",
         p: ["En pleine nature, les secours peuvent mettre une ou plusieurs heures à arriver. Il faut donc aussi protéger la victime du froid (couverture de survie, isolation du sol, vêtements secs) même pour une blessure banale : une personne immobile se refroidit très vite."] },
+      { titre: "Inconscient, choc, fracture",
+        liste: ["Une personne inconsciente qui respire se met en position latérale de sécurité (PLS) : sur le côté, bouche vers le sol.",
+                "Pâleur, sueurs froides, pouls rapide et faible après une blessure : état de choc. Allonger, couvrir, surélever les jambes si elles ne sont pas blessées, 112.",
+                "Fracture ou entorse grave : immobiliser dans la position trouvée, en bloquant les articulations au-dessus et en dessous.",
+                "Transporter un blessé seulement si les secours ne peuvent pas venir : un brancard se fabrique avec deux perches et des vestes."] },
+      { titre: "Seul avec un blessé",
+        p: ["Si personne ne peut appeler, il faudra peut-être partir chercher de l'aide. Avant, on installe la victime à l'abri et au chaud, avec eau, lampe et sifflet à portée de main, on note sa position GPS, on laisse un mot et on balise le chemin. À trois ou plus, quelqu'un reste toujours avec elle."] },
       { titre: "Les situations fréquentes",
         p: ["Chaque situation a sa fiche détaillée dans la catégorie Premiers secours : plaie qui saigne, ampoules, entorse, brûlure, intoxication, morsure de serpent, piqûres et tiques."],
         encadre: { type: "retenir", titre: "À retenir", texte: "Rien ne remplace une formation aux premiers secours (Croix-Rouge, protection civile) : quelques heures qui peuvent sauver une vie." } }
     ],
-    fiches: ["ps_saignement", "ps_ampoule", "ps_entorse", "ps_brulure", "ps_intox", "ps_morsure", "ps_piqure", "ps_tique", "froid"], especes: []
+    fiches: ["ps_pls", "ps_choc", "ps_attelle", "ps_brancard", "ps_laisser", "ps_saignement", "ps_ampoule", "ps_entorse", "ps_brulure", "ps_intox", "ps_morsure", "ps_piqure", "ps_tique", "froid"], especes: []
   });
 })();
