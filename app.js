@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.1.1";
+  var VERSION = "0.1.2";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -448,7 +448,9 @@
     });
   }
 
-  $("#photoInput").addEventListener("change", function (e) {
+  $("#photoInput").addEventListener("change", onPhoto);
+  $("#galleryInput").addEventListener("change", onPhoto);
+  function onPhoto(e) {
     var file = e.target.files && e.target.files[0];
     e.target.value = "";
     if (!file) return;
@@ -488,7 +490,7 @@
     }).catch(function (err) {
       setScanStatus(esc(err && err.msg ? err.msg : "Connexion au service impossible. Vérifiez le réseau, et que l'adresse du site est autorisée dans votre compte Pl@ntNet."));
     });
-  });
+  }
 
   function renderScanResults(results) {
     if (!results.length) { $("#scanResults").innerHTML = '<p class="muted">Aucun résultat.</p>'; return; }

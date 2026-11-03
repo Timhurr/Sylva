@@ -82,6 +82,11 @@
         Prendre une photo
       </label>
       <input type="file" id="photoInput" accept="image/*" capture="environment" hidden>
+      <label class="btn btn-big btn-gallery" for="galleryInput">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>
+        Choisir dans la galerie
+      </label>
+      <input type="file" id="galleryInput" accept="image/*" hidden>
 
       <div id="scanPreview" class="scan-preview" hidden><img id="scanImg" alt="Photo à identifier"></div>
       <div id="scanStatus" class="scan-status" hidden></div>
