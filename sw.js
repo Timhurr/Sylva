@@ -1,5 +1,5 @@
 /* Sylva – service worker : appli et fiches hors-ligne, tuiles de carte vues gardées en cache */
-var VERSION = "sylva-v0.1.2";
+var VERSION = "sylva-v0.1.3";
 var SHELL = VERSION + "-shell";
 var TILES = "sylva-tiles";
 var MAX_TILES = 2500;
@@ -60,15 +60,36 @@ self.addEventListener("fetch", function (e) {
     return;
   }
 
-  // Appli + bibliothèque carte : cache immédiat, mise à jour en arrière-plan
-  if (url.origin === self.location.origin || url.hostname === "unpkg.com") {
+  // Bibliothèque carte (version figée) : cache d'abord
+  if (url.hostname === "unpkg.com") {
     e.respondWith(caches.open(SHELL).then(function (c) {
-      return c.match(req, { ignoreSearch: true }).then(function (hit) {
-        var net = fetch(req).then(function (res) {
-          if (res && res.ok) c.put(req, res.clone());
-          return res;
-        }).catch(function () { return hit; });
-        return hit || net;
+      return c.match(req).then(function (hit) {
+        return hit || fetch(req).then(function (res) { if (res && res.ok) c.put(req, res.clone()); return res; });
+      });
+    }));
+    return;
+  }
+
+  // Fichiers de l'appli : réseau d'abord (toujours la dernière version),
+  // cache en secours si pas de réseau ou réseau trop lent (4 s)
+  if (url.origin === self.location.origin) {
+    e.respondWith(caches.open(SHELL).then(function (c) {
+      var cached = c.match(req, { ignoreSearch: true }).then(function (hit) {
+        return hit || (req.mode === "navigate" ? c.match("index.html") : undefined);
+      });
+      var net = fetch(url.href, { cache: "no-cache" }).then(function (res) {
+        if (res && res.ok) c.put(req, res.clone());
+        return res;
+      });
+      return new Promise(function (resolve) {
+        var done = false;
+        var timer = setTimeout(function () {
+          cached.then(function (hit) { if (hit && !done) { done = true; resolve(hit); } });
+        }, 4000);
+        net.then(function (res) { if (!done) { done = true; clearTimeout(timer); resolve(res); } })
+          .catch(function () {
+            cached.then(function (hit) { if (!done) { done = true; clearTimeout(timer); resolve(hit || Response.error()); } });
+          });
       });
     }));
   }

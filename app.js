@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.1.2";
+  var VERSION = "0.1.3";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -526,6 +526,16 @@
   startGeo();
 
   if ("serviceWorker" in navigator) {
-    window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () {}); });
+    var hadController = !!navigator.serviceWorker.controller, reloaded = false;
+    navigator.serviceWorker.addEventListener("controllerchange", function () {
+      // Une nouvelle version vient de s'installer : on recharge une fois pour l'afficher
+      if (hadController && !reloaded) { reloaded = true; window.location.reload(); }
+    });
+    window.addEventListener("load", function () {
+      navigator.serviceWorker.register("sw.js", { updateViaCache: "none" }).then(function (reg) {
+        reg.update();
+        document.addEventListener("visibilitychange", function () { if (!document.hidden) reg.update(); });
+      }).catch(function () {});
+    });
   }
 })();
