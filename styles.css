@@ -470,3 +470,8 @@ html[data-theme="nuit"] .g-nav .btn{background:var(--amber);color:#0C110E}
 .engr img{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:cover}
 .item-illus img,.chap-illus img{width:100%;height:100%;object-fit:cover;display:block}
 html[data-theme="nuit"] .engr img,html[data-theme="nuit"] .item-illus img,html[data-theme="nuit"] .chap-illus img{filter:brightness(.82)}
+
+/* Secours isolé */
+.red-flags ul{margin:4px 0 0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.red-flags li{color:var(--danger-ink)}
+.mode-seg{margin:16px 0 0}

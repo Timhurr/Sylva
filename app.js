@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.1";
+  var VERSION = "0.9.2";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -761,21 +761,35 @@
     });
     $("#listTechniques").innerHTML = h;
   }
-  function openTechnique(id) {
-    var t = TECHS.filter(function (x) { return x.id === id; })[0]; if (!t) return;
-    var tp = t.wiki && photoOf(t.wiki), n = t.etapes.length;
-    var h = (t.wiki ? '<div id="heroSlot" class="knot">' + (tp ? heroHtml(tp, t.titre) : "") + "</div>"
-                    : heroIllus(t.id, t.illus, t.titre)) +
-      '<div class="chap-k">' + esc(t.cat) + " · " + n + ' étapes</div><h1 id="sheetTitle">' + esc(t.titre) + "</h1><p>" + esc(t.intro) + "</p>" +
-      '<div class="steps" data-cur="0" data-n="' + n + '">' +
-      '<div class="step-bar" aria-hidden="true">' + t.etapes.map(function (x, i) { return '<span' + (i === 0 ? ' class="on"' : "") + "></span>"; }).join("") + "</div>" +
-      t.etapes.map(function (x, i) {
+  function stepsHtml(etapes, mode, hidden) {
+    var n = etapes.length;
+    return '<div class="steps" data-cur="0" data-n="' + n + '"' + (mode ? ' data-mode="' + mode + '"' : "") + (hidden ? " hidden" : "") + ">" +
+      '<div class="step-bar" aria-hidden="true">' + etapes.map(function (x, i) { return "<span" + (i === 0 ? ' class="on"' : "") + "></span>"; }).join("") + "</div>" +
+      etapes.map(function (x, i) {
         return '<div class="step' + (i === 0 ? " on" : "") + '"><span class="step-k"><span class="step-n">' + (i + 1) + "</span>Étape " + (i + 1) + " sur " + n + "</span><p>" + esc(x) + "</p></div>";
       }).join("") +
       '<div class="step-nav"><button type="button" class="btn" data-step="-1" disabled>Précédent</button><button type="button" class="btn btn-next" data-step="1">' + (n > 1 ? "Étape suivante" : "Terminé ✓") + "</button></div>" +
       '<button type="button" class="link-btn steps-toggle" data-step-all>Voir toutes les étapes</button></div>';
+  }
+  function openTechnique(id) {
+    var t = TECHS.filter(function (x) { return x.id === id; })[0]; if (!t) return;
+    var tp = t.wiki && photoOf(t.wiki);
+    var both = t.isole && t.etapes && t.etapes.length;
+    var main = t.isole || t.etapes, n = main.length;
+    var h = (t.wiki ? '<div id="heroSlot" class="knot">' + (tp ? heroHtml(tp, t.titre) : "") + "</div>"
+                    : heroIllus(t.id, t.illus, t.titre)) +
+      '<div class="chap-k">' + esc(t.cat) + (t.isole ? " · secours injoignables" : " · " + n + " étapes") + '</div><h1 id="sheetTitle">' + esc(t.titre) + "</h1><p>" + esc(t.intro) + "</p>";
+    if (t.alerte && t.alerte.length) {
+      h += '<div class="alert alert-danger red-flags"><strong>Fais tout pour sortir ou te faire repérer si :</strong><ul>' +
+        t.alerte.map(function (a) { return "<li>" + esc(a) + "</li>"; }).join("") + "</ul></div>";
+    }
+    if (both) {
+      h += '<div class="seg seg-2 mode-seg" role="group" aria-label="Situation"><button type="button" class="chip on" data-ps-mode="isole">Seul, sans secours</button><button type="button" class="chip" data-ps-mode="secours">Secours joignables</button></div>';
+      h += stepsHtml(t.isole, "isole", false) + stepsHtml(t.etapes, "secours", true);
+    } else h += stepsHtml(main, "", false);
+    (t.attentionIsole || []).forEach(function (a) { h += '<div class="alert alert-warn"><span>' + esc(a) + "</span></div>"; });
     (t.attention || []).forEach(function (a) { h += '<div class="alert alert-warn"><span>' + esc(a) + "</span></div>"; });
-    if (t.source) h += '<p class="disclaimer">Source : ' + esc(t.source) + ". Illustration Sylva.</p>";
+    if (t.source) h += '<p class="disclaimer">Source : ' + esc(t.source) + ". Contenu éducatif : il ne remplace pas une formation aux premiers secours.</p>";
     openSheet(t.cat, h);
     if (t.wiki && !tp && navigator.onLine) {
       fetchPhoto(t.wiki, ["en"]).then(function (p) {
@@ -830,7 +844,7 @@
     $("#listTechniques").hidden = !showFiches;
     if (showFiches) {
       if (q) {
-        var fl = TECHS.filter(function (t) { return norm(t.titre + " " + t.intro + " " + t.etapes.join(" ")).indexOf(q) !== -1; });
+        var fl = TECHS.filter(function (t) { return norm(t.titre + " " + t.intro + " " + (t.etapes || []).concat(t.isole || []).join(" ")).indexOf(q) !== -1; });
         $("#listTechniques").innerHTML = '<div class="section-title">Fiches pratiques (' + fl.length + ')</div><div class="list">' + fl.map(function (t) {
           return '<button class="item" data-tech="' + esc(t.id) + '"><span class="item-illus" aria-hidden="true">' + thumbOf(t.id, t.illus) + "</span>" +
             '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.cat) + "</span></span></button>";
@@ -886,6 +900,13 @@
     lectureChap = c.id;
   }
   $("#sheetBody").addEventListener("click", function (e) {
+    var pm = e.target.closest("[data-ps-mode]");
+    if (pm) {
+      var m = pm.getAttribute("data-ps-mode");
+      $all("#sheetBody [data-ps-mode]").forEach(function (x) { x.classList.toggle("on", x === pm); });
+      $all("#sheetBody .steps[data-mode]").forEach(function (x) { x.hidden = x.getAttribute("data-mode") !== m; });
+      return;
+    }
     var st = e.target.closest("[data-step],[data-step-all]");
     if (st) {
       var box = st.closest(".steps");
@@ -1441,7 +1462,7 @@
     if (!q) return;
     var esp = ESPECES.filter(function (s) { return norm(s.nom + " " + s.latin + " " + s.resume).indexOf(q) !== -1; }).slice(0, 10);
     var ch = GUIDE.filter(function (c) { return norm(chapText(c)).indexOf(q) !== -1; }).slice(0, 6);
-    var fi = TECHS.filter(function (t) { return norm(t.titre + " " + t.intro + " " + t.etapes.join(" ")).indexOf(q) !== -1; }).slice(0, 10);
+    var fi = TECHS.filter(function (t) { return norm(t.titre + " " + t.intro + " " + (t.etapes || []).concat(t.isole || []).join(" ")).indexOf(q) !== -1; }).slice(0, 10);
     var h = "";
     if (fi.length) h += '<div class="section-title">Fiches pratiques</div><div class="list">' + fi.map(function (t) {
       return '<button class="item" data-tech="' + esc(t.id) + '"><span class="item-illus" aria-hidden="true">' + thumbOf(t.id, t.illus) + "</span>" +
