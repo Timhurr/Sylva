@@ -258,5 +258,11 @@
     '<path d="M30 120 C80 120 90 60 140 60" fill="none" stroke="' + C.feu + '" stroke-width="3" stroke-dasharray="2 10" stroke-linecap="round"/>'
   );
 
+  I.premiers_secours = svg(
+    '<rect x="110" y="40" width="100" height="100" rx="18" fill="#C2412A"/>' +
+    '<rect x="148" y="58" width="24" height="64" rx="4" fill="#fff"/><rect x="128" y="78" width="64" height="24" rx="4" fill="#fff"/>' +
+    t(160, 166, "Urgence : 112 · Centre Antipoisons : 070 245 245", "middle", C.clair)
+  );
+
   window.SYLVA_ILLUS = I;
 })();

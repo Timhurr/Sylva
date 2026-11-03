@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.3.1";
+  var VERSION = "0.4.0";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -422,6 +422,23 @@
     closeModal($("#modalSettings")); toast("Réglages enregistrés");
   });
   $("#btnPhotos").addEventListener("click", function () { toast("Téléchargement des photos…"); prefetchPhotos(true); });
+  $("#btnSources").addEventListener("click", function () {
+    closeModal($("#modalSettings"));
+    openSheet("À propos", '<h1 id="sheetTitle">Sources et crédits</h1>' +
+      "<p>Tous les textes de Sylva sont rédigés pour l'appli, et les schémas des techniques sont dessinés pour elle. Aucun passage de livre protégé n'est reproduit.</p>" +
+      "<h3>Contenu</h3><ul>" +
+      "<li>Techniques de survie : manuels de l'armée américaine FM 21-76 / FM 3-05.70 (domaine public).</li>" +
+      "<li>Premiers secours : consignes grand public (Croix-Rouge, ULB), recoupées avec le manuel FM 4-25.11.</li>" +
+      "<li>Champignons dangereux et intoxications : Centre Antipoisons belge (070 245 245).</li>" +
+      "<li>Vipère : Province de Liège. Loup : Service public de Wallonie.</li>" +
+      "<li>Eau improvisée : revue scientifique medRxiv (2025).</li></ul>" +
+      "<h3>Données et services</h3><ul>" +
+      '<li>Carte, aires de bivouac, points d\'eau et recherche : © contributeurs <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL).</li>' +
+      '<li>Photos : Wikimedia Commons, licences libres, auteur indiqué sous chaque photo.</li>' +
+      '<li>Météo : <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0).</li>' +
+      "<li>Identification des plantes : Pl@ntNet (CIRAD, INRAE, INRIA, IRD).</li></ul>" +
+      '<p class="disclaimer">Sylva est un outil éducatif. Il ne remplace ni un guide de terrain, ni un mycologue, ni une formation aux premiers secours. En cas d\'urgence : 112.</p>');
+  });
   $("#btnExportSpots").addEventListener("click", function () {
     var s = getSpots(); if (!s.length) { toast("Aucun spot enregistré"); return; }
     copyText(JSON.stringify(s, null, 1));
@@ -512,20 +529,22 @@
   var CAT_LABEL = { plante: "Plante comestible", toxique: "Plante toxique", champignon: "Champignon", animal: "Faune" };
   var CAT_PLURAL = { plante: "Plantes comestibles", toxique: "Plantes toxiques", champignon: "Champignons", animal: "Faune" };
   var CAT_ICO = { plante: ["#23382A", "#8CCB7E"], toxique: ["#4A1C14", "#FFB4A1"], champignon: ["#3A3218", "#F2D184"], animal: ["#2A2235", "#C7B9DE"] };
-  var curCat = "tout";
+  var curCat = "saison";
+  var MOIS_NOMS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
   function lvClass(n) { return "lv-" + (n || "info"); }
 
   function renderEspeces() {
     var q = norm($("#searchEspeces").value);
     var list = ESPECES.filter(function (s) {
-      if (curCat !== "tout" && s.cat !== curCat) return false;
+      if (curCat === "saison") { if (!s.mois || s.mois.indexOf(new Date().getMonth() + 1) === -1) return false; }
+      else if (curCat !== "tout" && s.cat !== curCat) return false;
       if (!q) return true;
       return norm(s.nom + " " + s.latin + " " + s.resume).indexOf(q) !== -1;
     });
     var html = "";
     var lastCat = null;
     list.forEach(function (s) {
-      if (curCat === "tout" && s.cat !== lastCat) { html += '<div class="section-title">' + esc(CAT_PLURAL[s.cat]) + "</div>"; lastCat = s.cat; }
+      if ((curCat === "tout" || curCat === "saison") && s.cat !== lastCat) { html += '<div class="section-title">' + esc(CAT_PLURAL[s.cat]) + "</div>"; lastCat = s.cat; }
       var ic = CAT_ICO[s.cat], ph = photoOf(s.latin);
       html += '<button class="item" data-esp="' + esc(s.id) + '">' +
         (ph ? '<span class="item-ico item-photo"><img src="' + esc(ph.src) + '" alt="" loading="lazy"></span>'
@@ -534,6 +553,9 @@
         '<span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + "</span></button>";
     });
     $("#listEspeces").innerHTML = html || '<p class="muted">Aucune espèce trouvée.</p>';
+    $("#especesSub").textContent = curCat === "saison"
+      ? list.length + " espèces présentes en " + MOIS_NOMS[new Date().getMonth()] + " · " + ESPECES.length + " au total"
+      : list.length + " espèces · Belgique et Ardennes";
   }
   $("#searchEspeces").addEventListener("input", renderEspeces);
   $all("#catChips .chip").forEach(function (c) {

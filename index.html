@@ -114,7 +114,8 @@
         <input type="search" id="searchEspeces" placeholder="Châtaigne, sanglier, amanite…">
       </label>
       <div class="chips" id="catChips" role="group" aria-label="Catégories">
-        <button class="chip on" data-cat="tout">Tout</button>
+        <button class="chip on" data-cat="saison">De saison</button>
+        <button class="chip" data-cat="tout">Tout</button>
         <button class="chip" data-cat="plante">Comestibles</button>
         <button class="chip" data-cat="toxique">Toxiques</button>
         <button class="chip" data-cat="champignon">Champignons</button>
@@ -230,6 +231,10 @@
       <button type="button" class="btn" id="btnPhotos">Télécharger pour le hors-ligne</button>
     </div>
     <p class="tiny muted">Photos sous licence libre (Wikimedia Commons). À faire avec du réseau avant de partir.</p>
+    <div class="field-label">À propos</div>
+    <div class="row">
+      <button type="button" class="btn" id="btnSources">Sources et crédits</button>
+    </div>
     <div class="field-label">Mes spots</div>
     <div class="row">
       <button type="button" class="btn" id="btnExportSpots">Copier mes spots</button>
@@ -264,6 +269,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="data.js"></script>
+<script src="especes_plus.js"></script>
 <script src="illus.js"></script>
 <script src="app.js"></script>
 </body>

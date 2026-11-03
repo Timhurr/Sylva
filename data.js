@@ -827,3 +827,104 @@ var SRC_NOEUDS = "The Ashley Book of Knots ; manuels scouts ; " + SRC_FM;
   k.cat = "Nœuds"; k.illus = "noeud"; k.source = SRC_NOEUDS;
   window.SYLVA_TECHNIQUES.push(k);
 });
+
+// ---------- PREMIERS SECOURS ----------
+// Rédigé d'après les consignes grand public actuelles (Croix-Rouge, ULB, Centre Antipoisons)
+// et recoupé avec le manuel FM 4-25.11 (domaine public). Ne remplace pas une formation.
+window.SYLVA_CATEGORIES.splice(window.SYLVA_CATEGORIES.indexOf("Secours") + 1, 0, "Premiers secours");
+var SRC_PS = "Consignes grand public de premiers secours (Croix-Rouge, ULB) ; Centre Antipoisons belge ; manuel FM 4-25.11 (domaine public)";
+[
+  {
+    id: "ps_saignement", titre: "Plaie qui saigne",
+    intro: "Une hémorragie se contrôle presque toujours par une forte pression directe.",
+    etapes: [
+      "Se protéger les mains si possible (gants, sac plastique).",
+      "Appuyer fort et sans relâcher directement sur la plaie avec un tissu propre, pendant au moins 10 minutes.",
+      "Si le tissu se remplit de sang, ne pas l'enlever : en ajouter un par-dessus et continuer d'appuyer.",
+      "Allonger la victime, la couvrir, appeler le 112 si le saignement ne s'arrête pas ou est abondant.",
+      "Petite plaie : rincer à l'eau potable, désinfecter, couvrir d'un pansement."
+    ],
+    attention: ["Le garrot ne s'utilise qu'en dernier recours, sur un membre, quand la pression directe ne suffit pas, et en notant l'heure de pose."]
+  },
+  {
+    id: "ps_ampoule", titre: "Ampoules aux pieds",
+    intro: "Le premier ennemi du randonneur. Mieux vaut traiter la zone qui chauffe avant l'ampoule.",
+    etapes: [
+      "Dès qu'une zone chauffe, s'arrêter et la protéger (pansement seconde peau, sparadrap).",
+      "Ampoule fermée : ne pas la percer, la protéger avec un pansement spécial ou un anneau de mousse autour.",
+      "Ampoule ouverte : nettoyer, ne pas arracher la peau, couvrir d'un pansement propre.",
+      "Changer de chaussettes mouillées : l'humidité favorise les ampoules."
+    ],
+    attention: ["Rougeur qui s'étend, pus ou fièvre : signe d'infection, consulter."]
+  },
+  {
+    id: "ps_entorse", titre: "Entorse de la cheville",
+    intro: "Un faux pas sur un sentier humide arrive vite. L'enjeu : savoir si on peut encore marcher.",
+    etapes: [
+      "S'arrêter et mettre la cheville au repos.",
+      "Refroidir 20 minutes avec de l'eau froide ou une poche de froid enveloppée dans un tissu (jamais directement sur la peau).",
+      "Surélever la jambe.",
+      "Si on ne peut pas faire 4 pas, ou si la douleur est vive sur l'os : ne pas forcer, appeler les secours."
+    ],
+    attention: ["Ne pas retirer la chaussure si le pied gonfle beaucoup et qu'il faut encore marcher jusqu'à un accès."]
+  },
+  {
+    id: "ps_brulure", titre: "Brûlure",
+    intro: "Réflexe vital : refroidir longtemps à l'eau tempérée.",
+    etapes: [
+      "Refroidir immédiatement sous l'eau tempérée pendant 15 à 20 minutes (30 minutes pour un produit chimique).",
+      "Retirer bagues et vêtements qui ne collent pas à la peau.",
+      "Ne pas percer les cloques, ne rien appliquer (ni beurre, ni dentifrice, ni glace).",
+      "Couvrir d'un tissu propre ou d'un film alimentaire.",
+      "Appeler le 112 si la brûlure est plus grande que la paume de la victime, ou touche le visage, les mains, les articulations ou les parties génitales."
+    ],
+    attention: ["Vêtements en feu : empêcher la victime de courir, la faire rouler au sol ou l'étouffer avec une couverture."]
+  },
+  {
+    id: "ps_intox", titre: "Intoxication (plante, champignon)",
+    intro: "En Belgique, le Centre Antipoisons répond 24 h/24 au 070 245 245 (gratuit).",
+    etapes: [
+      "Appeler le Centre Antipoisons au 070 245 245, ou le 112 si la personne a du mal à respirer, perd connaissance ou convulse.",
+      "Garder les restes : la plante, les champignons crus ou cuits, même les épluchures, pour l'identification.",
+      "Noter l'heure du repas, la quantité et l'heure des premiers symptômes.",
+      "Ne pas faire vomir et ne rien donner à boire sans avis médical."
+    ],
+    attention: ["Champignons : des symptômes qui apparaissent 6 heures ou plus après le repas annoncent souvent une intoxication grave (foie, reins), même si la personne se sent mieux ensuite."]
+  },
+  {
+    id: "ps_morsure", titre: "Morsure de serpent",
+    intro: "Les morsures de vipère sont très rares en Belgique, mais les bons gestes sont simples.",
+    etapes: [
+      "Rester calme et s'allonger : l'agitation accélère la diffusion du venin.",
+      "Immobiliser le membre mordu, retirer bagues, montre et bracelets.",
+      "Désinfecter la morsure.",
+      "Appeler le 112."
+    ],
+    attention: ["Ne jamais sucer, aspirer, inciser ni poser de garrot."]
+  },
+  {
+    id: "ps_piqure", titre: "Piqûre de guêpe, d'abeille ou de frelon",
+    intro: "Douloureuse mais bénigne… sauf allergie ou piqûre dans la bouche.",
+    etapes: [
+      "Abeille : retirer le dard en le raclant avec un ongle ou une carte, sans pincer la poche à venin.",
+      "Refroidir avec de l'eau froide pour limiter le gonflement.",
+      "Surveiller la victime pendant 30 minutes.",
+      "Appeler le 112 en cas de gonflement du visage ou de la gorge, de gêne respiratoire, de malaise ou de piqûres multiples. Si la personne a un stylo d'adrénaline, l'aider à l'utiliser."
+    ],
+    attention: ["Piqûre dans la bouche : sucer de la glace ou de l'eau froide et appeler le 112 si ça gonfle."]
+  },
+  {
+    id: "ps_tique", titre: "Morsure de tique",
+    intro: "À vérifier chaque soir de bivouac : aisselles, aine, derrière les genoux, cuir chevelu.",
+    etapes: [
+      "Retirer la tique le plus tôt possible avec un tire-tique, en tournant sans tirer.",
+      "Ne rien mettre dessus avant (ni éther, ni alcool, ni huile).",
+      "Désinfecter et noter la date et l'endroit de la morsure.",
+      "Surveiller la zone pendant un mois : une rougeur qui s'étend en anneau ou de la fièvre nécessitent de consulter un médecin."
+    ],
+    attention: []
+  }
+].forEach(function (t) {
+  t.cat = "Premiers secours"; t.illus = "premiers_secours"; t.source = SRC_PS;
+  window.SYLVA_TECHNIQUES.push(t);
+});
