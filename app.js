@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.1.4";
+  var VERSION = "0.2.0";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -398,15 +398,95 @@
     e.preventDefault(); save("sylva_key", $("#apiKey").value.trim());
     closeModal($("#modalSettings")); toast("Réglages enregistrés");
   });
+  $("#btnPhotos").addEventListener("click", function () { toast("Téléchargement des photos…"); prefetchPhotos(true); });
   $("#btnExportSpots").addEventListener("click", function () {
     var s = getSpots(); if (!s.length) { toast("Aucun spot enregistré"); return; }
     copyText(JSON.stringify(s, null, 1));
   });
 
+  // ---------- Photos (Wikimedia Commons, licences libres) ----------
+  var PHOTOS = load("sylva_photos", {});
+  function latinMain(latin) { return String(latin || "").split("/")[0].trim(); }
+  function photoOf(latin) { var p = PHOTOS[norm(latinMain(latin))]; return p && p.src ? p : null; }
+  function stripHtml(h) { var d = document.createElement("div"); d.innerHTML = h || ""; return (d.textContent || "").replace(/\s+/g, " ").trim(); }
+
+  function wikiThumb(lang, latin) {
+    return fetch("https://" + lang + ".wikipedia.org/w/api.php?action=query&format=json&origin=*&redirects=1" +
+      "&prop=pageimages&piprop=thumbnail%7Cname&pithumbsize=640&pilicense=free&titles=" + encodeURIComponent(latin))
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var pages = d && d.query && d.query.pages;
+        for (var k in pages) {
+          var pg = pages[k];
+          if (pg.thumbnail && pg.pageimage) {
+            return { src: pg.thumbnail.source, file: pg.pageimage, page: "https://" + lang + ".wikipedia.org/wiki/" + encodeURIComponent(pg.title) };
+          }
+        }
+        return null;
+      });
+  }
+  function commonsMeta(file) {
+    return fetch("https://commons.wikimedia.org/w/api.php?action=query&format=json&origin=*&prop=imageinfo&iiprop=extmetadata" +
+      "&titles=" + encodeURIComponent("File:" + file))
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        var pages = d && d.query && d.query.pages;
+        for (var k in pages) {
+          var ii = pages[k].imageinfo && pages[k].imageinfo[0];
+          var m = ii && ii.extmetadata;
+          if (m) return { artist: stripHtml(m.Artist && m.Artist.value).slice(0, 80), license: stripHtml(m.LicenseShortName && m.LicenseShortName.value), commons: true };
+        }
+        return { artist: "", license: "", commons: false };
+      })
+      .catch(function () { return { artist: "", license: "", commons: false }; });
+  }
+  function fetchPhoto(latin) {
+    var name = latinMain(latin), key = norm(name);
+    if (PHOTOS[key]) return Promise.resolve(PHOTOS[key].src ? PHOTOS[key] : null);
+    return wikiThumb("fr", name).then(function (r) { return r || wikiThumb("en", name); }).then(function (r) {
+      if (!r) { PHOTOS[key] = { none: true }; save("sylva_photos", PHOTOS); return null; }
+      return commonsMeta(r.file).then(function (m) {
+        r.artist = m.artist; r.license = m.license; r.commons = m.commons;
+        PHOTOS[key] = r; save("sylva_photos", PHOTOS);
+        return r;
+      });
+    });
+  }
+  function photoCredit(p) {
+    var link = p.commons ? "https://commons.wikimedia.org/wiki/File:" + encodeURIComponent(p.file) : p.page;
+    return "Photo : " + esc(p.artist || "auteur sur Wikimedia") + (p.license ? " · " + esc(p.license) : "") +
+      ' · <a href="' + esc(link) + '" target="_blank" rel="noopener">source</a>';
+  }
+  function allLatins() {
+    var out = [];
+    ESPECES.forEach(function (s) {
+      out.push(s.latin);
+      (s.sosies || []).forEach(function (x) { if (x.latin) out.push(x.latin); });
+    });
+    return out;
+  }
+  var prefetching = false;
+  function prefetchPhotos(verbose) {
+    if (prefetching || !navigator.onLine) { if (verbose && !navigator.onLine) toast("Pas de réseau"); return; }
+    prefetching = true;
+    var list = allLatins(), i = 0, ok = 0;
+    (function next() {
+      if (i >= list.length) {
+        prefetching = false; renderEspeces();
+        if (verbose) toast(ok + " photos prêtes pour le hors-ligne");
+        return;
+      }
+      var latin = list[i++];
+      fetchPhoto(latin).then(function (p) {
+        if (p) { ok++; var img = new Image(); img.src = p.src; }
+      }).catch(function () {}).then(function () { setTimeout(next, 250); });
+    })();
+  }
+
   // ---------- Espèces ----------
   var CAT_LABEL = { plante: "Plante comestible", toxique: "Plante toxique", champignon: "Champignon", animal: "Faune" };
   var CAT_PLURAL = { plante: "Plantes comestibles", toxique: "Plantes toxiques", champignon: "Champignons", animal: "Faune" };
-  var CAT_ICO ={ plante: ["#23382A", "#8CCB7E"], toxique: ["#4A1C14", "#FFB4A1"], champignon: ["#3A3218", "#F2D184"], animal: ["#2A2235", "#C7B9DE"] };
+  var CAT_ICO = { plante: ["#23382A", "#8CCB7E"], toxique: ["#4A1C14", "#FFB4A1"], champignon: ["#3A3218", "#F2D184"], animal: ["#2A2235", "#C7B9DE"] };
   var curCat = "tout";
   function lvClass(n) { return "lv-" + (n || "info"); }
 
@@ -421,9 +501,10 @@
     var lastCat = null;
     list.forEach(function (s) {
       if (curCat === "tout" && s.cat !== lastCat) { html += '<div class="section-title">' + esc(CAT_PLURAL[s.cat]) + "</div>"; lastCat = s.cat; }
-      var ic = CAT_ICO[s.cat];
+      var ic = CAT_ICO[s.cat], ph = photoOf(s.latin);
       html += '<button class="item" data-esp="' + esc(s.id) + '">' +
-        '<span class="item-ico" style="background:' + ic[0] + ";color:" + ic[1] + '">' + esc(s.nom.charAt(0)) + "</span>" +
+        (ph ? '<span class="item-ico item-photo"><img src="' + esc(ph.src) + '" alt="" loading="lazy"></span>'
+            : '<span class="item-ico" style="background:' + ic[0] + ";color:" + ic[1] + '">' + esc(s.nom.charAt(0)) + "</span>") +
         '<span class="item-main"><span class="item-name">' + esc(s.nom) + '</span><span class="item-sub">' + esc(s.saison) + "</span></span>" +
         '<span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + "</span></button>";
     });
@@ -441,28 +522,50 @@
     var b = e.target.closest("[data-esp]"); if (b) openEspece(b.getAttribute("data-esp"));
   });
 
+  function heroHtml(p, alt) {
+    return '<figure class="photo"><img src="' + esc(p.src) + '" alt="' + esc(alt) + '"><figcaption>' + photoCredit(p) + "</figcaption></figure>";
+  }
+  function sosieThumb(x) {
+    var p = x.latin && photoOf(x.latin);
+    return p ? '<img class="sosie-img" src="' + esc(p.src) + '" alt="' + esc(x.nom) + '">' : "";
+  }
+
   function openEspece(id) {
     var s = ESPECES.filter(function (x) { return x.id === id; })[0]; if (!s) return;
-    var h = '<h1 id="sheetTitle">' + esc(s.nom) + '</h1><div class="latin">' + esc(s.latin) + "</div>" +
+    var ph = photoOf(s.latin);
+    var h = '<div id="heroSlot">' + (ph ? heroHtml(ph, s.nom) : "") + "</div>" +
+      '<h1 id="sheetTitle">' + esc(s.nom) + '</h1><div class="latin">' + esc(s.latin) + "</div>" +
       '<div class="row" style="flex-wrap:wrap;gap:6px;margin:0 0 12px"><span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + '</span><span class="badge lv-info">' + esc(s.saison) + "</span></div>" +
       "<p>" + esc(s.resume) + "</p>";
     if (s.identification && s.identification.length) {
       h += "<h3>Reconnaître</h3><ul>" + s.identification.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
     }
     if (s.sosies && s.sosies.length) {
+      var credits = [];
       h += "<h3>Ne pas confondre</h3>" + s.sosies.map(function (x) {
-        return '<div class="sosie ' + esc(x.niveau) + '"><b>' + esc(x.nom) + "</b>" + esc(x.diff) + "</div>";
+        var p = x.latin && photoOf(x.latin);
+        if (p) credits.push(esc(x.nom.split(" (")[0]) + " — " + photoCredit(p));
+        return '<div class="sosie ' + esc(x.niveau) + '">' + sosieThumb(x) + '<div><b>' + esc(x.nom) + "</b>" + esc(x.diff) + "</div></div>";
       }).join("");
+      if (credits.length) h += '<p class="tiny muted credits">' + credits.join("<br>") + "</p>";
     }
     if (s.usages && s.usages.length) {
       h += "<h3>" + (s.cat === "animal" ? "Conseils" : s.niveau === "danger" ? "Consignes" : "Usages") + "</h3><ul>" +
         s.usages.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
     }
-    h += '<p class="disclaimer">Contenu éducatif. Ne consommez jamais une plante ou un champignon sans certitude absolue de son identité.</p>';
+    h += '<p class="disclaimer">Contenu éducatif. Ne consommez jamais une plante ou un champignon sans certitude absolue de son identité. La photo montre l\'espèce en général : comparez toujours plusieurs critères.</p>';
     openSheet(CAT_LABEL[s.cat], h);
+    if (!ph && navigator.onLine) {
+      fetchPhoto(s.latin).then(function (p) {
+        var slot = document.getElementById("heroSlot");
+        if (p && slot && !$("#sheet").hidden) slot.innerHTML = heroHtml(p, s.nom);
+      }).catch(function () {});
+    }
   }
 
   // ---------- Techniques ----------
+  var ILLUS = window.SYLVA_ILLUS || {};
+  var CATS = window.SYLVA_CATEGORIES || [];
   function renderTechniques() {
     var h = "";
     TECHS.forEach(function (t) {
@@ -471,21 +574,28 @@
           '<span class="k">Priorité</span><span class="t">' + esc(t.titre) + "</span><p>" + esc(t.intro) + "</p></button>";
       }
     });
-    h += '<div class="section-title">Toutes les techniques</div><div class="list">';
-    TECHS.forEach(function (t) {
-      if (t.priorite) return;
-      h += '<button class="item" data-tech="' + esc(t.id) + '">' +
-        '<span class="item-ico" style="background:#203027;color:#E9A23B">' + esc(t.titre.charAt(0)) + "</span>" +
-        '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.intro) + "</span></span></button>";
+    CATS.forEach(function (cat) {
+      var items = TECHS.filter(function (t) { return t.cat === cat && !t.priorite; });
+      if (!items.length) return;
+      h += '<div class="section-title">' + esc(cat) + '</div><div class="list">';
+      items.forEach(function (t) {
+        h += '<button class="item" data-tech="' + esc(t.id) + '">' +
+          '<span class="item-illus" aria-hidden="true">' + (ILLUS[t.illus] || "") + "</span>" +
+          '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.intro) + "</span></span></button>";
+      });
+      h += "</div>";
     });
-    h += "</div>";
     $("#listTechniques").innerHTML = h;
   }
   $("#listTechniques").addEventListener("click", function (e) {
     var b = e.target.closest("[data-tech]"); if (!b) return;
     var t = TECHS.filter(function (x) { return x.id === b.getAttribute("data-tech"); })[0]; if (!t) return;
-    openSheet("Technique", '<h1 id="sheetTitle">' + esc(t.titre) + "</h1><p>" + esc(t.intro) + "</p><h3>Étapes</h3><ol>" +
-      t.etapes.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ol>");
+    var h = (ILLUS[t.illus] ? '<div class="illus">' + ILLUS[t.illus] + "</div>" : "") +
+      '<h1 id="sheetTitle">' + esc(t.titre) + "</h1><p>" + esc(t.intro) + "</p><h3>Étapes</h3><ol>" +
+      t.etapes.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ol>";
+    (t.attention || []).forEach(function (a) { h += '<div class="alert alert-warn"><span>' + esc(a) + "</span></div>"; });
+    if (t.source) h += '<p class="disclaimer">Source : ' + esc(t.source) + ". Illustration Sylva.</p>";
+    openSheet(t.cat, h);
   });
 
   // ---------- Scanner ----------
@@ -595,6 +705,7 @@
   // ---------- Démarrage ----------
   renderEspeces();
   renderTechniques();
+  setTimeout(function () { prefetchPhotos(false); }, 3000);
   initMap();
   startGeo();
 

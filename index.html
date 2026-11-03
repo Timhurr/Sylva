@@ -194,6 +194,11 @@
       <input type="text" id="apiKey" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Collez votre clé ici">
     </label>
     <p class="tiny muted">Clé gratuite sur my.plantnet.org (500 identifications par jour). Elle reste uniquement sur ce téléphone.</p>
+    <div class="field-label">Photos des espèces</div>
+    <div class="row">
+      <button type="button" class="btn" id="btnPhotos">Télécharger pour le hors-ligne</button>
+    </div>
+    <p class="tiny muted">Photos sous licence libre (Wikimedia Commons). À faire avec du réseau avant de partir.</p>
     <div class="field-label">Mes spots</div>
     <div class="row">
       <button type="button" class="btn" id="btnExportSpots">Copier mes spots</button>
@@ -225,6 +230,7 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="data.js"></script>
+<script src="illus.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

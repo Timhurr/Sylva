@@ -1,11 +1,12 @@
 /* Sylva – service worker : appli et fiches hors-ligne, tuiles de carte vues gardées en cache */
-var VERSION = "sylva-v0.1.4";
+var VERSION = "sylva-v0.2.0";
 var SHELL = VERSION + "-shell";
 var TILES = "sylva-tiles";
+var PHOTOS = "sylva-photos";
 var MAX_TILES = 2500;
 
 var LOCAL = [
-  "./", "index.html", "styles.css", "app.js", "data.js", "manifest.webmanifest",
+  "./", "index.html", "styles.css", "app.js", "data.js", "illus.js", "manifest.webmanifest",
   "icons/icon-180.png", "icons/icon-192.png", "icons/icon-512.png"
 ];
 var CDN = [
@@ -27,7 +28,7 @@ self.addEventListener("install", function (e) {
 
 self.addEventListener("activate", function (e) {
   e.waitUntil(caches.keys().then(function (keys) {
-    return Promise.all(keys.filter(function (k) { return k !== SHELL && k !== TILES; }).map(function (k) { return caches.delete(k); }));
+    return Promise.all(keys.filter(function (k) { return k !== SHELL && k !== TILES && k !== PHOTOS; }).map(function (k) { return caches.delete(k); }));
   }).then(function () { return self.clients.claim(); }));
 });
 
@@ -53,6 +54,19 @@ self.addEventListener("fetch", function (e) {
         if (hit) return hit;
         return fetch(req).then(function (res) {
           if (res && (res.ok || res.type === "opaque")) { c.put(req, res.clone()).then(trimTiles); }
+          return res;
+        });
+      });
+    }));
+    return;
+  }
+
+  // Photos Wikimedia : cache d'abord (gardées pour le hors-ligne)
+  if (url.hostname === "upload.wikimedia.org") {
+    e.respondWith(caches.open(PHOTOS).then(function (c) {
+      return c.match(req).then(function (hit) {
+        return hit || fetch(req).then(function (res) {
+          if (res && (res.ok || res.type === "opaque")) c.put(req, res.clone());
           return res;
         });
       });

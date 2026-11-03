@@ -19,7 +19,7 @@ window.SYLVA_ESPECES = [
       "Feuilles simples, longues (15–25 cm), bordées de dents pointues"
     ],
     sosies: [
-      { nom: "Marron d'Inde (Aesculus hippocastanum)", niveau: "danger",
+      { nom: "Marron d'Inde (Aesculus hippocastanum)", latin: "Aesculus hippocastanum", niveau: "danger",
         diff: "Bogue avec quelques pointes courtes et espacées, 1 seul fruit rond et lisse sans pointe, feuilles en éventail à 5–7 folioles." }
     ],
     usages: [
@@ -85,7 +85,7 @@ window.SYLVA_ESPECES = [
       "Pousse en haies et lisières"
     ],
     sosies: [
-      { nom: "Troène (Ligustrum vulgare)", niveau: "danger",
+      { nom: "Troène (Ligustrum vulgare)", latin: "Ligustrum vulgare", niveau: "danger",
         diff: "Baies noires luisantes en grappes, sans pellicule bleutée, sur un arbuste sans épines." }
     ],
     usages: [
@@ -147,7 +147,7 @@ window.SYLVA_ESPECES = [
       "Feuilles opposées, en cœur allongé, bordées de grosses dents"
     ],
     sosies: [
-      { nom: "Lamier blanc", niveau: "ok",
+      { nom: "Lamier blanc", latin: "Lamium album", niveau: "ok",
         diff: "Ressemble à l'ortie mais ne pique pas. Comestible aussi." }
     ],
     usages: [
@@ -182,7 +182,7 @@ window.SYLVA_ESPECES = [
       "Fleurs blanches en ombelles"
     ],
     sosies: [
-      { nom: "Carotte sauvage, panais, céleri sauvage", niveau: "danger",
+      { nom: "Carotte sauvage, panais, céleri sauvage", latin: "Daucus carota", niveau: "danger",
         diff: "Règle simple : ne jamais consommer une ombellifère sauvage (fleurs en ombrelle) sans être expert. Plusieurs sont mortelles." }
     ],
     usages: ["Ne pas toucher à mains nues si possible, ne rien consommer."]
@@ -249,7 +249,7 @@ window.SYLVA_ESPECES = [
       "Lames et pied blancs, anneau, base bulbeuse"
     ],
     sosies: [
-      { nom: "Amanite des Césars (absente en Belgique)", niveau: "caution",
+      { nom: "Amanite des Césars (absente en Belgique)", latin: "Amanita caesarea", niveau: "caution",
         diff: "Lames et pied jaunes. Ne pas tenter de distinguer soi-même." }
     ],
     usages: ["Ne rien consommer."]
@@ -263,7 +263,7 @@ window.SYLVA_ESPECES = [
       "Petit anneau fragile sur le pied"
     ],
     sosies: [
-      { nom: "Pholiote changeante (comestible)", niveau: "danger",
+      { nom: "Pholiote changeante (comestible)", latin: "Kuehneromyces mutabilis", niveau: "danger",
         diff: "Confusion classique et mortelle, même pour des cueilleurs expérimentés." }
     ],
     usages: ["Ne rien consommer."]
@@ -278,7 +278,7 @@ window.SYLVA_ESPECES = [
       "Pied ventru avec un fin réseau blanc en relief en haut"
     ],
     sosies: [
-      { nom: "Bolet amer (Tylopilus felleus)", niveau: "caution",
+      { nom: "Bolet amer (Tylopilus felleus)", latin: "Tylopilus felleus", niveau: "caution",
         diff: "Tubes qui deviennent roses, réseau sombre sur le pied, goût très amer." },
       { nom: "Bolets à pores rouges", niveau: "danger",
         diff: "Pores rouges ou orangés, chair qui bleuit : à écarter." }
@@ -347,76 +347,315 @@ window.SYLVA_ESPECES = [
   }
 ];
 
+// ---------- TECHNIQUES ----------
+// Sources principales : manuel de survie de l'armée américaine FM 21-76 / FM 3-05.70
+// (domaine public), recommandations OMS sur l'ébullition, revue medRxiv 2025 sur
+// l'approvisionnement en eau improvisé, réglementation forestière wallonne.
+var SRC_FM = "Manuel de survie de l'armée américaine FM 21-76 / FM 3-05.70 (domaine public)";
+var SRC_EAU = "OMS ; revue « Improvised Water Procurement in Wilderness Medicine » (medRxiv, 2025)";
+
+window.SYLVA_CATEGORIES = ["Priorités", "Eau", "Feu", "Abri", "Orientation", "Secours", "Nourriture", "Éthique"];
+
 window.SYLVA_TECHNIQUES = [
+  // ===== PRIORITÉS =====
   {
-    id: "eau", titre: "Rendre l'eau potable", icone: "eau", priorite: true,
-    intro: "Même claire, l'eau de l'Ourthe peut contenir bactéries et parasites (élevages et villages en amont).",
+    id: "priorites", cat: "Priorités", titre: "La règle des 3", illus: "priorites",
+    intro: "Un repère simple pour savoir quoi faire en premier quand ça tourne mal.",
+    etapes: [
+      "3 minutes sans air : dégager les voies respiratoires, arrêter une hémorragie, c'est la priorité absolue.",
+      "3 heures sans abri par froid humide ou forte chaleur : se protéger avant de chercher à manger.",
+      "3 jours sans eau : trouver et rendre l'eau potable vient ensuite.",
+      "3 semaines sans nourriture : sur un bivouac de quelques jours, la nourriture n'est jamais l'urgence.",
+      "Garder la tête froide : s'arrêter, réfléchir, observer, planifier (le « STOP » des manuels de survie)."
+    ],
+    attention: ["Ces durées sont des ordres de grandeur, pas des limites à tester."],
+    source: SRC_FM
+  },
+
+  // ===== EAU =====
+  {
+    id: "eau", cat: "Eau", titre: "Rendre l'eau potable", illus: "eau_ebullition", priorite: true,
+    intro: "Même claire, l'eau de l'Ourthe peut contenir bactéries et parasites (élevages et villages en amont). L'ébullition est la seule méthode improvisée vraiment sûre.",
     etapes: [
       "Préfiltrer à travers un tissu propre pour retirer les particules.",
       "Porter à gros bouillons pendant 1 minute (3 minutes au-dessus de 2 000 m).",
-      "Laisser refroidir à couvert. À défaut : filtre de randonnée ou pastilles de purification en respectant le temps d'attente indiqué.",
-      "Puiser en amont du campement et loin des pâtures."
-    ]
+      "Laisser refroidir à couvert, dans un récipient propre.",
+      "À défaut de feu : filtre de randonnée certifié ou pastilles de purification, en respectant le temps d'attente indiqué.",
+      "Puiser en amont du campement, loin des pâtures et des eaux stagnantes."
+    ],
+    attention: ["L'ébullition ne retire pas les polluants chimiques : éviter l'eau près des champs traités, routes ou sites industriels."],
+    source: SRC_EAU
   },
   {
-    id: "froid", titre: "Prévenir l'hypothermie", icone: "froid", priorite: true,
+    id: "filtre", cat: "Eau", titre: "Filtre improvisé (sable et charbon)", illus: "eau_filtre",
+    intro: "Clarifie une eau trouble avant de la faire bouillir. Ne la rend PAS potable à lui seul.",
+    etapes: [
+      "Couper le fond d'une bouteille plastique et la retourner, bouchon légèrement dévissé ou percé.",
+      "Empiler de bas en haut : charbon de bois écrasé (du feu de la veille, sans cendres), sable fin, gravier, puis tissu ou herbes.",
+      "Verser l'eau lentement par le haut et jeter les premiers passages, souvent encore troubles.",
+      "Faire bouillir l'eau filtrée 1 minute avant de la boire."
+    ],
+    attention: ["Aucune étude ne montre qu'un filtre artisanal élimine les microbes : toujours bouillir après."],
+    source: SRC_EAU
+  },
+  {
+    id: "pluie", cat: "Eau", titre: "Récupérer l'eau de pluie", illus: "eau_pluie",
+    intro: "La meilleure source improvisée : quelques litres par averse pour très peu d'effort.",
+    etapes: [
+      "Tendre une bâche, un poncho ou une couverture de survie en pente vers un point bas.",
+      "Placer un récipient propre sous ce point bas (gourde, casserole, sac étanche).",
+      "Laisser la première pluie rincer la bâche avant de récolter.",
+      "Stocker à l'abri et faire bouillir si l'eau a stagné ou touché des feuilles."
+    ],
+    attention: [],
+    source: SRC_EAU
+  },
+  {
+    id: "transpiration", cat: "Eau", titre: "Sac de transpiration", illus: "eau_transpiration",
+    intro: "Un sac plastique transparent sur une branche feuillue récupère l'eau que la plante évapore. Utile au soleil, faible en novembre.",
+    etapes: [
+      "Choisir une branche feuillue d'un arbre ou arbuste NON toxique, bien exposée au soleil.",
+      "Enfiler un sac plastique transparent dessus et le fermer hermétiquement autour de la branche.",
+      "Laisser pendre un coin du sac vers le bas, avec un petit caillou dedans pour créer un point bas.",
+      "Récolter en fin de journée en perçant le coin ou en ouvrant le sac, puis changer de branche."
+    ],
+    attention: ["Rendement de quelques décilitres à 1 litre par jour, et seulement par beau temps.", "Jamais sur if, digitale, douce-amère ou une plante non identifiée."],
+    source: SRC_FM + " ; " + SRC_EAU
+  },
+  {
+    id: "rosee", cat: "Eau", titre: "Collecter la rosée", illus: "eau_rosee",
+    intro: "Un complément d'appoint, au petit matin, quand l'herbe est trempée.",
+    etapes: [
+      "Juste avant le lever du soleil, nouer un tissu absorbant (t-shirt, chiffon) autour des chevilles ou le tenir à la main.",
+      "Marcher ou le traîner dans les herbes hautes mouillées.",
+      "Essorer régulièrement dans un récipient.",
+      "Faire bouillir avant de boire."
+    ],
+    attention: ["Rendement très faible (de l'ordre d'un verre) : ne jamais compter dessus comme source principale."],
+    source: SRC_EAU
+  },
+
+  // ===== FEU =====
+  {
+    id: "feu", cat: "Feu", titre: "Préparer son feu", illus: "feu_preparation",
+    intro: "90 % des feux ratés le sont par manque de préparation. En Wallonie, feu interdit en forêt sauf aux emplacements prévus : vérifier les règles de l'aire.",
+    etapes: [
+      "Choisir un emplacement autorisé, à l'abri du vent, dégagé de feuilles et loin des racines et branches basses.",
+      "Ramasser une grosse poignée d'amadou : écorce de bouleau (brûle même humide), herbes sèches, aiguilles mortes, copeaux fins.",
+      "Préparer le petit bois en dégradé, de l'épaisseur d'une allumette à celle d'un pouce.",
+      "Prévoir le bois de chauffe (épaisseur d'un poignet), uniquement du bois mort ramassé au sol.",
+      "Rassembler deux fois plus de chaque catégorie que ce qui semble nécessaire, AVANT d'allumer."
+    ],
+    attention: ["Ne jamais couper de branches vivantes : elles ne brûlent pas et c'est interdit."],
+    source: SRC_FM
+  },
+  {
+    id: "tipi", cat: "Feu", titre: "Feu en tipi", illus: "feu_tipi",
+    intro: "La structure la plus simple pour démarrer : la flamme monte et attrape le bois du dessus.",
+    etapes: [
+      "Déposer l'amadou en boule au centre.",
+      "Dresser le petit bois le plus fin en cône autour, en laissant une ouverture côté vent.",
+      "Allumer l'amadou par l'ouverture, au ras du sol.",
+      "Souffler doucement à la base quand les flammes prennent.",
+      "Ajouter du bois de plus en plus gros sans écraser la structure."
+    ],
+    attention: [],
+    source: SRC_FM
+  },
+  {
+    id: "cabane", cat: "Feu", titre: "Feu en cabane (rondins croisés)", illus: "feu_cabane",
+    intro: "Brûle longtemps et donne un beau lit de braises, idéal pour cuisiner.",
+    etapes: [
+      "Démarrer un petit tipi au centre.",
+      "Poser deux bûches parallèles de chaque côté, puis deux autres en travers par-dessus, comme une cabane en rondins.",
+      "Monter 3 à 5 étages en réduisant légèrement la taille vers le haut.",
+      "Laisser le feu s'effondrer en braises avant de poser la casserole."
+    ],
+    attention: [],
+    source: SRC_FM
+  },
+  {
+    id: "ferro", cat: "Feu", titre: "Allumer au ferrocérium", illus: "feu_ferro",
+    intro: "La pierre à feu fonctionne mouillée, par grand froid et des milliers de fois. À mettre dans tout sac de bivouac.",
+    etapes: [
+      "Préparer un nid d'amadou très fin et sec (écorce de bouleau râpée, coton, copeaux).",
+      "Poser la pointe de la tige DANS l'amadou, le racleur appuyé à environ 45°.",
+      "Tirer la tige vers soi plutôt que de pousser le racleur : on ne disperse pas le nid.",
+      "Répéter fermement jusqu'à ce que les étincelles prennent, puis souffler doucement."
+    ],
+    attention: ["Les étincelles dépassent 3 000 °C : garder doigts et vêtements synthétiques à distance."],
+    source: SRC_FM
+  },
+  {
+    id: "feupluie", cat: "Feu", titre: "Faire du feu sous la pluie", illus: "feu_pluie",
+    intro: "En Ardenne en novembre, tout est mouillé. Il faut chercher le sec là où il se cache.",
+    etapes: [
+      "Récolter les brindilles mortes encore sur pied, en bas des épicéas : elles restent sèches sous la ramure.",
+      "Prélever l'écorce de bouleau sur des arbres morts ou au sol.",
+      "Fendre les morceaux de bois mort : le cœur reste sec même quand l'extérieur est trempé.",
+      "Monter une plateforme de bâtons sur le sol mouillé et allumer dessus.",
+      "Abriter le départ de feu avec son corps ou une bâche haute, jamais à ras des flammes."
+    ],
+    attention: ["Ne jamais faire de feu sous une tente ou une bâche fermée : risque d'incendie et de monoxyde de carbone."],
+    source: SRC_FM
+  },
+
+  // ===== ABRI =====
+  {
+    id: "froid", cat: "Abri", titre: "Prévenir l'hypothermie", illus: "froid", priorite: true,
     intro: "Novembre en Ardenne : nuits proches de 0 °C et humidité. Le froid humide est le vrai danger du bivouac.",
     etapes: [
       "Rester au sec : se changer avant d'avoir froid, garder une tenue sèche réservée à la nuit.",
-      "Système en couches : base respirante, couche chaude, coque imperméable.",
-      "Isoler du sol : un bon matelas compte autant que le sac de couchage.",
+      "Système en couches : base respirante (pas de coton), couche chaude, coque imperméable.",
+      "Isoler du sol : au repos, on y perd une grande partie de sa chaleur. Un bon matelas compte autant que le sac de couchage.",
       "Manger et boire chaud avant de dormir.",
       "Signes d'alerte : frissons incontrôlables, gestes maladroits, confusion. Réchauffer la personne et appeler le 112 si ça s'aggrave."
-    ]
+    ],
+    attention: ["Une personne qui arrête de frissonner alors qu'elle a toujours froid est en danger : appeler les secours."],
+    source: SRC_FM
   },
   {
-    id: "abri", titre: "Choisir son emplacement", icone: "abri",
+    id: "abri", cat: "Abri", titre: "Choisir son emplacement", illus: "abri_emplacement",
     intro: "Un bon emplacement fait la moitié d'une bonne nuit.",
     etapes: [
       "Uniquement sur une aire de bivouac autorisée ou un terrain privé avec accord (voir onglet Carte).",
-      "Lever les yeux : aucune branche morte ni arbre mort au-dessus de la tente.",
-      "Éviter les fonds de vallée et le bord immédiat de la rivière : air froid, humidité, crue possible.",
-      "Sol plat, légèrement surélevé, entrée de la tente dos au vent."
-    ]
+      "Lever les yeux : aucune branche morte ni arbre mort au-dessus.",
+      "Éviter le fond de vallée et le bord immédiat de la rivière : air froid, humidité, montée des eaux possible.",
+      "Chercher un replat sec, légèrement surélevé, proche du bois mort et de l'eau.",
+      "Orienter l'entrée de l'abri dos au vent dominant."
+    ],
+    attention: [],
+    source: SRC_FM
   },
   {
-    id: "feu", titre: "Faire du feu (là où c'est permis)", icone: "feu",
-    intro: "En Wallonie, le feu est interdit en forêt sauf aux emplacements prévus. Vérifier les règles de l'aire sur place.",
+    id: "bache", cat: "Abri", titre: "Abri en A avec une bâche", illus: "abri_bache",
+    intro: "Le plus rapide avec du matériel : une bâche de 3 × 3 m et 10 m de cordelette.",
     etapes: [
-      "Préparer trois tas avant d'allumer : amadou (herbes sèches, écorce de bouleau), petit bois (allumettes de branche), bois plus gros.",
-      "Ramasser uniquement du bois mort au sol, jamais sur un arbre vivant.",
-      "Monter un tipi de petit bois autour de l'amadou, allumer côté vent, souffler doucement à la base.",
-      "Éteindre complètement à l'eau, remuer, vérifier qu'aucune braise ne chauffe au toucher du dos de la main."
-    ]
+      "Tendre une corde entre deux arbres, à hauteur de hanche à épaule selon la météo (plus bas = plus chaud).",
+      "Poser la bâche à cheval sur la corde.",
+      "Piqueter les quatre coins au sol, côtés bien tendus pour que la pluie ruisselle.",
+      "Garnir le sol de feuilles sèches ou d'aiguilles sous le matelas."
+    ],
+    attention: ["Nouer un petit bout de ficelle sur la corde de chaque côté : l'eau y goutte au lieu de couler dans l'abri."],
+    source: SRC_FM
   },
   {
-    id: "orientation", titre: "S'orienter sans réseau", icone: "orientation",
+    id: "appentis", cat: "Abri", titre: "Appentis en branchages", illus: "abri_appentis",
+    intro: "Un toit incliné ouvert d'un côté, efficace avec un feu réfléchi devant (là où le feu est autorisé).",
+    etapes: [
+      "Caler une perche faîtière solide entre deux arbres, à hauteur de poitrine.",
+      "Appuyer des perches dessus, côté vent, à environ 45°, espacées de 30 cm.",
+      "Entrelacer des branches souples en travers pour former une grille.",
+      "Couvrir de branchages feuillus, fougères ou feuilles, du bas vers le haut comme des tuiles.",
+      "Isoler le sol avec une épaisse couche de feuilles sèches."
+    ],
+    attention: ["Uniquement avec du bois mort et sur un terrain où c'est permis."],
+    source: SRC_FM
+  },
+  {
+    id: "debris", cat: "Abri", titre: "Hutte de débris", illus: "abri_debris",
+    intro: "L'abri de survie sans matériel le plus chaud : un sac de couchage géant en feuilles mortes.",
+    etapes: [
+      "Trouver une perche faîtière d'environ 1,5 fois ta taille.",
+      "Poser une extrémité sur une souche ou un trépied à hauteur de genou, l'autre au sol.",
+      "Allonger des branches le long des deux côtés, serrées, pour former des côtes.",
+      "Couvrir de petits branchages puis d'une couche de feuilles mortes de 60 cm à 1 m d'épaisseur (la longueur d'un bras).",
+      "Remplir l'intérieur de feuilles sèches, entrer pieds devant et boucher l'entrée avec un tas de feuilles."
+    ],
+    attention: ["L'intérieur doit être juste assez grand pour toi : plus c'est petit, plus c'est chaud."],
+    source: SRC_FM
+  },
+
+  // ===== ORIENTATION =====
+  {
+    id: "orientation", cat: "Orientation", titre: "S'orienter sans réseau", illus: "orient_montre",
     intro: "La vallée de l'Ourthe est sinueuse et le réseau mobile y est irrégulier.",
     etapes: [
       "Avant de partir : repérer l'itinéraire et l'afficher dans l'onglet Carte pour le garder en cache.",
-      "Suivre la rivière vers l'aval mène tôt ou tard à un village (La Roche-en-Ardenne vers le nord-ouest).",
+      "Suivre la rivière vers l'aval mène tôt ou tard à un village (La Roche-en-Ardenne vers le nord-ouest depuis Nisramont).",
       "En novembre, le soleil est plein sud vers 12 h 30 (heure belge).",
-      "La nuit, l'étoile polaire indique le nord : prolonger 5 fois l'écart entre les deux étoiles du bord de la « casserole » de la Grande Ourse."
-    ]
+      "Avec une montre à aiguilles : pointer la petite aiguille vers le soleil. Le sud est à mi-chemin entre elle et le 12 (le 1 en heure d'été)."
+    ],
+    attention: [],
+    source: SRC_FM
   },
   {
-    id: "urgence", titre: "Urgence & secours", icone: "sos",
+    id: "baton", cat: "Orientation", titre: "Méthode du bâton et de l'ombre", illus: "orient_baton",
+    intro: "Trouver l'est et l'ouest avec un simple bâton, dès qu'il y a un peu de soleil.",
+    etapes: [
+      "Planter un bâton bien droit sur un sol plat.",
+      "Marquer l'extrémité de son ombre avec un caillou : c'est l'OUEST.",
+      "Attendre 15 minutes et marquer la nouvelle extrémité de l'ombre : c'est l'EST.",
+      "La ligne entre les deux repères va d'ouest en est. Une perpendiculaire donne le nord et le sud."
+    ],
+    attention: [],
+    source: SRC_FM
+  },
+  {
+    id: "polaire", cat: "Orientation", titre: "Trouver le nord la nuit", illus: "orient_polaire",
+    intro: "L'étoile polaire indique le nord à environ 1° près, toute l'année dans l'hémisphère nord.",
+    etapes: [
+      "Repérer la Grande Ourse, la « casserole » de 7 étoiles brillantes.",
+      "Prendre les deux étoiles du bord de la casserole, à l'opposé du manche.",
+      "Prolonger leur alignement d'environ 5 fois leur écartement.",
+      "L'étoile assez brillante et isolée qui s'y trouve est la Polaire : elle indique le nord."
+    ],
+    attention: [],
+    source: SRC_FM
+  },
+
+  // ===== SECOURS =====
+  {
+    id: "urgence", cat: "Secours", titre: "Urgence et secours", illus: "urgence",
     intro: "Le 112 passe par n'importe quel réseau mobile disponible, même si ce n'est pas celui de votre opérateur.",
     etapes: [
       "Appeler le 112 et donner vos coordonnées GPS (bouton SOS en haut de l'appli).",
       "Si l'appel ne passe pas, envoyer un SMS à un proche avec la position, puis monter sur une hauteur pour chercher du réseau.",
-      "Rester visible : vêtement de couleur vive, lampe, 3 signaux répétés = détresse.",
+      "Rester sur place si quelqu'un sait où vous êtes : on retrouve plus vite une personne immobile.",
       "Toujours prévenir quelqu'un de son itinéraire et de son heure de retour avant de partir."
-    ]
+    ],
+    attention: [],
+    source: SRC_FM
   },
   {
-    id: "traces", titre: "Ne laisser aucune trace", icone: "feuille",
+    id: "signaux", cat: "Secours", titre: "Signaux de détresse", illus: "secours_signaux",
+    intro: "Tout ce qui se répète par trois signifie « détresse », partout dans le monde.",
+    etapes: [
+      "Sifflet : 3 coups longs, une pause, et recommencer. Il porte bien plus loin que la voix et fatigue moins.",
+      "Lampe : 3 éclats répétés, ou SOS (3 courts, 3 longs, 3 courts).",
+      "Feux : 3 feux en triangle espacés d'une trentaine de mètres, dans une clairière visible du ciel (si la situation l'exige).",
+      "Au sol, symboles de 3 m de haut en branches ou pierres : V = besoin d'aide, X = besoin d'assistance médicale.",
+      "Porter une couleur vive et l'étendre dans un endroit dégagé."
+    ],
+    attention: ["En montagne, le signal alpin de détresse est de 6 signaux par minute, puis une minute de pause."],
+    source: SRC_FM
+  },
+
+  // ===== NOURRITURE =====
+  {
+    id: "piege", cat: "Nourriture", titre: "Pièges de survie : ce qu'il faut savoir", illus: "piege_4",
+    intro: "Les manuels militaires décrivent collets et assommoirs (comme le piège en « 4 »). En Belgique comme en France, les poser est du braconnage, sauf en cas de détresse vitale réelle.",
+    etapes: [
+      "Sur un bivouac de quelques jours, la nourriture n'est jamais la priorité : emporter ses vivres.",
+      "En vraie situation de détresse, privilégier ce qui demande peu d'énergie : cueillette identifiée avec certitude (onglet Espèces).",
+      "Les pièges ne fonctionnent qu'en multipliant les postes sur des coulées actives (passages, traces, crottes) et en les relevant souvent.",
+      "Un piège oublié continue de tuer : en situation réelle, les démonter tous avant de partir."
+    ],
+    attention: ["Interdit hors détresse vitale : amende et poursuites pour braconnage.", "La pêche demande un permis de pêche en Wallonie."],
+    source: SRC_FM
+  },
+
+  // ===== ÉTHIQUE =====
+  {
+    id: "traces", cat: "Éthique", titre: "Ne laisser aucune trace", illus: "traces",
     intro: "C'est ce qui permet aux aires de bivouac de rester ouvertes.",
     etapes: [
-      "Remporter tous ses déchets, y compris organiques.",
-      "Besoins : à plus de 50 m de l'eau, dans un trou de 15 cm rebouché, papier remporté.",
+      "Remporter tous ses déchets, y compris organiques et papier toilette.",
+      "Besoins : à plus de 50 m de l'eau, dans un trou de 15 cm rebouché.",
       "Pas de savon dans la rivière, même biodégradable.",
-      "Arriver tard, partir tôt, rester discret."
-    ]
+      "Arriver tard, partir tôt, rester discret, laisser le lieu plus propre qu'à l'arrivée."
+    ],
+    attention: [],
+    source: "Principes « Leave No Trace »"
   }
 ];
