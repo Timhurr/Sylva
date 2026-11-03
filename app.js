@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.1.3";
+  var VERSION = "0.1.4";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -158,8 +158,15 @@
       ");out center tags;";
   }
 
+  var focusPoint = null; // lieu recherché : prioritaire sur la position GPS
+  function refPoint() {
+    if (focusPoint) return focusPoint;
+    if (me) return [me[0], me[1]];
+    return map ? [map.getCenter().lat, map.getCenter().lng] : ZONE.centre;
+  }
+
   function loadOsm(force) {
-    var c = me ? [me[0], me[1]] : (map ? [map.getCenter().lat, map.getCenter().lng] : ZONE.centre);
+    var c = refPoint();
     var cached = load("sylva_osm", null);
     var fresh = cached && (Date.now() - cached.t < 7 * 864e5) && distKm(cached.c, c) < 8;
     if (fresh && !force) { updateMapCard(); return; }
@@ -242,7 +249,7 @@
 
   function updateMapCard() {
     if (!map) return;
-    var from = me ? [me[0], me[1]] : [map.getCenter().lat, map.getCenter().lng];
+    var from = refPoint();
     var biv = osmPlaces.filter(function (p) { return p.kind === "bivouac"; });
     if (!biv.length) {
       var cached = load("sylva_osm", null);
@@ -294,10 +301,76 @@
     renderSpots(); closeModal($("#modalSpot")); toast("Spot enregistré");
   });
   $("#btnLocate").addEventListener("click", function () {
-    if (me && map) map.setView([me[0], me[1]], 15);
+    clearPlace();
+    if (me && map) { map.setView([me[0], me[1]], 15); updateMapCard(); }
     else toast("Recherche de votre position…");
   });
-  $("#btnReloadOsm").addEventListener("click", function () { loadOsm(true); });
+  $("#btnReloadOsm").addEventListener("click", function () {
+    if (focusPoint && map) { var c = map.getCenter(); focusPoint = [c.lat, c.lng]; }
+    loadOsm(true);
+  });
+
+  // ---------- Recherche de lieu (Nominatim / OpenStreetMap) ----------
+  var placeMarker = null, placeList = [], lastSearch = 0;
+  function clearPlace() {
+    focusPoint = null;
+    if (placeMarker && map) { map.removeLayer(placeMarker); placeMarker = null; }
+  }
+  function showPlaceResults(html) { var r = $("#placeResults"); r.innerHTML = html; r.hidden = !html; }
+
+  $("#formPlace").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var q = $("#placeInput").value.trim();
+    if (!q) { showPlaceResults(""); return; }
+    if (!navigator.onLine) { showPlaceResults('<div class="place-empty">Pas de réseau : recherche impossible.</div>'); return; }
+    if (Date.now() - lastSearch < 1100) return; // max 1 recherche par seconde (règle du service)
+    lastSearch = Date.now();
+    $("#placeInput").blur();
+    showPlaceResults('<div class="place-empty">Recherche…</div>');
+    var c = map ? map.getCenter() : { lat: ZONE.centre[0], lng: ZONE.centre[1] };
+    var url = "https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&accept-language=fr" +
+      "&countrycodes=be,fr,lu,nl,de,ch&q=" + encodeURIComponent(q) +
+      "&viewbox=" + (c.lng - 1) + "," + (c.lat + 1) + "," + (c.lng + 1) + "," + (c.lat - 1);
+    fetch(url, { headers: { "Accept": "application/json" } }).then(function (r) {
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      return r.json();
+    }).then(function (list) {
+      placeList = list || [];
+      if (!placeList.length) { showPlaceResults('<div class="place-empty">Aucun lieu trouvé.</div>'); return; }
+      showPlaceResults(placeList.map(function (p, i) {
+        var parts = String(p.display_name || "").split(",");
+        return '<button type="button" class="place-item" data-place="' + i + '"><b>' + esc(p.name || parts[0]) +
+          "</b><span>" + esc(parts.slice(1).join(",").trim()) + "</span></button>";
+      }).join(""));
+    }).catch(function () {
+      showPlaceResults('<div class="place-empty">Service de recherche indisponible, réessayez.</div>');
+    });
+  });
+
+  $("#placeResults").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-place]"); if (!b || !map) return;
+    var p = placeList[+b.getAttribute("data-place")]; if (!p) return;
+    var ll = [parseFloat(p.lat), parseFloat(p.lon)];
+    var name = p.name || String(p.display_name || "").split(",")[0];
+    clearPlace();
+    focusPoint = ll;
+    placeMarker = L.marker(ll, { icon: pinIcon("#EEE9DD", "★"), zIndexOffset: 900 })
+      .bindPopup("<b>" + esc(name) + "</b><br>" +
+        (me ? '<span style="color:#A9B3A6">À ' + fmtKm(distKm([me[0], me[1]], ll)) + " de vous</span><br>" : "") +
+        '<br><a href="https://maps.apple.com/?daddr=' + ll[0] + "," + ll[1] + '" target="_blank" rel="noopener">Itinéraire</a>')
+      .addTo(map);
+    if (p.boundingbox) {
+      var bb = p.boundingbox.map(parseFloat); // [sud, nord, ouest, est]
+      map.fitBounds([[bb[0], bb[2]], [bb[1], bb[3]]], { maxZoom: 14 });
+    } else map.setView(ll, 13);
+    showPlaceResults("");
+    $("#placeInput").value = name;
+    loadOsm(true); // charge les aires de bivouac et points d'eau autour du lieu
+  });
+
+  $("#placeInput").addEventListener("input", function () {
+    if (!$("#placeInput").value) { showPlaceResults(""); clearPlace(); updateMapCard(); }
+  });
 
   // ---------- SOS ----------
   function sosText() {
