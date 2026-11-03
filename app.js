@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.1.0";
+  var VERSION = "0.1.1";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -470,11 +470,18 @@
       return fetch("https://my-api.plantnet.org/v2/identify/all?api-key=" + encodeURIComponent(key) +
         "&lang=fr&nb-results=5&include-related-images=false", { method: "POST", body: fd });
     }).then(function (r) {
-      if (r.status === 404) throw { msg: "Aucune plante reconnue. Rapprochez-vous d'une feuille, d'une fleur ou d'un fruit, bien net et bien éclairé." };
-      if (r.status === 401 || r.status === 403) throw { msg: "Clé API refusée. Vérifiez-la dans les réglages, et que l'adresse du site est autorisée dans votre compte Pl@ntNet." };
-      if (r.status === 429) throw { msg: "Quota du jour atteint (500 identifications)." };
-      if (!r.ok) throw { msg: "Le service d'identification a répondu une erreur (" + r.status + "). Réessayez." };
-      return r.json();
+      if (r.ok) return r.json();
+      return r.text().catch(function () { return ""; }).then(function (body) {
+        var detail = "";
+        try { var j = JSON.parse(body); detail = j.message || j.error || body; } catch (e) { detail = body; }
+        detail = String(detail || "").slice(0, 200);
+        var base;
+        if (r.status === 404) base = "Aucune plante reconnue. Rapprochez-vous d'une feuille, d'une fleur ou d'un fruit, bien net et bien éclairé.";
+        else if (r.status === 401 || r.status === 403) base = "Clé API refusée. Vérifiez-la dans les réglages, et que le domaine timhurr.github.io est autorisé dans votre compte Pl@ntNet.";
+        else if (r.status === 429) base = "Quota du jour atteint (500 identifications).";
+        else base = "Le service d'identification a répondu une erreur. Réessayez.";
+        throw { msg: base + " [Code " + r.status + (detail ? " : " + detail : "") + "] [Clé : " + key.slice(0, 4) + "…" + key.slice(-3) + ", " + key.length + " caractères]" };
+      });
     }).then(function (data) {
       setScanStatus("");
       renderScanResults(data.results || []);

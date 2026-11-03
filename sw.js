@@ -1,5 +1,5 @@
 /* Sylva – service worker : appli et fiches hors-ligne, tuiles de carte vues gardées en cache */
-var VERSION = "sylva-v0.1.0";
+var VERSION = "sylva-v0.1.1";
 var SHELL = VERSION + "-shell";
 var TILES = "sylva-tiles";
 var MAX_TILES = 2500;
