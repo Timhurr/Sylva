@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0E1612">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Sylva">
+<title>Sylva</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icons/icon-180.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-name">Sylva</span>
+    <span class="brand-zone" id="zoneName"></span>
+  </div>
+  <div class="topbar-actions">
+    <span class="net-badge" id="netBadge" hidden>Hors-ligne</span>
+    <button class="icon-btn" id="btnSettings" aria-label="Réglages">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+    </button>
+    <button class="sos-btn" id="btnSos">SOS</button>
+  </div>
+</header>
+
+<main>
+  <!-- CARTE -->
+  <section class="view active" id="view-carte" aria-label="Carte">
+    <div id="map"></div>
+    <div class="map-chips" role="group" aria-label="Couches">
+      <button class="chip on" data-layer="bivouac">Bivouac</button>
+      <button class="chip on" data-layer="eau">Eau potable</button>
+      <button class="chip on" data-layer="spots">Mes spots</button>
+    </div>
+    <div class="map-fabs">
+      <button class="fab" id="btnLocate" aria-label="Me localiser">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
+      </button>
+      <button class="fab" id="btnReloadOsm" aria-label="Recharger les zones autour de moi">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
+      </button>
+      <button class="fab fab-accent" id="btnAddSpot" aria-label="Ajouter un spot">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+    </div>
+    <div class="map-card" id="mapCard">
+      <div class="map-card-title">Chargement des zones…</div>
+      <div class="map-card-sub">Aires de bivouac et points d'eau depuis OpenStreetMap</div>
+    </div>
+  </section>
+
+  <!-- SCANNER -->
+  <section class="view" id="view-scan" aria-label="Scanner">
+    <div class="pad">
+      <h1>Scanner une plante</h1>
+      <p class="muted">Identification par photo via Pl@ntNet. Nécessite du réseau.</p>
+
+      <div class="alert alert-danger">
+        <strong>Ne mangez jamais une plante sur la seule base d'un scan.</strong>
+        <span>Vérifiez la fiche, les sosies, et en cas de doute, abstenez-vous. Les champignons ne sont pas pris en charge par le scan.</span>
+      </div>
+
+      <div class="field-label">Que photographiez-vous ?</div>
+      <div class="chips" id="organChips" role="group" aria-label="Partie de la plante">
+        <button class="chip on" data-organ="auto">Auto</button>
+        <button class="chip" data-organ="leaf">Feuille</button>
+        <button class="chip" data-organ="flower">Fleur</button>
+        <button class="chip" data-organ="fruit">Fruit</button>
+        <button class="chip" data-organ="bark">Écorce</button>
+      </div>
+
+      <label class="btn btn-primary btn-big" for="photoInput">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="4"/></svg>
+        Prendre une photo
+      </label>
+      <input type="file" id="photoInput" accept="image/*" capture="environment" hidden>
+
+      <div id="scanPreview" class="scan-preview" hidden><img id="scanImg" alt="Photo à identifier"></div>
+      <div id="scanStatus" class="scan-status" hidden></div>
+      <div id="scanResults"></div>
+      <p class="tiny muted">Identification fournie par le service Pl@ntNet (CIRAD, INRAE, INRIA, IRD).</p>
+    </div>
+  </section>
+
+  <!-- ESPÈCES -->
+  <section class="view" id="view-especes" aria-label="Espèces">
+    <div class="pad">
+      <h1>Espèces de la zone</h1>
+      <p class="muted" id="especesSub">Ardennes · saison actuelle</p>
+      <label class="search">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <span class="sr">Rechercher une espèce</span>
+        <input type="search" id="searchEspeces" placeholder="Châtaigne, sanglier, amanite…">
+      </label>
+      <div class="chips" id="catChips" role="group" aria-label="Catégories">
+        <button class="chip on" data-cat="tout">Tout</button>
+        <button class="chip" data-cat="plante">Comestibles</button>
+        <button class="chip" data-cat="toxique">Toxiques</button>
+        <button class="chip" data-cat="champignon">Champignons</button>
+        <button class="chip" data-cat="animal">Faune</button>
+      </div>
+      <div class="list" id="listEspeces"></div>
+    </div>
+  </section>
+
+  <!-- TECHNIQUES -->
+  <section class="view" id="view-techniques" aria-label="Techniques">
+    <div class="pad">
+      <h1>Techniques</h1>
+      <p class="muted">Disponibles hors-ligne.</p>
+      <div id="listTechniques"></div>
+    </div>
+  </section>
+</main>
+
+<!-- Fiche plein écran -->
+<div class="sheet" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-head">
+    <button class="icon-btn" id="sheetClose" aria-label="Fermer">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+    </button>
+    <span id="sheetKicker" class="sheet-kicker"></span>
+  </div>
+  <div class="sheet-body" id="sheetBody"></div>
+</div>
+
+<!-- Modales -->
+<div class="modal" id="modalSos" hidden role="dialog" aria-modal="true" aria-labelledby="sosTitle">
+  <div class="modal-box">
+    <h2 id="sosTitle">Urgence</h2>
+    <a class="btn btn-danger btn-big" href="tel:112">Appeler le 112</a>
+    <div class="coords" id="sosCoords">Position en cours de recherche…</div>
+    <div class="row">
+      <button class="btn" id="btnCopyPos">Copier ma position</button>
+      <a class="btn" id="btnSmsPos" href="#">Envoyer par SMS</a>
+    </div>
+    <p class="tiny muted">Donnez ces coordonnées au secouriste. Si l'appel ne passe pas, montez sur une hauteur pour chercher du réseau.</p>
+    <button class="btn btn-ghost" data-close>Fermer</button>
+  </div>
+</div>
+
+<div class="modal" id="modalSpot" hidden role="dialog" aria-modal="true" aria-labelledby="spotTitle">
+  <form class="modal-box" id="formSpot">
+    <h2 id="spotTitle">Nouveau spot</h2>
+    <p class="tiny muted" id="spotPosInfo"></p>
+    <label class="field">
+      <span class="field-label">Type</span>
+      <select id="spotType">
+        <option value="plante">Plante / cueillette</option>
+        <option value="eau">Point d'eau</option>
+        <option value="bivouac">Bon emplacement</option>
+        <option value="danger">Danger</option>
+        <option value="animal">Animal / traces</option>
+        <option value="autre">Autre</option>
+      </select>
+    </label>
+    <label class="field">
+      <span class="field-label">Note</span>
+      <textarea id="spotNote" rows="3" placeholder="Ex. : châtaigniers au bord du sentier, beaucoup de bogues au sol"></textarea>
+    </label>
+    <div class="row">
+      <button type="button" class="btn btn-ghost" data-close>Annuler</button>
+      <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </div>
+  </form>
+</div>
+
+<div class="modal" id="modalSettings" hidden role="dialog" aria-modal="true" aria-labelledby="setTitle">
+  <form class="modal-box" id="formSettings">
+    <h2 id="setTitle">Réglages</h2>
+    <label class="field">
+      <span class="field-label">Clé API Pl@ntNet</span>
+      <input type="text" id="apiKey" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Collez votre clé ici">
+    </label>
+    <p class="tiny muted">Clé gratuite sur my.plantnet.org (500 identifications par jour). Elle reste uniquement sur ce téléphone.</p>
+    <div class="field-label">Mes spots</div>
+    <div class="row">
+      <button type="button" class="btn" id="btnExportSpots">Copier mes spots</button>
+    </div>
+    <div class="row">
+      <button type="button" class="btn btn-ghost" data-close>Fermer</button>
+      <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </div>
+    <p class="tiny muted" id="appVersion"></p>
+  </form>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<nav class="tabbar" aria-label="Navigation principale">
+  <button class="tab active" data-view="carte">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2z"/><path d="M9 4v14M15 6v14"/></svg>Carte
+  </button>
+  <button class="tab" data-view="scan">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><circle cx="12" cy="12" r="3"/></svg>Scanner
+  </button>
+  <button class="tab" data-view="especes">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 19c8 0 14-6 14-14C11 5 5 11 5 19z"/><path d="M5 19l7-7"/></svg>Espèces
+  </button>
+  <button class="tab" data-view="techniques">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c2 4 6 6 6 11a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-3-1-5 1-8z"/></svg>Techniques
+  </button>
+</nav>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
