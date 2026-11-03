@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.4.0";
+  var VERSION = "0.5.0";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -530,12 +530,57 @@
   var CAT_PLURAL = { plante: "Plantes comestibles", toxique: "Plantes toxiques", champignon: "Champignons", animal: "Faune" };
   var CAT_ICO = { plante: ["#23382A", "#8CCB7E"], toxique: ["#4A1C14", "#FFB4A1"], champignon: ["#3A3218", "#F2D184"], animal: ["#2A2235", "#C7B9DE"] };
   var curCat = "saison";
+  // ---------- Région (pays + milieux) ----------
+  var PAYS = window.SYLVA_PAYS || {}, MILIEUX = window.SYLVA_MILIEUX || {};
+  var region = load("sylva_region", { pays: "BE", milieux: ["temperee"] });
+  function inRegion(s) {
+    var z = s.zones || ["temperee", "montagne"];
+    if (s.pays && s.pays.indexOf(region.pays) === -1) return false;
+    return z.some(function (m) { return region.milieux.indexOf(m) !== -1; });
+  }
+  function renderRegionBtn() {
+    $("#regionPays").textContent = (PAYS[region.pays] || {}).nom || region.pays;
+    $("#regionMilieux").textContent = region.milieux.map(function (m) { return MILIEUX[m]; }).join(" · ");
+  }
+  var draft = null;
+  function renderRegionModal() {
+    $("#paysChips").innerHTML = Object.keys(PAYS).map(function (k) {
+      return '<button type="button" class="chip' + (draft.pays === k ? " on" : "") + '" data-pays="' + k + '">' + esc(PAYS[k].nom) + "</button>";
+    }).join("");
+    var dispo = PAYS[draft.pays].milieux;
+    $("#milieuxChips").innerHTML = Object.keys(MILIEUX).map(function (m) {
+      var ok = dispo.indexOf(m) !== -1;
+      return '<button type="button" class="chip' + (draft.milieux.indexOf(m) !== -1 ? " on" : "") + '" data-milieu="' + m + '"' + (ok ? "" : " disabled") + ">" + esc(MILIEUX[m]) + "</button>";
+    }).join("");
+  }
+  $("#btnRegion").addEventListener("click", function () {
+    draft = { pays: region.pays, milieux: region.milieux.slice() }; renderRegionModal(); openModal("#modalRegion");
+  });
+  $("#paysChips").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-pays]"); if (!b) return;
+    draft.pays = b.getAttribute("data-pays");
+    var dispo = PAYS[draft.pays].milieux;
+    draft.milieux = draft.milieux.filter(function (m) { return dispo.indexOf(m) !== -1; });
+    if (!draft.milieux.length) draft.milieux = [dispo[0]];
+    renderRegionModal();
+  });
+  $("#milieuxChips").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-milieu]"); if (!b || b.disabled) return;
+    var m = b.getAttribute("data-milieu"), i = draft.milieux.indexOf(m);
+    if (i === -1) draft.milieux.push(m); else if (draft.milieux.length > 1) draft.milieux.splice(i, 1);
+    renderRegionModal();
+  });
+  $("#btnRegionOk").addEventListener("click", function () {
+    region = draft; save("sylva_region", region); closeModal($("#modalRegion"));
+    renderRegionBtn(); renderEspeces(); toast("Région : " + PAYS[region.pays].nom);
+  });
   var MOIS_NOMS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
   function lvClass(n) { return "lv-" + (n || "info"); }
 
   function renderEspeces() {
     var q = norm($("#searchEspeces").value);
     var list = ESPECES.filter(function (s) {
+      if (!inRegion(s)) return false;
       if (curCat === "saison") { if (!s.mois || s.mois.indexOf(new Date().getMonth() + 1) === -1) return false; }
       else if (curCat !== "tout" && s.cat !== curCat) return false;
       if (!q) return true;
@@ -554,8 +599,8 @@
     });
     $("#listEspeces").innerHTML = html || '<p class="muted">Aucune espèce trouvée.</p>';
     $("#especesSub").textContent = curCat === "saison"
-      ? list.length + " espèces présentes en " + MOIS_NOMS[new Date().getMonth()] + " · " + ESPECES.length + " au total"
-      : list.length + " espèces · Belgique et Ardennes";
+      ? list.length + " espèces présentes en " + MOIS_NOMS[new Date().getMonth()] + " dans ta région"
+      : list.length + " espèces dans ta région · " + ESPECES.length + " au total";
   }
   $("#searchEspeces").addEventListener("input", renderEspeces);
   $all("#catChips .chip").forEach(function (c) {
@@ -583,7 +628,8 @@
     var h = '<div id="heroSlot">' + (ph ? heroHtml(ph, s.nom) : "") + "</div>" +
       '<h1 id="sheetTitle">' + esc(s.nom) + '</h1><div class="latin">' + esc(s.latin) + "</div>" +
       '<div class="row" style="flex-wrap:wrap;gap:6px;margin:0 0 12px"><span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + '</span><span class="badge lv-info">' + esc(s.saison) + "</span></div>" +
-      "<p>" + esc(s.resume) + "</p>";
+      "<p>" + esc(s.resume) + "</p>" +
+      (s.notes && s.notes[region.pays] ? '<div class="alert alert-warn note-pays"><strong>En ' + esc(PAYS[region.pays].nom) + "</strong><span>" + esc(s.notes[region.pays]) + "</span></div>" : "");
     if (s.identification && s.identification.length) {
       h += "<h3>Reconnaître</h3><ul>" + s.identification.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
     }
@@ -1022,6 +1068,7 @@
   function renderBivouac() { loadMeteo(); renderChecklist(); renderCarnet(); }
 
   // ---------- Démarrage ----------
+  renderRegionBtn();
   renderEspeces();
   renderTechniques();
   setTimeout(function () { prefetchPhotos(false); }, 3000);

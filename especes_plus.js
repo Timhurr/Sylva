@@ -40,12 +40,12 @@
       [], ["Crue. Cueillir en hauteur plutôt qu'au ras du sol (voir Renard).", "Éviter les bords de routes."]),
 
     E("plante", "framboise", "Framboisier sauvage", "Rubus idaeus", "ok", "Comestible", "Juil. → août", [7, 8],
-      "Fréquent dans les coupes forestières et clairières ardennaises.",
+      "Fréquent dans les coupes forestières et les clairières.",
       ["Tiges dressées à petits aiguillons fins", "Dessous des feuilles blanchâtre", "Fruit rouge creux, qui se détache de son support"],
       [], ["Crue, à laver si cueillie bas."]),
 
     E("plante", "myrtille", "Myrtille", "Vaccinium myrtillus", "ok", "Comestible", "Juil. → août", [7, 8],
-      "Couvre le sol des forêts acides et des Fagnes. Les myrtilles sauvages colorent la bouche en bleu.",
+      "Couvre le sol des forêts acides et des landes. Les myrtilles sauvages colorent la bouche en bleu.",
       ["Petit arbrisseau de 20 à 50 cm aux tiges vertes anguleuses", "Petites feuilles ovales finement dentées", "Baies bleu-noir avec une petite couronne au sommet, chair violette"],
       [S("Airelle des marais (Vaccinium uliginosum)", "Vaccinium uliginosum", "caution", "Tiges brunes rondes, feuilles bleutées non dentées, chair blanche. À éviter en quantité.")],
       ["Crue. Laver ou cuire si cueillie au ras du sol (échinococcose, voir Renard)."]),
@@ -228,7 +228,7 @@
       ["Toujours bien cuite, jamais crue.", "Faire vérifier avant consommation."]),
 
     E("champignon", "boletbai", "Bolet bai", "Imleria badia", "caution", "Comestible · faire vérifier", "Août → nov.", [8, 9, 10, 11],
-      "Très commun sous les épicéas ardennais.",
+      "Très commun sous les épicéas et les pins.",
       ["Chapeau brun-marron, collant par temps humide", "Pores jaunes qui bleuissent au toucher", "Pied brun clair sans réseau"],
       [S("Bolet amer (Tylopilus felleus)", "Tylopilus felleus", "caution", "Pores qui rosissent, réseau sombre sur le pied, goût très amer.")],
       ["Faire vérifier avant consommation."]),
@@ -270,7 +270,7 @@
     E("animal", "loup", "Loup gris", "Canis lupus", "info", "Rare · discret", "Toute l'année", TOUTE,
       "Revenu naturellement en Wallonie, avec plusieurs zones de présence permanente. Il évite l'humain.",
       ["Plus grand qu'un berger allemand, pelage gris-beige, dos sombre", "Traces : 4 doigts, empreinte ovale de 10 cm, en ligne droite"],
-      [], ["Ne jamais nourrir ni approcher. Garder son chien en laisse.", "Signaler une observation au Réseau Loup du Service public de Wallonie."]),
+      [], ["Ne jamais nourrir ni approcher. Garder son chien en laisse.", "Signaler une observation aux services nature de sa région (voir la note pays)."]),
 
     E("animal", "chevreuil", "Chevreuil", "Capreolus capreolus", "info", "Observation", "Toute l'année", TOUTE,
       "Le cervidé le plus courant. Aboie quand il est dérangé.",
@@ -283,7 +283,7 @@
       [], ["Ne pas camper près d'un terrier actif."]),
 
     E("animal", "salamandre", "Salamandre tachetée", "Salamandra salamandra", "info", "Ne pas toucher", "Mars → oct.", [3, 4, 5, 6, 7, 8, 9, 10],
-      "Noire et jaune, sort les nuits de pluie dans les forêts ardennaises. Espèce protégée et menacée par un champignon mortel transporté sur les mains et les bottes.",
+      "Noire et jaune, sort les nuits de pluie dans les forêts humides. Espèce protégée et menacée par un champignon mortel transporté sur les mains et les bottes.",
       ["Amphibien noir à grandes taches jaunes", "Lent, se déplace la nuit par temps humide"],
       [], ["Ne pas la manipuler : sa peau sécrète une substance irritante et on peut lui transmettre une maladie.", "Nettoyer et sécher ses bottes entre deux sites."]),
 

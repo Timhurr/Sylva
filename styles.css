@@ -220,3 +220,13 @@ main{position:fixed;top:calc(var(--head-h) + var(--top));bottom:calc(var(--tab-h
 .add-btn{flex:none;min-height:40px;padding:0 14px;font-size:14px}
 .add-group{margin-top:18px}
 .check.check-edit input.edit-input{width:auto;height:40px;flex:1;min-width:0}
+
+/* Région */
+.region-btn{display:flex;align-items:center;gap:12px;width:100%;margin-top:12px;padding:10px 14px;border-radius:14px;border:1px solid var(--line);background:var(--surface);color:var(--text);text-align:left;cursor:pointer}
+.region-btn svg{color:var(--accent)}
+.region-txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px}
+.region-txt b{font-size:15px}
+.region-txt span{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.region-change{font-size:13px;font-weight:600;color:var(--accent)}
+.chip:disabled{opacity:.35}
+.note-pays{margin:10px 0}

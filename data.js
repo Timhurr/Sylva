@@ -30,7 +30,7 @@ window.SYLVA_ESPECES = [
   {
     id: "hetre", cat: "plante", nom: "Faîne (hêtre)", latin: "Fagus sylvatica",
     niveau: "caution", statut: "Petite quantité, grillée", saison: "Sept. → nov.",
-    resume: "Le hêtre domine les forêts ardennaises. Ses petites graines triangulaires se mangent avec modération.",
+    resume: "Le hêtre domine de nombreuses forêts d'Europe. Ses petites graines triangulaires se mangent avec modération.",
     identification: [
       "Écorce grise et lisse, tronc droit",
       "Feuilles ovales à bord ondulé, légèrement poilues au bord",
@@ -175,7 +175,7 @@ window.SYLVA_ESPECES = [
   {
     id: "oenanthe", cat: "toxique", nom: "Œnanthe safranée", latin: "Oenanthe crocata",
     niveau: "danger", statut: "Mortelle", saison: "Toute l'année",
-    resume: "L'une des plantes les plus toxiques d'Europe. Pousse au bord de l'eau : attention le long de l'Ourthe.",
+    resume: "L'une des plantes les plus toxiques d'Europe. Pousse au bord de l'eau : attention le long des rivières et des fossés.",
     identification: [
       "Grande ombellifère des berges et fossés humides",
       "Racines en fuseaux charnus, sève qui jaunit à l'air",
@@ -201,7 +201,7 @@ window.SYLVA_ESPECES = [
   {
     id: "digitale", cat: "toxique", nom: "Digitale pourpre", latin: "Digitalis purpurea",
     niveau: "danger", statut: "Très toxique", saison: "Rosettes en hiver",
-    resume: "Fréquente dans les coupes forestières ardennaises. Toute la plante est toxique pour le cœur.",
+    resume: "Fréquente dans les coupes forestières sur sol acide. Toute la plante est toxique pour le cœur.",
     identification: [
       "En hiver : rosette de grandes feuilles ovales, douces et duveteuses, nervures marquées",
       "En été : hampe de fleurs pourpres en clochettes"
@@ -290,7 +290,7 @@ window.SYLVA_ESPECES = [
   {
     id: "sanglier", cat: "animal", nom: "Sanglier", latin: "Sus scrofa",
     niveau: "info", statut: "Prudence", saison: "Toute l'année · chasse en automne",
-    resume: "Très présent dans les Ardennes. Évite l'humain, sauf laie avec marcassins ou animal blessé.",
+    resume: "Très présent dans les forêts d'Europe. Évite l'humain, sauf laie avec marcassins ou animal blessé.",
     identification: [
       "Traces : sabots à 2 doigts avec 2 ergots marqués derrière",
       "Sol retourné (boutis), souilles boueuses, arbres frottés"
@@ -337,7 +337,7 @@ window.SYLVA_ESPECES = [
   {
     id: "castor", cat: "animal", nom: "Castor d'Europe", latin: "Castor fiber",
     niveau: "info", statut: "Observation", saison: "Toute l'année",
-    resume: "Revenu dans les vallées ardennaises. Discret, actif au crépuscule le long de l'eau.",
+    resume: "Revenu dans de nombreuses vallées d'Europe. Discret, actif au crépuscule le long de l'eau.",
     identification: [
       "Arbres rongés en forme de crayon taillé au bord de l'eau",
       "Copeaux de bois, coulées vers la rivière"
@@ -375,7 +375,7 @@ window.SYLVA_TECHNIQUES = [
   // ===== EAU =====
   {
     id: "eau", cat: "Eau", titre: "Rendre l'eau potable", illus: "eau_ebullition", priorite: true,
-    intro: "Même claire, l'eau de l'Ourthe peut contenir bactéries et parasites (élevages et villages en amont). L'ébullition est la seule méthode improvisée vraiment sûre.",
+    intro: "Même claire, l'eau d'une rivière peut contenir bactéries et parasites (élevages et villages en amont). L'ébullition est la seule méthode improvisée vraiment sûre.",
     etapes: [
       "Préfiltrer à travers un tissu propre pour retirer les particules.",
       "Porter à gros bouillons pendant 1 minute (3 minutes au-dessus de 2 000 m).",
@@ -438,7 +438,7 @@ window.SYLVA_TECHNIQUES = [
   // ===== FEU =====
   {
     id: "feu", cat: "Feu", titre: "Préparer son feu", illus: "feu_preparation",
-    intro: "90 % des feux ratés le sont par manque de préparation. En Wallonie, feu interdit en forêt sauf aux emplacements prévus : vérifier les règles de l'aire.",
+    intro: "90 % des feux ratés le sont par manque de préparation. Le feu en forêt est très encadré : en Wallonie, interdit sauf aux emplacements prévus ; en France, interdit dans les bois et à moins de 200 m pour qui n'en est pas propriétaire. Vérifier les règles du lieu.",
     etapes: [
       "Choisir un emplacement autorisé, à l'abri du vent, dégagé de feuilles et loin des racines et branches basses.",
       "Ramasser une grosse poignée d'amadou : écorce de bouleau (brûle même humide), herbes sèches, aiguilles mortes, copeaux fins.",
@@ -488,7 +488,7 @@ window.SYLVA_TECHNIQUES = [
   },
   {
     id: "feupluie", cat: "Feu", titre: "Faire du feu sous la pluie", illus: "feu_pluie",
-    intro: "En Ardenne en novembre, tout est mouillé. Il faut chercher le sec là où il se cache.",
+    intro: "Par temps humide, en automne et en hiver, tout est mouillé. Il faut chercher le sec là où il se cache.",
     etapes: [
       "Récolter les brindilles mortes encore sur pied, en bas des épicéas : elles restent sèches sous la ramure.",
       "Prélever l'écorce de bouleau sur des arbres morts ou au sol.",
@@ -503,7 +503,7 @@ window.SYLVA_TECHNIQUES = [
   // ===== ABRI =====
   {
     id: "froid", cat: "Abri", titre: "Prévenir l'hypothermie", illus: "froid", priorite: true,
-    intro: "Novembre en Ardenne : nuits proches de 0 °C et humidité. Le froid humide est le vrai danger du bivouac.",
+    intro: "En automne et en hiver, nuits proches de 0 °C et humidité. Le froid humide est le vrai danger du bivouac.",
     etapes: [
       "Rester au sec : se changer avant d'avoir froid, garder une tenue sèche réservée à la nuit.",
       "Système en couches : base respirante (pas de coton), couche chaude, coque imperméable.",
@@ -569,11 +569,11 @@ window.SYLVA_TECHNIQUES = [
   // ===== ORIENTATION =====
   {
     id: "orientation", cat: "Orientation", titre: "S'orienter sans réseau", illus: "orient_montre",
-    intro: "La vallée de l'Ourthe est sinueuse et le réseau mobile y est irrégulier.",
+    intro: "En vallée ou en forêt, le réseau mobile est souvent irrégulier.",
     etapes: [
       "Avant de partir : repérer l'itinéraire et l'afficher dans l'onglet Carte pour le garder en cache.",
-      "Suivre la rivière vers l'aval mène tôt ou tard à un village (La Roche-en-Ardenne vers le nord-ouest depuis Nisramont).",
-      "En novembre, le soleil est plein sud vers 12 h 30 (heure belge).",
+      "Suivre une rivière vers l'aval mène tôt ou tard à un village ou une route.",
+      "Le soleil est plein sud vers le milieu de la journée : entre 12 h et 13 h en heure d'hiver, entre 13 h et 14 h en heure d'été (Europe de l'Ouest).",
       "Avec une montre à aiguilles : pointer la petite aiguille vers le soleil. Le sud est à mi-chemin entre elle et le 12 (le 1 en heure d'été)."
     ],
     attention: [],
@@ -641,7 +641,7 @@ window.SYLVA_TECHNIQUES = [
       "Les pièges ne fonctionnent qu'en multipliant les postes sur des coulées actives (passages, traces, crottes) et en les relevant souvent.",
       "Un piège oublié continue de tuer : en situation réelle, les démonter tous avant de partir."
     ],
-    attention: ["Interdit hors détresse vitale : amende et poursuites pour braconnage.", "La pêche demande un permis de pêche en Wallonie."],
+    attention: ["Interdit hors détresse vitale : amende et poursuites pour braconnage.", "La pêche demande un permis (permis de pêche en Wallonie, carte de pêche en France…)."],
     source: SRC_FM
   },
 
@@ -882,9 +882,9 @@ var SRC_PS = "Consignes grand public de premiers secours (Croix-Rouge, ULB) ; Ce
   },
   {
     id: "ps_intox", titre: "Intoxication (plante, champignon)",
-    intro: "En Belgique, le Centre Antipoisons répond 24 h/24 au 070 245 245 (gratuit).",
+    intro: "Les centres antipoison répondent 24 h/24 : Belgique 070 245 245, Luxembourg 8002 5500, Suisse 145, France : centre antipoison de votre région ou le 15.",
     etapes: [
-      "Appeler le Centre Antipoisons au 070 245 245, ou le 112 si la personne a du mal à respirer, perd connaissance ou convulse.",
+      "Appeler le centre antipoison (numéros ci-dessus), ou le 112 si la personne a du mal à respirer, perd connaissance ou convulse.",
       "Garder les restes : la plante, les champignons crus ou cuits, même les épluchures, pour l'identification.",
       "Noter l'heure du repas, la quantité et l'heure des premiers symptômes.",
       "Ne pas faire vomir et ne rien donner à boire sans avis médical."

@@ -108,6 +108,11 @@
     <div class="pad">
       <h1>Espèces de la zone</h1>
       <p class="muted" id="especesSub">Ardennes · saison actuelle</p>
+      <button class="region-btn" id="btnRegion" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7-6-7-11a7 7 0 0 1 14 0c0 5-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+        <span class="region-txt"><b id="regionPays">Belgique</b><span id="regionMilieux">Plaines, collines et forêts</span></span>
+        <span class="region-change">Changer</span>
+      </button>
       <label class="search">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
         <span class="sr">Rechercher une espèce</span>
@@ -180,6 +185,21 @@
     </div>
     <p class="tiny muted">Donnez ces coordonnées au secouriste. Si l'appel ne passe pas, montez sur une hauteur pour chercher du réseau.</p>
     <button class="btn btn-ghost" data-close>Fermer</button>
+  </div>
+</div>
+
+<div class="modal" id="modalRegion" hidden role="dialog" aria-modal="true" aria-labelledby="regionTitle">
+  <div class="modal-box">
+    <h2 id="regionTitle">Ma région</h2>
+    <div class="field-label">Pays</div>
+    <div class="chips" id="paysChips" role="group" aria-label="Pays"></div>
+    <div class="field-label">Milieux (plusieurs choix possibles)</div>
+    <div class="chips" id="milieuxChips" role="group" aria-label="Milieux"></div>
+    <p class="tiny muted">Les espèces affichées et les numéros d'urgence s'adaptent à ce choix.</p>
+    <div class="row">
+      <button type="button" class="btn btn-ghost" data-close>Annuler</button>
+      <button type="button" class="btn btn-primary" id="btnRegionOk">Valider</button>
+    </div>
   </div>
 </div>
 
@@ -270,6 +290,7 @@
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 <script src="data.js"></script>
 <script src="especes_plus.js"></script>
+<script src="especes_regions.js"></script>
 <script src="illus.js"></script>
 <script src="app.js"></script>
 </body>
