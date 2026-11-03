@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.3.0";
+  var VERSION = "0.3.1";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -651,11 +651,11 @@
 
   function setScanStatus(html) { var st = $("#scanStatus"); st.innerHTML = html; st.hidden = !html; }
 
-  function resizeImage(file) {
+  function resizeImage(file, maxSize) {
     return new Promise(function (resolve, reject) {
       var img = new Image(), url = URL.createObjectURL(file);
       img.onload = function () {
-        var max = 1280, w = img.naturalWidth, h = img.naturalHeight, r = Math.min(1, max / Math.max(w, h));
+        var max = maxSize || 1280, w = img.naturalWidth, h = img.naturalHeight, r = Math.min(1, max / Math.max(w, h));
         var cv = document.createElement("canvas"); cv.width = Math.round(w * r); cv.height = Math.round(h * r);
         cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
         URL.revokeObjectURL(url);
@@ -830,32 +830,139 @@
       .catch(function () { if (!cached) $("#meteo").innerHTML = '<p class="muted">Météo indisponible pour le moment.</p>'; });
   }
 
-  // ---------- Checklist du sac ----------
-  var CHECKLIST = [
+  // ---------- Checklist du sac (modifiable, avec photos perso) ----------
+  var CHECKLIST_DEFAUT = [
     ["Abri et couchage", ["Tente ou bâche + 10 m de cordelette", "Sac de couchage confort ≤ 0 °C", "Matelas isolant (R ≥ 3)", "Couverture de survie", "Sacs poubelle (déchets + rangement étanche)"]],
     ["Vêtements", ["Sous-couche laine ou synthétique (pas de coton)", "Polaire ou doudoune", "Veste et pantalon imperméables", "Bonnet et gants", "2 paires de chaussettes de rechange", "Tenue sèche réservée à la nuit", "Chaussures de marche imperméables"]],
     ["Eau et repas", ["Gourdes (2 L minimum)", "Réchaud + combustible + casserole", "Briquet + pierre à feu", "Pastilles ou filtre à eau", "Repas + en-cas énergétiques"]],
     ["Sécurité et orientation", ["Téléphone chargé + batterie externe", "Lampe frontale + piles", "Carte papier et boussole", "Sifflet", "Trousse de secours + tire-tique", "Couteau"]],
     ["Avant de partir", ["Prévenir quelqu'un : itinéraire et heure de retour", "Vérifier la météo (ci-dessus)", "Parcourir la zone sur la carte (cache hors-ligne)", "Télécharger les photos (réglages)", "Vérifier les règles de l'aire de bivouac"]]
   ];
-  function renderChecklist() {
-    var st = load("sylva_check", {}), total = 0, done = 0, h = "";
-    CHECKLIST.forEach(function (g, gi) {
-      h += '<div class="check-group">' + esc(g[0]) + "</div>";
-      g[1].forEach(function (label, ii) {
-        var id = gi + "-" + ii, on = !!st[id]; total++; if (on) done++;
-        h += '<label class="check' + (on ? " done" : "") + '"><input type="checkbox" data-check="' + id + '"' + (on ? " checked" : "") + "><span>" + esc(label) + "</span></label>";
-      });
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function defaultChecklist(oldState) {
+    return CHECKLIST_DEFAUT.map(function (g, gi) {
+      return { id: uid(), titre: g[0], items: g[1].map(function (label, ii) {
+        return { id: uid(), label: label, done: !!(oldState && oldState[gi + "-" + ii]), photo: false };
+      }) };
     });
-    $("#checklist").innerHTML = h;
-    $("#checkCount").textContent = done + " / " + total + (done === total ? " · sac prêt ✓" : "");
-    $("#checkBar").style.width = Math.round(done / total * 100) + "%";
   }
-  $("#checklist").addEventListener("change", function (e) {
-    var id = e.target.getAttribute("data-check"); if (!id) return;
-    var st = load("sylva_check", {}); st[id] = e.target.checked; save("sylva_check", st); renderChecklist();
+  function getChecklist() {
+    var cl = load("sylva_checklist", null);
+    if (!cl) { cl = defaultChecklist(load("sylva_check", {})); save("sylva_checklist", cl); }
+    return cl;
+  }
+  function saveChecklist(cl) { save("sylva_checklist", cl); }
+  function findItem(cl, id) {
+    for (var g = 0; g < cl.length; g++) for (var i = 0; i < cl[g].items.length; i++) if (cl[g].items[i].id === id) return { g: g, i: i, item: cl[g].items[i] };
+    return null;
+  }
+  var checkEdit = false;
+  var ICO_CAM = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="4"/></svg>';
+  var ICO_X = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+
+  function renderChecklist() {
+    var cl = getChecklist(), total = 0, done = 0, h = "";
+    cl.forEach(function (g) {
+      h += checkEdit
+        ? '<div class="check-group-edit"><input class="edit-input group-input" data-group-title="' + esc(g.id) + '" value="' + esc(g.titre) + '" aria-label="Nom de la catégorie">' +
+          '<button class="icon-mini danger" data-del-group="' + esc(g.id) + '" aria-label="Supprimer la catégorie ' + esc(g.titre) + '">' + ICO_X + "</button></div>"
+        : '<div class="check-group">' + esc(g.titre) + "</div>";
+      g.items.forEach(function (it) {
+        total++; if (it.done) done++;
+        var thumb = it.photo ? '<img class="check-thumb" data-check-photo="' + esc(it.id) + '" alt="" hidden>' : "";
+        if (checkEdit) {
+          h += '<div class="check check-edit">' +
+            '<button class="icon-mini photo-slot" data-photo-for="' + esc(it.id) + '" aria-label="' + (it.photo ? "Changer la photo" : "Ajouter une photo") + '">' + (it.photo ? thumb : ICO_CAM) + "</button>" +
+            '<input class="edit-input" data-item-label="' + esc(it.id) + '" value="' + esc(it.label) + '" aria-label="Nom de l\'élément">' +
+            '<button class="icon-mini danger" data-del-item="' + esc(it.id) + '" aria-label="Supprimer ' + esc(it.label) + '">' + ICO_X + "</button></div>";
+        } else {
+          h += '<label class="check' + (it.done ? " done" : "") + '"><input type="checkbox" data-check="' + esc(it.id) + '"' + (it.done ? " checked" : "") + ">" +
+            thumb + "<span>" + esc(it.label) + "</span></label>";
+        }
+      });
+      if (checkEdit) {
+        h += '<form class="add-row" data-add-to="' + esc(g.id) + '"><input class="edit-input" placeholder="Ajouter un élément…" aria-label="Nouvel élément dans ' + esc(g.titre) + '">' +
+          '<button class="btn btn-primary add-btn" type="submit">Ajouter</button></form>';
+      }
+    });
+    if (checkEdit) {
+      h += '<form class="add-row add-group" id="formAddGroup"><input class="edit-input" placeholder="Nouvelle catégorie…" aria-label="Nouvelle catégorie">' +
+        '<button class="btn add-btn" type="submit">Créer</button></form>' +
+        '<button class="link-btn" id="btnDefaultCheck" type="button">Revenir à la liste par défaut</button>';
+    }
+    $("#checklist").innerHTML = h;
+    $("#checkCount").textContent = done + " / " + total + (total && done === total ? " · sac prêt ✓" : "");
+    $("#checkBar").style.width = (total ? Math.round(done / total * 100) : 0) + "%";
+    $("#btnEditCheck").textContent = checkEdit ? "Terminé" : "Modifier";
+    $("#btnResetCheck").hidden = checkEdit;
+    $all("#checklist [data-check-photo]").forEach(function (img) {
+      spotPhotoUrl("chk-" + img.getAttribute("data-check-photo")).then(function (u) { if (u) { img.src = u; img.hidden = false; } });
+    });
+  }
+
+  $("#btnEditCheck").addEventListener("click", function () { checkEdit = !checkEdit; renderChecklist(); });
+  $("#btnResetCheck").addEventListener("click", function () {
+    var cl = getChecklist(); cl.forEach(function (g) { g.items.forEach(function (it) { it.done = false; }); });
+    saveChecklist(cl); renderChecklist();
   });
-  $("#btnResetCheck").addEventListener("click", function () { save("sylva_check", {}); renderChecklist(); });
+  $("#checklist").addEventListener("change", function (e) {
+    var t = e.target, cl = getChecklist(), f;
+    if (t.hasAttribute("data-check")) {
+      f = findItem(cl, t.getAttribute("data-check")); if (!f) return;
+      f.item.done = t.checked; saveChecklist(cl); renderChecklist();
+    } else if (t.hasAttribute("data-item-label")) {
+      f = findItem(cl, t.getAttribute("data-item-label")); if (!f) return;
+      var v = t.value.trim(); if (v) { f.item.label = v; saveChecklist(cl); } else t.value = f.item.label;
+    } else if (t.hasAttribute("data-group-title")) {
+      var g = cl.filter(function (x) { return x.id === t.getAttribute("data-group-title"); })[0];
+      if (g && t.value.trim()) { g.titre = t.value.trim(); saveChecklist(cl); }
+    }
+  });
+  $("#checklist").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var form = e.target, input = form.querySelector("input"), v = input.value.trim(); if (!v) return;
+    var cl = getChecklist();
+    if (form.id === "formAddGroup") cl.push({ id: uid(), titre: v, items: [] });
+    else {
+      var g = cl.filter(function (x) { return x.id === form.getAttribute("data-add-to"); })[0]; if (!g) return;
+      g.items.push({ id: uid(), label: v, done: false, photo: false });
+    }
+    saveChecklist(cl); renderChecklist();
+    var again = form.id ? $("#formAddGroup input") : document.querySelector('[data-add-to="' + form.getAttribute("data-add-to") + '"] input');
+    if (again) again.focus();
+  });
+  var photoTarget = null;
+  $("#checklist").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    var cl = getChecklist(), f;
+    if (b.hasAttribute("data-del-item")) {
+      var id = b.getAttribute("data-del-item"); f = findItem(cl, id); if (!f) return;
+      cl[f.g].items.splice(f.i, 1); saveChecklist(cl);
+      idbDo("readwrite", function (st) { return st.delete("chk-" + id); }).catch(function () {});
+      renderChecklist();
+    } else if (b.hasAttribute("data-del-group")) {
+      var gid = b.getAttribute("data-del-group"), g = cl.filter(function (x) { return x.id === gid; })[0];
+      if (!g || (g.items.length && !confirm("Supprimer la catégorie « " + g.titre + " » et ses " + g.items.length + " éléments ?"))) return;
+      cl = cl.filter(function (x) { return x.id !== gid; }); saveChecklist(cl); renderChecklist();
+    } else if (b.hasAttribute("data-photo-for")) {
+      photoTarget = b.getAttribute("data-photo-for"); $("#checkPhoto").click();
+    } else if (b.id === "btnDefaultCheck") {
+      if (!confirm("Remplacer ta liste par la liste par défaut ? Tes éléments et photos perso seront effacés.")) return;
+      saveChecklist(defaultChecklist(null)); renderChecklist();
+    }
+  });
+  $("#checkPhoto").addEventListener("change", function (e) {
+    var file = e.target.files && e.target.files[0]; e.target.value = "";
+    if (!file || !photoTarget) return;
+    var id = photoTarget;
+    resizeImage(file, 400).then(function (blob) {
+      return idbDo("readwrite", function (st) { return st.put(blob, "chk-" + id); });
+    }).then(function () {
+      if (spotUrls["chk-" + id]) { URL.revokeObjectURL(spotUrls["chk-" + id]); delete spotUrls["chk-" + id]; }
+      var cl = getChecklist(), f = findItem(cl, id); if (f) { f.item.photo = true; saveChecklist(cl); }
+      renderChecklist();
+    }).catch(function () { toast("Photo impossible à enregistrer"); });
+  });
 
   // ---------- Carnet ----------
   function renderCarnet() {
