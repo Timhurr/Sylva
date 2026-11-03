@@ -17,7 +17,7 @@ var CDN = [
 
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(SHELL).then(function (c) {
-    return c.addAll(LOCAL).then(function () {
+    return c.addAll(LOCAL.map(function (u) { return new Request(u, { cache: "reload" }); })).then(function () {
       return Promise.all(CDN.map(function (u) {
         return fetch(u, { mode: "cors" }).then(function (r) { if (r.ok) return c.put(u, r); }).catch(function () {});
       }));
