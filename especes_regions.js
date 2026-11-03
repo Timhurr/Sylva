@@ -45,7 +45,7 @@
             CH: "Plusieurs meutes dans les Alpes et le Jura." }
   };
   window.SYLVA_ESPECES.forEach(function (s) {
-    s.zones = ZONES[s.id] || ["temperee", "montagne"];
+    s.zones = ZONES[s.id] || s.zones || ["temperee", "montagne"];
     if (NOTES[s.id]) s.notes = NOTES[s.id];
   });
   // Textes rendus généraux pour tous les pays
