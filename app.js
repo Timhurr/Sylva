@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.4";
+  var VERSION = "0.9.5";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -729,6 +729,7 @@
   var ILLUS = window.SYLVA_ILLUS || {};
   var IMGS = {}; (window.SYLVA_IMAGES || []).forEach(function (k) { IMGS[k] = "img/" + k + ".webp"; });
   function thumbOf(key, illus) {
+    if (!IMGS[key] && IMGS[key + "_1"]) { var last = 1; while (IMGS[key + "_" + (last + 1)]) last++; key = key + "_" + last; }
     return IMGS[key] ? '<img src="' + IMGS[key] + '" alt="" loading="lazy">' : (ILLUS[illus] || "");
   }
   function heroIllus(key, illus, alt) {
@@ -752,7 +753,7 @@
       h += '<div class="section-title">' + esc(cat) + '</div><div class="list">';
       items.forEach(function (t) {
         h += '<button class="item" data-tech="' + esc(t.id) + '">' +
-          (t.wiki && photoOf(t.wiki)
+          (t.wiki && photoOf(t.wiki) && !IMGS[t.id + "_1"]
             ? '<span class="item-illus item-photo" aria-hidden="true"><img src="' + esc(photoOf(t.wiki).src) + '" alt="" loading="lazy"></span>'
             : '<span class="item-illus" aria-hidden="true">' + thumbOf(t.id, t.illus) + "</span>") +
           '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.intro) + "</span></span></button>";
@@ -761,12 +762,14 @@
     });
     $("#listTechniques").innerHTML = h;
   }
-  function stepsHtml(etapes, mode, hidden) {
+  function stepsHtml(etapes, mode, hidden, tid) {
     var n = etapes.length;
     return '<div class="steps" data-cur="0" data-n="' + n + '"' + (mode ? ' data-mode="' + mode + '"' : "") + (hidden ? " hidden" : "") + ">" +
       '<div class="step-bar" aria-hidden="true">' + etapes.map(function (x, i) { return "<span" + (i === 0 ? ' class="on"' : "") + "></span>"; }).join("") + "</div>" +
       etapes.map(function (x, i) {
-        return '<div class="step' + (i === 0 ? " on" : "") + '"><span class="step-k"><span class="step-n">' + (i + 1) + "</span>Étape " + (i + 1) + " sur " + n + "</span><p>" + esc(x) + "</p></div>";
+        var key = tid ? tid + (mode === "isole" ? "_seul_" : "_") + (i + 1) : "";
+        var si = key && IMGS[key] ? '<img class="step-img" src="' + IMGS[key] + '" alt="Étape ' + (i + 1) + '"' + (i ? ' loading="lazy"' : "") + ">" : "";
+        return '<div class="step' + (i === 0 ? " on" : "") + (si ? " has-img" : "") + '">' + si + '<span class="step-k"><span class="step-n">' + (i + 1) + "</span>Étape " + (i + 1) + " sur " + n + "</span><p>" + esc(x) + "</p></div>";
       }).join("") +
       '<div class="step-nav"><button type="button" class="btn" data-step="-1" disabled>Précédent</button><button type="button" class="btn btn-next" data-step="1">' + (n > 1 ? "Étape suivante" : "Terminé ✓") + "</button></div>" +
       '<button type="button" class="link-btn steps-toggle" data-step-all>Voir toutes les étapes</button></div>';
@@ -775,8 +778,9 @@
     var t = TECHS.filter(function (x) { return x.id === id; })[0]; if (!t) return;
     var tp = t.wiki && photoOf(t.wiki);
     var both = t.isole && t.etapes && t.etapes.length;
+    var stepPics = !!IMGS[t.id + "_1"] || !!IMGS[t.id + "_seul_1"];
     var main = t.isole || t.etapes, n = main.length;
-    var h = (t.wiki ? '<div id="heroSlot" class="knot">' + (tp ? heroHtml(tp, t.titre) : "") + "</div>"
+    var h = (stepPics ? "" : t.wiki ? '<div id="heroSlot" class="knot">' + (tp ? heroHtml(tp, t.titre) : "") + "</div>"
                     : heroIllus(t.id, t.illus, t.titre)) +
       '<div class="chap-k">' + esc(t.cat) + (t.isole ? " · secours injoignables" : " · " + n + " étapes") + '</div><h1 id="sheetTitle">' + esc(t.titre) + "</h1><p>" + esc(t.intro) + "</p>";
     if (t.alerte && t.alerte.length) {
@@ -785,13 +789,13 @@
     }
     if (both) {
       h += '<div class="seg seg-2 mode-seg" role="group" aria-label="Situation"><button type="button" class="chip on" data-ps-mode="isole">Seul, sans secours</button><button type="button" class="chip" data-ps-mode="secours">Secours joignables</button></div>';
-      h += stepsHtml(t.isole, "isole", false) + stepsHtml(t.etapes, "secours", true);
-    } else h += stepsHtml(main, "", false);
+      h += stepsHtml(t.isole, "isole", false, t.id) + stepsHtml(t.etapes, "secours", true, t.id);
+    } else h += stepsHtml(main, t.isole ? "isole" : "", false, t.id);
     (t.attentionIsole || []).forEach(function (a) { h += '<div class="alert alert-warn"><span>' + esc(a) + "</span></div>"; });
     (t.attention || []).forEach(function (a) { h += '<div class="alert alert-warn"><span>' + esc(a) + "</span></div>"; });
     if (t.source) h += '<p class="disclaimer">Source : ' + esc(t.source) + ". Contenu éducatif : il ne remplace pas une formation aux premiers secours.</p>";
     openSheet(t.cat, h);
-    if (t.wiki && !tp && navigator.onLine) {
+    if (t.wiki && !tp && !stepPics && navigator.onLine) {
       fetchPhoto(t.wiki, ["en"]).then(function (p) {
         var slot = document.getElementById("heroSlot");
         if (p && slot && !$("#sheet").hidden) slot.innerHTML = heroHtml(p, t.titre);
