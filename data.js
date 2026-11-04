@@ -662,7 +662,7 @@ window.SYLVA_TECHNIQUES = [
 
 // ---------- NŒUDS ----------
 // Photos : article Wikipédia (anglais) du nœud, image sous licence libre.
-var SRC_NOEUDS = "The Ashley Book of Knots ; manuels scouts ; " + SRC_FM;
+var SRC_NOEUDS = "Méthodes de nouage usuelles, rédigées pour Sylva ; " + SRC_FM;
 [
   {
     id: "chaise", titre: "Nœud de chaise", wiki: "Bowline",

@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.9";
+  var VERSION = "0.9.10";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -793,7 +793,7 @@
     } else h += stepsHtml(main, t.isole ? "isole" : "", false, t.id);
     (t.attentionIsole || []).forEach(function (a) { h += '<div class="alert alert-warn"><span>' + esc(a) + "</span></div>"; });
     (t.attention || []).forEach(function (a) { h += '<div class="alert alert-warn"><span>' + esc(a) + "</span></div>"; });
-    if (t.source) h += '<p class="disclaimer">Source : ' + esc(t.source) + ". Contenu éducatif : il ne remplace pas une formation aux premiers secours.</p>";
+    if (t.source) h += '<p class="disclaimer">Source : ' + esc(t.source) + (t.cat === "Premiers secours" ? ". Contenu éducatif : il ne remplace pas une formation aux premiers secours." : ".") + "</p>";
     openSheet(t.cat, h);
     if (t.wiki && !tp && !stepPics && navigator.onLine) {
       fetchPhoto(t.wiki, ["en"]).then(function (p) {
