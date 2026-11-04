@@ -178,7 +178,203 @@
         "Tirer l'autre extrémité du fil, celle du départ, pour faire rentrer la boucle sous les tours, jusqu'au milieu.",
         "Couper les deux bouts au ras."
       ],
-      attention: ["Une corde synthétique peut aussi se fondre au briquet, mais une surliure tient mieux et ne coupe pas les mains."] }
+      attention: ["Une corde synthétique peut aussi se fondre au briquet, mais une surliure tient mieux et ne coupe pas les mains."] },
+    { id: "simple_ganse", titre: "Nœud simple gansé", wiki: "Overhand knot",
+      intro: "Un arrêt ou une attache provisoire qui se défait d'un coup en tirant le bout.",
+      etapes: [
+        "Faire une boucle comme pour un nœud simple.",
+        "Au lieu de passer le bout, passer une ganse du brin libre dans la boucle.",
+        "Serrer. Pour défaire, tirer le bout de la ganse."
+      ] },
+    { id: "huit_ganse", titre: "Nœud de huit gansé", wiki: "Figure-eight knot",
+      intro: "Un arrêt en huit qui se défait instantanément : pour bloquer une corde provisoirement dans un œillet ou une poulie.",
+      etapes: [
+        "Faire une boucle, puis passer le brin libre derrière la partie dormante, comme pour un nœud de huit.",
+        "Pour le dernier passage dans la boucle, passer une ganse du brin libre au lieu du bout.",
+        "Serrer. Pour défaire, tirer le bout de la ganse."
+      ] },
+    { id: "stevedore", titre: "Nœud d'arrêt de docker", wiki: "Stevedore knot",
+      intro: "Un huit avec un tour de plus : un arrêt plus gros, qui ne passe pas dans un trou large et se défait encore facilement.",
+      etapes: [
+        "Faire une boucle en croisant le brin libre par-dessus la partie dormante.",
+        "Enrouler le brin libre deux fois autour de la partie dormante, au lieu d'une seule fois pour le huit.",
+        "Passer le brin libre dans la boucle de départ.",
+        "Serrer en tirant les deux brins."
+      ] },
+    { id: "pomme", titre: "Pomme de touline", wiki: "Monkey's fist",
+      intro: "Une boule de corde au bout d'une cordelette, qui donne du poids pour la lancer loin : par-dessus une branche pour suspendre un sac de nourriture, ou vers quelqu'un.",
+      etapes: [
+        "Enrouler la corde 3 fois autour de deux doigts, en laissant pendre la partie dormante.",
+        "Faire 3 tours autour des premiers, à angle droit, en les serrant au milieu.",
+        "Passer le bout à l'intérieur du premier groupe de tours, puis faire 3 tours autour du deuxième groupe, en passant chaque fois à l'intérieur du premier.",
+        "Retirer les doigts. Resserrer petit à petit en suivant la corde dans l'ordre, jusqu'à obtenir une boule ferme.",
+        "Attacher le bout à la partie dormante avec deux demi-clés."
+      ],
+      attention: ["Ne mets pas de pierre au centre si elle risque d'être lancée vers une personne : la boule devient dangereuse."] },
+    { id: "ecoute_double", titre: "Nœud d'écoute double", wiki: "Sheet bend",
+      intro: "Relier deux cordes de grosseurs très différentes, ou mouillées et glissantes. Plus sûr que l'écoute simple.",
+      etapes: [
+        "Faire une ganse avec la corde la plus grosse.",
+        "Passer le bout de la corde fine dans la ganse, par en dessous.",
+        "Le faire passer derrière les deux brins de la ganse, puis le glisser sous lui-même.",
+        "Faire un deuxième tour au même endroit, à côté du premier, et le glisser aussi sous lui-même.",
+        "Serrer en tirant les deux cordes."
+      ] },
+    { id: "carrick", titre: "Nœud de carrick", wiki: "Carrick bend",
+      intro: "Relier deux grosses cordes qui vont porter une lourde charge. Il reste facile à défaire, même après avoir été mouillé.",
+      etapes: [
+        "Avec la première corde, faire une boucle dont le bout passe par-dessus la partie dormante.",
+        "Poser le bout de la seconde corde sous cette boucle.",
+        "Faire avancer la seconde corde en alternant à chaque croisement : par-dessus la partie dormante de la première, sous son bout, par-dessus la boucle.",
+        "Continuer l'alternance : sous sa propre partie, puis par-dessus la boucle. Les deux bouts sortent en diagonale, de part et d'autre.",
+        "Tirer les deux cordes : le nœud se renverse et se tasse. C'est normal."
+      ],
+      attention: ["Vérifie qu'à chaque croisement la corde passe une fois dessus, une fois dessous. Une seule erreur et le nœud lâche."] },
+    { id: "pecheur_simple", titre: "Nœud de pêcheur", wiki: "Fisherman's knot",
+      intro: "Relier deux cordelettes ou deux fils de même grosseur, simplement et solidement.",
+      etapes: [
+        "Poser les deux bouts côte à côte, en sens opposés.",
+        "Avec le premier bout, faire un nœud simple autour de l'autre corde.",
+        "Avec le second bout, faire un nœud simple autour de la première corde.",
+        "Tirer les deux cordes : les deux nœuds glissent l'un vers l'autre et se bloquent."
+      ],
+      attention: ["Pour porter une personne, préfère le double nœud de pêcheur."] },
+    { id: "sang", titre: "Nœud de sang", wiki: "Blood knot",
+      intro: "Le nœud de pêche pour raccorder deux fils de nylon fins sans qu'ils glissent.",
+      etapes: [
+        "Croiser les deux fils sur une dizaine de centimètres.",
+        "Enrouler le premier bout 5 fois autour de l'autre fil, puis le ramener entre les deux fils, au point de croisement.",
+        "Enrouler le second bout 5 fois autour du premier fil, dans l'autre sens.",
+        "Passer ce second bout dans le même espace central, mais dans la direction opposée au premier.",
+        "Mouiller, tirer lentement les deux fils, puis couper les bouts."
+      ] },
+    { id: "roulant", titre: "Nœud roulant", wiki: "Rolling hitch",
+      intro: "Il agrippe une perche ou une autre corde et ne glisse pas quand on tire dans l'axe. Pour tirer un tronc, soulager une corde sous tension ou tendre une bâche.",
+      etapes: [
+        "Passer le bout autour de la perche en croisant la partie dormante, du côté vers lequel tu vas tirer.",
+        "Faire un deuxième tour à côté du premier, en croisant de nouveau la partie dormante, toujours du côté de la traction.",
+        "Passer le bout autour de la perche de l'autre côté de la partie dormante et le glisser sous lui-même.",
+        "Serrer, puis tirer dans l'axe, du côté des deux tours."
+      ] },
+    { id: "hune", titre: "Nœud de hune", wiki: "Buntline hitch",
+      intro: "Fixer une corde à un œillet ou un anneau qui bouge sans arrêt, comme une bâche qui bat au vent : il se resserre au lieu de se desserrer.",
+      etapes: [
+        "Passer le bout dans l'œillet ou l'anneau.",
+        "Avec le bout, faire un tour autour de la partie dormante.",
+        "Faire un second tour autour de la partie dormante, entre le premier tour et l'anneau.",
+        "Glisser le bout sous ce second tour : c'est un nœud de cabestan fait autour de la partie dormante.",
+        "Serrer en tirant la partie dormante."
+      ],
+      attention: ["Très difficile à défaire après une forte charge."] },
+    { id: "levier", titre: "Nœud de levier", wiki: "Marlinspike hitch",
+      intro: "Glisser un bâton dans une corde pour en faire une poignée : pour tirer fort, serrer une ligature ou faire les barreaux d'une échelle de corde.",
+      etapes: [
+        "Faire une boucle dans la corde.",
+        "La rabattre par-dessus la partie dormante.",
+        "Glisser le bâton par-dessus les côtés de la boucle et sous la partie dormante.",
+        "Tirer : la corde se bloque sur le bâton. Pour libérer, retirer le bâton."
+      ] },
+    { id: "bachmann", titre: "Nœud de Bachmann", wiki: "Bachmann hitch",
+      intro: "Un autobloquant avec mousqueton : le mousqueton sert de poignée pour le faire glisser. Pratique avec des gants ou des mains froides.",
+      etapes: [
+        "Clipper un anneau de cordelette dans un mousqueton.",
+        "Plaquer le mousqueton contre la corde principale, ouverture vers l'extérieur.",
+        "Enrouler la cordelette 3 ou 4 fois autour de la corde et du dos du mousqueton, en montant, en passant chaque fois dans le mousqueton.",
+        "Charger la boucle de cordelette vers le bas : le nœud bloque. Pousser le mousqueton pour le déplacer."
+      ],
+      attention: ["Ne bloque que si l'on tire vers le bas. Ne jamais saisir les spires pendant une chute : le nœud ne bloquerait plus."] },
+    { id: "chaise_tours", titre: "Nœud de chaise à double tour", wiki: "Bowline",
+      intro: "Un nœud de chaise plus sûr : la double boucle centrale serre mieux la corde, surtout si elle est glissante ou rigide.",
+      etapes: [
+        "Faire deux petites boucles superposées au lieu d'une, le brin libre passant par-dessus.",
+        "Passer le brin libre dans les deux boucles, par en dessous.",
+        "Le faire passer derrière la partie dormante.",
+        "Le redescendre dans les deux boucles.",
+        "Serrer et laisser une queue d'au moins 10 cm."
+      ] },
+    { id: "boucle_simple", titre: "Boucle simple", wiki: "Overhand loop",
+      intro: "La boucle la plus rapide à faire, pour une charge légère : accrocher un sac, une gourde ou une ficelle de séchage.",
+      etapes: [
+        "Plier le bout de la corde en ganse.",
+        "Faire un nœud simple avec ce double.",
+        "Serrer en tirant la boucle et les deux brins."
+      ],
+      attention: ["Elle se coince et affaiblit la corde : pour une vraie charge, préfère la boucle de huit."] },
+    { id: "chainette", titre: "Chaînette", wiki: "Chain sinnet",
+      intro: "Raccourcir et ranger une longue corde sans qu'elle s'emmêle, et la dérouler d'un seul geste.",
+      etapes: [
+        "Faire une boucle près du bout de la corde.",
+        "Passer une ganse de la partie dormante dans cette boucle.",
+        "Passer une nouvelle ganse dans la précédente, et continuer ainsi sur toute la longueur.",
+        "Pour bloquer, passer le bout dans la dernière ganse. Pour défaire, retirer le bout et tirer : tout se déroule."
+      ] },
+    { id: "tresse", titre: "Tresse à trois brins", wiki: "Braid",
+      intro: "Faire une corde plus solide avec des brins fins : fibres d'ortie, écorce de tilleul, herbes, ficelle.",
+      etapes: [
+        "Attacher ensemble les trois brins à un bout, ou les coincer sous une pierre.",
+        "Passer le brin de droite par-dessus celui du milieu : il devient le brin du milieu.",
+        "Passer le brin de gauche par-dessus le nouveau brin du milieu.",
+        "Recommencer en alternant droite et gauche, en serrant de façon régulière.",
+        "Ajouter un nouveau brin en le superposant sur quelques centimètres quand l'un d'eux devient court. Finir par un nœud simple."
+      ] },
+    { id: "filet", titre: "Filet de fortune",
+      intro: "Avec de la cordelette, un filet sert de hamac, de sac de transport ou de séchoir.",
+      etapes: [
+        "Tendre une corde de tête entre deux arbres.",
+        "Y fixer des longueurs égales de cordelette, à intervalles réguliers, par des têtes d'alouette.",
+        "Nouer chaque brin avec son voisin par un nœud simple, tous à la même hauteur : c'est la première rangée de mailles.",
+        "Rangée suivante : décaler d'une demi-maille et nouer chaque brin avec l'autre voisin.",
+        "Continuer rangée après rangée en gardant des mailles de taille égale, puis nouer le bas sur une seconde corde."
+      ],
+      attention: ["Pêcher ou chasser au filet est interdit dans la plupart des pays européens."] },
+    { id: "epissure_oeil", titre: "Épissure en œil", wiki: "Eye splice",
+      intro: "Une boucle permanente au bout d'une corde à trois torons, plus solide que n'importe quel nœud.",
+      etapes: [
+        "Défaire les trois torons sur environ 15 cm et faire une petite surliure au bout de chacun.",
+        "Plier la corde pour former l'œil de la taille voulue.",
+        "Glisser le toron du milieu sous un toron de la partie dormante, contre le sens de la torsion.",
+        "Glisser le toron de gauche sous le toron suivant de la partie dormante, à gauche du premier.",
+        "Retourner l'épissure et glisser le dernier toron sous le toron de la partie dormante qui reste libre.",
+        "Continuer : chaque toron passe par-dessus un toron et sous le suivant. Faire au moins 5 passages, puis couper les bouts."
+      ],
+      attention: ["Uniquement pour une corde toronnée (torons visibles), pas pour une corde tressée d'escalade."] },
+    { id: "epissure_arriere", titre: "Épissure arrière", wiki: "Back splice",
+      intro: "Terminer proprement le bout d'une corde à trois torons pour qu'il ne s'effiloche jamais.",
+      etapes: [
+        "Défaire les torons sur une dizaine de centimètres.",
+        "Faire une tête : plier chaque toron par-dessus son voisin, dans le même sens, et passer le dernier dans la boucle du premier. Serrer.",
+        "Glisser chaque toron vers la corde, par-dessus un toron et sous le suivant, contre le sens de la torsion.",
+        "Faire 3 passages pour chaque toron.",
+        "Rouler l'épissure sous le pied pour la tasser, puis couper les bouts."
+      ] },
+    { id: "epissure_courte", titre: "Épissure courte", wiki: "Short splice",
+      intro: "Réparer une corde à trois torons coupée, ou en relier deux, sans nœud : le raccord reste solide.",
+      etapes: [
+        "Défaire les torons des deux bouts sur environ 15 cm et faire une surliure au bout de chaque toron.",
+        "Emboîter les deux bouts : chaque toron d'une corde vient se placer entre deux torons de l'autre.",
+        "Ligaturer provisoirement le centre avec une ficelle pour que ça tienne.",
+        "D'un côté, glisser chaque toron par-dessus un toron et sous le suivant, contre le sens de la torsion. Faire 3 passages.",
+        "Retirer la ligature et faire la même chose de l'autre côté.",
+        "Rouler l'épissure sous le pied pour la tasser, puis couper les bouts."
+      ],
+      attention: ["L'épissure épaissit la corde : elle ne passe plus dans une petite poulie."] },
+    { id: "surliure_francaise", titre: "Surliure à demi-clés", wiki: "Whipping knot",
+      intro: "Une autre façon d'arrêter le bout d'une corde, ou de faire une poignée antidérapante sur un manche, avec une série de demi-clés.",
+      etapes: [
+        "Attacher le fil fin sur la corde avec un nœud simple.",
+        "Faire une demi-clé autour de la corde et la serrer contre le nœud.",
+        "Faire la suivante juste à côté, toujours dans le même sens : les nœuds forment une petite arête en spirale.",
+        "Continuer sur une longueur égale à 1,5 fois le diamètre, ou sur toute la longueur du manche.",
+        "Finir par deux demi-clés serrées et couper le fil."
+      ] },
+    { id: "noeuds_eviter", titre: "Deux nœuds à ne pas confondre",
+      intro: "Le nœud plat a deux faux jumeaux qui lâchent sous la charge : le nœud de vache et le nœud de voleur. Savoir les reconnaître évite une mauvaise surprise.",
+      etapes: [
+        "Nœud plat correct : gauche sur droite, puis droite sur gauche. Les deux bouts sortent du même côté et le nœud est bien symétrique.",
+        "Nœud de vache : deux fois gauche sur droite. Les bouts sortent en biais, le nœud est tordu et il glisse.",
+        "Nœud de voleur : il ressemble au nœud plat, mais les deux bouts sortent en diagonale, de part et d'autre. Il lâche très facilement.",
+        "En cas de doute, défaire et refaire en disant à voix haute : « gauche sur droite, droite sur gauche »."
+      ] }
   ];
   K.forEach(function (k) {
     if (T.some(function (t) { return t.id === k.id; })) return;
