@@ -478,6 +478,6 @@ html[data-theme="nuit"] .engr img,html[data-theme="nuit"] .item-illus img,html[d
 
 /* Image par étape */
 .step.has-img{padding-top:0;overflow:hidden}
-.step-img{display:block;width:calc(100% + 36px);margin:0 -18px 14px;aspect-ratio:4/3;object-fit:cover;background:#E9DFCB}
+.step-img{display:block;width:calc(100% + 36px);margin:0 -18px 14px;height:auto;max-height:62vh;object-fit:contain;background:#EFE6D3}
 .steps.all .step-img{width:calc(100% + 36px)}
 html[data-theme="nuit"] .step-img{filter:brightness(.82)}
