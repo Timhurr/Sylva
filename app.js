@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.12";
+  var VERSION = "0.9.13";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -728,8 +728,9 @@
   // ---------- Techniques ----------
   var ILLUS = window.SYLVA_ILLUS || {};
   var IMGS = {}; (window.SYLVA_IMAGES || []).forEach(function (k) { IMGS[k] = "img/" + k + ".webp"; });
+  function thumbKey(key) { if (IMGS[key]) return key; for (var q = 12; q >= 1; q--) if (IMGS[key + "_" + q]) return key + "_" + q; return key; }
   function thumbOf(key, illus) {
-    if (!IMGS[key] && IMGS[key + "_1"]) { var last = 1; while (IMGS[key + "_" + (last + 1)]) last++; key = key + "_" + last; }
+    if (!IMGS[key]) { var last = 0; for (var q = 1; q <= 12; q++) if (IMGS[key + "_" + q]) last = q; if (last) key = key + "_" + last; }
     return IMGS[key] ? '<img src="' + IMGS[key] + '" alt="" loading="lazy">' : (ILLUS[illus] || "");
   }
   function heroIllus(key, illus, alt) {
@@ -753,7 +754,7 @@
       h += '<div class="section-title">' + esc(cat) + '</div><div class="list">';
       items.forEach(function (t) {
         h += '<button class="item" data-tech="' + esc(t.id) + '">' +
-          (t.wiki && photoOf(t.wiki) && !IMGS[t.id + "_1"]
+          (t.wiki && photoOf(t.wiki) && !/_\d+$/.test(thumbKey(t.id))
             ? '<span class="item-illus item-photo" aria-hidden="true"><img src="' + esc(photoOf(t.wiki).src) + '" alt="" loading="lazy"></span>'
             : '<span class="item-illus" aria-hidden="true">' + thumbOf(t.id, t.illus) + "</span>") +
           '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.intro) + "</span></span></button>";
@@ -778,7 +779,8 @@
     var t = TECHS.filter(function (x) { return x.id === id; })[0]; if (!t) return;
     var tp = t.wiki && photoOf(t.wiki);
     var both = t.isole && t.etapes && t.etapes.length;
-    var stepPics = !!IMGS[t.id + "_1"] || !!IMGS[t.id + "_seul_1"];
+    var stepPics = false;
+    for (var si_ = 1; si_ <= 12; si_++) if (IMGS[t.id + "_" + si_] || IMGS[t.id + "_seul_" + si_]) { stepPics = true; break; }
     var main = t.isole || t.etapes, n = main.length;
     var h = (stepPics ? "" : t.wiki ? '<div id="heroSlot" class="knot">' + (tp ? heroHtml(tp, t.titre) : "") + "</div>"
                     : heroIllus(t.id, t.illus, t.titre)) +

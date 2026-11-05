@@ -4,7 +4,7 @@
 (function () {
   "use strict";
   var T = window.SYLVA_TECHNIQUES || [];
-  var SRC = "Méthodes de nouage usuelles, rédigées pour Sylva. Photo : Wikimedia Commons";
+  var SRC = "Méthodes de nouage usuelles, rédigées pour Sylva";
   var K = [
     { id: "simple", titre: "Nœud simple", wiki: "Overhand knot",
       intro: "Le nœud de base, à la source de presque tous les autres. Sert d'arrêt rapide au bout d'une corde ou d'un fil.",
