@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.20";
+  var VERSION = "0.9.21";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -569,8 +569,8 @@
   }
 
   // ---------- Espèces ----------
-  var CAT_LABEL = { plante: "Plante comestible", toxique: "Plante toxique", champignon: "Champignon", animal: "Faune" };
-  var CAT_PLURAL = { plante: "Plantes comestibles", toxique: "Plantes toxiques", champignon: "Champignons", animal: "Faune" };
+  var CAT_LABEL = { plante: "Plante comestible", toxique: "Plante toxique", champignon: "Champignon", animal: "Faune", poisson: "Poisson et vie aquatique" };
+  var CAT_PLURAL = { plante: "Plantes comestibles", toxique: "Plantes toxiques", champignon: "Champignons", animal: "Faune", poisson: "Poissons et vie aquatique" };
   var CAT_ICO = { plante: ["#23382A", "#8CCB7E"], toxique: ["#4A1C14", "#FFB4A1"], champignon: ["#3A3218", "#F2D184"], animal: ["#2A2235", "#C7B9DE"] };
   var curCat = "saison";
   // ---------- Région (pays + milieux) ----------
@@ -672,9 +672,16 @@
     danger: "Ne pas consommer, ne pas porter à la bouche.",
     info: "Infos et conduite à tenir."
   };
+  var VERDICT_POISSON = {
+    ok: "Avec un permis, en respectant tailles et périodes. Toujours bien cuit.",
+    caution: "Comestible avec précautions : lis les consignes avant de le garder.",
+    danger: "À relâcher ou à ne pas toucher : protégé, pollué ou venimeux.",
+    info: "Petit poisson à connaître, sans intérêt pour la table."
+  };
   function verdictHtml(s) {
     var n = s.niveau || "info";
-    return '<div class="verdict v-' + esc(n) + '"><span class="v-ico" aria-hidden="true">' + VERDICT_ICO[n] + "</span><span><b>" + esc(s.statut) + "</b><span>" + esc(VERDICT_SUB[n]) + "</span></span></div>";
+    var sub = s.cat === "poisson" ? VERDICT_POISSON[n] : VERDICT_SUB[n];
+    return '<div class="verdict v-' + esc(n) + '"><span class="v-ico" aria-hidden="true">' + VERDICT_ICO[n] + "</span><span><b>" + esc(s.statut) + "</b><span>" + esc(sub) + "</span></span></div>";
   }
   function ficheHeroHtml(p, s) {
     return p ? '<img src="' + esc(p.src) + '" alt="' + esc(s.nom) + '"><figcaption>' + photoCredit(p) + "</figcaption>"
@@ -712,7 +719,7 @@
       if (credits.length) h += '<p class="tiny muted credits">' + credits.join("<br>") + "</p>";
     }
     if (s.usages && s.usages.length) {
-      h += "<h3>" + (s.cat === "animal" ? "Conseils" : s.niveau === "danger" ? "Consignes" : "Usages") + "</h3><ul>" +
+      h += "<h3>" + (s.cat === "animal" ? "Conseils" : s.cat === "poisson" ? "Pêche et cuisine" : s.niveau === "danger" ? "Consignes" : "Usages") + "</h3><ul>" +
         s.usages.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
     }
     h += '<p class="disclaimer">Contenu éducatif. Ne consommez jamais une plante ou un champignon sans certitude absolue de son identité. La photo montre l\'espèce en général : comparez toujours plusieurs critères.</p></div>';
@@ -1408,7 +1415,7 @@
       '<span class="s">' + (d ? esc(tripWhenTxt(t)) + " · " : "") + "Sac prêt à " + st.pct + " % · " + st.done + " / " + st.total + "</span>" +
       '<span class="bar"><span style="width:' + st.pct + '%"></span></span></span>';
     var mois = now.getMonth() + 1;
-    var sais = ESPECES.filter(function (s) { return inRegion(s) && s.mois && s.mois.indexOf(mois) !== -1 && s.cat !== "animal"; });
+    var sais = ESPECES.filter(function (s) { return inRegion(s) && s.mois && s.mois.indexOf(mois) !== -1 && s.cat !== "animal" && s.cat !== "poisson"; });
     sais.sort(function (a, b) { return (photoOf(b.latin) ? 1 : 0) - (photoOf(a.latin) ? 1 : 0); });
     $("#homeSeason").innerHTML = sais.slice(0, 12).map(function (s) {
       var p = photoOf(s.latin);
