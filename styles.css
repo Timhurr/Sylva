@@ -481,3 +481,4 @@ html[data-theme="nuit"] .engr img,html[data-theme="nuit"] .item-illus img,html[d
 .step-img{display:block;width:calc(100% + 36px);margin:0 -18px 14px;height:auto;max-height:62vh;object-fit:contain;background:#EFE6D3}
 .steps.all .step-img{width:calc(100% + 36px)}
 html[data-theme="nuit"] .step-img{filter:brightness(.82)}
+html[data-theme="nuit"] .scan-hero .seg .chip.on{background:#fff;color:#16201A}
