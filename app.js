@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.24";
+  var VERSION = "0.9.25";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -184,7 +184,10 @@
       if (img) spotPhotoUrl(img.getAttribute("data-spot-photo")).then(function (u) { if (u) { img.src = u; img.hidden = false; e.popup.update(); } });
       var btn = e.popup.getElement().querySelector("[data-del-spot]");
       if (btn) btn.addEventListener("click", function () { deleteSpot(btn.getAttribute("data-del-spot")); map.closePopup(); });
+      var here = e.popup.getElement().querySelector("[data-spot-here]");
+      if (here) here.addEventListener("click", function (ev) { ev.stopPropagation(); spotHere(); });
     });
+    map.on("click", onMapTap);
 
     renderSpots();
     var cached = load("sylva_osm", null);
@@ -394,10 +397,38 @@
     if (!map) return;
     if (me) { pendingSpotPos = [me[0], me[1]]; $("#spotPosInfo").textContent = "Position GPS actuelle (± " + Math.round(me[2]) + " m)"; }
     else { var c = map.getCenter(); pendingSpotPos = [c.lat, c.lng]; $("#spotPosInfo").textContent = "Pas de GPS : le spot sera placé au centre de la carte."; }
+    openSpotForm();
+  });
+  function openSpotForm() {
     $("#spotNote").value = "";
     pendingSpotBlob = null; $("#spotPhotoPreview").hidden = true;
     openModal("#modalSpot");
-  });
+  }
+  // Toucher la carte : épingle provisoire, puis « Placer un spot ici »
+  var tapMarker = null;
+  function clearTap() { if (tapMarker && map) { map.removeLayer(tapMarker); tapMarker = null; } }
+  function onMapTap(e) {
+    var bp = $("#basemapPanel");
+    if (bp && !bp.hidden) { bp.hidden = true; return; }
+    var ll = e.latlng; clearTap();
+    var dist = "";
+    if (me) {
+      var d = map.distance([me[0], me[1]], ll);
+      dist = "<br><span style=\"font-size:12px;opacity:.75\">À " + (d < 1000 ? Math.round(d) + " m" : (d / 1000).toFixed(1).replace(".", ",") + " km") + " de toi</span>";
+    }
+    tapMarker = L.marker(ll, { icon: pinIcon("#EEE9DD", "+"), zIndexOffset: 950 })
+      .bindPopup("<b>Point choisi</b><br><span style=\"font-size:12px;opacity:.75\">" + ll.lat.toFixed(5) + ", " + ll.lng.toFixed(5) + "</span>" + dist +
+        '<br><br><button data-spot-here style="background:var(--accent);color:var(--accent-ink);border:0;border-radius:12px;padding:9px 14px;font-weight:700;cursor:pointer">Placer un spot ici</button>');
+    tapMarker.on("popupclose", function () { setTimeout(function () { if (tapMarker && !tapMarker.isPopupOpen()) clearTap(); }, 0); });
+    tapMarker.addTo(map).openPopup();
+  }
+  function spotHere() {
+    if (!tapMarker) return;
+    var ll = tapMarker.getLatLng();
+    pendingSpotPos = [ll.lat, ll.lng];
+    $("#spotPosInfo").textContent = "Point choisi sur la carte (" + ll.lat.toFixed(5) + ", " + ll.lng.toFixed(5) + ")";
+    clearTap(); openSpotForm();
+  }
   $("#formSpot").addEventListener("submit", function (e) {
     e.preventDefault();
     var spots = getSpots();
