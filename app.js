@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.25";
+  var VERSION = "0.9.26";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -183,7 +183,15 @@
       var img = e.popup.getElement().querySelector("[data-spot-photo]");
       if (img) spotPhotoUrl(img.getAttribute("data-spot-photo")).then(function (u) { if (u) { img.src = u; img.hidden = false; e.popup.update(); } });
       var btn = e.popup.getElement().querySelector("[data-del-spot]");
-      if (btn) btn.addEventListener("click", function () { deleteSpot(btn.getAttribute("data-del-spot")); map.closePopup(); });
+      if (btn) btn.addEventListener("click", function () {
+        var did = btn.getAttribute("data-del-spot");
+        if (btn.dataset.sure) { deleteSpot(did); map.closePopup(); return; }
+        btn.dataset.sure = "1"; btn.textContent = "Confirmer ?";
+      });
+      var ed = e.popup.getElement().querySelector("[data-edit-spot]");
+      if (ed) ed.addEventListener("click", function () { map.closePopup(); editSpot(ed.getAttribute("data-edit-spot")); });
+      var gp = e.popup.getElement().querySelector("[data-gps-spot]");
+      if (gp) gp.addEventListener("click", function () { map.closePopup(); gpsSpot(gp.getAttribute("data-gps-spot")); });
       var here = e.popup.getElement().querySelector("[data-spot-here]");
       if (here) here.addEventListener("click", function (ev) { ev.stopPropagation(); spotHere(); });
     });
@@ -374,8 +382,10 @@
       var html = "<b>" + esc(ty[2]) + "</b><br>" + esc(s.note || "(sans note)") +
         (s.photo ? '<img class="popup-photo" data-spot-photo="' + esc(s.id) + '" alt="Photo du spot" hidden>' : "") +
         '<br><span style="color:#A9B3A6;font-size:12px">' + esc(new Date(s.date).toLocaleString("fr-BE")) + "</span>" +
-        '<br><br><button data-del-spot="' + esc(s.id) + '" style="background:none;border:0;color:#FFB4A1;font-weight:600;padding:0;cursor:pointer">Supprimer</button>';
-      var mk = L.marker([s.lat, s.lon], { icon: pinIcon(ty[0], ty[1]) }).bindPopup(html);
+        '<div class="spot-actions"><button data-gps-spot="' + esc(s.id) + '" class="sa-gps">GPS</button>' +
+        '<button data-edit-spot="' + esc(s.id) + '">Modifier</button>' +
+        '<button data-del-spot="' + esc(s.id) + '" class="sa-del">Supprimer</button></div>';
+      var mk = L.marker([s.lat, s.lon], { icon: pinIcon(ty[0], ty[1]) }).bindPopup(html, { minWidth: 240 });
       spotMarkers[s.id] = mk; layers.spots.addLayer(mk);
     });
   }
@@ -399,10 +409,48 @@
     else { var c = map.getCenter(); pendingSpotPos = [c.lat, c.lng]; $("#spotPosInfo").textContent = "Pas de GPS : le spot sera placé au centre de la carte."; }
     openSpotForm();
   });
+  var editingSpot = null;
   function openSpotForm() {
+    editingSpot = null; $("#spotTitle").textContent = "Nouveau spot";
     $("#spotNote").value = "";
     pendingSpotBlob = null; $("#spotPhotoPreview").hidden = true;
     openModal("#modalSpot");
+  }
+  function editSpot(id) {
+    var s = getSpots().filter(function (x) { return x.id === id; })[0]; if (!s) return;
+    editingSpot = id; pendingSpotBlob = null;
+    $("#spotTitle").textContent = "Modifier le spot";
+    $("#spotType").value = s.type; $("#spotNote").value = s.note || "";
+    $("#spotPosInfo").textContent = "Position : " + s.lat.toFixed(5) + ", " + s.lon.toFixed(5);
+    var pv = $("#spotPhotoPreview"); pv.hidden = true;
+    if (s.photo) spotPhotoUrl(id).then(function (u) { if (u) { pv.src = u; pv.hidden = false; } });
+    openModal("#modalSpot");
+  }
+  // GPS : guidage vers le spot (appli Plans / Google Maps avec réseau, ligne droite + cap sans réseau)
+  var gpsLine = null;
+  function capTxt(deg) { return ["nord", "nord-est", "est", "sud-est", "sud", "sud-ouest", "ouest", "nord-ouest"][Math.round(deg / 45) % 8]; }
+  function gpsSpot(id) {
+    var s = getSpots().filter(function (x) { return x.id === id; })[0]; if (!s) return;
+    if (gpsLine) { map.removeLayer(gpsLine); gpsLine = null; }
+    var info = "";
+    if (me) {
+      var d = map.distance([me[0], me[1]], [s.lat, s.lon]);
+      var y = Math.sin((s.lon - me[1]) * Math.PI / 180) * Math.cos(s.lat * Math.PI / 180);
+      var x = Math.cos(me[0] * Math.PI / 180) * Math.sin(s.lat * Math.PI / 180) - Math.sin(me[0] * Math.PI / 180) * Math.cos(s.lat * Math.PI / 180) * Math.cos((s.lon - me[1]) * Math.PI / 180);
+      var brg = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+      gpsLine = L.polyline([[me[0], me[1]], [s.lat, s.lon]], { color: "#E9A23B", weight: 4, dashArray: "8 8" }).addTo(map);
+      if (gpsLine.getBounds) map.fitBounds(gpsLine.getBounds(), { padding: [60, 60] });
+      info = (d < 1000 ? Math.round(d) + " m" : (d / 1000).toFixed(1).replace(".", ",") + " km") + " à vol d'oiseau, cap " + Math.round(brg) + "° (" + capTxt(brg) + ")";
+    }
+    if (navigator.onLine) {
+      var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+      var url = ios ? "https://maps.apple.com/?daddr=" + s.lat + "," + s.lon + "&dirflg=w"
+                    : "https://www.google.com/maps/dir/?api=1&destination=" + s.lat + "," + s.lon + "&travelmode=walking";
+      if (info) toast(info);
+      window.open(url, "_blank");
+    } else {
+      toast(me ? "Hors ligne : " + info + ". Suis le trait orange avec la boussole." : "Hors ligne et sans GPS : active la localisation pour être guidé.");
+    }
   }
   // Toucher la carte : épingle provisoire, puis « Placer un spot ici »
   var tapMarker = null;
@@ -432,8 +480,15 @@
   $("#formSpot").addEventListener("submit", function (e) {
     e.preventDefault();
     var spots = getSpots();
-    var id = String(Date.now()), blob = pendingSpotBlob;
-    spots.push({ id: id, lat: pendingSpotPos[0], lon: pendingSpotPos[1], type: $("#spotType").value, note: $("#spotNote").value.trim(), date: Date.now(), photo: !!blob });
+    var blob = pendingSpotBlob, id;
+    if (editingSpot) {
+      id = editingSpot;
+      spots.forEach(function (x) { if (x.id === id) { x.type = $("#spotType").value; x.note = $("#spotNote").value.trim(); if (blob) x.photo = true; } });
+      editingSpot = null;
+    } else {
+      id = String(Date.now());
+      spots.push({ id: id, lat: pendingSpotPos[0], lon: pendingSpotPos[1], type: $("#spotType").value, note: $("#spotNote").value.trim(), date: Date.now(), photo: !!blob });
+    }
     save("sylva_spots", spots);
     closeModal($("#modalSpot"));
     var done = function () { renderSpots(); toast("Spot enregistré"); };

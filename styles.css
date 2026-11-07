@@ -496,3 +496,8 @@ html[data-theme="nuit"] .scan-hero .seg .chip.on{background:#fff;color:#16201A}
 .t-saison{background:var(--surface);box-shadow:var(--shadow)} .t-saison svg{color:var(--amber)}
 html[data-theme="nuit"] .t-saison{border:1px solid var(--line)}
 .ico-poisson{background:var(--water-bg);color:var(--water)}
+
+.spot-actions{display:flex;gap:6px;margin-top:12px}
+.spot-actions button{flex:1;border:0;border-radius:12px;padding:9px 6px;font:inherit;font-size:13px;font-weight:700;background:var(--line);color:var(--text);cursor:pointer}
+.spot-actions .sa-gps{background:var(--accent);color:var(--accent-ink)}
+.spot-actions .sa-del{color:var(--danger)}
