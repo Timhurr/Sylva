@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.23";
+  var VERSION = "0.9.24";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -165,10 +165,7 @@
       return;
     }
     map = L.map("map", { zoomControl: false }).setView(ZONE.centre, ZONE.zoom);
-    L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-    }).addTo(map);
+    initBasemaps();
     layers.bivouac = L.layerGroup().addTo(map);
     layers.eau = L.layerGroup().addTo(map);
     layers.spots = L.layerGroup().addTo(map);
@@ -193,6 +190,56 @@
     var cached = load("sylva_osm", null);
     if (cached && cached.elements) renderOsm(cached.elements);
     loadOsm(false);
+  }
+
+  // ---------- Fonds de carte ----------
+  var OSM_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+  var BASEMAPS = {
+    ign_be: { nom: "IGN Belgique", sub: "Topo, sentiers, courbes de niveau",
+      url: "https://cartoweb.wmts.ngi.be/1.0.0/topo/default/3857/{z}/{y}/{x}.png", maxNative: 17,
+      attr: '&copy; <a href="https://www.ngi.be">IGN Belgique</a> (CartoWeb)' },
+    topo: { nom: "OpenTopoMap", sub: "Relief et courbes, toute l'Europe",
+      url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", maxNative: 17, sub2: "abc",
+      attr: OSM_ATTR + ', SRTM | style &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)' },
+    osm: { nom: "OpenStreetMap", sub: "Carte standard",
+      url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", maxNative: 19, attr: OSM_ATTR },
+    ign_fr: { nom: "Plan IGN France", sub: "Carte officielle française",
+      url: "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&FORMAT=image/png&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}", maxNative: 19,
+      attr: '&copy; <a href="https://www.ign.fr">IGN France</a>' },
+    sat: { nom: "Satellite", sub: "Photo aérienne (usage personnel)", sat: true,
+      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", maxNative: 19,
+      attr: "Imagerie &copy; Esri, Maxar, Earthstar Geographics" }
+  };
+  var baseLayer = null;
+
+  function setBasemap(id) {
+    var b = BASEMAPS[id] || BASEMAPS.ign_be;
+    if (!BASEMAPS[id]) id = "ign_be";
+    if (baseLayer) map.removeLayer(baseLayer);
+    var opt = { maxZoom: 19, maxNativeZoom: b.maxNative, attribution: b.attr };
+    if (b.sub2) opt.subdomains = b.sub2;
+    baseLayer = L.tileLayer(b.url, opt).addTo(map);
+    baseLayer.bringToBack();
+    $("#map").classList.toggle("map-sat", !!b.sat);
+    save("sylva_basemap", id);
+    $all("#basemapList [data-basemap]").forEach(function (x) { x.classList.toggle("on", x.dataset.basemap === id); });
+  }
+
+  function initBasemaps() {
+    var list = $("#basemapList");
+    if (list) {
+      list.innerHTML = Object.keys(BASEMAPS).map(function (k) {
+        var b = BASEMAPS[k];
+        return '<button type="button" class="basemap-item" data-basemap="' + k + '"><b>' + b.nom + "</b><span>" + b.sub + "</span></button>";
+      }).join("");
+      list.addEventListener("click", function (e) {
+        var btn = e.target.closest("[data-basemap]"); if (!btn) return;
+        setBasemap(btn.dataset.basemap); $("#basemapPanel").hidden = true;
+      });
+    }
+    var fab = $("#btnBasemap");
+    if (fab) fab.addEventListener("click", function () { var p = $("#basemapPanel"); p.hidden = !p.hidden; });
+    setBasemap(load("sylva_basemap", "ign_be"));
   }
 
   function osmQuery(lat, lon) {
