@@ -1,5 +1,5 @@
 /* Sylva – service worker : appli et fiches hors-ligne, tuiles de carte vues gardées en cache */
-var VERSION = "sylva-v0.9.27";
+var VERSION = "sylva-v0.9.28";
 var SHELL = VERSION + "-shell";
 var TILES = "sylva-tiles";
 var PHOTOS = "sylva-photos";
@@ -47,8 +47,17 @@ self.addEventListener("fetch", function (e) {
   if (req.method !== "GET") return; // API (Pl@ntNet, Overpass) : toujours en direct
   var url = new URL(req.url);
 
+  // Index des tuiles vectorielles (change de version) : réseau d'abord, cache en secours
+  if (url.hostname === "tiles.openfreemap.org" && url.pathname === "/planet") {
+    e.respondWith(caches.open(TILES).then(function (c) {
+      return fetch(req).then(function (res) { if (res && res.ok) c.put(req, res.clone()); return res; })
+        .catch(function () { return c.match(req); });
+    }));
+    return;
+  }
+
   // Tuiles OpenStreetMap : cache d'abord (celles déjà affichées), réseau sinon
-  if (url.hostname === "tile.openstreetmap.org" || url.hostname === "cartoweb.wmts.ngi.be" || /\.tile\.opentopomap\.org$/.test(url.hostname) || url.hostname === "data.geopf.fr" || url.hostname === "server.arcgisonline.com") {
+  if (url.hostname === "tile.openstreetmap.org" || url.hostname === "cartoweb.wmts.ngi.be" || /\.tile\.opentopomap\.org$/.test(url.hostname) || url.hostname === "data.geopf.fr" || url.hostname === "server.arcgisonline.com" || url.hostname === "tiles.openfreemap.org") {
     e.respondWith(caches.open(TILES).then(function (c) {
       return c.match(req).then(function (hit) {
         if (hit) return hit;
@@ -86,9 +95,11 @@ self.addEventListener("fetch", function (e) {
 
   // Bibliothèque carte (version figée) : cache d'abord
   if (url.hostname === "unpkg.com" || url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com") {
-    e.respondWith(caches.open(SHELL).then(function (c) {
-      return c.match(req).then(function (hit) {
-        return hit || fetch(req).then(function (res) { if (res && (res.ok || res.type === "opaque")) c.put(req, res.clone()); return res; });
+    // gardée d'une version à l'autre (cache PHOTOS), pour la carte Terminal hors ligne
+    e.respondWith(caches.match(req).then(function (hit) {
+      return hit || fetch(req).then(function (res) {
+        if (res && (res.ok || res.type === "opaque")) { var cp = res.clone(); caches.open(PHOTOS).then(function (c) { c.put(req, cp); }); }
+        return res;
       });
     }));
     return;

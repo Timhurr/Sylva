@@ -529,3 +529,6 @@ html #map.skin-nuitrouge .leaflet-marker-pane,html #map.skin-nuitrouge .leaflet-
 #map.skin-nuitrouge .spot-actions button,#map.skin-nuitrouge [data-spot-here]{background:#2a0806!important;color:#ff5a4a!important}
 #map.skin-nuitrouge .spot-actions .sa-gps{background:#7a140c!important;color:#ffd0c8!important}
 #map.skin-nuitrouge .leaflet-control-attribution{background:rgba(22,4,4,.8);color:#a0302a}
+
+/* Terminal vectoriel : plus de filtre sur la carte, juste une lueur */
+html #map.skin-terminal.term-vec .leaflet-tile-pane{filter:drop-shadow(0 0 2px rgba(26,250,29,.35))}

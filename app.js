@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.27";
+  var VERSION = "0.9.28";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -229,8 +229,8 @@
     if (baseLayer) map.removeLayer(baseLayer);
     var opt = { maxZoom: 19, maxNativeZoom: b.maxNative, attribution: b.attr };
     if (b.sub2) opt.subdomains = b.sub2;
-    baseLayer = L.tileLayer(b.url, opt).addTo(map);
-    baseLayer.bringToBack();
+    baseLayer = L.tileLayer(b.url, opt);
+    if (!$("#map").classList.contains("term-vec")) { baseLayer.addTo(map); baseLayer.bringToBack(); }
     $("#map").classList.toggle("map-sat", !!b.sat);
     save("sylva_basemap", id);
     $all("#basemapList [data-basemap]").forEach(function (x) { x.classList.toggle("on", x.dataset.basemap === id); });
@@ -263,9 +263,61 @@
     }
     setSkin(load("sylva_skin", "naturel"));
   }
+  // Carte vectorielle « Terminal » : OpenFreeMap (gratuit, usage commercial permis) dessinée en vert sur noir
+  var G_ROAD = "#48fb4a", G_WATER = "#3ccc3f";
+  var TERM_STYLE = {
+    version: 8,
+    sources: { omt: { type: "vector", url: "https://tiles.openfreemap.org/planet" } },
+    layers: [
+      { id: "fond", type: "background", paint: { "background-color": "#333333" } },
+      { id: "sols", type: "fill", source: "omt", "source-layer": "landcover", paint: { "fill-color": "#353535" } },
+      { id: "usages", type: "fill", source: "omt", "source-layer": "landuse", paint: { "fill-color": "#363636" } },
+      { id: "parcs", type: "fill", source: "omt", "source-layer": "park", paint: { "fill-color": "#363636" } },
+      { id: "eau", type: "fill", source: "omt", "source-layer": "water", paint: { "fill-color": G_WATER } },
+      { id: "cours_eau", type: "line", source: "omt", "source-layer": "waterway", paint: { "line-color": G_WATER, "line-width": ["interpolate", ["linear"], ["zoom"], 10, 0.6, 16, 3] } },
+      { id: "batiments", type: "fill", source: "omt", "source-layer": "building", paint: { "fill-color": "#3a3a3a" } },
+      { id: "limites", type: "line", source: "omt", "source-layer": "boundary", paint: { "line-color": "#2b2b2b", "line-width": 1.2 } },
+      { id: "rail", type: "line", source: "omt", "source-layer": "transportation", filter: ["in", ["get", "class"], ["literal", ["rail", "transit"]]], paint: { "line-color": "#6b9f6d", "line-width": 1 } },
+      { id: "chemins", type: "line", source: "omt", "source-layer": "transportation", filter: ["in", ["get", "class"], ["literal", ["path", "track", "service", "minor"]]],
+        paint: { "line-color": "#44fb46", "line-width": ["interpolate", ["linear"], ["zoom"], 12, 0.5, 17, 2.5], "line-dasharray": ["case", ["in", ["get", "class"], ["literal", ["path", "track"]]], ["literal", [2, 1.5]], ["literal", [1, 0]]] } },
+      { id: "routes", type: "line", source: "omt", "source-layer": "transportation", filter: ["in", ["get", "class"], ["literal", ["primary", "secondary", "tertiary"]]],
+        paint: { "line-color": "#4cfb4e", "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.6, 16, 5] } },
+      { id: "autoroutes", type: "line", source: "omt", "source-layer": "transportation", filter: ["in", ["get", "class"], ["literal", ["motorway", "trunk"]]],
+        paint: { "line-color": G_ROAD, "line-width": ["interpolate", ["linear"], ["zoom"], 6, 0.8, 16, 7] } }
+    ]
+  };
+  var glPromise = null, termLayer = null;
+  function loadGL() {
+    if (glPromise) return glPromise;
+    glPromise = new Promise(function (res, rej) {
+      var css = document.createElement("link"); css.rel = "stylesheet"; css.href = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"; document.head.appendChild(css);
+      function js(src, next) { var sc = document.createElement("script"); sc.src = src; sc.onload = next; sc.onerror = function () { glPromise = null; rej(); }; document.head.appendChild(sc); }
+      js("https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js", function () {
+        js("https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.1/leaflet-maplibre-gl.js", function () { L.maplibreGL ? res() : rej(); });
+      });
+    });
+    return glPromise;
+  }
+  function terminalVector(on) {
+    var m = $("#map");
+    if (!on) {
+      if (termLayer && map.hasLayer(termLayer)) map.removeLayer(termLayer);
+      m.classList.remove("term-vec");
+      if (baseLayer && !map.hasLayer(baseLayer)) baseLayer.addTo(map);
+      return;
+    }
+    // en attendant (ou sans réseau la première fois) : filtre vert sur la carte choisie
+    loadGL().then(function () {
+      if (!m.classList.contains("skin-terminal")) return;
+      if (!termLayer) termLayer = L.maplibreGL({ style: TERM_STYLE, attribution: '<a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a> ' + OSM_ATTR });
+      if (!map.hasLayer(termLayer)) termLayer.addTo(map);
+      if (baseLayer && map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
+      m.classList.add("term-vec");
+    }).catch(function () {});
+  }
   var SKINS = {
     naturel: ["Naturel", "La carte telle quelle"],
-    terminal: ["Terminal", "Écran rétro à phosphore vert"],
+    terminal: ["Terminal", "Écran rétro à phosphore vert, carte vectorielle"],
     parchemin: ["Parchemin", "Tons sépia, comme les gravures"],
     nuitrouge: ["Nuit rouge", "Préserve la vision de nuit"]
   };
@@ -275,6 +327,7 @@
     Object.keys(SKINS).forEach(function (k) { m.classList.remove("skin-" + k); });
     if (id !== "naturel") m.classList.add("skin-" + id);
     save("sylva_skin", id);
+    terminalVector(id === "terminal");
     $all("#skinList [data-skin]").forEach(function (x) { x.classList.toggle("on", x.dataset.skin === id); });
   }
 
