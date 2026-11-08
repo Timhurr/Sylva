@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.26";
+  var VERSION = "0.9.27";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -251,6 +251,31 @@
     var fab = $("#btnBasemap");
     if (fab) fab.addEventListener("click", function () { var p = $("#basemapPanel"); p.hidden = !p.hidden; });
     setBasemap(load("sylva_basemap", "ign_be"));
+    var sl = $("#skinList");
+    if (sl) {
+      sl.innerHTML = Object.keys(SKINS).map(function (k) {
+        return '<button type="button" class="basemap-item" data-skin="' + k + '"><b>' + SKINS[k][0] + "</b><span>" + SKINS[k][1] + "</span></button>";
+      }).join("");
+      sl.addEventListener("click", function (e) {
+        var b = e.target.closest("[data-skin]"); if (!b) return;
+        setSkin(b.dataset.skin); $("#basemapPanel").hidden = true;
+      });
+    }
+    setSkin(load("sylva_skin", "naturel"));
+  }
+  var SKINS = {
+    naturel: ["Naturel", "La carte telle quelle"],
+    terminal: ["Terminal", "Écran rétro à phosphore vert"],
+    parchemin: ["Parchemin", "Tons sépia, comme les gravures"],
+    nuitrouge: ["Nuit rouge", "Préserve la vision de nuit"]
+  };
+  function setSkin(id) {
+    if (!SKINS[id]) id = "naturel";
+    var m = $("#map");
+    Object.keys(SKINS).forEach(function (k) { m.classList.remove("skin-" + k); });
+    if (id !== "naturel") m.classList.add("skin-" + id);
+    save("sylva_skin", id);
+    $all("#skinList [data-skin]").forEach(function (x) { x.classList.toggle("on", x.dataset.skin === id); });
   }
 
   function osmQuery(lat, lon) {
