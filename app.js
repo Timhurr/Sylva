@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.28";
+  var VERSION = "0.9.29";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -278,8 +278,10 @@
       { id: "batiments", type: "fill", source: "omt", "source-layer": "building", paint: { "fill-color": "#3a3a3a" } },
       { id: "limites", type: "line", source: "omt", "source-layer": "boundary", paint: { "line-color": "#2b2b2b", "line-width": 1.2 } },
       { id: "rail", type: "line", source: "omt", "source-layer": "transportation", filter: ["in", ["get", "class"], ["literal", ["rail", "transit"]]], paint: { "line-color": "#6b9f6d", "line-width": 1 } },
-      { id: "chemins", type: "line", source: "omt", "source-layer": "transportation", filter: ["in", ["get", "class"], ["literal", ["path", "track", "service", "minor"]]],
-        paint: { "line-color": "#44fb46", "line-width": ["interpolate", ["linear"], ["zoom"], 12, 0.5, 17, 2.5], "line-dasharray": ["case", ["in", ["get", "class"], ["literal", ["path", "track"]]], ["literal", [2, 1.5]], ["literal", [1, 0]]] } },
+      { id: "sentiers", type: "line", source: "omt", "source-layer": "transportation", filter: ["in", ["get", "class"], ["literal", ["path", "track"]]],
+        paint: { "line-color": "#44fb46", "line-width": ["interpolate", ["linear"], ["zoom"], 12, 0.5, 17, 2.5], "line-dasharray": [2, 1.5] } },
+      { id: "chemins", type: "line", source: "omt", "source-layer": "transportation", filter: ["in", ["get", "class"], ["literal", ["service", "minor"]]],
+        paint: { "line-color": "#44fb46", "line-width": ["interpolate", ["linear"], ["zoom"], 12, 0.5, 17, 2.5] } },
       { id: "routes", type: "line", source: "omt", "source-layer": "transportation", filter: ["in", ["get", "class"], ["literal", ["primary", "secondary", "tertiary"]]],
         paint: { "line-color": "#4cfb4e", "line-width": ["interpolate", ["linear"], ["zoom"], 8, 0.6, 16, 5] } },
       { id: "autoroutes", type: "line", source: "omt", "source-layer": "transportation", filter: ["in", ["get", "class"], ["literal", ["motorway", "trunk"]]],
@@ -311,8 +313,17 @@
       if (!m.classList.contains("skin-terminal")) return;
       if (!termLayer) termLayer = L.maplibreGL({ style: TERM_STYLE, attribution: '<a href="https://openfreemap.org">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/">OpenMapTiles</a> ' + OSM_ATTR });
       if (!map.hasLayer(termLayer)) termLayer.addTo(map);
-      if (baseLayer && map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
-      m.classList.add("term-vec");
+      var gm = termLayer.getMaplibreMap && termLayer.getMaplibreMap();
+      var ok = function () {
+        if (!m.classList.contains("skin-terminal")) return;
+        if (baseLayer && map.hasLayer(baseLayer)) map.removeLayer(baseLayer);
+        m.classList.add("term-vec");
+      };
+      // On ne retire la carte d'origine qu'une fois la carte vectorielle réellement dessinée
+      if (gm && gm.on) {
+        if (gm.loaded && gm.loaded()) ok(); else gm.once("load", ok);
+        gm.on("error", function (ev) { try { console.warn("Terminal :", ev && ev.error && ev.error.message); } catch (e) {} });
+      } else ok();
     }).catch(function () {});
   }
   var SKINS = {
