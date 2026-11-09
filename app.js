@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.35";
+  var VERSION = "0.9.36";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -1339,8 +1339,9 @@
     if (me) return "Autour de ma position";
     return ZONE.nom;
   }
-  function renderMeteo(data, when) {
-    var d = data.daily, h = "";
+  function renderMeteo(data, when, note) {
+    var d = data.daily, h = note ? '<p class="tiny muted" style="margin:0 0 8px">' + note + "</p>" : "";
+    var today = new Date(); today = today.getFullYear() + "-" + String(today.getMonth() + 1).padStart(2, "0") + "-" + String(today.getDate()).padStart(2, "0");
     var days = [0, 1, 2].filter(function (i) { return d.time && d.time[i]; });
     var minAll = Math.min.apply(null, days.map(function (i) { return d.temperature_2m_min[i]; }));
     var rainMax = Math.max.apply(null, days.map(function (i) { return d.precipitation_sum[i] || 0; }));
@@ -1351,7 +1352,7 @@
       '<p class="tiny muted" style="margin:4px 0 0">Rafales en km/h. Monter le camp avant ' + (setH - 1) + " h " + setM + ", tant qu'il fait jour.</p>";
     h += '<div class="meteo-days">' + days.map(function (i) {
       var date = new Date(d.time[i] + "T12:00:00");
-      var label = i === 0 ? "Aujourd'hui" : date.toLocaleDateString("fr-BE", { weekday: "long" });
+      var label = d.time[i] === today ? "Aujourd'hui" : date.toLocaleDateString("fr-BE", { weekday: "long", day: d.time[0] === today ? undefined : "numeric" });
       return '<div class="day"><span class="d">' + esc(label) + '</span><span class="w">' + esc(WMO[d.weather_code[i]] || "—") + "</span>" +
         '<span class="tt">' + Math.round(d.temperature_2m_max[i]) + "° <small>/ " + Math.round(d.temperature_2m_min[i]) + "°</small></span>" +
         '<span class="x">💧 ' + (d.precipitation_sum[i] || 0).toFixed(0) + " mm · " + (d.precipitation_probability_max[i] == null ? "–" : d.precipitation_probability_max[i]) + "%</span>" +
@@ -1386,6 +1387,30 @@
       .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
       .then(function (data) { save("sylva_meteo", { t: Date.now(), c: c, data: data }); renderMeteo(data, Date.now()); renderHero(); applyTheme(); })
       .catch(function () { if (!cached) $("#meteo").innerHTML = '<p class="muted">Météo indisponible pour le moment.</p>'; });
+  }
+
+  // Météo de l'onglet Bivouac : au lieu de la sortie s'il est choisi (l'accueil garde la météo d'ici)
+  function loadBivMeteo() {
+    var t = getTrip();
+    if (t.lat == null) { loadMeteo(); return; }
+    if ($("#bivPlace")) $("#bivPlace").textContent = t.lieu || t.pointLabel || "Lieu du bivouac";
+    var j = tripDays(t), start = null, note = "";
+    if (j !== null && j >= 0 && j <= 13) start = t.date;
+    else if (j !== null && j > 13) note = "Prévisions disponibles 2 semaines avant la sortie : en attendant, voici la météo actuelle sur place.";
+    var key = t.lat.toFixed(3) + "," + t.lon.toFixed(3) + "," + (start || "now");
+    var cached = load("sylva_meteo_trip", null), ok = cached && cached.key === key;
+    if (ok) renderMeteo(cached.data, cached.t, note);
+    if ((ok && Date.now() - cached.t < 3600e3) || !navigator.onLine) {
+      if (!ok) $("#meteo").innerHTML = '<p class="muted">Pas de réseau : ouvre cet onglet une fois connecté pour garder la météo du lieu en mémoire.</p>';
+      return;
+    }
+    var range = start ? "&start_date=" + start + "&end_date=" + new Date(new Date(start + "T12:00:00").getTime() + 2 * 864e5).toISOString().slice(0, 10) : "&forecast_days=3";
+    fetch("https://api.open-meteo.com/v1/forecast?latitude=" + t.lat.toFixed(3) + "&longitude=" + t.lon.toFixed(3) +
+      "&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_sum,precipitation_probability_max,wind_gusts_10m_max,sunrise,sunset" +
+      "&timezone=Europe%2FBrussels" + range)
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (data) { save("sylva_meteo_trip", { t: Date.now(), key: key, data: data }); if (getTrip().lat != null) renderMeteo(data, Date.now(), note); })
+      .catch(function () { if (!ok) $("#meteo").innerHTML = '<p class="muted">Météo du lieu indisponible pour le moment.</p>'; });
   }
 
   // ---------- Programme du prochain bivouac : recettes et fiches -> sac ----------
@@ -1628,7 +1653,7 @@
     setTimeout(function () { map.setView([s.lat, s.lon], 16); if (spotMarkers[id]) spotMarkers[id].openPopup(); }, 120);
   });
 
-  function renderBivouac() { renderTrip(); loadMeteo(); renderPlan(); renderChecklist(); renderCarnet(); }
+  function renderBivouac() { renderTrip(); loadBivMeteo(); renderPlan(); renderChecklist(); renderHist(); renderCarnet(); }
 
   // ---------- Aujourd'hui ----------
   var MOIS_COURTS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
@@ -1656,14 +1681,132 @@
     $("#tripWhen").textContent = tripWhenTxt(t);
     $("#tripName").textContent = t.lieu || "Mon bivouac";
     $("#btnTrip").textContent = t.date || t.lieu ? "Modifier la sortie" : "Choisir la date et le lieu";
+    $("#btnTripEnd").hidden = !(t.date || t.lieu);
+  }
+  // Lieu de la sortie : recherche, un de mes spots, ou ma position
+  var tripPick = null, tripFound = [];
+  function showTripPoint() {
+    $("#tripPoint").innerHTML = tripPick
+      ? "📍 " + esc(tripPick.label || "Point choisi") + ' <span class="muted">(' + tripPick.lat.toFixed(4) + ", " + tripPick.lon.toFixed(4) + ')</span> <button type="button" class="link-btn" id="btnTripClear">effacer</button>'
+      : '<span class="muted">Sans point précis, la météo du bivouac suit ta position ou la carte.</span>';
   }
   $("#btnTrip").addEventListener("click", function () {
-    var t = getTrip(); $("#tripLieu").value = t.lieu || ""; $("#tripDate").value = t.date || ""; openModal("#modalTrip");
+    var t = getTrip(); $("#tripLieu").value = t.lieu || ""; $("#tripDate").value = t.date || "";
+    tripPick = t.lat != null ? { lat: t.lat, lon: t.lon, label: t.pointLabel || t.lieu, spot: t.spot || "" } : null;
+    var sel = $("#tripSpot");
+    sel.innerHTML = '<option value="">Choisir un spot…</option>' + getSpots().map(function (sp) {
+      var ty = SPOT_TYPES[sp.type] || SPOT_TYPES.autre;
+      return '<option value="' + esc(sp.id) + '">' + esc(ty[2] + (sp.note ? " · " + sp.note.slice(0, 40) : "")) + "</option>";
+    }).join("");
+    sel.value = tripPick && tripPick.spot ? tripPick.spot : "";
+    $("#btnTripMe").hidden = !me;
+    $("#tripResults").hidden = true; showTripPoint(); openModal("#modalTrip");
+  });
+  function tripSearch() {
+    var q = $("#tripLieu").value.trim(), box = $("#tripResults"); if (!q) return;
+    if (!navigator.onLine) { box.hidden = false; box.innerHTML = '<div class="place-empty">Pas de réseau : choisis plutôt un spot ou ta position.</div>'; return; }
+    if (Date.now() - lastSearch < 1100) return; lastSearch = Date.now();
+    box.hidden = false; box.innerHTML = '<div class="place-empty">Recherche…</div>';
+    fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&accept-language=fr&countrycodes=be,fr,lu,nl,de,ch&q=" + encodeURIComponent(q), { headers: { "Accept": "application/json" } })
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (list) {
+        tripFound = list || [];
+        box.innerHTML = tripFound.length ? tripFound.map(function (p, i) {
+          var parts = String(p.display_name || "").split(",");
+          return '<button type="button" class="place-item" data-trip-place="' + i + '"><b>' + esc(p.name || parts[0]) + "</b><span>" + esc(parts.slice(1, 4).join(",").trim()) + "</span></button>";
+        }).join("") : '<div class="place-empty">Aucun lieu trouvé.</div>';
+      }).catch(function () { box.innerHTML = '<div class="place-empty">Recherche indisponible, réessaie.</div>'; });
+  }
+  $("#btnTripSearch").addEventListener("click", tripSearch);
+  $("#tripLieu").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); tripSearch(); } });
+  $("#tripResults").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-trip-place]"); if (!b) return;
+    var p = tripFound[+b.getAttribute("data-trip-place")]; if (!p) return;
+    var name = p.name || String(p.display_name || "").split(",")[0];
+    tripPick = { lat: parseFloat(p.lat), lon: parseFloat(p.lon), label: name, spot: "" };
+    $("#tripLieu").value = name; $("#tripSpot").value = ""; $("#tripResults").hidden = true; showTripPoint();
+  });
+  $("#tripSpot").addEventListener("change", function () {
+    var sp = getSpots().filter(function (x) { return x.id === $("#tripSpot").value; })[0];
+    if (!sp) return;
+    var ty = SPOT_TYPES[sp.type] || SPOT_TYPES.autre, lab = sp.note ? sp.note.slice(0, 40) : ty[2];
+    tripPick = { lat: sp.lat, lon: sp.lon, label: lab, spot: sp.id };
+    if (!$("#tripLieu").value.trim()) $("#tripLieu").value = lab;
+    showTripPoint();
+  });
+  $("#btnTripMe").addEventListener("click", function () {
+    if (!me) return;
+    tripPick = { lat: me[0], lon: me[1], label: "Ma position", spot: "" }; $("#tripSpot").value = ""; showTripPoint();
+  });
+  $("#tripPoint").addEventListener("click", function (e) {
+    if (e.target.id === "btnTripClear") { tripPick = null; $("#tripSpot").value = ""; showTripPoint(); }
   });
   $("#formTrip").addEventListener("submit", function (e) {
     e.preventDefault();
-    save("sylva_trip", { lieu: $("#tripLieu").value.trim(), date: $("#tripDate").value });
-    closeModal($("#modalTrip")); renderTrip(); renderAccueil(); toast("Sortie enregistrée");
+    var t = { lieu: $("#tripLieu").value.trim(), date: $("#tripDate").value };
+    if (tripPick) { t.lat = tripPick.lat; t.lon = tripPick.lon; t.pointLabel = tripPick.label; t.spot = tripPick.spot || ""; }
+    save("sylva_trip", t);
+    closeModal($("#modalTrip")); renderTrip(); loadBivMeteo(); renderAccueil(); toast("Sortie enregistrée");
+  });
+
+  // ---------- Historique des bivouacs ----------
+  function getHist() { var h = load("sylva_hist", []); return Array.isArray(h) ? h : []; }
+  function starsTxt(n) { var s = ""; for (var i = 1; i <= 5; i++) s += i <= n ? "★" : "☆"; return s; }
+  function renderHist() {
+    var hs = getHist().slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || "") || b.fin - a.fin; });
+    $("#histList").innerHTML = hs.length ? '<div class="list">' + hs.map(function (x) {
+      var d = x.date ? new Date(x.date + "T12:00:00").toLocaleDateString("fr-BE", { day: "numeric", month: "long", year: "numeric" }) : "Date inconnue";
+      return '<button class="item hist-item" data-hist="' + esc(x.id) + '"><span class="item-main"><span class="item-name">' + esc(x.lieu || "Bivouac") +
+        (x.stars ? ' <span class="hist-stars" aria-label="' + x.stars + ' sur 5">' + starsTxt(x.stars) + "</span>" : "") + "</span>" +
+        '<span class="item-sub">' + esc(d) + (x.plan && x.plan.length ? " · " + x.plan.length + " recette(s) / fiche(s)" : "") + "</span>" +
+        '<span class="item-sub">' + esc(x.note ? x.note.slice(0, 110) + (x.note.length > 110 ? "…" : "") : "Touche pour ajouter un commentaire") + "</span></span></button>";
+    }).join("") + "</div>"
+      : '<div class="card"><p class="muted" style="margin:0">Pas encore d\'ancien bivouac. Après ta sortie, touche « Terminer ce bivouac » : il arrive ici et tu peux le noter et le commenter.</p></div>';
+  }
+  var histEdit = null, histStars = 0;
+  function drawStars() {
+    var h = ""; for (var i = 1; i <= 5; i++) h += '<button type="button" role="radio" aria-checked="' + (i === histStars) + '" aria-label="' + i + ' sur 5" data-star="' + i + '"' + (i <= histStars ? ' class="on"' : "") + ">★</button>";
+    $("#histStars").innerHTML = h;
+  }
+  function openHist(id) {
+    var x = id ? getHist().filter(function (y) { return y.id === id; })[0] : null;
+    histEdit = x ? x.id : null; histStars = x ? x.stars || 0 : 0;
+    $("#histTitle").textContent = x ? "Ancien bivouac" : "Ajouter un ancien bivouac";
+    $("#histLieu").value = x ? x.lieu || "" : ""; $("#histDate").value = x ? x.date || "" : "";
+    $("#histNote").value = x ? x.note || "" : "";
+    $("#histPlan").textContent = x && x.plan && x.plan.length ? "Au programme : " + x.plan.map(function (p) { return p.titre; }).join(", ") : "";
+    $("#btnHistDel").hidden = !x;
+    drawStars(); openModal("#modalHist");
+  }
+  $("#histStars").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-star]"); if (!b) return;
+    var n = +b.getAttribute("data-star"); histStars = histStars === n ? 0 : n; drawStars();
+  });
+  $("#histList").addEventListener("click", function (e) { var b = e.target.closest("[data-hist]"); if (b) openHist(b.getAttribute("data-hist")); });
+  $("#btnAddPast").addEventListener("click", function () { openHist(null); });
+  $("#formHist").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var hs = getHist(), x = histEdit ? hs.filter(function (y) { return y.id === histEdit; })[0] : null;
+    if (!x) { x = { id: uid(), fin: Date.now(), plan: [] }; hs.push(x); }
+    x.lieu = $("#histLieu").value.trim(); x.date = $("#histDate").value; x.stars = histStars; x.note = $("#histNote").value.trim();
+    save("sylva_hist", hs); closeModal($("#modalHist")); renderHist(); toast("Bivouac enregistré");
+  });
+  $("#btnHistDel").addEventListener("click", function () {
+    if (!histEdit || !confirm("Supprimer ce bivouac de l'historique ?")) return;
+    save("sylva_hist", getHist().filter(function (y) { return y.id !== histEdit; }));
+    closeModal($("#modalHist")); renderHist();
+  });
+  $("#btnTripEnd").addEventListener("click", function () {
+    var t = getTrip();
+    if (!confirm("Terminer « " + (t.lieu || "ce bivouac") + " » ? Il passe dans tes anciens bivouacs, et le sac est remis à zéro pour le prochain.")) return;
+    var plan = getPlan().map(function (id) { var f = TECHS.filter(function (x) { return x.id === id; })[0]; return f ? { id: id, titre: f.titre } : null; }).filter(Boolean);
+    var x = { id: uid(), lieu: t.lieu || t.pointLabel || "Bivouac", date: t.date || new Date().toISOString().slice(0, 10), lat: t.lat, lon: t.lon, plan: plan, stars: 0, note: "", fin: Date.now() };
+    var hs = getHist(); hs.push(x); save("sylva_hist", hs);
+    var cl = getChecklist().filter(function (g) { return !g.src; });
+    cl.forEach(function (g) { g.items.forEach(function (it) { it.done = false; }); });
+    saveChecklist(cl); save("sylva_plan", []); save("sylva_trip", { lieu: "", date: "" }); try { localStorage.removeItem("sylva_meteo_trip"); } catch (e2) {}
+    renderBivouac(); renderAccueil();
+    openHist(x.id);
   });
   function renderHero() {
     var m = load("sylva_meteo", null);

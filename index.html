@@ -255,7 +255,7 @@
   <section class="view" id="view-bivouac" aria-label="Bivouac">
     <div class="pad page">
       <header class="page-head"><div class="page-title"><span class="eyebrow" id="tripWhen">Prochaine sortie</span><h1 id="tripName">Mon bivouac</h1></div></header>
-      <button class="link-btn" id="btnTrip" type="button">Choisir la date et le lieu</button>
+      <div class="trip-actions"><button class="link-btn" id="btnTrip" type="button">Choisir la date et le lieu</button><button class="link-btn" id="btnTripEnd" type="button" hidden>Terminer ce bivouac</button></div>
 
       <div class="sec-head"><h2>Météo</h2><span class="muted small" id="bivPlace">Vallée de l'Ourthe</span></div>
       <div id="meteo" class="card"><p class="muted">Chargement…</p></div>
@@ -274,6 +274,9 @@
         <div id="checklist"></div>
         <input type="file" id="checkPhoto" accept="image/*" hidden>
       </div>
+
+      <div class="sec-head"><h2>Anciens bivouacs</h2><button class="link-btn" type="button" id="btnAddPast">Ajouter</button></div>
+      <div id="histList"></div>
 
       <div class="sec-head"><h2>Carnet de spots</h2></div>
       <div id="carnet"></div>
@@ -393,13 +396,35 @@
   </form>
 </div>
 
+<div class="modal" id="modalHist" hidden role="dialog" aria-modal="true" aria-labelledby="histTitle">
+  <form class="modal-box" id="formHist">
+    <h2 id="histTitle">Ancien bivouac</h2>
+    <label class="field"><span class="field-label">Lieu</span><input type="text" id="histLieu" placeholder="Ex. : Nisramont"></label>
+    <label class="field"><span class="field-label">Date</span><input type="date" id="histDate"></label>
+    <div class="field"><span class="field-label">Ma note</span><div class="stars" id="histStars" role="radiogroup" aria-label="Note sur 5"></div></div>
+    <label class="field"><span class="field-label">Commentaire</span><textarea id="histNote" rows="5" placeholder="Météo, emplacement, ce qui a marché, ce qu'il faudra changer…"></textarea></label>
+    <p class="tiny muted" id="histPlan"></p>
+    <div class="row">
+      <button type="button" class="btn btn-ghost" id="btnHistDel">Supprimer</button>
+      <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </div>
+  </form>
+</div>
+
 <div class="modal" id="modalTrip" hidden role="dialog" aria-modal="true" aria-labelledby="tripTitle">
   <form class="modal-box" id="formTrip">
     <h2 id="tripTitle">Ma prochaine sortie</h2>
-    <label class="field">
+    <div class="field">
       <span class="field-label">Lieu</span>
-      <input type="text" id="tripLieu" placeholder="Ex. : Vallée de l'Ourthe">
+      <div class="trip-search"><input type="text" id="tripLieu" placeholder="Ex. : Nisramont" autocomplete="off"><button type="button" class="btn" id="btnTripSearch">Chercher</button></div>
+      <div id="tripResults" class="trip-results" hidden></div>
+    </div>
+    <label class="field">
+      <span class="field-label">Ou un de mes spots</span>
+      <select id="tripSpot"><option value="">Choisir un spot…</option></select>
     </label>
+    <button type="button" class="link-btn" id="btnTripMe">Utiliser ma position actuelle</button>
+    <p class="trip-point" id="tripPoint"></p>
     <label class="field">
       <span class="field-label">Date d'arrivée</span>
       <input type="date" id="tripDate">

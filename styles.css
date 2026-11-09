@@ -551,3 +551,15 @@ html[data-theme="nuit"] .rc-buff{color:#8CD996}
 .plan-btn{width:100%;margin:12px 0 4px}
 .plan-row{display:flex;align-items:center;gap:6px}
 .plan-row .item{flex:1;min-width:0}
+
+.trip-search{display:flex;gap:8px}
+.trip-search input{flex:1;min-width:0}
+.trip-search .btn{flex:0 0 auto;min-height:48px}
+.trip-results{border:1px solid var(--line);border-radius:14px;overflow:hidden;max-height:220px;overflow-y:auto}
+.trip-point{font-size:14px;margin:8px 0}
+.trip-actions{display:flex;gap:16px;flex-wrap:wrap}
+.hist-stars{color:#E9A23B;font-size:13px;letter-spacing:1px;white-space:nowrap}
+.stars{display:flex;gap:4px}
+.stars button{border:0;background:none;font-size:32px;line-height:1;color:var(--line);padding:2px;cursor:pointer}
+.stars button.on{color:#E9A23B}
+.field textarea{font:inherit;resize:vertical}
