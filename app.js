@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.39";
+  var VERSION = "0.9.40";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -170,6 +170,9 @@
     layers.bivouac = L.layerGroup().addTo(map);
     layers.eau = L.layerGroup().addTo(map);
     layers.spots = L.layerGroup().addTo(map);
+    layers.services = L.layerGroup();
+    if (load("sylva_layer_services", true)) layers.services.addTo(map);
+    var sc = document.querySelector('.map-chips [data-layer="services"]'); if (sc) sc.classList.toggle("on", map.hasLayer(layers.services));
 
     $all(".map-chips .chip").forEach(function (c) {
       c.addEventListener("click", function () {
@@ -177,6 +180,7 @@
         c.classList.toggle("on", on);
         var lg = layers[c.dataset.layer];
         if (on) map.addLayer(lg); else map.removeLayer(lg);
+        if (c.dataset.layer === "services") { save("sylva_layer_services", on); if (on) loadPoi(false); }
       });
     });
 
@@ -193,6 +197,10 @@
       if (ed) ed.addEventListener("click", function () { map.closePopup(); editSpot(ed.getAttribute("data-edit-spot")); });
       var gp = e.popup.getElement().querySelector("[data-gps-spot]");
       if (gp) gp.addEventListener("click", function () { map.closePopup(); gpsSpot(gp.getAttribute("data-gps-spot")); });
+      var gpo = e.popup.getElement().querySelector("[data-go-lat]");
+      if (gpo) gpo.addEventListener("click", function () {
+        map.closePopup(); startNav({ lat: +gpo.getAttribute("data-go-lat"), lon: +gpo.getAttribute("data-go-lon"), label: gpo.getAttribute("data-go-name") });
+      });
       var here = e.popup.getElement().querySelector("[data-spot-here]");
       if (here) here.addEventListener("click", function (ev) { ev.stopPropagation(); spotHere(); });
       var goh = e.popup.getElement().querySelector("[data-go-here]");
@@ -365,6 +373,7 @@
   }
 
   function loadOsm(force) {
+    loadPoi(force);
     var c = refPoint();
     var cached = load("sylva_osm", null);
     var fresh = cached && (Date.now() - cached.t < 7 * 864e5) && distKm(cached.c, c) < 8;
@@ -388,6 +397,69 @@
     }).catch(function () {
       if (force) toast("Serveur OpenStreetMap indisponible, réessayez");
       updateMapCard();
+    });
+  }
+
+  // ---------- Services autour (OpenStreetMap) : magasins, pharmacie, carburant… ----------
+  var POI = [
+    ["alim", "Alimentation", "#7FB069", "🛒", function (t) { return /^(supermarket|convenience|bakery|butcher|greengrocer|farm|deli|general)$/.test(t.shop); }],
+    ["sante", "Santé", "#E0584A", "+", function (t) { return /^(pharmacy|doctors|hospital|clinic|dentist)$/.test(t.amenity); }],
+    ["carbu", "Carburant", "#5B7FC7", "⛽", function (t) { return t.amenity === "fuel"; }],
+    ["resto", "Restaurant / café", "#D9822B", "🍴", function (t) { return /^(restaurant|cafe|bar|pub|fast_food)$/.test(t.amenity); }],
+    ["outdoor", "Matériel / bricolage", "#8A6D4B", "🔧", function (t) { return /^(outdoor|sports|hardware|doityourself)$/.test(t.shop); }],
+    ["argent", "Distributeur", "#4E8F7A", "€", function (t) { return t.amenity === "atm" || t.amenity === "bank"; }],
+    ["transport", "Gare", "#6B6B9A", "🚆", function (t) { return t.railway === "station" || t.public_transport === "station"; }],
+    ["wc", "Toilettes", "#7C8A80", "WC", function (t) { return t.amenity === "toilets"; }],
+    ["police", "Police", "#33497A", "P", function (t) { return t.amenity === "police"; }]
+  ];
+  var POI_FR = { supermarket: "Supermarché", convenience: "Épicerie", bakery: "Boulangerie", butcher: "Boucherie", greengrocer: "Primeur", farm: "Vente à la ferme", deli: "Traiteur", general: "Magasin",
+    pharmacy: "Pharmacie", doctors: "Médecin", hospital: "Hôpital", clinic: "Clinique", dentist: "Dentiste", fuel: "Station-service", restaurant: "Restaurant", cafe: "Café",
+    bar: "Bar", pub: "Café", fast_food: "Snack", outdoor: "Magasin outdoor", sports: "Magasin de sport", hardware: "Quincaillerie", doityourself: "Bricolage",
+    atm: "Distributeur", bank: "Banque", toilets: "Toilettes", police: "Police", station: "Gare" };
+  function poiQuery(lat, lon) {
+    var a = "(around:8000," + lat + "," + lon + ");";
+    return "[out:json][timeout:25];(" +
+      'nwr["shop"~"^(supermarket|convenience|bakery|butcher|greengrocer|farm|deli|general|outdoor|sports|hardware|doityourself)$"]' + a +
+      'nwr["amenity"~"^(pharmacy|doctors|hospital|clinic|dentist|fuel|restaurant|cafe|bar|pub|fast_food|atm|bank|toilets|police)$"]' + a +
+      'nwr["railway"="station"]' + a + ");out center tags 400;";
+  }
+  function hoursFr(h) {
+    var D = { Mo: "lun", Tu: "mar", We: "mer", Th: "jeu", Fr: "ven", Sa: "sam", Su: "dim", PH: "fériés" };
+    return String(h).replace(/\b(Mo|Tu|We|Th|Fr|Sa|Su|PH)\b/g, function (m) { return D[m]; })
+      .replace(/\boff\b|\bclosed\b/g, "fermé").replace(/24\/7/, "24 h/24, 7 j/7").replace(/\s*;\s*/g, " · ").replace(/(\d\d):(\d\d)/g, "$1h$2");
+  }
+  function loadPoi(force) {
+    if (!map || !map.hasLayer(layers.services)) return;
+    var c = refPoint(), cached = load("sylva_poi", null);
+    var fresh = cached && (Date.now() - cached.t < 7 * 864e5) && distKm(cached.c, c) < 5;
+    if (cached) renderPoi(cached.elements);
+    if ((fresh && !force) || !navigator.onLine) return;
+    fetch("https://overpass-api.de/api/interpreter", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "data=" + encodeURIComponent(poiQuery(c[0].toFixed(5), c[1].toFixed(5))) })
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (d) { save("sylva_poi", { t: Date.now(), c: c, elements: d.elements || [] }); renderPoi(d.elements || []); })
+      .catch(function () {});
+  }
+  function renderPoi(els) {
+    if (!map) return;
+    layers.services.clearLayers();
+    (els || []).forEach(function (el) {
+      var lat = el.lat != null ? el.lat : el.center && el.center.lat, lon = el.lon != null ? el.lon : el.center && el.center.lon;
+      if (lat == null) return;
+      var t = el.tags || {}, k = POI.filter(function (x) { return x[4](t); })[0]; if (!k) return;
+      var typ = POI_FR[t.shop] || POI_FR[t.amenity] || (t.railway === "station" ? "Gare" : k[1]);
+      var name = t.name || typ, lines = [];
+      if (t.opening_hours) lines.push("Horaires : " + esc(hoursFr(t.opening_hours)));
+      var tel = t.phone || t["contact:phone"]; if (tel) lines.push('Tél. : <a href="tel:' + esc(tel.replace(/\s/g, "")) + '">' + esc(tel) + "</a>");
+      var addr = [t["addr:street"] && (t["addr:street"] + (t["addr:housenumber"] ? " " + t["addr:housenumber"] : "")), t["addr:city"]].filter(Boolean).join(", ");
+      if (addr) lines.push(esc(addr));
+      var d = me ? '<br><span style="color:#A9B3A6">À ' + fmtKm(distKm([me[0], me[1]], [lat, lon])) + " de toi</span>" : "";
+      var web = t.website || t["contact:website"];
+      var html = "<b>" + esc(name) + '</b><br><span style="color:#A9B3A6">' + esc(typ) + "</span>" + d +
+        (lines.length ? "<br><br>" + lines.join("<br>") : "") + (web ? '<br><a href="' + esc(web) + '" target="_blank" rel="noopener">Site web</a>' : "") +
+        '<div class="spot-actions"><button class="sa-gps" data-go-lat="' + lat + '" data-go-lon="' + lon + '" data-go-name="' + esc(name) + '">Y aller</button></div>' +
+        '<span style="font-size:11px;color:#A9B3A6">Infos OpenStreetMap : horaires à vérifier.</span>';
+      layers.services.addLayer(L.marker([lat, lon], { icon: pinIcon(k[2], k[3]) }).bindPopup(html, { minWidth: 220 }));
     });
   }
 
