@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.45";
+  var VERSION = "0.9.46";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -2237,6 +2237,10 @@
     $("#panelGuide").hidden = which !== "guide";
     $("#panelQuiz").hidden = which !== "quiz";
     $("#panelBadges").hidden = which !== "badges";
+    $("#panelPouls").hidden = which !== "pouls";
+    $("#panelNiveau").hidden = which !== "niveau";
+    $("#panelAsk").hidden = which !== "ask";
+    if (which !== "pouls" && typeof stopCam === "function") stopCam();
     $("#view-apprendre").scrollTop = 0;
   }
   function setCat(cat) {
@@ -2592,13 +2596,267 @@
     var t = e.target.closest("[data-sa-tech]"); if (t) { openTechnique(t.getAttribute("data-sa-tech")); return; }
     var s = e.target.closest("[data-sa-esp]"); if (s) openEspece(s.getAttribute("data-sa-esp"));
   });
-  $all("[data-learn-x]").forEach(function (b) {
-    b.addEventListener("click", function () {
-      var w = b.getAttribute("data-learn-x");
-      learnShow(w);
-      if (w === "quiz") renderQuizHome(); else renderBadges();
-    });
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-learn-x]"); if (!b) return;
+    var w = b.getAttribute("data-learn-x");
+    if (b.closest("#view-accueil")) showView("apprendre");
+    learnShow(w);
+    if (w === "quiz") renderQuizHome(); else if (w === "badges") renderBadges(); else if (w === "pouls") renderPouls(); else if (w === "niveau") renderNiveau(); else if (w === "ask") { setTimeout(function () { $("#askInput").focus(); }, 100); }
   });
+
+  // =====================================================================
+  // ---------- Pouls : minuteur guidé (fiable) + caméra (expérimental) ----------
+  // =====================================================================
+  var pl = null; // { t0, taps, timer }
+  function poulsVerdict(bpm) {
+    if (bpm < 40) return ["danger", "Très lent", "Sous 40 au repos, surtout avec froid, somnolence ou confusion : hypothermie ou état grave possible. Réchauffe, isole du sol, et fais tout pour te faire secourir."];
+    if (bpm < 50) return ["warn", "Lent", "Normal chez un sportif reposé. Avec froid, frissons qui s'arrêtent ou confusion : pense à l'hypothermie."];
+    if (bpm <= 100) return ["ok", "Normal", "Entre 50 et 100 au repos, c'est normal pour un adulte."];
+    if (bpm <= 120) return ["warn", "Rapide", "Normal juste après un effort ou un stress. Reprends ta mesure après 5 minutes de repos assis."];
+    return ["danger", "Très rapide", "Au-dessus de 120 au repos, avec pâleur, sueurs froides ou malaise : état de choc possible. Allonge-toi, jambes surélevées, couvre-toi."];
+  }
+  function poulsHist() { return load("sylva_pouls", []); }
+  function renderPouls() {
+    var hs = poulsHist().slice(-6).reverse();
+    $("#poulsBox").innerHTML =
+      '<p class="muted">Pose deux doigts (pas le pouce) sur le côté du cou, sous la mâchoire, ou à l\'intérieur du poignet côté pouce. Reste assis, au calme.</p>' +
+      '<div class="pouls-zone"><div class="pouls-count" id="plCount">30 s</div><div class="pouls-bpm" id="plBpm">Touche « Démarrer », puis le gros bouton à chaque battement</div></div>' +
+      '<button type="button" class="pouls-tap" id="plTap" disabled>♥</button>' +
+      '<div class="row"><button type="button" class="btn btn-primary" id="plStart">Démarrer (30 s)</button><button type="button" class="btn" id="plCam">Caméra (expérimental)</button></div>' +
+      '<div id="plResult"></div><div id="plCamBox"></div>' +
+      (hs.length ? '<div class="sec-head"><h2>Mesures précédentes</h2></div><div class="card">' + hs.map(function (x) {
+        var v = poulsVerdict(x.bpm); return '<div class="pl-hist"><b>' + x.bpm + ' bpm</b><span class="pl-tag pl-' + v[0] + '">' + v[1] + "</span><span>" + esc(new Date(x.t).toLocaleString("fr-BE", { weekday: "short", hour: "2-digit", minute: "2-digit" })) + (x.cam ? " · caméra" : "") + "</span></div>";
+      }).join("") + "</div>" : "") +
+      '<p class="tiny muted">Repère, pas un diagnostic médical. Note l\'heure et répète la mesure toutes les 15 à 30 minutes pour suivre un blessé.</p>';
+  }
+  function poulsResult(bpm, cam) {
+    bpm = Math.round(bpm);
+    var v = poulsVerdict(bpm), hs = poulsHist(); hs.push({ t: Date.now(), bpm: bpm, cam: !!cam }); save("sylva_pouls", hs.slice(-50));
+    $("#plResult").innerHTML = '<div class="alert alert-' + (v[0] === "ok" ? "ok" : v[0]) + '"><strong>' + bpm + " battements par minute · " + v[1] + "</strong><span>" + v[2] + "</span></div>" +
+      (v[0] !== "ok" ? '<div class="row"><button type="button" class="btn" data-qtech="froid">Hypothermie</button><button type="button" class="btn" data-qtech="ps_choc">État de choc</button></div>' : "");
+  }
+  $("#poulsBox").addEventListener("click", function (e) {
+    var q = e.target.closest("[data-qtech]"); if (q) { openTechnique(q.dataset.qtech); return; }
+    if (e.target.id === "plStart") {
+      if (pl && pl.timer) clearInterval(pl.timer);
+      pl = { t0: Date.now(), taps: [] }; $("#plTap").disabled = false; $("#plResult").innerHTML = ""; $("#plStart").textContent = "Recommencer";
+      pl.timer = setInterval(function () {
+        var left = 30 - Math.floor((Date.now() - pl.t0) / 1000);
+        $("#plCount").textContent = Math.max(0, left) + " s";
+        if (left <= 0) {
+          clearInterval(pl.timer); pl.timer = null; $("#plTap").disabled = true;
+          var n = pl.taps.length;
+          if (n < 5) { $("#plResult").innerHTML = '<div class="alert alert-warn"><strong>Trop peu de battements comptés</strong><span>Cherche bien le pouls avant de démarrer, puis tape à chaque battement.</span></div>'; return; }
+          var span = (pl.taps[n - 1] - pl.taps[0]) / 1000;
+          poulsResult(span > 10 ? (n - 1) / span * 60 : n * 2);
+        }
+      }, 200);
+      return;
+    }
+    if (e.target.closest("#plTap") && pl && pl.timer) {
+      pl.taps.push(Date.now()); $("#plBpm").textContent = pl.taps.length + " battement" + (pl.taps.length > 1 ? "s" : "");
+      if (navigator.vibrate) navigator.vibrate(15);
+      return;
+    }
+    if (e.target.id === "plCam") camPouls();
+    if (e.target.id === "plCamStop") stopCam();
+  });
+  var cam = null;
+  function stopCam() {
+    if (!cam) return;
+    cam.stop = true; try { cam.stream.getTracks().forEach(function (t) { t.stop(); }); } catch (e) {}
+    cam = null;
+  }
+  function camPouls() {
+    stopCam();
+    var box = $("#plCamBox");
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { box.innerHTML = '<p class="muted">Caméra indisponible sur cet appareil.</p>'; return; }
+    box.innerHTML = '<div class="alert alert-warn"><strong>Mode expérimental</strong><span>Couvre entièrement la caméra arrière du bout de l\'index, sans appuyer fort, dans un endroit éclairé. Ne bouge plus pendant 20 secondes. Peu fiable avec des doigts froids : préfère le comptage au doigt.</span></div>' +
+      '<canvas id="plGraph" width="600" height="120" class="pl-graph"></canvas><p id="plCamTxt" class="muted">Démarrage de la caméra…</p><button type="button" class="btn" id="plCamStop">Arrêter</button><video id="plVid" playsinline muted hidden></video>';
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" }, width: { ideal: 160 }, height: { ideal: 120 }, frameRate: { ideal: 30 } }, audio: false }).then(function (stream) {
+      cam = { stream: stream, vals: [], ts: [], t0: performance.now(), stop: false };
+      var track = stream.getVideoTracks()[0];
+      try { track.applyConstraints({ advanced: [{ torch: true }] }).catch(function () {}); } catch (e) {}
+      var v = $("#plVid"); v.srcObject = stream; v.play().catch(function () {});
+      var c = document.createElement("canvas"); c.width = 40; c.height = 30; var cx = c.getContext("2d", { willReadFrequently: true });
+      var g = $("#plGraph").getContext("2d");
+      (function loop() {
+        if (!cam || cam.stop) return;
+        if (v.readyState >= 2) {
+          cx.drawImage(v, 0, 0, 40, 30);
+          var d = cx.getImageData(0, 0, 40, 30).data, r = 0, gg = 0;
+          for (var i = 0; i < d.length; i += 4) { r += d[i]; gg += d[i + 1]; }
+          r /= d.length / 4; gg /= d.length / 4;
+          var now = performance.now();
+          cam.vals.push(r); cam.ts.push(now);
+          var covered = r > 60 && r > gg * 1.6;
+          var el = (now - cam.t0) / 1000;
+          $("#plCamTxt").textContent = covered ? "Mesure… " + Math.max(0, Math.ceil(20 - el)) + " s" : "Doigt mal placé : couvre toute la caméra (l'image doit être rouge).";
+          if (!covered) { cam.vals = []; cam.ts = []; cam.t0 = now; }
+          drawSig(g, cam.vals.slice(-150));
+          if (covered && el >= 20) { var bpm = camBpm(cam.vals, cam.ts); stopCam(); $("#plCamBox").innerHTML = bpm ? "" : '<p class="muted">Signal trop faible : réessaie avec plus de lumière, ou compte au doigt.</p>'; if (bpm) poulsResult(bpm, true); return; }
+        }
+        requestAnimationFrame(loop);
+      })();
+    }).catch(function () { box.innerHTML = '<p class="muted">Accès à la caméra refusé. Autorise-le dans Réglages > Safari > Caméra, ou utilise le comptage au doigt.</p>'; });
+  }
+  function drawSig(g, vals) {
+    var W = 600, H = 120; g.clearRect(0, 0, W, H); if (vals.length < 3) return;
+    var mn = Math.min.apply(null, vals), mx = Math.max.apply(null, vals) || 1, rg = mx - mn || 1;
+    g.strokeStyle = "#C9472E"; g.lineWidth = 3; g.beginPath();
+    vals.forEach(function (v, i) { var x = i / 149 * W, y = H - 8 - (v - mn) / rg * (H - 16); if (i) g.lineTo(x, y); else g.moveTo(x, y); }); g.stroke();
+  }
+  // Signal rouge -> lissage, retrait de la tendance, comptage des pics espacés de 0,33 s minimum (180 bpm max)
+  function camBpm(vals, ts) {
+    if (vals.length < 60) return 0;
+    var sm = vals.map(function (v, i) { var a = 0, n = 0; for (var k = i - 2; k <= i + 2; k++) if (vals[k] != null) { a += vals[k]; n++; } return a / n; });
+    var dt = sm.map(function (v, i) { var a = 0, n = 0; for (var k = i - 15; k <= i + 15; k++) if (sm[k] != null) { a += sm[k]; n++; } return v - a / n; });
+    var sd = Math.sqrt(dt.reduce(function (a, v) { return a + v * v; }, 0) / dt.length); if (sd < 0.05) return 0;
+    var peaks = [];
+    for (var i = 2; i < dt.length - 2; i++) {
+      if (dt[i] > sd * 0.4 && dt[i] >= dt[i - 1] && dt[i] >= dt[i + 1] && dt[i] >= dt[i - 2] && dt[i] >= dt[i + 2]) {
+        if (!peaks.length || ts[i] - ts[peaks[peaks.length - 1]] > 330) peaks.push(i);
+      }
+    }
+    if (peaks.length < 6) return 0;
+    var iv = []; for (var p = 1; p < peaks.length; p++) iv.push(ts[peaks[p]] - ts[peaks[p - 1]]);
+    iv.sort(function (a, b) { return a - b; }); var med = iv[Math.floor(iv.length / 2)];
+    var bpm = 60000 / med; return bpm >= 35 && bpm <= 190 ? bpm : 0;
+  }
+
+  // =====================================================================
+  // ---------- Niveau à bulle + relief du spot (cuvette / crête) ----------
+  // =====================================================================
+  var lvOn = false;
+  function onTilt(e) {
+    if (e.beta == null || !$("#lvBubble")) return;
+    var b = e.beta * Math.PI / 180, gm = e.gamma * Math.PI / 180;
+    var tilt = Math.acos(Math.max(-1, Math.min(1, Math.cos(b) * Math.cos(gm)))) * 180 / Math.PI;
+    var bx = Math.max(-1, Math.min(1, e.gamma / 15)), by = Math.max(-1, Math.min(1, e.beta / 15));
+    $("#lvBubble").style.transform = "translate(" + (-bx * 70) + "px," + (-by * 70) + "px)";
+    $("#lvDeg").textContent = tilt.toFixed(1).replace(".", ",") + "°";
+    var dir = Math.abs(e.beta) > Math.abs(e.gamma) ? (e.beta > 0 ? "le haut du téléphone" : "le bas du téléphone") : (e.gamma > 0 ? "la droite" : "la gauche");
+    var v = tilt < 2 ? ["ok", "Plat : parfait pour dormir."] : tilt < 6 ? ["ok", "Légère pente : bon. Dors la tête du côté le plus haut, pieds vers la descente."]
+      : tilt < 10 ? ["warn", "Pente marquée : tu vas glisser la nuit. Cherche plus plat, ou cale le matelas."] : ["danger", "Trop pentu pour dormir. L'eau de pluie coulera aussi vers toi."];
+    $("#lvVerdict").className = "alert alert-" + v[0]; $("#lvVerdict").innerHTML = "<span>" + v[1] + "</span>";
+    $("#lvLow").textContent = tilt >= 2 ? "Le sol descend vers " + dir + "." : "";
+  }
+  function startLevel() {
+    var go = function () { if (!lvOn) { lvOn = true; window.addEventListener("deviceorientation", onTilt); } };
+    if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function")
+      DeviceOrientationEvent.requestPermission().then(function (r) { go(); if (r !== "granted") toast("Autorise les capteurs de mouvement pour le niveau"); }).catch(function () { go(); });
+    else go();
+  }
+  function reliefPoint() {
+    var t = getTrip();
+    if (t.lat != null) return { c: [t.lat, t.lon], label: t.lieu || "lieu du bivouac" };
+    if (me) return { c: [me[0], me[1]], label: "ta position" };
+    if (map) { var m = map.getCenter(); return { c: [m.lat, m.lng], label: "centre de la carte" }; }
+    return null;
+  }
+  function renderNiveau() {
+    var rp = reliefPoint(), cached = load("sylva_relief", null);
+    $("#niveauBox").innerHTML =
+      '<p class="muted">Pose le téléphone à plat sur le sol, là où tu veux dormir.</p>' +
+      '<div class="lv-ring"><div class="lv-cross"></div><div class="lv-bubble" id="lvBubble"></div></div>' +
+      '<div class="lv-deg" id="lvDeg">–</div><p class="center small" id="lvLow"></p><div id="lvVerdict" class="alert"><span>Touche « Activer le niveau ».</span></div>' +
+      '<button type="button" class="btn btn-primary" id="lvStart">Activer le niveau</button>' +
+      '<div class="sec-head"><h2>Cuvette ou crête ?</h2></div>' +
+      '<div class="card"><p class="small" style="margin-top:0">Sylva compare l\'altitude du point avec 16 points autour (à 75 et 200 m). Point analysé : <b>' + esc(rp ? rp.label : "aucun") + "</b>.</p>" +
+      '<button type="button" class="btn" id="rlGo"' + (rp ? "" : " disabled") + '>Analyser le relief</button><div id="rlRes"></div></div>';
+    if (cached && rp && distKm(cached.c, rp.c) < 0.05) showRelief(cached);
+  }
+  function showRelief(r) {
+    var tpi = r.tpi, slope = r.slope, cls, t, x;
+    if (tpi <= -4) { cls = "danger"; t = "Cuvette"; x = "Ton point est " + Math.abs(tpi).toFixed(0) + " m plus bas que les alentours. L'eau de pluie et l'air froid s'y accumulent la nuit : monte un peu sur une pente douce ou un replat."; }
+    else if (tpi <= -1.5) { cls = "warn"; t = "Léger creux"; x = "Un peu plus bas que les alentours : vérifie qu'aucune rigole ne passe sous l'abri, et creuse un petit fossé côté pente si la pluie est annoncée."; }
+    else if (tpi >= 8) { cls = "danger"; t = "Crête ou sommet"; x = "Ton point domine les alentours de " + tpi.toFixed(0) + " m : très exposé au vent et à la foudre. Descends un peu sous la crête, côté abrité du vent."; }
+    else if (tpi >= 3) { cls = "warn"; t = "Position haute"; x = "Un peu exposée au vent : oriente l'entrée de l'abri dos au vent et tends bien la bâche."; }
+    else { cls = "ok"; t = "Terrain intermédiaire"; x = "Ni creux ni crête : une bonne position pour bivouaquer."; }
+    if (slope > 15) { x += " Attention, la pente autour est forte (environ " + Math.round(slope) + " %)."; if (cls === "ok") cls = "warn"; }
+    $("#rlRes").innerHTML = '<div class="alert alert-' + cls + '" style="margin-top:10px"><strong>' + t + " · altitude " + Math.round(r.z) + " m</strong><span>" + x + '</span></div><p class="tiny muted">Modèle d\'altitude à environ 90 m de précision (Open-Meteo / Copernicus) : vérifie toujours le terrain sur place.</p>';
+  }
+  $("#niveauBox").addEventListener("click", function (e) {
+    if (e.target.id === "lvStart") { startLevel(); e.target.textContent = "Niveau actif"; }
+    if (e.target.id === "rlGo") {
+      var rp = reliefPoint(); if (!rp) return;
+      if (!navigator.onLine) { $("#rlRes").innerHTML = '<p class="muted">Pas de réseau : fais l\'analyse avant de partir (elle reste en mémoire pour ce lieu).</p>'; return; }
+      $("#rlRes").innerHTML = '<p class="muted">Analyse…</p>';
+      var c = rp.c, lats = [c[0]], lons = [c[1]];
+      [75, 200].forEach(function (dm) {
+        for (var k = 0; k < 8; k++) {
+          var a = k * Math.PI / 4; lats.push(c[0] + dm * Math.cos(a) / 111320); lons.push(c[1] + dm * Math.sin(a) / (111320 * Math.cos(c[0] * Math.PI / 180)));
+        }
+      });
+      fetch("https://api.open-meteo.com/v1/elevation?latitude=" + lats.map(function (v) { return v.toFixed(5); }).join(",") + "&longitude=" + lons.map(function (v) { return v.toFixed(5); }).join(","))
+        .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+        .then(function (j) {
+          var z = j.elevation; if (!z || z.length < 17) throw new Error();
+          var near = z.slice(1, 9), far = z.slice(9, 17), mean = function (a) { return a.reduce(function (s, v) { return s + v; }, 0) / a.length; };
+          var tpi = z[0] - (mean(near) * 0.4 + mean(far) * 0.6);
+          var slope = Math.max.apply(null, near.map(function (v) { return Math.abs(v - z[0]); })) / 75 * 100;
+          var res = { c: c, z: z[0], tpi: tpi, slope: slope, t: Date.now() };
+          save("sylva_relief", res); showRelief(res);
+        }).catch(function () { $("#rlRes").innerHTML = '<p class="muted">Service d\'altitude indisponible, réessaie.</p>'; });
+    }
+  });
+
+  // =====================================================================
+  // ---------- Demande à Sylva : questions en langage courant -> fiches (hors ligne) ----------
+  // =====================================================================
+  var STOP = "le la les un une des de du d l au aux et ou a à en dans sur sous pour par avec sans ce cet cette ces mon ma mes ton ta tes son sa ses je j tu il elle on nous vous ils elles me m te t se s y est suis es sont ai as a ont fait faire comment quoi que qu qui quel quelle quels quelles est-ce ne n pas plus tres très bien peu trop mal je je suis ca ça cela c comme si alors donc mais car quand puis-je peux peut dois doit faut il-faut".split(" ");
+  var SYN = [
+    [/chevill|tordu|foul|entors/, "entorse cheville"], [/saign|sang|coupur|entaill|plaie|blessur/, "saignement plaie"], [/hemorrag|gicl|pisse le sang|beaucoup de sang/, "garrot saignement"],
+    [/brul|ebouillant/, "brulure"], [/froid|gel|tremble|frisson|hypotherm|glace|congel/, "hypothermie froid"], [/chaud|insolation|coup de chaleur|deshydrat/, "chaleur"],
+    [/serpent|vipere|aspic/, "morsure serpent"], [/tique/, "tique"], [/guepe|abeille|frelon|piqu/, "piqure guepe"], [/champignon|mange|empoison|intox|vomi|baie/, "intoxication"],
+    [/casse|fractur|\bos\b|\bbras\b|jambe|poignet/, "attelle immobiliser fracture echarpe"], [/inconscien|evanoui|respire|reveille pas/, "pls position laterale"],
+    [/choc|pale|sueur|malaise/, "choc"], [/ampoule|pied/, "ampoule"], [/\beaux?\b|boire|soif|potable|tourbe|brune|riviere|source/, "eau potable filtre bouillir"],
+    [/perdu|orient|nord|direction|chemin/, "orientation boussole"], [/secour|aide|appel|112|reseau|helico|signal/, "signaux detresse secours"],
+    [/\bfeux?\b|allum|briquet|bois mouill|pluie/, "feu"], [/abri|bache|tente|dormir|nuit|vent/, "abri bache"], [/faim|manger|nourrit/, "nourriture"],
+    [/poisson|peche/, "peche poisson"], [/noeud|corde|attach/, "noeud"], [/orage|foudre|eclair/, "orage foudre"]
+  ];
+  var URGENT = /inconscien|respire (pas|plus|mal)|ne respire|beaucoup de sang|gicl|hemorrag|reveille pas|convuls|arret cardiaque|crise cardiaque|poitrine|paralys|noy/;
+  function stemW(w) { return w.length > 5 ? w.slice(0, 5) : w; }
+  function askSylva(qRaw) {
+    var q = norm(qRaw).replace(/[^a-z0-9' -]/g, " ");
+    var words = q.split(/[\s'-]+/).filter(function (w) { return w && w.length > 2 && STOP.indexOf(w) === -1; });
+    var own = words.map(stemW);
+    SYN.forEach(function (s) { if (s[0].test(q)) words = words.concat(s[1].split(" ")); });
+    var stems = words.map(stemW).filter(function (v, i, a) { return a.indexOf(v) === i; });
+    if (!stems.length) return { urgent: false, res: [] };
+    var res = TECHS.map(function (t) {
+      var ti = norm(t.titre), it = norm(t.intro), body = norm((t.etapes || []).concat(t.isole || [], t.alerte || []).join(" "));
+      var sc = 0;
+      stems.forEach(function (st) { if (ti.indexOf(st) !== -1) sc += 6; if (it.indexOf(st) !== -1) sc += 2; if (body.indexOf(st) !== -1) sc += 1; });
+      if (/^rj_/.test(t.id)) sc *= 0.5;
+      if (t.cat === "Premiers secours" || t.cat === "Secours") sc *= 1.15;
+      return { t: t, sc: sc };
+    }).filter(function (x) { return x.sc >= 4; }).sort(function (a, b) { return b.sc - a.sc; });
+    if (res.length) { var top = res[0].sc; res = res.filter(function (x) { return x.sc >= top * 0.45; }).slice(0, 4); }
+    var esp = ESPECES.filter(function (s) { var n = norm(s.nom); return own.some(function (st) { return st.length > 3 && n.indexOf(st) !== -1; }); }).slice(0, 2);
+    return { urgent: URGENT.test(q), res: res, esp: esp };
+  }
+  function renderAsk(q) {
+    var a = askSylva(q), h = '<div class="ask-q">' + esc(q) + "</div>";
+    if (a.urgent) h += '<div class="alert alert-danger"><strong>Urgence vitale possible</strong><span>Appelle le 112 si tu peux (même sans réseau de ton opérateur, essaie). Sinon, suis la fiche ci-dessous et fais-toi repérer.</span><div class="row" style="margin-top:8px"><a class="btn" href="tel:112">Appeler le 112</a></div></div>';
+    if (!a.res.length && !(a.esp && a.esp.length)) h += '<div class="ask-a"><p>Je n\'ai pas trouvé de fiche pour ça. Essaie avec d\'autres mots (« cheville », « saigne », « froid », « eau trouble »…), ou parcours les fiches par catégorie.</p></div>';
+    a.res.forEach(function (x, i) {
+      var t = x.t, steps = (t.isole && t.isole.length ? t.isole : t.etapes || []).slice(0, i === 0 ? 4 : 0);
+      h += '<div class="ask-a' + (i === 0 ? " best" : "") + '"><span class="ask-k">' + (i === 0 ? "La fiche la plus proche" : "Voir aussi") + " · " + esc(t.cat) + "</span><b>" + esc(t.titre) + "</b>" +
+        (i === 0 ? "<p>" + esc(t.intro) + "</p>" : "") +
+        (t.alerte && t.alerte.length && i === 0 ? '<div class="alert alert-danger" style="margin:8px 0"><strong>Signes d\'alerte</strong><span>' + esc(t.alerte.join(" · ")) + "</span></div>" : "") +
+        (steps.length ? "<ol>" + steps.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ol>" : "") +
+        '<button type="button" class="btn ' + (i === 0 ? "btn-primary" : "") + '" data-qtech="' + esc(t.id) + '">Ouvrir la fiche' + (i === 0 && (t.etapes || t.isole || []).length > 4 ? " complète" : "") + "</button></div>";
+    });
+    (a.esp || []).forEach(function (s) { h += '<div class="ask-a"><span class="ask-k">Espèce</span><b>' + esc(s.nom) + "</b><p>" + esc(s.statut) + '</p><button type="button" class="btn" data-qesp="' + esc(s.id) + '">Voir l\'espèce</button></div>'; });
+    $("#askOut").innerHTML = h + '<p class="tiny muted">Réponses tirées uniquement des fiches de Sylva, sans connexion. Rien n\'est inventé.</p>';
+  }
+  $("#formAsk").addEventListener("submit", function (e) { e.preventDefault(); var q = $("#askInput").value.trim(); if (q) { renderAsk(q); $("#askInput").blur(); } });
+  $("#askOut").addEventListener("click", function (e) {
+    var t = e.target.closest("[data-qtech]"); if (t) { openTechnique(t.dataset.qtech); return; }
+    var s = e.target.closest("[data-qesp]"); if (s) openEspece(s.dataset.qesp);
+  });
+  $all("#askSugg [data-ask]").forEach(function (b) { b.addEventListener("click", function () { $("#askInput").value = b.dataset.ask; renderAsk(b.dataset.ask); }); });
 
   renderRegionBtn();
   renderEspeces();

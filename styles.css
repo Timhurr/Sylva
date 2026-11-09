@@ -640,3 +640,37 @@ html[data-theme="nuit"] .quiz-opt.bad{background:#4A1E16;color:#F8DAD3}
 a.season-alert{text-decoration:none}
 #tripChasse .alert{margin-top:10px}
 #tripChasse small{opacity:.75}
+
+/* Outils de terrain */
+.tools-grid{grid-template-columns:1fr 1fr}
+.tools-grid .train-card:first-child{grid-column:1 / -1}
+.ask-home{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:18px;background:var(--surface);box-shadow:var(--shadow);padding:14px 16px;margin:12px 0 4px;font:inherit;color:var(--text);text-align:left}
+.ask-home span{font-size:22px}.ask-home b{flex:1;font-size:15px}.ask-home i{font-style:normal;font-size:12px;color:var(--muted);font-weight:700}
+.ask-form{display:flex;gap:8px;margin:8px 0}
+.ask-form input{flex:1;min-width:0;border-radius:14px;border:1px solid var(--line);background:var(--surface);padding:13px;font-size:16px;color:var(--text)}
+.ask-form .btn{flex:0 0 auto}
+.ask-sugg{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.ask-q{align-self:flex-end;margin:6px 0 10px auto;max-width:85%;background:var(--accent);color:var(--accent-ink);padding:10px 14px;border-radius:18px 18px 4px 18px;width:fit-content;font-weight:600}
+.ask-a{background:var(--surface);border-radius:18px;padding:14px;margin-bottom:10px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px}
+.ask-a.best{border:2px solid var(--accent)}
+.ask-a ol{margin:4px 0;padding-left:20px;font-size:15px;line-height:1.45}
+.ask-a p{margin:0;font-size:14px}
+.ask-k{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.pouls-zone{text-align:center;margin:10px 0}
+.pouls-count{font-size:44px;font-weight:800}
+.pouls-bpm{color:var(--muted);font-weight:600}
+.pouls-tap{display:block;margin:12px auto;width:170px;height:170px;border-radius:50%;border:0;background:#C9472E;color:#fff;font-size:64px;box-shadow:0 10px 30px rgba(201,71,46,.35);touch-action:manipulation}
+.pouls-tap:disabled{opacity:.35}
+.pouls-tap:active{transform:scale(.95)}
+#plResult .alert,#plCamBox .alert{margin-top:12px}
+.pl-graph{width:100%;height:90px;background:var(--surface);border-radius:12px;margin-top:10px}
+.pl-hist{display:flex;gap:10px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14px}
+.pl-hist:first-child{border-top:0}
+.pl-tag{font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px}
+.pl-ok{background:#DCEFD9;color:#1E4A1B}.pl-warn{background:#FBE7C6;color:#7A4B0A}.pl-danger{background:#F8DAD3;color:#6B1F10}
+.lv-ring{position:relative;width:200px;height:200px;margin:16px auto;border-radius:50%;background:var(--surface);box-shadow:inset 0 0 0 3px var(--line),var(--shadow);overflow:hidden}
+.lv-cross{position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border:2px solid var(--accent);border-radius:50%}
+.lv-bubble{position:absolute;left:50%;top:50%;width:34px;height:34px;margin:-17px 0 0 -17px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#fff,#9ED36A);box-shadow:0 2px 6px rgba(0,0,0,.25);transition:transform .1s linear}
+.lv-deg{text-align:center;font-size:36px;font-weight:800}
+.center{text-align:center}
+#lvVerdict{margin:8px 0 10px}
