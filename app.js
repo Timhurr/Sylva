@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.38";
+  var VERSION = "0.9.39";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -543,7 +543,15 @@
   }
   function mDist(a, b) { return distKm(a, b) * 1000; }
   function fmtM(m) { return m < 1000 ? Math.round(m / 10) * 10 + " m" : (m / 1000).toFixed(m < 10000 ? 1 : 0).replace(".", ",") + " km"; }
-  function fmtMin(m) { var mn = Math.max(1, Math.round(m / 1000 / 4 * 60)); return mn < 60 ? mn + " min" : Math.floor(mn / 60) + " h " + String(mn % 60).padStart(2, "0"); }
+  // Modes : profil OSRM (serveurs FOSSGIS), vitesse moyenne sans réseau (km/h), écart toléré (m), mots
+  var NAV_MODES = {
+    pied: { prof: "routed-foot", kmh: 4, off: 60, by: "par les chemins", how: "à pied", step: 400 },
+    velo: { prof: "routed-bike", kmh: 15, off: 80, by: "par les chemins et routes", how: "à vélo", step: 600 },
+    voiture: { prof: "routed-car", kmh: 50, off: 120, by: "par la route", how: "en voiture", step: 1200 }
+  };
+  function navMode() { return NAV_MODES[nav && nav.mode] || NAV_MODES.pied; }
+  function fmtSec(sec) { var mn = Math.max(1, Math.round(sec / 60)); return mn < 60 ? mn + " min" : Math.floor(mn / 60) + " h " + String(mn % 60).padStart(2, "0"); }
+  function fmtMin(m) { return fmtSec(m / 1000 / navMode().kmh * 3600); }
   function onHeading(e) {
     var h = e.webkitCompassHeading != null ? e.webkitCompassHeading : (e.absolute && e.alpha != null ? 360 - e.alpha : null);
     if (h == null) return;
@@ -561,22 +569,24 @@
   function stepTxt(st) {
     var m = st.maneuver || {}, v = MANEUV[m.type] || "Continue", sd = SIDE[m.modifier] || "";
     if (m.type === "arrive") return "Tu arrives à destination";
+    if ((m.type === "roundabout" || m.type === "rotary") && m.exit) return "Au rond-point, prends la " + m.exit + (m.exit === 1 ? "re" : "e") + " sortie" + (st.name ? " vers " + st.name : "");
     return v + (sd ? " " + sd : "") + (st.name ? " sur " + st.name : "");
   }
   function fetchRoute() {
     if (!nav || !me || !navigator.onLine) return;
     nav.lastRoute = Date.now();
-    var url = "https://routing.openstreetmap.de/routed-foot/route/v1/driving/" + me[1].toFixed(5) + "," + me[0].toFixed(5) + ";" +
+    var url = "https://routing.openstreetmap.de/" + navMode().prof + "/route/v1/driving/" + me[1].toFixed(5) + "," + me[0].toFixed(5) + ";" +
       nav.t.lon.toFixed(5) + "," + nav.t.lat.toFixed(5) + "?overview=full&geometries=geojson&steps=true";
     fetch(url).then(function (r) { if (!r.ok) throw new Error(); return r.json(); }).then(function (j) {
       if (!nav || !j.routes || !j.routes[0]) return;
       var rt = j.routes[0], pts = rt.geometry.coordinates.map(function (c) { return [c[1], c[0]]; });
       // Itinéraire absurde (trop long par rapport à la ligne droite) : on reste sur la ligne droite
-      if (rt.distance > Math.max(3000, mDist([me[0], me[1]], [nav.t.lat, nav.t.lon]) * 4)) { nav.route = null; return navUpdate(); }
-      nav.route = pts; nav.routeDist = rt.distance;
+      var lim = nav.mode === "pied" ? Math.max(3000, mDist([me[0], me[1]], [nav.t.lat, nav.t.lon]) * 4) : Math.max(15000, mDist([me[0], me[1]], [nav.t.lat, nav.t.lon]) * 6);
+      if (rt.distance > lim) { nav.route = null; return navUpdate(); }
+      nav.route = pts; nav.routeDist = rt.distance; nav.routeDur = rt.duration;
       nav.steps = (rt.legs[0] && rt.legs[0].steps || []).map(function (st) { return { at: [st.maneuver.location[1], st.maneuver.location[0]], txt: stepTxt(st) }; });
       if (nav.line) map.removeLayer(nav.line);
-      nav.line = L.polyline(pts, { color: "#2F7FA3", weight: 6, opacity: .85 }).addTo(map);
+      nav.line = L.polyline(pts, { color: nav.mode === "voiture" ? "#7A5BC7" : "#2F7FA3", weight: 6, opacity: .85 }).addTo(map);
       navUpdate();
     }).catch(function () {});
   }
@@ -609,17 +619,19 @@
       drawNavArrow(); return;
     }
     var off = nav.route ? distToRoute(p) : 0;
-    if (navigator.onLine && (!nav.lastRoute || (off > 60 && Date.now() - nav.lastRoute > 30000))) fetchRoute();
-    var onRoute = nav.route && off <= 60;
+    var md = navMode();
+    if (navigator.onLine && (!nav.lastRoute || (off > md.off && Date.now() - nav.lastRoute > 30000))) fetchRoute();
+    var onRoute = nav.route && off <= md.off;
     var rem = onRoute ? remainingOnRoute(p) : straight;
     $("#navDist").textContent = fmtM(rem);
-    var info = onRoute ? "par les chemins · environ " + fmtMin(rem) + " à pied" : "à vol d'oiseau · environ " + fmtMin(straight * 1.3) + " à pied";
+    var eta = onRoute && nav.routeDur && nav.routeDist ? fmtSec(nav.routeDur * rem / nav.routeDist) : fmtMin(onRoute ? rem : straight * 1.3);
+    var info = (onRoute ? md.by : "à vol d'oiseau") + " · environ " + eta + " " + md.how;
     if (onRoute && nav.steps) {
       var next = nav.steps.filter(function (st) { return mDist(p, st.at) > 15; }).sort(function (a, b) { return mDist(p, a.at) - mDist(p, b.at); })[0];
-      if (next && mDist(p, next.at) < 400) info = "Dans " + fmtM(mDist(p, next.at)) + " : " + next.txt;
+      if (next && mDist(p, next.at) < md.step) info = "Dans " + fmtM(mDist(p, next.at)) + " : " + next.txt;
     }
     if (!navigator.onLine && !nav.route) info += " · hors ligne : suis la flèche";
-    else if (nav.route && !onRoute) info += " · tu t'es écarté du chemin";
+    else if (nav.route && !onRoute) info += nav.mode === "voiture" ? " · recalcul de l'itinéraire" : " · tu t'es écarté du chemin";
     $("#navInfo").textContent = info;
     drawNavArrow();
     if (nav.follow) map.panTo(p, { animate: true });
@@ -627,7 +639,8 @@
   function startNav(t) {
     stopNav(true);
     if (!map) return;
-    nav = { t: t, follow: true };
+    nav = { t: t, follow: true, mode: load("sylva_navmode", "pied") };
+    $all("#navModes [data-navmode]").forEach(function (x) { x.classList.toggle("on", x.dataset.navmode === nav.mode); });
     $("#navTo").textContent = t.label || "Destination";
     var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     $("#navExt").href = ios ? "https://maps.apple.com/?daddr=" + t.lat + "," + t.lon + "&dirflg=w" : "https://www.google.com/maps/dir/?api=1&destination=" + t.lat + "," + t.lon + "&travelmode=walking";
@@ -652,6 +665,15 @@
     if (!silent) toast("Guidage arrêté");
   }
   $("#navStop").addEventListener("click", function () { stopNav(); });
+  $("#navModes").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-navmode]"); if (!b || !nav || b.dataset.navmode === nav.mode) return;
+    nav.mode = b.dataset.navmode; save("sylva_navmode", nav.mode);
+    $all("#navModes [data-navmode]").forEach(function (x) { x.classList.toggle("on", x === b); });
+    if (nav.line) { map.removeLayer(nav.line); nav.line = null; }
+    nav.route = null; nav.steps = null; nav.lastRoute = 0; nav.arrived = false;
+    if (nav.mode === "voiture") toast("En voiture : ne touche pas au téléphone en roulant, fixe-le sur un support.");
+    navUpdate();
+  });
   $("#navCenter").addEventListener("click", function () { if (nav && me) { nav.follow = true; map.setView([me[0], me[1]], Math.max(map.getZoom(), 16)); } });
   document.addEventListener("visibilitychange", function () {
     if (nav && document.visibilityState === "visible" && navigator.wakeLock) navigator.wakeLock.request("screen").then(function (w) { if (nav) nav.wake = w; }).catch(function () {});
