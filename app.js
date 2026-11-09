@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.43";
+  var VERSION = "0.9.44";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -171,6 +171,8 @@
     layers.bivouac = L.layerGroup().addTo(map);
     layers.eau = L.layerGroup().addTo(map);
     layers.spots = L.layerGroup().addTo(map);
+    var chc = document.querySelector('.map-chips [data-layer="chasse"]');
+    if (chc) chc.classList.toggle("on", load("sylva_layer_chasse", true));
     layers.services = L.layerGroup();
     if (load("sylva_layer_services", true)) layers.services.addTo(map);
     var sc = document.querySelector('.map-chips [data-layer="services"]'); if (sc) sc.classList.toggle("on", map.hasLayer(layers.services));
@@ -180,8 +182,9 @@
         var on = !c.classList.contains("on");
         c.classList.toggle("on", on);
         var lg = layers[c.dataset.layer];
-        if (on) map.addLayer(lg); else map.removeLayer(lg);
+        if (lg) { if (on) map.addLayer(lg); else map.removeLayer(lg); }
         if (c.dataset.layer === "services") { save("sylva_layer_services", on); if (on) loadPoi(false); }
+        if (c.dataset.layer === "chasse") { save("sylva_layer_chasse", on); if (on) loadChasse(false); }
       });
     });
 
@@ -374,7 +377,7 @@
   }
 
   function loadOsm(force) {
-    loadPoi(force);
+    loadPoi(force); loadChasse(force);
     var c = refPoint();
     var cached = load("sylva_osm", null);
     var fresh = cached && (Date.now() - cached.t < 7 * 864e5) && distKm(cached.c, c) < 8;
@@ -398,6 +401,93 @@
     }).catch(function () {
       if (force) toast("Serveur OpenStreetMap indisponible, réessayez");
       updateMapCard();
+    });
+  }
+
+
+  // ---------- Chasse : dates de chasse et fermetures annoncées au DNF (SPW, service public) ----------
+  var CHASSE_URL = "https://geoservices3.wallonie.be/arcgis/rest/services/APP_DNFEXT/CHASSE_DATEFERM/MapServer/0/query";
+  var CHASSE_OFFICIEL = "https://portalarcgis.spw.wallonie.be/portail/apps/experiencebuilder/experience/?id=ef94a8903433442f8082f3cdf5c7d3bd";
+  function ymd(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  function inWallonie(c) { return c[0] > 49.45 && c[0] < 50.82 && c[1] > 2.8 && c[1] < 6.45; }
+  function fetchChasse(c, from, days, km) {
+    var to = new Date(from.getTime() + days * 864e5), dLat = km / 111, dLon = km / (111 * Math.cos(c[0] * Math.PI / 180));
+    var q = "where=" + encodeURIComponent("DATE_CHASSE >= DATE '" + ymd(from) + "' AND DATE_CHASSE <= DATE '" + ymd(to) + "'") +
+      "&geometry=" + [c[1] - dLon, c[0] - dLat, c[1] + dLon, c[0] + dLat].map(function (v) { return v.toFixed(4); }).join(",") +
+      "&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelIntersects&outSR=4326" +
+      "&outFields=DATE_CHASSE,FERMETURE,MODE_CHASSE_TXT,UGC_NOM,N_LOT,KEYG&returnGeometry=true&maxAllowableOffset=0.0002&f=geojson";
+    return fetch(CHASSE_URL + "?" + q).then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (g) { if (!g || !g.features) throw new Error(); return g.features; });
+  }
+  // Regroupe les dates par territoire
+  function groupChasse(feats) {
+    var by = {};
+    feats.forEach(function (f) {
+      var p = f.properties || {}, k = (p.KEYG || "") + "|" + (p.N_LOT || "");
+      if (!by[k]) by[k] = { geom: f.geometry, nom: p.UGC_NOM || "", lot: p.N_LOT || "", dates: [] };
+      by[k].dates.push({ d: p.DATE_CHASSE, ferme: p.FERMETURE || "", mode: p.MODE_CHASSE_TXT || "" });
+    });
+    return Object.keys(by).map(function (k) { var x = by[k]; x.dates.sort(function (a, b) { return a.d - b.d; }); return x; });
+  }
+  function frDate(ms) { return new Date(ms).toLocaleDateString("fr-BE", { weekday: "short", day: "numeric", month: "short" }); }
+  function fermee(x) { return /oui|ferm|close/i.test(x.ferme) && !/non|pas/i.test(x.ferme); }
+  var chasseLayer = null;
+  function renderChasse(feats) {
+    if (!map || !window.L || !L.geoJSON) return;
+    if (!chasseLayer) chasseLayer = L.layerGroup();
+    chasseLayer.clearLayers();
+    var today = ymd(new Date());
+    groupChasse(feats).forEach(function (t) {
+      var now = t.dates.some(function (x) { return ymd(new Date(x.d)) === today; });
+      var closed = t.dates.some(fermee);
+      var lines = t.dates.map(function (x) {
+        return "<li><b>" + esc(frDate(x.d)) + "</b> · " + esc(x.mode || "chasse") + (x.ferme ? " · " + (fermee(x) ? '<span style="color:#C9472E;font-weight:700">chemins fermés</span>' : esc(x.ferme)) : "") + "</li>";
+      }).join("");
+      var html = "<b>" + (now ? "Chasse aujourd'hui" : "Chasse annoncée") + "</b><br><span style=\"font-size:12px;opacity:.75\">" + esc(t.nom || "Territoire de chasse") + (t.lot ? " · lot " + esc(t.lot) : "") + "</span>" +
+        '<ul style="margin:8px 0;padding-left:18px">' + lines + "</ul>" +
+        '<span style="font-size:11px;opacity:.75">Source : SPW, annonces au DNF. Seules les affiches sur le terrain font foi.</span><br>' +
+        '<a href="' + CHASSE_OFFICIEL + '" target="_blank" rel="noopener">Carte officielle</a>';
+      L.geoJSON(t.geom, { style: { color: now ? "#C9472E" : "#E9A23B", weight: 2, fillOpacity: now ? .28 : .14, dashArray: closed ? null : "4 4" } })
+        .bindPopup(html, { minWidth: 240 }).addTo(chasseLayer);
+    });
+    var chip = document.querySelector('.map-chips [data-layer="chasse"]');
+    layers.chasse = chasseLayer;
+    if (chip && chip.classList.contains("on") && !map.hasLayer(chasseLayer)) chasseLayer.addTo(map);
+  }
+  function loadChasse(force) {
+    if (!map) return;
+    var c = refPoint(), cached = load("sylva_chasse", null), today = ymd(new Date());
+    if (cached && cached.day === today && distKm(cached.c, c) < 6 && !force) { renderChasse(cached.f); return; }
+    if (cached && cached.day === today) renderChasse(cached.f);
+    if (!inWallonie(c) || !navigator.onLine) return;
+    fetchChasse(c, new Date(new Date().setHours(0, 0, 0, 0)), 14, 10)
+      .then(function (f) { save("sylva_chasse", { t: Date.now(), day: today, c: c, f: f }); renderChasse(f); })
+      .catch(function () {});
+  }
+  // Bivouac : chasse annoncée autour du lieu, aux dates de la sortie
+  function tripChasse() {
+    var box = $("#tripChasse"); if (!box) return;
+    var t = getTrip();
+    if (t.lat == null || !t.date || !inWallonie([t.lat, t.lon])) { box.innerHTML = ""; return; }
+    var key = t.lat.toFixed(3) + "," + t.lon.toFixed(3) + "," + t.date, cached = load("sylva_chasse_trip", null);
+    var show = function (feats, when) {
+      var g = groupChasse(feats), near = g.length;
+      var closed = g.some(function (x) { return x.dates.some(fermee); });
+      box.innerHTML = '<div class="alert ' + (near ? "alert-danger" : "alert-ok") + ' meteo-alert"><strong>' +
+        (near ? "Chasse annoncée autour de " + esc(t.lieu || "ton lieu") : "Pas de chasse annoncée autour de " + esc(t.lieu || "ton lieu")) + "</strong><span>" +
+        (near ? g.length + " territoire" + (g.length > 1 ? "s" : "") + " à moins de 3 km, le " + g.map(function (x) { return x.dates.map(function (d) { return frDate(d.d); }).join(", "); }).filter(function (v, i, a) { return a.indexOf(v) === i; }).slice(0, 3).join(" ; ").replace(/\.$/, "") +
+          (closed ? ". Des chemins seront fermés : change d'itinéraire ou de date." : ". Porte une couleur vive et respecte les affiches.")
+          : "Aucune annonce au DNF à moins de 3 km pour tes dates. Regarde quand même les affiches à l'entrée des bois.") +
+        ' <a href="' + CHASSE_OFFICIEL + '" target="_blank" rel="noopener">Carte officielle</a>' +
+        '<br><small>Vérifié ' + (when ? new Date(when).toLocaleString("fr-BE", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) : "") + ". Seules les affiches sur le terrain font foi.</small></span></div>";
+    };
+    if (cached && cached.key === key) show(cached.f, cached.t);
+    if ((cached && cached.key === key && Date.now() - cached.t < 6 * 3600e3) || !navigator.onLine) return;
+    var start = new Date(t.date + "T00:00:00");
+    fetchChasse([t.lat, t.lon], start, 1, 3).then(function (f) {
+      save("sylva_chasse_trip", { key: key, t: Date.now(), f: f }); show(f, Date.now());
+    }).catch(function () {
+      if (!(cached && cached.key === key)) box.innerHTML = '<div class="alert alert-warn meteo-alert"><strong>Chasse : vérifie avant de partir</strong><span>Impossible de lire les annonces de chasse pour le moment. <a href="' + CHASSE_OFFICIEL + '" target="_blank" rel="noopener">Ouvrir la carte officielle</a></span></div>';
     });
   }
 
@@ -1865,7 +1955,7 @@
     setTimeout(function () { map.setView([s.lat, s.lon], 16); if (spotMarkers[id]) spotMarkers[id].openPopup(); }, 120);
   });
 
-  function renderBivouac() { renderTrip(); loadBivMeteo(); renderPlan(); renderJournal(); renderChecklist(); renderHist(); renderCarnet(); }
+  function renderBivouac() { renderTrip(); loadBivMeteo(); tripChasse(); renderPlan(); renderJournal(); renderChecklist(); renderHist(); renderCarnet(); }
 
   // ---------- Aujourd'hui ----------
   var MOIS_COURTS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
@@ -1960,7 +2050,7 @@
     var t = { lieu: $("#tripLieu").value.trim(), date: $("#tripDate").value };
     if (tripPick) { t.lat = tripPick.lat; t.lon = tripPick.lon; t.pointLabel = tripPick.label; t.spot = tripPick.spot || ""; }
     save("sylva_trip", t);
-    closeModal($("#modalTrip")); renderTrip(); loadBivMeteo(); renderAccueil(); toast("Sortie enregistrée");
+    closeModal($("#modalTrip")); renderTrip(); loadBivMeteo(); tripChasse(); renderAccueil(); toast("Sortie enregistrée");
   });
 
   // ---------- Historique des bivouacs ----------
@@ -2436,7 +2526,7 @@
   var SAISON = [
     [[3, 4, 5, 6, 7, 8, 9, 10], "Tiques actives", "Pantalon dans les chaussettes, et inspection complète le soir. Retire une tique au tire-tique, sans l'écraser.", "tech:ps_tique", "warn"],
     [[8, 9, 10, 11], "Champignons mortels de saison", "L'amanite phalloïde pousse en ce moment. Ne mange jamais un champignon sauvage sans certitude absolue.", "esp:phalloide", "danger"],
-    [[10, 11, 12, 1], "Chasse en battue", "Respecte les panneaux « Chasse » à l'entrée des bois : l'accès est interdit ce jour-là. Porte une couleur vive en forêt.", "", "danger"],
+    [[10, 11, 12, 1], "Chasse en battue", "Respecte les panneaux « Chasse » à l'entrée des bois : l'accès est interdit ce jour-là. Porte une couleur vive. Les dates annoncées sont sur la carte (couche « Chasse »).", "url:" + CHASSE_OFFICIEL, "danger"],
     [[9, 10], "Brame du cerf", "Les cerfs sont agités la nuit, surtout en Ardenne. Garde tes distances, ne campe pas sur les places de brame.", "", "info"],
     [[3, 4, 5], "Ail des ours et sosies", "Le muguet et la colchique, mortels, poussent au même endroit. Froisse la feuille : l'ail des ours sent l'ail, pas les autres.", "esp:aildesours", "warn"],
     [[4, 5, 6, 7, 8, 9], "Vipères au soleil", "Regarde où tu poses les mains et les pieds sur les rochers ensoleillés. Morsure : reste calme et immobile.", "tech:ps_morsure", "warn"],
@@ -2450,6 +2540,7 @@
     var m = new Date().getMonth() + 1;
     var list = SAISON.filter(function (a) { return a[0].indexOf(m) !== -1; }).slice(0, 4);
     box.innerHTML = list.length ? '<div class="sec-head"><h2>En ce moment</h2><span class="muted small">alertes de saison</span></div>' + list.map(function (a) {
+      if (/^url:/.test(a[3])) return '<a class="season-alert sa-' + a[4] + '" href="' + esc(a[3].slice(4)) + '" target="_blank" rel="noopener"><b>' + esc(a[1]) + "</b><span>" + esc(a[2]) + "</span><i>Carte officielle des chasses ›</i></a>";
       var link = a[3] ? a[3].split(":") : null;
       var ok = link && (link[0] === "tech" ? TECHS.some(function (t) { return t.id === link[1]; }) : ESPECES.some(function (s) { return s.id === link[1]; }));
       return '<button type="button" class="season-alert sa-' + a[4] + '"' + (ok ? " data-sa-" + link[0] + '="' + esc(link[1]) + '"' : "") + "><b>" + esc(a[1]) + "</b><span>" + esc(a[2]) + "</span>" + (ok ? '<i>Voir la fiche ›</i>' : "") + "</button>";

@@ -637,3 +637,6 @@ body.navigating .map-fabs{bottom:calc(var(--bottom) + 100px)}
 html[data-theme="nuit"] .alert-ok{background:#1E3A1E;color:#CDEBC8}
 html[data-theme="nuit"] .quiz-opt.good{background:#1E3A1E;color:#CDEBC8}
 html[data-theme="nuit"] .quiz-opt.bad{background:#4A1E16;color:#F8DAD3}
+a.season-alert{text-decoration:none}
+#tripChasse .alert{margin-top:10px}
+#tripChasse small{opacity:.75}
