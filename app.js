@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.49";
+  var VERSION = "0.9.50";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -228,17 +228,6 @@
     ign_be: { nom: "IGN Belgique", sub: "Topo, sentiers, courbes de niveau",
       url: "https://cartoweb.wmts.ngi.be/1.0.0/topo/default/3857/{z}/{y}/{x}.png", maxNative: 17,
       attr: '&copy; <a href="https://www.ngi.be">IGN Belgique</a> (CartoWeb)' },
-    topo: { nom: "OpenTopoMap", sub: "Relief et courbes, toute l'Europe",
-      url: "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", maxNative: 17, sub2: "abc",
-      attr: OSM_ATTR + ', SRTM | style &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA)' },
-    osm: { nom: "OpenStreetMap", sub: "Carte standard",
-      url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png", maxNative: 19, attr: OSM_ATTR },
-    ign_fr: { nom: "Plan IGN France", sub: "Carte officielle française",
-      url: "https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&FORMAT=image/png&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}", maxNative: 19,
-      attr: '&copy; <a href="https://www.ign.fr">IGN France</a>' },
-    sat: { nom: "Satellite", sub: "Photo aérienne (usage personnel)", sat: true,
-      url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", maxNative: 19,
-      attr: "Imagerie &copy; Esri, Maxar, Earthstar Geographics" }
   };
   function mtKey() { return load("sylva_mtkey", "") || ""; }
   function addMapTiler() {
