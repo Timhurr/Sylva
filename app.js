@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.34";
+  var VERSION = "0.9.35";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -1027,6 +1027,7 @@
                     : heroIllus(t.id, t.illus, t.titre)) +
       '<div class="chap-k">' + esc(t.cat) + (t.isole ? " · secours injoignables" : " · " + n + " étapes") + '</div><h1 id="sheetTitle">' + esc(t.titre) + "</h1><p>" + esc(t.intro) + "</p>";
     if (t.recette) h += recetteHtml(t.recette);
+    h += planBtnHtml(t.id);
     if (t.alerte && t.alerte.length) {
       h += '<div class="alert alert-danger red-flags"><strong>Fais tout pour sortir ou te faire repérer si :</strong><ul>' +
         t.alerte.map(function (a) { return "<li>" + esc(a) + "</li>"; }).join("") + "</ul></div>";
@@ -1148,6 +1149,8 @@
     lectureChap = c.id;
   }
   $("#sheetBody").addEventListener("click", function (e) {
+    var pb = e.target.closest("[data-plan]");
+    if (pb) { togglePlan(pb.getAttribute("data-plan")); pb.outerHTML = planBtnHtml(pb.getAttribute("data-plan")); return; }
     var pm = e.target.closest("[data-ps-mode]");
     if (pm) {
       var m = pm.getAttribute("data-ps-mode");
@@ -1385,6 +1388,74 @@
       .catch(function () { if (!cached) $("#meteo").innerHTML = '<p class="muted">Météo indisponible pour le moment.</p>'; });
   }
 
+  // ---------- Programme du prochain bivouac : recettes et fiches -> sac ----------
+  // Matériel repéré dans le texte d'une fiche : [mot-clé (regex), élément à prendre]
+  var GEAR = [
+    [/alu(minium)?\b/i, "Papier aluminium"], [/popote|gamelle|marmite|casserole/i, "Popote / gamelle"],
+    [/\bpo[êe]le\b/i, "Poêle de bivouac"], [/\bquart\b|\btasse\b/i, "Quart (tasse)"], [/cuill[èe]re/i, "Cuillère"],
+    [/b[âa]che|tarp/i, "Bâche (tarp)"], [/cordelette|paracorde|ficelle|ligne fa[îi]ti[èe]re/i, "Cordelette (10 m)"],
+    [/sardine|piquet/i, "Sardines / piquets"], [/\bscie\b/i, "Scie pliante"], [/hachette|hache\b/i, "Hachette"],
+    [/ferro|pierre [àa] feu/i, "Pierre à feu (ferro)"], [/briquet/i, "Briquet"], [/allumette/i, "Allumettes"],
+    [/amadou|coton.{0,12}vaseline|allume-feu/i, "Allume-feu"], [/sac poubelle|sac [ée]tanche/i, "Sacs étanches / poubelle"],
+    [/couverture de survie/i, "Couverture de survie"], [/sifflet/i, "Sifflet"], [/boussole/i, "Boussole"],
+    [/carte (papier|topo|IGN)/i, "Carte papier"], [/frontale|lampe/i, "Lampe frontale"], [/\bgants?\b/i, "Gants"],
+    [/tire-tique/i, "Tire-tique"], [/bande|compresse|pansement/i, "Pansements et compresses"], [/[ée]pingle/i, "Épingles de sûreté"],
+    [/foulard|triangle de tissu/i, "Foulard / tissu triangulaire"], [/hame[çc]on/i, "Hameçons"], [/fil de p[êe]che|\bligne\b.*p[êe]che|p[êe]che.*\bligne\b/i, "Fil de pêche"],
+    [/permis de p[êe]che|un permis/i, "Permis de pêche"], [/bouteille (en )?plastique/i, "Bouteille plastique vide"],
+    [/pastilles?|filtre [àa] eau/i, "Pastilles ou filtre à eau"], [/couteau/i, "Couteau"]
+  ];
+  function getPlan() { var p = load("sylva_plan", []); return Array.isArray(p) ? p : []; }
+  function inPlan(id) { return getPlan().indexOf(id) !== -1; }
+  function planBtnHtml(id) {
+    var on = inPlan(id);
+    return '<button type="button" class="btn ' + (on ? "" : "btn-primary ") + 'plan-btn" data-plan="' + esc(id) + '">' +
+      (on ? "✓ Au programme du bivouac · retirer" : "+ Ajouter au prochain bivouac") + "</button>";
+  }
+  function thingsFor(t) {
+    var out = [];
+    if (t.recette && t.recette.ingredients) out = t.recette.ingredients.slice();
+    var txt = [t.intro].concat(t.etapes || [], t.isole || []).join(" ");
+    GEAR.forEach(function (g) { if (g[0].test(txt) && out.indexOf(g[1]) === -1) out.push(g[1]); });
+    if (!out.length) out.push("Relire la fiche avant de partir");
+    return out;
+  }
+  function togglePlan(id) {
+    var t = TECHS.filter(function (x) { return x.id === id; })[0]; if (!t) return;
+    var p = getPlan(), cl = getChecklist();
+    if (p.indexOf(id) !== -1) {
+      p.splice(p.indexOf(id), 1);
+      cl = cl.filter(function (g) { return g.src !== id; });
+      toast("Retiré du prochain bivouac");
+    } else {
+      p.push(id);
+      if (!cl.some(function (g) { return g.src === id; })) {
+        // On n'ajoute pas ce qui est déjà dans le sac
+        var have = {}; cl.forEach(function (g) { g.items.forEach(function (it) { have[norm(it.label)] = 1; }); });
+        var items = thingsFor(t).filter(function (x) { return !have[norm(x)]; });
+        cl.push({ id: uid(), src: id, titre: (t.recette ? "Recette : " : "Pour : ") + t.titre,
+          items: (items.length ? items : ["Tout est déjà dans le sac"]).map(function (l) { return { id: uid(), label: l, done: false, photo: false }; }) });
+      }
+      toast("Ajouté au sac du prochain bivouac");
+    }
+    save("sylva_plan", p); saveChecklist(cl);
+    renderChecklist(); renderPlan(); if (typeof renderAccueil === "function") renderAccueil();
+  }
+  function renderPlan() {
+    var box = $("#planList"); if (!box) return;
+    var p = getPlan().map(function (id) { return TECHS.filter(function (x) { return x.id === id; })[0]; }).filter(Boolean);
+    $("#planHead").hidden = !p.length; box.hidden = !p.length;
+    box.innerHTML = '<div class="list">' + p.map(function (t) {
+      return '<div class="plan-row"><button class="item" data-tech="' + esc(t.id) + '"><span class="item-illus" aria-hidden="true">' + thumbOf(t.id, t.illus) + "</span>" +
+        '<span class="item-main"><span class="item-name">' + esc(t.titre) + '</span><span class="item-sub">' + esc(t.cat) + "</span></span></button>" +
+        '<button class="icon-mini danger" data-unplan="' + esc(t.id) + '" aria-label="Retirer ' + esc(t.titre) + ' du programme">' +
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>';
+    }).join("") + "</div>";
+  }
+  $("#planList").addEventListener("click", function (e) {
+    var u = e.target.closest("[data-unplan]"); if (u) { togglePlan(u.getAttribute("data-unplan")); return; }
+    var b = e.target.closest("[data-tech]"); if (b) openTechnique(b.getAttribute("data-tech"));
+  });
+
   // ---------- Checklist du sac (modifiable, avec photos perso) ----------
   var CHECKLIST_DEFAUT = [
     ["Abri et couchage", ["Tente ou bâche + 10 m de cordelette", "Sac de couchage confort ≤ 0 °C", "Matelas isolant (R ≥ 3)", "Couverture de survie", "Sacs poubelle (déchets + rangement étanche)"]],
@@ -1501,12 +1572,14 @@
     } else if (b.hasAttribute("data-del-group")) {
       var gid = b.getAttribute("data-del-group"), g = cl.filter(function (x) { return x.id === gid; })[0];
       if (!g || (g.items.length && !confirm("Supprimer la catégorie « " + g.titre + " » et ses " + g.items.length + " éléments ?"))) return;
-      cl = cl.filter(function (x) { return x.id !== gid; }); saveChecklist(cl); renderChecklist();
+      cl = cl.filter(function (x) { return x.id !== gid; }); saveChecklist(cl);
+      if (g.src) { save("sylva_plan", getPlan().filter(function (x) { return x !== g.src; })); renderPlan(); }
+      renderChecklist();
     } else if (b.hasAttribute("data-photo-for")) {
       photoTarget = b.getAttribute("data-photo-for"); $("#checkPhoto").click();
     } else if (b.id === "btnDefaultCheck") {
       if (!confirm("Remplacer ta liste par la liste par défaut ? Tes éléments et photos perso seront effacés.")) return;
-      saveChecklist(defaultChecklist(null)); renderChecklist();
+      saveChecklist(defaultChecklist(null)); save("sylva_plan", []); renderPlan(); renderChecklist();
     }
   });
   $("#checkPhoto").addEventListener("change", function (e) {
@@ -1555,7 +1628,7 @@
     setTimeout(function () { map.setView([s.lat, s.lon], 16); if (spotMarkers[id]) spotMarkers[id].openPopup(); }, 120);
   });
 
-  function renderBivouac() { renderTrip(); loadMeteo(); renderChecklist(); renderCarnet(); }
+  function renderBivouac() { renderTrip(); loadMeteo(); renderPlan(); renderChecklist(); renderCarnet(); }
 
   // ---------- Aujourd'hui ----------
   var MOIS_COURTS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
