@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.48";
+  var VERSION = "0.9.49";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -262,6 +262,7 @@
     if (b.cors) opt.crossOrigin = true; // MapTiler : envoie l'en-tête Origin pour la restriction de domaine
     if (b.cors) opt.referrerPolicy = "strict-origin-when-cross-origin";
     baseLayer = L.tileLayer(b.url, opt);
+    if (b.cors && baseLayer.on) { var errN = 0; baseLayer.on("tileerror", function () { if (++errN === 3) toast("MapTiler refuse la clé : vérifie-la dans Réglages, et le domaine autorisé dans MapTiler"); }); }
     if (!$("#map").classList.contains("term-vec")) { baseLayer.addTo(map); baseLayer.bringToBack(); }
     $("#map").classList.toggle("map-sat", !!b.sat);
     save("sylva_basemap", id);

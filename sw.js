@@ -1,5 +1,5 @@
 /* Sylva – service worker : appli et fiches hors-ligne, tuiles de carte vues gardées en cache */
-var VERSION = "sylva-v0.9.48";
+var VERSION = "sylva-v0.9.49";
 var SHELL = VERSION + "-shell";
 var TILES = "sylva-tiles";
 var PHOTOS = "sylva-photos";
@@ -29,6 +29,11 @@ self.addEventListener("install", function (e) {
 self.addEventListener("activate", function (e) {
   e.waitUntil(caches.keys().then(function (keys) {
     return Promise.all(keys.filter(function (k) { return k !== SHELL && k !== TILES && k !== PHOTOS; }).map(function (k) { return caches.delete(k); }));
+  }).then(function () {
+    // Purge des tuiles MapTiler gardées par erreur (réponses « Invalid key » mises en cache avant la v0.9.49)
+    return caches.open(TILES).then(function (c) {
+      return c.keys().then(function (ks) { return Promise.all(ks.filter(function (r) { return r.url.indexOf("api.maptiler.com") !== -1; }).map(function (r) { return c.delete(r); })); });
+    });
   }).then(function () { return self.clients.claim(); }));
 });
 
@@ -62,7 +67,8 @@ self.addEventListener("fetch", function (e) {
       return c.match(req).then(function (hit) {
         if (hit) return hit;
         return fetch(req).then(function (res) {
-          if (res && (res.ok || res.type === "opaque")) { c.put(req, res.clone()).then(trimTiles); }
+          var opaqueOk = res && res.type === "opaque" && url.hostname !== "api.maptiler.com";
+          if (res && (res.ok || opaqueOk)) { c.put(req, res.clone()).then(trimTiles); }
           return res;
         });
       });
