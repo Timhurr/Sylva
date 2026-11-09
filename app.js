@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.47";
+  var VERSION = "0.9.48";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -247,9 +247,9 @@
     if (!k) return;
     var at = '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> ' + OSM_ATTR;
     BASEMAPS.mt_outdoor = { nom: "MapTiler Outdoor", sub: "Sentiers, relief, courbes · toute l'Europe",
-      url: "https://api.maptiler.com/maps/outdoor-v2/256/{z}/{x}/{y}.png?key=" + encodeURIComponent(k), maxNative: 20, attr: at };
+      url: "https://api.maptiler.com/maps/outdoor-v2/256/{z}/{x}/{y}.png?key=" + encodeURIComponent(k), maxNative: 20, cors: true, attr: at };
     BASEMAPS.mt_sat = { nom: "MapTiler Satellite", sub: "Photo aérienne haute résolution", sat: true,
-      url: "https://api.maptiler.com/maps/satellite/256/{z}/{x}/{y}.jpg?key=" + encodeURIComponent(k), maxNative: 20, attr: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> &copy; fournisseurs d\'imagerie' };
+      url: "https://api.maptiler.com/maps/satellite/256/{z}/{x}/{y}.jpg?key=" + encodeURIComponent(k), maxNative: 20, cors: true, attr: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> &copy; fournisseurs d\'imagerie' };
   }
   var baseLayer = null;
 
@@ -259,6 +259,8 @@
     if (baseLayer) map.removeLayer(baseLayer);
     var opt = { maxZoom: 19, maxNativeZoom: b.maxNative, attribution: b.attr };
     if (b.sub2) opt.subdomains = b.sub2;
+    if (b.cors) opt.crossOrigin = true; // MapTiler : envoie l'en-tête Origin pour la restriction de domaine
+    if (b.cors) opt.referrerPolicy = "strict-origin-when-cross-origin";
     baseLayer = L.tileLayer(b.url, opt);
     if (!$("#map").classList.contains("term-vec")) { baseLayer.addTo(map); baseLayer.bringToBack(); }
     $("#map").classList.toggle("map-sat", !!b.sat);
@@ -1044,7 +1046,7 @@
   });
   $("#formSettings").addEventListener("submit", function (e) {
     e.preventDefault(); save("sylva_key", $("#apiKey").value.trim());
-    var mk = $("#mtKey").value.trim(), oldMk = load("sylva_mtkey", "");
+    var mk = $("#mtKey").value.replace(/\s+/g, ""), oldMk = load("sylva_mtkey", "");
     save("sylva_mtkey", mk);
     if (mk !== oldMk && map) { initBasemaps(); if (mk) toast("Cartes MapTiler ajoutées au menu des cartes"); }
     closeModal($("#modalSettings")); toast("Réglages enregistrés");
