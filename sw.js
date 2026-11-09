@@ -1,5 +1,5 @@
 /* Sylva – service worker : appli et fiches hors-ligne, tuiles de carte vues gardées en cache */
-var VERSION = "sylva-v0.9.46";
+var VERSION = "sylva-v0.9.47";
 var SHELL = VERSION + "-shell";
 var TILES = "sylva-tiles";
 var PHOTOS = "sylva-photos";
@@ -57,7 +57,7 @@ self.addEventListener("fetch", function (e) {
   }
 
   // Tuiles OpenStreetMap : cache d'abord (celles déjà affichées), réseau sinon
-  if (url.hostname === "tile.openstreetmap.org" || url.hostname === "cartoweb.wmts.ngi.be" || /\.tile\.opentopomap\.org$/.test(url.hostname) || url.hostname === "data.geopf.fr" || url.hostname === "server.arcgisonline.com" || url.hostname === "tiles.openfreemap.org") {
+  if (url.hostname === "tile.openstreetmap.org" || url.hostname === "cartoweb.wmts.ngi.be" || /\.tile\.opentopomap\.org$/.test(url.hostname) || url.hostname === "data.geopf.fr" || url.hostname === "server.arcgisonline.com" || url.hostname === "tiles.openfreemap.org" || url.hostname === "api.maptiler.com") {
     e.respondWith(caches.open(TILES).then(function (c) {
       return c.match(req).then(function (hit) {
         if (hit) return hit;

@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.46";
+  var VERSION = "0.9.47";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -240,6 +240,17 @@
       url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}", maxNative: 19,
       attr: "Imagerie &copy; Esri, Maxar, Earthstar Geographics" }
   };
+  function mtKey() { return load("sylva_mtkey", "") || ""; }
+  function addMapTiler() {
+    var k = mtKey();
+    ["mt_outdoor", "mt_sat"].forEach(function (id) { delete BASEMAPS[id]; });
+    if (!k) return;
+    var at = '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> ' + OSM_ATTR;
+    BASEMAPS.mt_outdoor = { nom: "MapTiler Outdoor", sub: "Sentiers, relief, courbes · toute l'Europe",
+      url: "https://api.maptiler.com/maps/outdoor-v2/256/{z}/{x}/{y}.png?key=" + encodeURIComponent(k), maxNative: 20, attr: at };
+    BASEMAPS.mt_sat = { nom: "MapTiler Satellite", sub: "Photo aérienne haute résolution", sat: true,
+      url: "https://api.maptiler.com/maps/satellite/256/{z}/{x}/{y}.jpg?key=" + encodeURIComponent(k), maxNative: 20, attr: '<a href="https://www.maptiler.com/copyright/" target="_blank">&copy; MapTiler</a> &copy; fournisseurs d\'imagerie' };
+  }
   var baseLayer = null;
 
   function setBasemap(id) {
@@ -255,18 +266,26 @@
     $all("#basemapList [data-basemap]").forEach(function (x) { x.classList.toggle("on", x.dataset.basemap === id); });
   }
 
+  var basemapsWired = false;
+  function renderBasemapList() {
+    addMapTiler();
+    var list = $("#basemapList"); if (!list) return;
+    list.innerHTML = Object.keys(BASEMAPS).map(function (k) {
+      var b = BASEMAPS[k];
+      return '<button type="button" class="basemap-item" data-basemap="' + k + '"><b>' + b.nom + "</b><span>" + b.sub + "</span></button>";
+    }).join("");
+    var cur = load("sylva_basemap", "ign_be");
+    $all("#basemapList [data-basemap]").forEach(function (x) { x.classList.toggle("on", x.dataset.basemap === cur); });
+  }
   function initBasemaps() {
+    renderBasemapList();
+    if (basemapsWired) { var cur = load("sylva_basemap", "ign_be"); if (!BASEMAPS[cur]) setBasemap("ign_be"); return; }
+    basemapsWired = true;
     var list = $("#basemapList");
-    if (list) {
-      list.innerHTML = Object.keys(BASEMAPS).map(function (k) {
-        var b = BASEMAPS[k];
-        return '<button type="button" class="basemap-item" data-basemap="' + k + '"><b>' + b.nom + "</b><span>" + b.sub + "</span></button>";
-      }).join("");
-      list.addEventListener("click", function (e) {
-        var btn = e.target.closest("[data-basemap]"); if (!btn) return;
-        setBasemap(btn.dataset.basemap); $("#basemapPanel").hidden = true;
-      });
-    }
+    if (list) list.addEventListener("click", function (e) {
+      var btn = e.target.closest("[data-basemap]"); if (!btn) return;
+      setBasemap(btn.dataset.basemap); $("#basemapPanel").hidden = true;
+    });
     var fab = $("#btnBasemap");
     if (fab) fab.addEventListener("click", function () { var p = $("#basemapPanel"); p.hidden = !p.hidden; });
     setBasemap(load("sylva_basemap", "ign_be"));
@@ -1021,10 +1040,13 @@
 
   // ---------- Réglages ----------
   $("#btnSettings").addEventListener("click", function () {
-    $("#apiKey").value = load("sylva_key", "") || ""; openModal("#modalSettings");
+    $("#apiKey").value = load("sylva_key", "") || ""; $("#mtKey").value = load("sylva_mtkey", "") || ""; openModal("#modalSettings");
   });
   $("#formSettings").addEventListener("submit", function (e) {
     e.preventDefault(); save("sylva_key", $("#apiKey").value.trim());
+    var mk = $("#mtKey").value.trim(), oldMk = load("sylva_mtkey", "");
+    save("sylva_mtkey", mk);
+    if (mk !== oldMk && map) { initBasemaps(); if (mk) toast("Cartes MapTiler ajoutées au menu des cartes"); }
     closeModal($("#modalSettings")); toast("Réglages enregistrés");
   });
   $("#btnPhotos").addEventListener("click", function () { toast("Téléchargement des photos…"); prefetchPhotos(true); });
