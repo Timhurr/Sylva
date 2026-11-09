@@ -557,7 +557,9 @@ html[data-theme="nuit"] .rc-buff{color:#8CD996}
 .trip-search .btn{flex:0 0 auto;min-height:48px}
 .trip-results{border:1px solid var(--line);border-radius:14px;overflow:hidden;max-height:220px;overflow-y:auto}
 .trip-point{font-size:14px;margin:8px 0}
-.trip-actions{display:flex;gap:16px;flex-wrap:wrap}
+.trip-actions{display:flex;align-items:center;gap:20px;flex-wrap:wrap;margin-top:-8px}
+.trip-actions .link-btn{margin:0!important;padding:8px 0;line-height:1.2}
+#btnTripEnd{color:var(--muted)}
 .hist-stars{color:#E9A23B;font-size:13px;letter-spacing:1px;white-space:nowrap}
 .stars{display:flex;gap:4px}
 .stars button{border:0;background:none;font-size:32px;line-height:1;color:var(--line);padding:2px;cursor:pointer}
