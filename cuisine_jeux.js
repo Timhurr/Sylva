@@ -9,9 +9,6 @@
   if (C.indexOf(CAT) === -1) {
     var i = C.indexOf("Pêche"); C.splice(i === -1 ? C.length : i + 1, 0, CAT);
   }
-  function src(jeu, editeur) {
-    return "Recette originale Sylva, inspirée de " + jeu + ". Non officiel : Sylva n'est ni affiliée ni approuvée par " + editeur;
-  }
   var VIANDE = "Volaille et porc se mangent bien cuits à cœur : coupe le plus gros morceau, la chair ne doit plus être rose et le jus doit être clair.";
   var CHAMPI = "Champignons du commerce uniquement. Ne jamais cuisiner un champignon sauvage sans certitude absolue : certains sont mortels.";
 
@@ -194,11 +191,178 @@
       attention: ["Ne bois que des plantes identifiées avec certitude : plusieurs plantes toxiques poussent au même endroit.", "Ce n'est pas un médicament : une vraie blessure se soigne avec les fiches « Premiers secours »."] }
   ];
 
+  // Recettes proposées par Tim (adaptées : sécurité alimentaire, cueillette)
+  var CAN = "Ne chauffe jamais une boîte fermée : elle explose. Une boîte ouverte se chauffe au bord des braises, mais son vernis intérieur n'aime pas le feu vif : le mieux reste de verser le contenu dans la popote.";
+  var PIERRE = "Jamais de pierre prise dans l'eau ou très humide : l'eau piégée dedans peut la faire éclater dans le feu.";
+  var R2 = [
+    { id: "rj_papillote_vigor", titre: "La papillote Vigor", jeu: "The Legend of Zelda: Breath of the Wild", cuisson: "Dans les braises (papillote)", interet: "Protéines, sel pour l'effort, lipides du beurre.",
+      ingredients: ["1 steak de bœuf (ou lard épais) en gros dés", "4 champignons de Paris coupés en deux", "1 noisette de beurre (ou filet d'huile)", "Gros sel, poivre noir", "1 gousse d'ail écrasée"],
+      etapes: ["Le bouclier : étale une grande feuille d'aluminium, doublée si elle est fine.",
+        "L'assemblage : dépose la viande et les champignons au centre. Ajoute l'ail, le sel, le poivre, et le beurre par-dessus.",
+        "Le scellé : replie l'aluminium hermétiquement en chausson étanche, le jus ne doit pas fuir.",
+        "Le feu : dégage un lit de braises chaudes sans flammes, et pose la papillote directement dessus.",
+        "Le chrono : 15 à 20 minutes, en retournant une fois à mi-cuisson avec deux bâtons. Ouvre délicatement : la vapeur brûle."],
+      attention: [CHAMPI, "Avec du lard, il doit être bien cuit et grillé, pas seulement tiède."] },
+    { id: "rj_ragout_taverne", titre: "Le ragoût de la taverne", jeu: "World of Warcraft et Skyrim", cuisson: "Sur pierre chaude, dans la boîte ou la popote", interet: "Glucides lents, fibres et protéines : de l'énergie durable contre le froid de la nuit.",
+      ingredients: ["1 boîte de haricots à la sauce tomate (type baked beans)", "1 saucisse fumée (Montbéliard ou kielbasa)", "50 g de fromage à pâte dure (comté, beaufort) en dés"],
+      etapes: ["L'ouverture : ouvre entièrement la boîte de haricots.",
+        "La découpe : tranche la saucisse fumée en rondelles épaisses, ajoute-la aux haricots et mélange.",
+        "La chauffe : pose la popote (ou la boîte ouverte) sur une pierre plate au bord des braises, et laisse mijoter jusqu'à frémissement.",
+        "La fusion : retire du feu avec des gants ou une pince de fortune, et jette les dés de fromage dedans.",
+        "Le service : laisse fondre 1 minute. À la cuillère, quand le fromage file."],
+      attention: [CAN, PIERRE] },
+    { id: "rj_grilled_cheese", titre: "Le grilled cheese de l'abri", jeu: "Fallout", cuisson: "Pressé sous pierre chaude", interet: "Très calorique : du gras pour relancer la chaudière corporelle par temps froid.",
+      ingredients: ["2 grosses tranches de pain de campagne", "3 tranches épaisses de fromage fondant (raclette, cheddar ou reblochon)", "2 tranches de bacon ou de jambon cru"],
+      etapes: ["Le sandwich : place le fromage et le bacon entre les deux tranches de pain.",
+        "L'emballage : enveloppe fermement le sandwich dans de l'aluminium.",
+        "La presse : chauffe une pierre plate, propre et sèche, au bord du feu. Elle doit être très chaude.",
+        "La cuisson : pose le sandwich sur un lit de braises bien plat, puis la pierre chaude par-dessus, comme une presse à panini.",
+        "Le résultat : 3 à 5 minutes de chaque côté. Le pain doit être croustillant et le fromage complètement fondu."],
+      attention: [PIERRE, "Manipule la pierre avec deux bâtons ou des gants épais."] },
+    { id: "rj_chaudron_ermite", titre: "Le chaudron de l'ermite", jeu: "Genshin Impact", cuisson: "À la popote (suspendue ou sur trépied)", interet: "Hydratation, minéraux et réconfort immédiat.",
+      ingredients: ["1 poignée de champignons du commerce (frais, ou séchés réhydratés)", "1 cube de bouillon (volaille ou légumes)", "2 portions de fromage à tartiner (type Kiri ou Vache qui rit)", "1 filet d'huile"],
+      etapes: ["Le saisi : dans la popote, fais sauter les champignons dans l'huile au-dessus de petites flammes jusqu'à ce qu'ils dorent.",
+        "Le bouillon : émiette le cube dessus et verse un grand verre d'eau (250 ml).",
+        "La réduction : laisse bouillir 5 minutes au-dessus des braises.",
+        "Le liant : hors du feu, ajoute le fromage et remue fort jusqu'à obtenir une sauce crémeuse.",
+        "L'astuce : à napper sur une pomme de terre cuite dans la braise, ou à manger comme une soupe épaisse avec du pain."],
+      attention: [CHAMPI] },
+    { id: "rj_pain_elmoth", titre: "Le pain de voyage d'Elmoth", jeu: "Le Seigneur des anneaux et la fantasy", cuisson: "Sur pierre plate (cuisson sèche)", interet: "Glucides compacts : se garde dans le sac et se mange en marchant le lendemain.",
+      ingredients: ["100 g de farine de blé (pesée chez toi dans un sac étanche)", "1 pincée de sel", "1 cuillère à café de sucre ou de miel", "Eau tiède, au jugé"],
+      etapes: ["Le pétrissage : dans la popote ou dans le sac de farine, ajoute le sel, le sucre, et l'eau petit à petit. Mélange à la main jusqu'à une pâte ferme qui ne colle plus.",
+        "La forme : divise la pâte et aplatis-la en galettes fines, 1 cm au maximum pour qu'elles cuisent à cœur.",
+        "Le four naturel : brosse les cendres d'une pierre plate chauffée au bord du foyer. Elle doit être brûlante.",
+        "La cuisson : pose les galettes directement sur la pierre, sans matière grasse.",
+        "Le timing : 5 à 8 minutes de chaque côté. La galette doit sonner creux. Mange chaud, ou enveloppe dans un tissu pour la route."],
+      attention: [PIERRE] },
+    { id: "rj_cafe_cowboy", titre: "Le café du cow-boy", jeu: "Red Dead Redemption", cuisson: "Décantation à la popote", interet: "Caféine contre la fatigue, sucre et magnésium du chocolat.",
+      ingredients: ["2 cuillères à soupe de café moulu (pas de soluble)", "300 ml d'eau potable", "1 carré de chocolat noir (ou un peu de sucre)"],
+      etapes: ["L'ébullition : porte l'eau à ébullition complète dans la popote.",
+        "L'infusion : retire du feu, jette le café moulu dans l'eau et remue une fois.",
+        "La décantation : laisse reposer 3 à 4 minutes sans toucher, à l'abri du vent. La mouture tombe et se tasse au fond.",
+        "Le secret : mets le carré de chocolat au fond de ton quart.",
+        "Le service : verse très doucement, sans secouer la popote, pour laisser le marc au fond. Remue pour fondre le chocolat."],
+      attention: ["Une goutte d'eau froide versée sur le café aide la mouture à tomber. Ne bois pas le fond."] },
+    { id: "rj_onigiri", titre: "Les rations du samouraï (onigiri)", jeu: "Ghost of Tsushima et Sekiro", cuisson: "À la popote (riz compact)", interet: "Glucides lents : la jauge d'endurance pleine avant une longue marche.",
+      ingredients: ["100 g de riz rond (riz à sushi), lavé chez toi", "150 ml d'eau", "1 pincée de sel", "1 petite boîte de thon au naturel (ou du lard cuit haché)", "1 feuille d'algue nori (optionnel)"],
+      etapes: ["Le feu doux : riz et eau dans la popote, couvercle fermé et une pierre dessus. Porte à ébullition au-dessus des braises, puis recule la popote et laisse 15 minutes à feu très doux, sans jamais ouvrir.",
+        "Le repos : hors du feu, laisse étuver 10 minutes, toujours couvert.",
+        "Le façonnage : laisse tiédir, mouille tes mains à l'eau salée. Prends une poignée de riz, creuse un trou et glisse une cuillère de thon émietté.",
+        "Le triangle : presse fort entre tes mains pour former un triangle compact. Entoure la base d'algue pour le tenir sans te coller les doigts."],
+      attention: ["Riz cuit et thon ouvert ne se gardent pas : mange les onigiris dans la journée, et pas après une journée chaude dans le sac."] },
+    { id: "rj_soupe_monstre", titre: "La soupe de monstre du Séraphin", jeu: "Monster Hunter et Dragon Quest", cuisson: "Bouillon long, au coin du feu", interet: "Réhydratation, collagène et minéraux : le meilleur bonus de défense contre le gel.",
+      ingredients: ["200 g de viande à braiser (bœuf, gibier du commerce ou jarret de porc)", "1 gros oignon en quartiers", "1 carotte en grosses rondelles", "1 cube de bouillon de bœuf", "Eau"],
+      etapes: ["Le saisissement : fais dorer la viande au fond de la popote bien chaude, avec un peu de gras.",
+        "Le déluge : couvre d'eau à hauteur, et ajoute l'oignon, la carotte et le cube émietté.",
+        "La cuisson longue : pose la popote sur un trépied ou deux pierres stables, au-dessus de braises moyennes. Laisse mijoter 1 h à 1 h 30 pendant que tu montes l'abri. Plus c'est doux et long, plus la viande est tendre.",
+        "La dégustation : sers brûlant dans le quart. Rajoute de l'eau si ça réduit trop."],
+      attention: ["Oignon du commerce : l'ail des ours et les « oignons sauvages » ont des sosies mortels (muguet, colchique). Voir les fiches espèces.", VIANDE] },
+    { id: "rj_galette_stalker", titre: "La galette de la Zone (blini de survie)", jeu: "S.T.A.L.K.E.R. et Metro 2033", cuisson: "À la poêle de bivouac ou au couvercle de popote", interet: "Énergie compacte, ingrédients de fond de sac qui se gardent longtemps.",
+      ingredients: ["1 sachet de purée en flocons", "1 cuillère à soupe de farine", "Eau tiède", "1 cuillère à soupe d'huile ou de saindoux", "Sel, poivre"],
+      etapes: ["Le mélange : dans la popote, mélange flocons et farine, puis ajoute l'eau tiède petit à petit jusqu'à une pâte épaisse, comme de la pâte à modeler. Sale, poivre.",
+        "Les galettes : forme des boules, puis aplatis-les en galettes épaisses de la taille de ta paume.",
+        "Le test du feu : chauffe l'huile dans la poêle ou le couvercle de la popote, sur les braises.",
+        "La friture : 3 à 4 minutes de chaque côté, jusqu'à une croûte dorée et croustillante.",
+        "Le service : chaud, idéalement avec un morceau de corned-beef, pour un vrai repas de survivant des tunnels."],
+      attention: ["Huile chaude au-dessus du feu : poêle bien stable, et jamais d'eau dedans."] },
+    { id: "rj_porridge", titre: "Le porridge du pionnier", jeu: "The Long Dark", cuisson: "À la popote (petit-déjeuner de tempête)", interet: "Index glycémique bas : de l'énergie en continu pendant des heures de marche dans le froid.",
+      ingredients: ["50 g de flocons d'avoine fins", "200 ml d'eau (ou de neige fondue, bouillie)", "1 poignée de fruits secs (raisins, cranberries, amandes)", "1 cuillère à café de miel ou de sucre roux"],
+      etapes: ["L'immersion : dans la popote froide, mélange flocons, fruits secs et eau.",
+        "Le bouillonnement : au-dessus de braises moyennes, porte doucement à ébullition en remuant sans arrêt pour que le fond n'attache pas.",
+        "L'épaississement : dès que ça bout et épaissit (3 à 5 minutes), retire du feu.",
+        "Le liant : ajoute le miel, couvre 2 minutes pour que les fruits secs gonflent. Ça réchauffe dès le réveil."],
+      attention: [] },
+    { id: "rj_lembas", titre: "Le lembas des coureurs des bois", jeu: "Le Seigneur des anneaux et Green Hell", cuisson: "Sur branche de bois vert (feu direct)", interet: "Glucides denses : le pain des trappeurs par excellence.", tags: ["Zéro vaisselle", "Artisanat", "Marche"],
+      ingredients: ["100 g de farine avec une pincée de levure chimique", "1 cuillère à soupe de lait en poudre", "1 pincée de sel", "Eau, au jugé"],
+      etapes: ["La pâte de ration : dans un sac congélation ou la popote, mélange farine, lait en poudre et sel. Ajoute un filet d'eau et malaxe jusqu'à une boule souple et élastique.",
+        "Le support : taille une branche de bois vert (noisetier ou bouleau) de la taille d'un manche à balai, et retire l'écorce sur les 20 derniers centimètres.",
+        "L'enroulement : étire la pâte en long boudin fin et enroule-la en spirale sur la partie écorcée, en pressant bien les extrémités.",
+        "La cuisson : au-dessus des braises, pas dans les flammes, en tournant régulièrement.",
+        "Le rendu : en 10 à 15 minutes, le pain gonfle, dore et se détache tout seul. Remplis le trou d'un carré de chocolat ou de fromage."],
+      attention: ["Pas de branche d'if, de laurier-cerise ou de bois inconnu : ils sont toxiques. Noisetier, bouleau ou saule."] },
+    { id: "rj_ragout_goule", titre: "Le ragoût de goule de l'outback", jeu: "Fallout et Project Zomboid", cuisson: "À la popote (ration d'urgence)", interet: "Sel contre les crampes, protéines qui se gardent longtemps.", tags: ["Boîte de ration", "Rustique", "Anti-froid"],
+      ingredients: ["1 boîte de corned-beef de 200 g", "1 petit paquet de crackers salés", "½ oignon (séché ou frais)", "1 tasse d'eau", "Un peu d'huile ou de gras"],
+      etapes: ["La base : fais revenir l'oignon en dés dans un peu de gras au fond de la popote, jusqu'à ce qu'il soit translucide.",
+        "La viande : ajoute le bloc de corned-beef et écrase-le à la cuillère.",
+        "Le bouillonnement : verse l'eau et laisse mijoter 5 minutes au-dessus des braises.",
+        "L'épaississant : émiette 3 ou 4 crackers dedans. Ils boivent le jus et donnent une purée rustique épaisse.",
+        "La consommation : brûlant. +50 % de jauge d'énergie."],
+      attention: [] },
+    { id: "rj_jerky", titre: "Le séchage du chasseur (jerky au feu de bois)", jeu: "The Long Dark et ARK: Survival Evolved", cuisson: "Séchage et fumage au-dessus des braises", interet: "Protéines pures, presque sans gras : un en-cas qui tient dans le sac.", tags: ["Conservation", "Artisanat", "Feu de bois"],
+      ingredients: ["200 g de bœuf maigre (tende de tranche) en lanières de 5 mm", "Gros sel, poivre noir", "Poudre d'ail ou piment (optionnel)"],
+      etapes: ["Le salage : sale et épice les lanières sur toutes les faces, et laisse reposer 30 minutes sur une surface propre.",
+        "La saisie de sécurité : plonge les lanières 1 minute dans l'eau bouillante, ou saisis-les rapidement sur la grille. La viande doit être chauffée à cœur avant de sécher.",
+        "Le séchoir : monte un petit trépied en bois vert, ou tends des cordelettes à 60 cm au-dessus de braises qui faiblissent.",
+        "La suspension : enfile les lanières sur des piques de bois vert et suspends-les dans la chaleur.",
+        "Le fumage : pas de flammes, juste de la chaleur douce et de la fumée de bois dur (chêne, hêtre), pendant 3 à 4 heures.",
+        "Le résultat : la viande devient sombre, sèche, mais reste souple. Range-la dans un sac propre et fermé."],
+      attention: ["Un séchage au feu de camp n'est pas une conserve industrielle : mange ce jerky dans les 2 à 3 jours, et jette-le s'il sent mauvais ou devient humide.", "Bœuf du commerce uniquement : le gibier sauvage peut porter des parasites qu'un séchage ne tue pas."] },
+    { id: "rj_crispy_boite", titre: "Le crispy de la boîte cachée", jeu: "DayZ et Escape from Tarkov", cuisson: "Dans la boîte ou la popote, sur les braises", interet: "Sucres rapides et potassium : le moral et l'énergie mentale remontent tout de suite.", tags: ["Boîte de ration", "Zéro vaisselle", "Dessert"],
+      ingredients: ["1 boîte de fruits au sirop (ananas, pêches ou abricots)", "2 ou 3 biscuits secs (spéculoos, petit-beurre)", "1 pincée de cannelle (optionnel)"],
+      etapes: ["La ventilation : ouvre la boîte et vide la moitié du sirop (bois-le, c'est un shot d'énergie).",
+        "Le crumble : émiette les biscuits par-dessus les fruits, ajoute la cannelle.",
+        "Le brasier : pose la boîte ouverte (ou la popote) bien stable sur un nid de petites braises.",
+        "La caramélisation : laisse bouillir doucement 10 minutes. Le sirop réduit et le biscuit fait une croûte.",
+        "Le service : retire avec un outil ou un tissu épais, et laisse tiédir 2 minutes avant de manger à la cuillère."],
+      attention: [CAN] },
+    { id: "rj_elixir_mana", titre: "L'élixir de mana (thé des bois)", jeu: "Don't Starve et Skyrim", cuisson: "Infusion à la popote (cueillette)", interet: "Vitamine C et chaleur : un vrai réconfort quand il fait froid.", tags: ["Cueillette", "Hydratation", "Zéro calorie"],
+      ingredients: ["1 poignée de jeunes aiguilles de pin ou de sapin, identifiées avec certitude", "1 morceau de gingembre (emporté), ou de jeunes pousses de ronce", "1 cuillère à soupe de miel", "500 ml d'eau"],
+      etapes: ["La récolte : rince les aiguilles et hache-les grossièrement au couteau pour libérer les arômes.",
+        "La chauffe : porte l'eau à ébullition complète.",
+        "L'infusion : retire du feu, ajoute les aiguilles et le gingembre, et couvre.",
+        "Le repos : 10 à 12 minutes à l'abri du vent. Le liquide prend une couleur dorée.",
+        "Le filtre : verse dans le quart en retenant les aiguilles, puis ajoute le miel."],
+      attention: ["L'if est mortel et ressemble à un sapin : aiguilles plates, molles, vert foncé dessus, sans odeur d'agrume, et baies rouges. Voir sa fiche espèce. Évite aussi le thuya et les conifères d'ornement.", "Déconseillé aux femmes enceintes : certaines aiguilles de pin sont déconseillées pendant la grossesse."] },
+    { id: "rj_fondue_pelerin", titre: "La fondue du pèlerin", jeu: "Steep et Horizon", cuisson: "À la popote (chaleur partagée)", interet: "Gras et protéines en masse : le plat parfait pour une nuit sous zéro.", tags: ["Très calorique", "Rustique", "Réconfort"],
+      ingredients: ["150 g de fromage à pâte pressée (comté, abondance ou emmental) râpé ou en dés", "50 ml de vin blanc sec (dans une petite fiole), ou de jus de pomme acide", "1 gousse d'ail", "Croûtons de pain rassis ou crackers"],
+      etapes: ["Le parfum : frotte le fond et les parois de la popote avec la gousse d'ail coupée en deux, et laisse-la au fond.",
+        "L'amorce : verse le vin (ou le jus de pomme) et porte à frémissement sur des braises douces.",
+        "La cascade : ajoute le fromage en trois fois, en remuant sans arrêt en formant des 8.",
+        "L'onctuosité : garde une chaleur très douce. Le fromage doit fondre sans brûler ni rendre son gras. Recule la popote si ça chauffe trop.",
+        "L'action : pique le pain au bout d'une brochette en bois et trempe-le dans la popote, au centre du groupe."],
+      attention: ["Le vin cuit garde un peu d'alcool : prends la version au jus de pomme pour les enfants."] }
+  ];
+  // Doublons fusionnés : ses versions du poisson sur bâton et de la pomme au miel enrichissent les miennes
+  var MERGE = { rj_poisson_baton: "Minecraft, Far Cry et Red Dead Redemption 2", rj_pomme_miel: "The Legend of Zelda: Breath of the Wild et les potions de soin des RPG", rj_potion_soin: "les potions de soin des jeux de rôle" };
   R.forEach(function (r) {
-    if (T.some(function (t) { return t.id === r.id; })) return;
-    T.push({ id: r.id, cat: CAT, titre: r.titre, illus: r.illus, intro: r.intro + " Inspiration : " + r.jeu + ".",
-      etapes: r.etapes, attention: r.attention, source: src(r.jeu, r.ed) });
+    if (MERGE[r.id]) r.jeu = MERGE[r.id];
+    if (r.id === "rj_poisson_baton") r.etapes[3] = "Plante la branche dans le sol, penchée vers les braises, à 20 à 30 cm de la chaleur : le poisson cuit au rayonnement, jamais dans les flammes.";
+    if (r.id === "rj_pomme_miel") r.etapes[4] = "Pose-la dans un creux de cendres chaudes au bord du feu, pas sur les braises rouges vives, et recouvre de cendres : 20 à 25 minutes. Elle confit dans son jus.";
   });
+
+  var NOTE = "Non officiel : Sylva n'est affiliée à aucun éditeur des jeux cités, ni approuvée par eux";
+  function splitButin(e) {
+    var t = e.replace(/^Butin[^:]*:\s*/, "").replace(/\.\s*$/, "");
+    var out = [], depth = 0, cur = "";
+    for (var i = 0; i < t.length; i++) {
+      var ch = t[i];
+      if (ch === "(") depth++; if (ch === ")") depth--;
+      if ((ch === "," || ch === ".") && depth === 0) { if (cur.trim()) out.push(cur.trim()); cur = ""; continue; }
+      cur += ch;
+    }
+    if (cur.trim()) out.push(cur.trim());
+    return out.map(function (x) { x = x.replace(/^et\s+/i, ""); return x.charAt(0).toUpperCase() + x.slice(1); });
+  }
+  R.forEach(function (r) {
+    var ing = [];
+    var et = r.etapes.slice();
+    if (/^Butin/.test(et[0])) ing = splitButin(et.shift());
+    var effet = (r.intro.match(/Effet : (.+?)\.?$/) || [])[1];
+    r.recette = { jeu: r.jeu, ingredients: ing, effet: effet || "" };
+    r.intro = r.intro.replace(/\s*Effet : .+$/, "");
+    r.etapes = et;
+  });
+  R2.forEach(function (r) {
+    r.illus = "feu_cabane";
+    r.intro = r.interet;
+    r.recette = { jeu: r.jeu, cuisson: r.cuisson, tags: r.tags || [], ingredients: r.ingredients };
+  });
+  R.concat(R2).forEach(function (r) {
+    if (T.some(function (t) { return t.id === r.id; })) return;
+    T.push({ id: r.id, cat: CAT, titre: r.titre, illus: r.illus, intro: r.intro, recette: r.recette,
+      etapes: r.etapes, attention: r.attention || [], source: "Recette originale Sylva, inspirée de " + r.jeu + ". " + NOTE });
+  });
+  R = R.concat(R2);
 
   // Chapitre « cuisine » : nouvelle section et liens vers les recettes
   var G = window.SYLVA_GUIDE || [];

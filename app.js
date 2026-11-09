@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.30";
+  var VERSION = "0.9.31";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -992,6 +992,18 @@
     });
     $("#listTechniques").innerHTML = h;
   }
+  // Carte « objet de jeu » des recettes du feu
+  function recetteHtml(r) {
+    var h = '<div class="recipe-card"><div class="rc-head"><span class="rc-k">Inspiré de</span><b>' + esc(r.jeu) + "</b></div>";
+    var chips = [];
+    if (r.cuisson) chips.push('<span class="rc-chip rc-fire">' + esc(r.cuisson) + "</span>");
+    if (r.effet) chips.push('<span class="rc-chip rc-buff">' + esc(r.effet) + "</span>");
+    (r.tags || []).forEach(function (x) { chips.push('<span class="rc-chip">' + esc(x) + "</span>"); });
+    if (chips.length) h += '<div class="rc-chips">' + chips.join("") + "</div>";
+    if (r.interet) h += '<p class="rc-int"><span class="rc-k">Intérêt</span> ' + esc(r.interet) + "</p>";
+    if (r.ingredients && r.ingredients.length) h += '<div class="rc-k" style="margin-top:10px">Butin</div><ul class="rc-loot">' + r.ingredients.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
+    return h + "</div>";
+  }
   function stepsHtml(etapes, mode, hidden, tid) {
     var n = etapes.length;
     return '<div class="steps" data-cur="0" data-n="' + n + '"' + (mode ? ' data-mode="' + mode + '"' : "") + (hidden ? " hidden" : "") + ">" +
@@ -1014,6 +1026,7 @@
     var h = (stepPics ? "" : t.wiki ? '<div id="heroSlot" class="knot">' + (tp ? heroHtml(tp, t.titre) : "") + "</div>"
                     : heroIllus(t.id, t.illus, t.titre)) +
       '<div class="chap-k">' + esc(t.cat) + (t.isole ? " · secours injoignables" : " · " + n + " étapes") + '</div><h1 id="sheetTitle">' + esc(t.titre) + "</h1><p>" + esc(t.intro) + "</p>";
+    if (t.recette) h += recetteHtml(t.recette);
     if (t.alerte && t.alerte.length) {
       h += '<div class="alert alert-danger red-flags"><strong>Fais tout pour sortir ou te faire repérer si :</strong><ul>' +
         t.alerte.map(function (a) { return "<li>" + esc(a) + "</li>"; }).join("") + "</ul></div>";

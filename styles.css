@@ -532,3 +532,18 @@ html #map.skin-nuitrouge .leaflet-marker-pane,html #map.skin-nuitrouge .leaflet-
 
 /* Terminal vectoriel : plus de filtre sur la carte, juste une lueur */
 html #map.skin-terminal.term-vec .leaflet-tile-pane{filter:drop-shadow(0 0 2px rgba(26,250,29,.35))}
+
+/* Recettes du feu : carte d'objet */
+.recipe-card{margin:14px 0 6px;padding:14px 16px;border-radius:18px;background:linear-gradient(160deg,rgba(233,162,59,.14),rgba(233,162,59,.04));border:1px solid rgba(233,162,59,.45)}
+.rc-head{display:flex;flex-direction:column;gap:2px}
+.rc-head b{font-size:15px}
+.rc-k{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.rc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.rc-chip{font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--line);color:var(--text)}
+.rc-fire{background:rgba(214,92,52,.16);color:#B4472A}
+.rc-buff{background:rgba(70,150,80,.16);color:#2F7A3A}
+html[data-theme="nuit"] .rc-fire{color:#FF9C7A}
+html[data-theme="nuit"] .rc-buff{color:#8CD996}
+.rc-int{margin:10px 0 0;font-size:14px}
+.rc-loot{margin:6px 0 0;padding-left:20px;font-size:15px;line-height:1.5}
+.rc-loot li::marker{color:#E9A23B}
