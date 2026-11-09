@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.33";
+  var VERSION = "0.9.34";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -971,7 +971,7 @@
   function renderTechniques() {
     var h = "";
     TECHS.forEach(function (t) {
-      if (t.priorite && (!ficheCat || t.cat === ficheCat)) {
+      if (t.priorite && (!ficheCat || ficheCat === "Priorités" || t.cat === ficheCat)) {
         h += '<button class="tech-card' + (t.id === "froid" ? " cold" : "") + '" data-tech="' + esc(t.id) + '">' +
           '<span class="k">Priorité</span><span class="t">' + esc(t.titre) + "</span><p>" + esc(t.intro) + "</p></button>";
       }

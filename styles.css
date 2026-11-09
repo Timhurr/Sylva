@@ -137,7 +137,7 @@ html[data-theme="nuit"] .resume-card.dark{color:var(--text);border:1px solid var
 .t-champignon{background:var(--warn-bg)} .t-champignon svg,.t-champignon i{color:var(--earth)}
 .t-animal{background:var(--violet-bg)} .t-animal svg,.t-animal i{color:var(--violet)}
 .skill-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.skill{min-height:76px;border-radius:20px;border:0;background:var(--surface);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:800;color:var(--text);padding:6px 2px}
+.skill{min-height:76px;text-align:center;line-height:1.15;hyphens:auto;border-radius:20px;border:0;background:var(--surface);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;font-size:12px;font-weight:800;color:var(--text);padding:6px 2px}
 html[data-theme="nuit"] .skill{border:1px solid var(--line)}
 .c-amber{color:var(--amber)} .c-water{color:var(--water)} .c-forest{color:var(--ok)} .c-earth{color:var(--earth)} .c-danger{color:var(--danger)}
 .res-group{margin-top:8px}
