@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.37";
+  var VERSION = "0.9.38";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -139,6 +139,7 @@
       updateMapCard();
     }
     updateSosCoords();
+    if (nav) navUpdate();
   }
   function onPosErr(err) {
     if (err && err.code === 1) toast("Localisation refusée : activez-la dans Réglages > Safari");
@@ -194,8 +195,14 @@
       if (gp) gp.addEventListener("click", function () { map.closePopup(); gpsSpot(gp.getAttribute("data-gps-spot")); });
       var here = e.popup.getElement().querySelector("[data-spot-here]");
       if (here) here.addEventListener("click", function (ev) { ev.stopPropagation(); spotHere(); });
+      var goh = e.popup.getElement().querySelector("[data-go-here]");
+      if (goh) goh.addEventListener("click", function (ev) {
+        ev.stopPropagation(); if (!tapMarker) return; var ll = tapMarker.getLatLng(); clearTap(); map.closePopup();
+        startNav({ lat: ll.lat, lon: ll.lng, label: "Point choisi" });
+      });
     });
     map.on("click", onMapTap);
+    map.on("dragstart", function () { if (nav) nav.follow = false; });
 
     renderSpots();
     var cached = load("sylva_osm", null);
@@ -520,27 +527,135 @@
   function capTxt(deg) { return ["nord", "nord-est", "est", "sud-est", "sud", "sud-ouest", "ouest", "nord-ouest"][Math.round(deg / 45) % 8]; }
   function gpsSpot(id) {
     var s = getSpots().filter(function (x) { return x.id === id; })[0]; if (!s) return;
-    if (gpsLine) { map.removeLayer(gpsLine); gpsLine = null; }
-    var info = "";
-    if (me) {
-      var d = map.distance([me[0], me[1]], [s.lat, s.lon]);
-      var y = Math.sin((s.lon - me[1]) * Math.PI / 180) * Math.cos(s.lat * Math.PI / 180);
-      var x = Math.cos(me[0] * Math.PI / 180) * Math.sin(s.lat * Math.PI / 180) - Math.sin(me[0] * Math.PI / 180) * Math.cos(s.lat * Math.PI / 180) * Math.cos((s.lon - me[1]) * Math.PI / 180);
-      var brg = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
-      gpsLine = L.polyline([[me[0], me[1]], [s.lat, s.lon]], { color: "#E9A23B", weight: 4, dashArray: "8 8" }).addTo(map);
-      if (gpsLine.getBounds) map.fitBounds(gpsLine.getBounds(), { padding: [60, 60] });
-      info = (d < 1000 ? Math.round(d) + " m" : (d / 1000).toFixed(1).replace(".", ",") + " km") + " à vol d'oiseau, cap " + Math.round(brg) + "° (" + capTxt(brg) + ")";
-    }
-    if (navigator.onLine) {
-      var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
-      var url = ios ? "https://maps.apple.com/?daddr=" + s.lat + "," + s.lon + "&dirflg=w"
-                    : "https://www.google.com/maps/dir/?api=1&destination=" + s.lat + "," + s.lon + "&travelmode=walking";
-      if (info) toast(info);
-      window.open(url, "_blank");
-    } else {
-      toast(me ? "Hors ligne : " + info + ". Suis le trait orange avec la boussole." : "Hors ligne et sans GPS : active la localisation pour être guidé.");
-    }
+    var ty = SPOT_TYPES[s.type] || SPOT_TYPES.autre;
+    startNav({ lat: s.lat, lon: s.lon, label: s.note ? s.note.slice(0, 40) : ty[2] });
   }
+
+  // ---------- Guidage GPS dans Sylva ----------
+  // Avec réseau : itinéraire à pied sur les chemins (OSRM, profil piéton, serveurs FOSSGIS / OpenStreetMap).
+  // Sans réseau : flèche-boussole, distance et cap en ligne droite. Fonctionne avec l'écran allumé.
+  var nav = null; // { t, route, steps, line, straight, lastRoute, arrived, wake }
+  var heading = null, headingOn = false;
+  function bearingTo(a, b) {
+    var y = Math.sin((b[1] - a[1]) * Math.PI / 180) * Math.cos(b[0] * Math.PI / 180);
+    var x = Math.cos(a[0] * Math.PI / 180) * Math.sin(b[0] * Math.PI / 180) - Math.sin(a[0] * Math.PI / 180) * Math.cos(b[0] * Math.PI / 180) * Math.cos((b[1] - a[1]) * Math.PI / 180);
+    return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+  }
+  function mDist(a, b) { return distKm(a, b) * 1000; }
+  function fmtM(m) { return m < 1000 ? Math.round(m / 10) * 10 + " m" : (m / 1000).toFixed(m < 10000 ? 1 : 0).replace(".", ",") + " km"; }
+  function fmtMin(m) { var mn = Math.max(1, Math.round(m / 1000 / 4 * 60)); return mn < 60 ? mn + " min" : Math.floor(mn / 60) + " h " + String(mn % 60).padStart(2, "0"); }
+  function onHeading(e) {
+    var h = e.webkitCompassHeading != null ? e.webkitCompassHeading : (e.absolute && e.alpha != null ? 360 - e.alpha : null);
+    if (h == null) return;
+    heading = h; if (nav) drawNavArrow();
+  }
+  function startCompass() {
+    if (headingOn) return;
+    var go = function () { headingOn = true; window.addEventListener("deviceorientationabsolute", onHeading); window.addEventListener("deviceorientation", onHeading); };
+    if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") {
+      DeviceOrientationEvent.requestPermission().then(function (r) { if (r === "granted") go(); }).catch(function () {});
+    } else go();
+  }
+  var MANEUV = { "turn": "Tourne", "new name": "Continue", "depart": "Pars", "arrive": "Arrivée", "continue": "Continue", "fork": "À la fourche, prends", "end of road": "Au bout du chemin, tourne", "roundabout": "Au rond-point, sors", "rotary": "Au rond-point, sors" };
+  var SIDE = { "left": "à gauche", "right": "à droite", "slight left": "légèrement à gauche", "slight right": "légèrement à droite", "sharp left": "franchement à gauche", "sharp right": "franchement à droite", "straight": "tout droit", "uturn": "demi-tour" };
+  function stepTxt(st) {
+    var m = st.maneuver || {}, v = MANEUV[m.type] || "Continue", sd = SIDE[m.modifier] || "";
+    if (m.type === "arrive") return "Tu arrives à destination";
+    return v + (sd ? " " + sd : "") + (st.name ? " sur " + st.name : "");
+  }
+  function fetchRoute() {
+    if (!nav || !me || !navigator.onLine) return;
+    nav.lastRoute = Date.now();
+    var url = "https://routing.openstreetmap.de/routed-foot/route/v1/driving/" + me[1].toFixed(5) + "," + me[0].toFixed(5) + ";" +
+      nav.t.lon.toFixed(5) + "," + nav.t.lat.toFixed(5) + "?overview=full&geometries=geojson&steps=true";
+    fetch(url).then(function (r) { if (!r.ok) throw new Error(); return r.json(); }).then(function (j) {
+      if (!nav || !j.routes || !j.routes[0]) return;
+      var rt = j.routes[0], pts = rt.geometry.coordinates.map(function (c) { return [c[1], c[0]]; });
+      // Itinéraire absurde (trop long par rapport à la ligne droite) : on reste sur la ligne droite
+      if (rt.distance > Math.max(3000, mDist([me[0], me[1]], [nav.t.lat, nav.t.lon]) * 4)) { nav.route = null; return navUpdate(); }
+      nav.route = pts; nav.routeDist = rt.distance;
+      nav.steps = (rt.legs[0] && rt.legs[0].steps || []).map(function (st) { return { at: [st.maneuver.location[1], st.maneuver.location[0]], txt: stepTxt(st) }; });
+      if (nav.line) map.removeLayer(nav.line);
+      nav.line = L.polyline(pts, { color: "#2F7FA3", weight: 6, opacity: .85 }).addTo(map);
+      navUpdate();
+    }).catch(function () {});
+  }
+  function distToRoute(p) {
+    if (!nav.route) return 0;
+    var best = 1e9; nav.route.forEach(function (q) { var d = mDist(p, q); if (d < best) best = d; }); return best;
+  }
+  function remainingOnRoute(p) {
+    var r = nav.route, bi = 0, best = 1e9;
+    r.forEach(function (q, i) { var d = mDist(p, q); if (d < best) { best = d; bi = i; } });
+    var tot = best; for (var i = bi; i < r.length - 1; i++) tot += mDist(r[i], r[i + 1]);
+    return tot;
+  }
+  function drawNavArrow() {
+    if (!nav || !me) return;
+    var brg = bearingTo([me[0], me[1]], [nav.t.lat, nav.t.lon]);
+    var rot = heading == null ? brg : brg - heading;
+    $("#navArrow").style.transform = "rotate(" + rot + "deg)";
+    $("#navCap").textContent = "Cap " + Math.round(brg) + "° (" + capTxt(brg) + ")" + (heading == null ? " · flèche orientée vers le nord" : "");
+  }
+  function navUpdate() {
+    if (!nav) return;
+    if (!me) { $("#navDist").textContent = "…"; $("#navInfo").textContent = "En attente du GPS. Active la localisation."; return; }
+    var p = [me[0], me[1]], tg = [nav.t.lat, nav.t.lon], straight = mDist(p, tg);
+    if (!nav.straightLine) nav.straightLine = L.polyline([p, tg], { color: "#E9A23B", weight: 3, dashArray: "6 8" }).addTo(map);
+    else nav.straightLine.setLatLngs([p, tg]);
+    if (straight < 25 + Math.min(me[2] || 0, 40)) {
+      if (!nav.arrived) { nav.arrived = true; if (navigator.vibrate) navigator.vibrate([200, 100, 200]); toast("Tu es arrivé"); }
+      $("#navDist").textContent = "Arrivé"; $("#navInfo").textContent = nav.t.label + " est à moins de 30 m.";
+      drawNavArrow(); return;
+    }
+    var off = nav.route ? distToRoute(p) : 0;
+    if (navigator.onLine && (!nav.lastRoute || (off > 60 && Date.now() - nav.lastRoute > 30000))) fetchRoute();
+    var onRoute = nav.route && off <= 60;
+    var rem = onRoute ? remainingOnRoute(p) : straight;
+    $("#navDist").textContent = fmtM(rem);
+    var info = onRoute ? "par les chemins · environ " + fmtMin(rem) + " à pied" : "à vol d'oiseau · environ " + fmtMin(straight * 1.3) + " à pied";
+    if (onRoute && nav.steps) {
+      var next = nav.steps.filter(function (st) { return mDist(p, st.at) > 15; }).sort(function (a, b) { return mDist(p, a.at) - mDist(p, b.at); })[0];
+      if (next && mDist(p, next.at) < 400) info = "Dans " + fmtM(mDist(p, next.at)) + " : " + next.txt;
+    }
+    if (!navigator.onLine && !nav.route) info += " · hors ligne : suis la flèche";
+    else if (nav.route && !onRoute) info += " · tu t'es écarté du chemin";
+    $("#navInfo").textContent = info;
+    drawNavArrow();
+    if (nav.follow) map.panTo(p, { animate: true });
+  }
+  function startNav(t) {
+    stopNav(true);
+    if (!map) return;
+    nav = { t: t, follow: true };
+    $("#navTo").textContent = t.label || "Destination";
+    var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    $("#navExt").href = ios ? "https://maps.apple.com/?daddr=" + t.lat + "," + t.lon + "&dirflg=w" : "https://www.google.com/maps/dir/?api=1&destination=" + t.lat + "," + t.lon + "&travelmode=walking";
+    $("#navGoogle").href = "https://www.google.com/maps/dir/?api=1&destination=" + t.lat + "," + t.lon + "&travelmode=walking";
+    nav.marker = L.marker([t.lat, t.lon], { icon: pinIcon("#2F7FA3", "★"), zIndexOffset: 980 }).addTo(map);
+    $("#navPanel").hidden = false; document.body.classList.add("navigating");
+    showView("carte");
+    startCompass();
+    try { if (navigator.wakeLock) navigator.wakeLock.request("screen").then(function (w) { if (nav) nav.wake = w; else w.release(); }).catch(function () {}); } catch (e) {}
+    setTimeout(function () {
+      if (me) map.fitBounds([[me[0], me[1]], [t.lat, t.lon]], { padding: [80, 80], maxZoom: 16 }); else map.setView([t.lat, t.lon], 15);
+      setTimeout(function () { if (nav) nav.follow = true; }, 2500);
+    }, 150);
+    nav.follow = false;
+    navUpdate();
+  }
+  function stopNav(silent) {
+    if (!nav) return;
+    ["line", "straightLine", "marker"].forEach(function (k) { if (nav[k]) map.removeLayer(nav[k]); });
+    try { if (nav.wake) nav.wake.release(); } catch (e) {}
+    nav = null; $("#navPanel").hidden = true; document.body.classList.remove("navigating");
+    if (!silent) toast("Guidage arrêté");
+  }
+  $("#navStop").addEventListener("click", function () { stopNav(); });
+  $("#navCenter").addEventListener("click", function () { if (nav && me) { nav.follow = true; map.setView([me[0], me[1]], Math.max(map.getZoom(), 16)); } });
+  document.addEventListener("visibilitychange", function () {
+    if (nav && document.visibilityState === "visible" && navigator.wakeLock) navigator.wakeLock.request("screen").then(function (w) { if (nav) nav.wake = w; }).catch(function () {});
+  });
   // Toucher la carte : épingle provisoire, puis « Placer un spot ici »
   var tapMarker = null;
   function clearTap() { if (tapMarker && map) { map.removeLayer(tapMarker); tapMarker = null; } }
@@ -555,7 +670,7 @@
     }
     tapMarker = L.marker(ll, { icon: pinIcon("#EEE9DD", "+"), zIndexOffset: 950 })
       .bindPopup("<b>Point choisi</b><br><span style=\"font-size:12px;opacity:.75\">" + ll.lat.toFixed(5) + ", " + ll.lng.toFixed(5) + "</span>" + dist +
-        '<br><br><button data-spot-here style="background:var(--accent);color:var(--accent-ink);border:0;border-radius:12px;padding:9px 14px;font-weight:700;cursor:pointer">Placer un spot ici</button>');
+        '<div class="spot-actions"><button data-go-here class="sa-gps">Y aller</button><button data-spot-here>Placer un spot ici</button></div>');
     tapMarker.on("popupclose", function () { setTimeout(function () { if (tapMarker && !tapMarker.isPopupOpen()) clearTap(); }, 0); });
     tapMarker.addTo(map).openPopup();
   }
@@ -1682,6 +1797,7 @@
     $("#tripName").textContent = t.lieu || "Mon bivouac";
     $("#btnTrip").textContent = t.date || t.lieu ? "Modifier la sortie" : "Choisir la date et le lieu";
     $("#btnTripEnd").hidden = !(t.date || t.lieu);
+    $("#btnTripGo").hidden = t.lat == null;
   }
   // Lieu de la sortie : recherche, un de mes spots, ou ma position
   var tripPick = null, tripFound = [];
@@ -1718,6 +1834,7 @@
       }).catch(function () { box.innerHTML = '<div class="place-empty">Recherche indisponible, réessaie.</div>'; });
   }
   $("#btnTripSearch").addEventListener("click", tripSearch);
+  $("#btnTripGo").addEventListener("click", function () { var t = getTrip(); if (t.lat != null) startNav({ lat: t.lat, lon: t.lon, label: t.lieu || t.pointLabel || "Bivouac" }); });
   $("#tripLieu").addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); tripSearch(); } });
   $("#tripResults").addEventListener("click", function (e) {
     var b = e.target.closest("[data-trip-place]"); if (!b) return;

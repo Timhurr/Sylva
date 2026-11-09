@@ -100,6 +100,19 @@
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
       </button>
     </div>
+    <div class="nav-panel" id="navPanel" hidden role="region" aria-label="Guidage">
+      <div class="nav-top">
+        <svg class="nav-arrow" id="navArrow" viewBox="0 0 48 48" aria-hidden="true"><path d="M24 4l14 36-14-8-14 8z"/></svg>
+        <div class="nav-main"><span class="nav-to">Vers <b id="navTo"></b></span><b class="nav-dist" id="navDist">…</b><span class="nav-info" id="navInfo"></span></div>
+      </div>
+      <div class="nav-cap" id="navCap"></div>
+      <div class="nav-actions">
+        <button type="button" class="btn" id="navCenter">Suivre</button>
+        <a class="btn" id="navExt" target="_blank" rel="noopener">Plans</a>
+        <a class="btn" id="navGoogle" target="_blank" rel="noopener">Google</a>
+        <button type="button" class="btn nav-stop" id="navStop">Arrêter</button>
+      </div>
+    </div>
     <div class="map-card" id="mapCard">
       <div class="map-card-title">Chargement des zones…</div>
       <div class="map-card-sub">Aires de bivouac et points d'eau depuis OpenStreetMap</div>
@@ -255,7 +268,7 @@
   <section class="view" id="view-bivouac" aria-label="Bivouac">
     <div class="pad page">
       <header class="page-head"><div class="page-title"><span class="eyebrow" id="tripWhen">Prochaine sortie</span><h1 id="tripName">Mon bivouac</h1></div></header>
-      <div class="trip-actions"><button class="link-btn" id="btnTrip" type="button">Choisir la date et le lieu</button><button class="link-btn" id="btnTripEnd" type="button" hidden>Terminer ce bivouac</button></div>
+      <div class="trip-actions"><button class="link-btn" id="btnTrip" type="button">Choisir la date et le lieu</button><button class="link-btn" id="btnTripGo" type="button" hidden>Y aller</button><button class="link-btn" id="btnTripEnd" type="button" hidden>Terminer ce bivouac</button></div>
 
       <div class="sec-head"><h2>Météo</h2><span class="muted small" id="bivPlace">Vallée de l'Ourthe</span></div>
       <div id="meteo" class="card"><p class="muted">Chargement…</p></div>

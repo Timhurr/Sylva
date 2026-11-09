@@ -565,3 +565,20 @@ html[data-theme="nuit"] .rc-buff{color:#8CD996}
 .stars button{border:0;background:none;font-size:32px;line-height:1;color:var(--line);padding:2px;cursor:pointer}
 .stars button.on{color:#E9A23B}
 .field textarea{font:inherit;resize:vertical}
+
+/* Guidage GPS */
+.nav-panel{position:absolute;left:12px;right:12px;top:calc(env(safe-area-inset-top) + 70px);z-index:700;background:var(--dark-card,#16201A);color:#fff;border-radius:24px;padding:14px 16px;box-shadow:0 14px 36px rgba(0,0,0,.3)}
+.nav-top{display:flex;align-items:center;gap:14px}
+.nav-arrow{width:64px;height:64px;flex:0 0 64px;transition:transform .25s linear}
+.nav-arrow path{fill:#E9A23B;stroke:#fff;stroke-width:2;stroke-linejoin:round}
+.nav-main{display:flex;flex-direction:column;min-width:0}
+.nav-to{font-size:13px;opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-dist{font-size:30px;line-height:1.1}
+.nav-info{font-size:14px;opacity:.9}
+.nav-cap{font-size:12px;opacity:.7;margin-top:6px}
+.nav-actions{display:flex;gap:6px;margin-top:10px}
+.nav-actions .btn{min-height:40px;font-size:13px;padding:0 8px;background:rgba(255,255,255,.12);color:#fff;border-radius:12px}
+.nav-actions .nav-stop{background:#C9472E}
+body.navigating .map-search,body.navigating .map-chips,body.navigating .map-card{display:none}
+.nav-actions .btn{white-space:nowrap}
+body.navigating .map-fabs{bottom:calc(var(--bottom) + 100px)}
