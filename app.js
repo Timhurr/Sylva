@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.40";
+  var VERSION = "0.9.41";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -1205,6 +1205,7 @@
   function recetteHtml(r) {
     var h = '<div class="recipe-card"><div class="rc-head"><span class="rc-k">Inspiré de</span><b>' + esc(r.jeu) + "</b></div>";
     var chips = [];
+    if (r.niveau) chips.push('<span class="rc-chip rc-lvl rc-lvl' + r.niv + '">' + esc(r.niveau) + "</span>");
     if (r.cuisson) chips.push('<span class="rc-chip rc-fire">' + esc(r.cuisson) + "</span>");
     if (r.effet) chips.push('<span class="rc-chip rc-buff">' + esc(r.effet) + "</span>");
     (r.tags || []).forEach(function (x) { chips.push('<span class="rc-chip">' + esc(x) + "</span>"); });

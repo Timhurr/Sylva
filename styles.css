@@ -585,3 +585,7 @@ body.navigating .map-fabs{bottom:calc(var(--bottom) + 100px)}
 .nav-modes{display:flex;gap:4px;margin-top:10px;background:rgba(255,255,255,.08);border-radius:12px;padding:3px}
 .nav-modes button{flex:1;border:0;background:transparent;color:#fff;opacity:.75;font:inherit;font-size:13px;font-weight:700;padding:8px 4px;border-radius:9px}
 .nav-modes button.on{background:#E9A23B;color:#16201A;opacity:1}
+.rc-lvl{background:#16201A;color:#fff}
+.rc-lvl1{background:#5E8C5A}
+.rc-lvl2{background:#B07A2A}
+.rc-lvl3{background:#7A3B2A}

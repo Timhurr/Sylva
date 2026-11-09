@@ -352,10 +352,103 @@
     r.intro = r.intro.replace(/\s*Effet : .+$/, "");
     r.etapes = et;
   });
+  // Troisième fournée de Tim (adaptée : conservation, cueillette, sachets plastique)
+  var CUEILLE = "Cueille uniquement ce que tu identifies avec certitude (voir les fiches espèces), loin des routes, des champs traités et des endroits où passent les chiens.";
+  R2 = R2.concat([
+    { id: "rj_galettes_ration", titre: "Les galettes de ration des chasseurs de coffres", jeu: "Borderlands et Fallout", cuisson: "Sur pierre ou couvercle de popote (cuisson sèche)", interet: "Avoine : énergie lente, fer et fibres. Ultra-léger à transporter.", tags: ["Fond de sac", "Urgence", "Artisanat"],
+      ingredients: ["80 g de farine d'avoine (ou flocons écrasés au couteau)", "1 cuillère à soupe de lait en poudre", "1 poignée de raisins secs", "1 pincée de sel", "Eau, au jugé"],
+      etapes: ["Le mix de l'abri : dans la popote, mélange l'avoine, le lait en poudre, le sel et les raisins secs.",
+        "L'hydratation : verse l'eau cuillère par cuillère jusqu'à une pâte très compacte et collante.",
+        "Le compactage : forme de petites galettes très plates et denses, de la taille d'une carte bancaire.",
+        "La chauffe : pose-les sur une pierre plate brûlante, brossée et sèche, ou sur le couvercle retourné de la popote posé sur les braises.",
+        "Le résultat : 6 à 8 minutes de chaque côté, jusqu'à ce qu'elles soient sèches et rigides. Bien sèches, elles se gardent environ une semaine dans un sachet étanche."],
+      attention: [PIERRE] },
+    { id: "rj_bouillon_sainte", titre: "Le bouillon de vitalité de la Sainte", jeu: "Elden Ring et Dark Souls", cuisson: "À la popote (bouillon d'herbes)", interet: "Eau, sel et minéraux contre la déshydratation, et de la chaleur pour tout le corps.", tags: ["Cueillette", "Hydratation", "Végétarien"],
+      ingredients: ["1 poignée de têtes d'orties (cueillies avec des gants ou un sac)", "1 poignée de feuilles de pissenlit ou d'oseille sauvage, identifiées avec certitude", "1 cube de bouillon de légumes", "400 ml d'eau"],
+      etapes: ["Le blanchiment : porte l'eau à ébullition et ajoute le cube de bouillon.",
+        "Le sacrifice : plonge les orties et les herbes dans le bouillon frémissant. La cuisson fait disparaître le piquant de l'ortie en moins d'une minute.",
+        "La réduction : laisse mijoter 10 minutes au-dessus des braises, jusqu'à ce que les feuilles soient très tendres.",
+        "L'écrasement : hors du feu, écrase les feuilles contre la paroi avec une cuillère.",
+        "Le service : brûlant dans ton quart, avant un effort ou avant de dormir."],
+      attention: [CUEILLE, "Oseille : riche en acide oxalique, à manger avec modération, et à éviter en cas de calculs rénaux."] },
+    { id: "rj_brocheton_pirate", titre: "Le brocheton du pirate", jeu: "Sea of Thieves et Assassin's Creed IV: Black Flag", cuisson: "Sur branche de bois vert (feu direct)", interet: "Protéines maigres, et un bonus de moral pour tout le camp.", tags: ["Zéro vaisselle", "Rustique"],
+      ingredients: ["1 filet de poisson blanc ferme (cabillaud, lieu) ou 1 blanc de poulet, en gros cubes", "½ oignon en larges pétales", "1 tranche de lard fumé en carrés", "Sel, poivre"],
+      etapes: ["L'arme : taille une longue branche fine de noisetier vert. Écorce les 15 derniers centimètres et taille une pointe.",
+        "L'embrochage : enfile en alternant un morceau de poisson ou de poulet, un pétale d'oignon et un carré de lard.",
+        "Le verrouillage : laisse un nœud de branche ou taille une encoche à la base pour que rien ne glisse.",
+        "La cuisson : tiens la brochette à 20 cm au-dessus des braises et tourne souvent : le gras du lard fond et nappe la chair.",
+        "Le timing : 12 à 15 minutes. L'oignon doit noircir sur les bords, et la viande être cuite à cœur."],
+      attention: [VIANDE, "Le cabillaud se tient mal sur une branche : prends des cubes épais, ou du poulet."] },
+    { id: "rj_pemmican", titre: "Le pemmican des grands espaces", jeu: "RimWorld et The Oregon Trail", cuisson: "Sans cuisson sur le terrain (préparé chez toi)", interet: "La densité d'énergie maximale : protéines, graisses et baies dans un petit bloc.", tags: ["Urgence", "Conservation", "Très calorique"],
+      ingredients: ["50 g de viande séchée du commerce (beef jerky), réduite en poudre", "50 g de saindoux, de suif de bœuf ou de beurre clarifié (ghee), fondu", "30 g de baies séchées (cranberries, myrtilles) écrasées"],
+      etapes: ["La poudre : chez toi, écrase ou mixe la viande séchée jusqu'à une poudre grossière, comme de la sciure.",
+        "Le liant : ajoute les baies écrasées.",
+        "L'amalgame : verse la graisse fondue, tiède et pas brûlante, puis malaxe jusqu'à une pâte homogène très dense.",
+        "Le moule : forme de petites boules ou étale la pâte pour couper des barres.",
+        "La conservation : laisse figer au frais, puis emballe dans du papier sulfurisé. Au sec et au frais, il se garde plusieurs semaines."],
+      attention: ["Prends de la viande séchée du commerce, bien sèche : le pemmican ne se conserve que si tout est parfaitement sec. Jette-le s'il sent le rance ou devient humide.", "Très gras et très nourrissant : quelques bouchées suffisent."] },
+    { id: "rj_pochee_espace", titre: "La pochée de ration de l'espace", jeu: "The Outer Worlds et Starfield", cuisson: "À l'eau bouillante, couvercle fermé", interet: "Repas chaud en 5 minutes, presque sans vaisselle.", tags: ["Zéro vaisselle", "Boîte de ration", "Rapide"],
+      ingredients: ["1 sachet de nouilles instantanées (type ramen)", "1 sachet de soupe déshydratée (légumes ou miso)", "1 petite boîte de thon ou de miettes de crabe", "Eau bouillante"],
+      etapes: ["Le broyage : sans ouvrir le sachet de nouilles, écrase-le entre tes mains pour casser les nouilles en petits morceaux.",
+        "Le chargement : verse les nouilles, la soupe déshydratée et le poisson égoutté dans ton quart ou ta popote.",
+        "Le réacteur : couvre d'eau bouillante, un centimètre au-dessus des aliments.",
+        "Le confinement : ferme avec le couvercle et cale le tout entre deux pierres, ou dans un bonnet, pour garder la chaleur 5 minutes.",
+        "L'extraction : remue et mange, avec des baguettes taillées dans du bois mort si tu n'as pas de cuillère."],
+      attention: ["Ne verse pas d'eau bouillante dans le sachet des nouilles : il n'est pas fait pour ça, il se déforme et peut te brûler les doigts. Seuls les sachets de repas lyophilisés sont prévus pour l'eau bouillante."] },
+    { id: "rj_etouffee_trappeur", titre: "L'étouffée du trappeur", jeu: "World of Warcraft", cuisson: "En papillote sous la cendre", interet: "Viande fondante cuite dans sa vapeur, facile à digérer.", tags: ["Lent", "Réconfort"],
+      ingredients: ["1 blanc de poulet (ou filet de lapin du commerce) en grosses lamelles", "½ oignon émincé", "1 gousse d'ail en rondelles", "1 cuillère à soupe de moutarde forte (en mini-tube)", "Sel, poivre", "Papier aluminium"],
+      etapes: ["Le matelas : étale une double épaisseur d'aluminium.",
+        "Le lit : dépose l'oignon et l'ail au centre.",
+        "Le badigeonnage : enrobe la viande de moutarde, pose-la sur les oignons, sale et poivre.",
+        "L'étouffée : ferme une papillote hermétique en dôme, en laissant un peu d'air pour la vapeur.",
+        "L'enterrement : creuse un creux dans les cendres chaudes au pied du feu, pose la papillote et recouvre de cendres et de quelques braises. 25 à 30 minutes sans y toucher.",
+        "Le contrôle : ouvre et coupe le plus gros morceau. Si c'est encore rose, referme et remets 10 minutes."],
+      attention: [VIANDE] },
+    { id: "rj_kari_sud", titre: "Le kari de la mer du Sud", jeu: "Uncharted et Far Cry", cuisson: "À la popote (plat unique épicé)", interet: "Les épices réchauffent et masquent le goût de l'eau purifiée.", tags: ["Épicé", "Anti-froid", "Rustique"],
+      ingredients: ["1 petite brique de lait de coco (200 ml)", "1 cuillère à café de curry en poudre (ou de pâte de curry)", "1 boîte de sardines à l'huile", "1 poignée de riz précuit (ou de crackers émiettés)"],
+      etapes: ["La base épicée : verse l'huile des sardines dans la popote chaude et fais griller le curry 30 secondes au-dessus des braises.",
+        "La liquéfaction : ajoute le lait de coco et mélange bien. Porte à frémissement.",
+        "Le plongeon : ajoute les sardines entières et le riz (ou les crackers pour épaissir).",
+        "Le mijotage : 5 à 7 minutes à feu très doux, au bord du foyer.",
+        "Le service : un plat d'aventurier, riche et parfumé, au milieu de la forêt froide."],
+      attention: ["Le curry brûle vite : 30 secondes suffisent, sinon il devient amer."] },
+    { id: "rj_biscuits_abri", titre: "Les biscuits de sécurité de l'abri", jeu: "Fallout", cuisson: "À la popote (à l'étouffée sous couvercle)", interet: "Des glucides concentrés pour remplacer le pain ramolli par l'humidité.", tags: ["Fond de sac", "Artisanat", "Végétarien"],
+      ingredients: ["80 g de farine de blé", "2 cuillères à soupe d'eau, plus si besoin", "1 pincée de bicarbonate (ou de levure chimique)", "1 pincée de sel", "1 noisette de saindoux ou d'huile"],
+      etapes: ["La pâte : mélange farine, sel, bicarbonate et matière grasse dans la popote. Ajoute l'eau petit à petit jusqu'à une pâte ferme mais malléable.",
+        "Le façonnage : forme des billes de la taille d'une noix et aplatis-les au pouce en petits disques épais.",
+        "L'installation : tapisse le fond de la popote froide d'aluminium et pose les biscuits dessus.",
+        "La vapeur : ferme bien le couvercle, avec une pierre lourde dessus, et pose la popote sur des braises très douces.",
+        "La cuisson : 15 minutes à l'étouffée. Ils lèvent un peu et durcissent sans brûler. Délicieux trempés dans un bouillon."],
+      attention: ["Pas d'aluminium ? Des feuilles fraîches de noisetier ou de tilleul conviennent, seulement si tu les reconnais avec certitude."] },
+    { id: "rj_bouillie_necrophage", titre: "La bouillie de nécrophage", jeu: "The Witcher", cuisson: "À la popote (mélange de fortune)", interet: "Recharge rapide après une longue marche ou une grosse montée.", tags: ["Boîte de ration", "Rapide", "Dessert"],
+      ingredients: ["40 g de flocons d'avoine fins", "1 barre chocolatée (type Snickers) ou barre de céréales, en morceaux", "200 ml d'eau (ou de lait reconstitué)", "1 pincée de sel"],
+      etapes: ["La chauffe : chauffe l'eau salée jusqu'aux premiers frémissements.",
+        "Le plongeon : verse les flocons d'un coup et remue tout de suite pour éviter les grumeaux.",
+        "La fusion : après 2 minutes, quand la bouillie épaissit, ajoute les morceaux de barre.",
+        "L'homogénéisation : retire du feu et remue jusqu'à ce que le chocolat et le caramel marbrent la bouillie.",
+        "L'effet : un dessert de luxe qui recharge ta jauge de vigueur."],
+      attention: [] },
+    { id: "rj_crumble_balmora", titre: "Le crumble des dunes de Balmora", jeu: "The Elder Scrolls III: Morrowind", cuisson: "Dans le quart ou la popote (feu indirect)", interet: "Fruits, noix et sucre : le réconfort chaud avant la nuit.", tags: ["Artisanat", "Dessert", "Réconfort"],
+      ingredients: ["1 pomme ou 1 poire en petits dés", "3 crackers ou biscuits secs", "1 poignée de mendiants (amandes, noisettes, noix)", "1 cuillère à soupe de miel ou de sucre", "1 noisette de beurre"],
+      etapes: ["La compote : au fond de ton quart en inox, mets les dés de fruit, le miel et le beurre.",
+        "La réduction : pose le quart sur une pierre chaude ou une grille au-dessus de braises douces. 10 minutes, en remuant, jusqu'à ce que les fruits soient translucides et caramélisés.",
+        "Le sablage : dans un sac ou entre tes mains, écrase les biscuits et les noix en miettes grossières.",
+        "Le couvercle : saupoudre ces miettes sur les fruits chauds, sans remuer.",
+        "La touche finale : laisse encore 3 minutes au bord du feu pour que le dessus devienne croustillant. À la petite cuillère, sous l'abri."],
+      attention: ["Un quart en titane ou en inox va sur le feu. Pas un gobelet en plastique ou à double paroi : il fond ou peut se déformer."] }
+  ]);
   R2.forEach(function (r) {
     r.illus = "feu_cabane";
     r.intro = r.interet;
     r.recette = { jeu: r.jeu, cuisson: r.cuisson, tags: r.tags || [], ingredients: r.ingredients };
+  });
+  // Niveau de compétence en cuisine : 1 Novice (de l'eau chaude), 2 Apprenti (surveiller une cuisson, tailler une broche), 3 Maître trappeur (braises longues, conservation)
+  var NIV = { 1: ["cafe_cowboy", "porridge", "potion_soin", "elixir_mana", "crispy_boite", "ragout_goule", "ragout_taverne", "saucisses", "pochee_espace", "bouillie_necrophage"],
+    3: ["steak_broche", "ragout_lapin", "ragout_camp", "soupe_monstre", "jerky", "pemmican", "etouffee_trappeur", "lembas", "roule_cannelle", "pain_elmoth"] };
+  var NIV_TXT = { 1: "Niveau 1 · Novice", 2: "Niveau 2 · Apprenti", 3: "Niveau 3 · Maître trappeur" };
+  R.concat(R2).forEach(function (r) {
+    var k = r.id.replace(/^rj_/, ""), n = NIV[1].indexOf(k) !== -1 ? 1 : NIV[3].indexOf(k) !== -1 ? 3 : 2;
+    r.recette.niveau = NIV_TXT[n]; r.recette.niv = n;
   });
   R.concat(R2).forEach(function (r) {
     if (T.some(function (t) { return t.id === r.id; })) return;
