@@ -52,6 +52,7 @@
         </span>
       </button>
       <div id="homeAlerts"></div>
+      <div id="homeSeasonAlerts"></div>
 
       <div class="sec-head"><h2>Ton prochain bivouac</h2><button class="link-btn" type="button" data-goto="bivouac">Voir</button></div>
       <button class="trip-card" id="tripCard" type="button"></button>
@@ -220,9 +221,24 @@
           <button type="button" class="skill" data-learn-fiches=""><svg class="c-forest" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></svg>Tout</button>
         </div>
 
+        <div class="sec-head"><h2>S'entraîner</h2></div>
+        <div class="train-grid">
+          <button type="button" class="train-card" data-learn-x="quiz"><span class="tc-ico">❓</span><b>Quiz de survie</b><span>3 niveaux, questions tirées des fiches</span></button>
+          <button type="button" class="train-card" data-learn-x="badges"><span class="tc-ico">🏆</span><b>Défis et badges</b><span>Ta progression sur le terrain</span></button>
+        </div>
+
         <div class="sec-head"><h2>Guide de survie</h2><button class="link-btn" type="button" data-learn="guide">Sommaire</button></div>
         <button class="resume-card dark" id="learnGuide" type="button"></button>
       </div>
+    </div>
+
+    <div class="pad page" id="panelQuiz" hidden>
+      <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Quiz de survie</h1></div>
+      <div id="quizBox"></div>
+    </div>
+    <div class="pad page" id="panelBadges" hidden>
+      <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Défis et badges</h1></div>
+      <div id="badgeBox"></div>
     </div>
 
     <div class="pad page" id="panelEspeces" hidden>
@@ -279,6 +295,13 @@
 
       <div class="sec-head" id="planHead" hidden><h2>Au programme</h2><span class="muted small">recettes et fiches ajoutées</span></div>
       <div id="planList" hidden></div>
+
+      <div class="sec-head"><h2>Journal de bord</h2></div>
+      <div class="card journal-card">
+        <p class="journal-stats" id="journalStats"></p>
+        <div class="row"><button type="button" class="btn btn-primary" id="btnJournalRec">▶ Enregistrer mon trajet</button><button type="button" class="btn" id="btnJournalNote">+ Note / photo</button></div>
+        <div id="journalList"></div>
+      </div>
 
       <div class="sec-head"><h2>Sac à dos</h2></div>
       <div class="card">
@@ -413,6 +436,19 @@
   </form>
 </div>
 
+<div class="modal" id="modalJournal" hidden role="dialog" aria-modal="true" aria-labelledby="jrTitle">
+  <form class="modal-box" id="formJournal">
+    <h2 id="jrTitle">Note de journal</h2>
+    <label class="field"><span class="field-label">Ce que tu vois, fais ou ressens</span><textarea id="jrText" rows="4" placeholder="Ex. : arrivée au barrage, vent du nord, source à sec…"></textarea></label>
+    <div class="field"><span class="field-label">Photo (facultative)</span>
+      <label class="btn"><input type="file" id="jrPhoto" accept="image/*" hidden>Prendre ou choisir une photo</label>
+      <img id="jrPreview" class="photo-preview" alt="" hidden>
+    </div>
+    <p class="tiny muted">L'heure et ta position sont ajoutées automatiquement.</p>
+    <div class="row"><button type="button" class="btn btn-ghost" data-close>Annuler</button><button type="submit" class="btn btn-primary">Ajouter</button></div>
+  </form>
+</div>
+
 <div class="modal" id="modalHist" hidden role="dialog" aria-modal="true" aria-labelledby="histTitle">
   <form class="modal-box" id="formHist">
     <h2 id="histTitle">Ancien bivouac</h2>
@@ -421,6 +457,7 @@
     <div class="field"><span class="field-label">Ma note</span><div class="stars" id="histStars" role="radiogroup" aria-label="Note sur 5"></div></div>
     <label class="field"><span class="field-label">Commentaire</span><textarea id="histNote" rows="5" placeholder="Météo, emplacement, ce qui a marché, ce qu'il faudra changer…"></textarea></label>
     <p class="tiny muted" id="histPlan"></p>
+    <div id="histJournal"></div>
     <div class="row">
       <button type="button" class="btn btn-ghost" id="btnHistDel">Supprimer</button>
       <button type="submit" class="btn btn-primary">Enregistrer</button>

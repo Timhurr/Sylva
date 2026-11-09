@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.42";
+  var VERSION = "0.9.43";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -140,6 +140,7 @@
     }
     updateSosCoords();
     if (nav) navUpdate();
+    journalOnPos();
   }
   function onPosErr(err) {
     if (err && err.code === 1) toast("Localisation refusée : activez-la dans Réglages > Safari");
@@ -1228,6 +1229,7 @@
   }
   function openTechnique(id) {
     var t = TECHS.filter(function (x) { return x.id === id; })[0]; if (!t) return;
+    markRead(id);
     var tp = t.wiki && photoOf(t.wiki);
     var both = t.isole && t.etapes && t.etapes.length;
     var stepPics = false;
@@ -1863,7 +1865,7 @@
     setTimeout(function () { map.setView([s.lat, s.lon], 16); if (spotMarkers[id]) spotMarkers[id].openPopup(); }, 120);
   });
 
-  function renderBivouac() { renderTrip(); loadBivMeteo(); renderPlan(); renderChecklist(); renderHist(); renderCarnet(); }
+  function renderBivouac() { renderTrip(); loadBivMeteo(); renderPlan(); renderJournal(); renderChecklist(); renderHist(); renderCarnet(); }
 
   // ---------- Aujourd'hui ----------
   var MOIS_COURTS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
@@ -1988,6 +1990,8 @@
     $("#histNote").value = x ? x.note || "" : "";
     $("#histPlan").textContent = x && x.plan && x.plan.length ? "Au programme : " + x.plan.map(function (p) { return p.titre; }).join(", ") : "";
     $("#btnHistDel").hidden = !x;
+    $("#histJournal").innerHTML = histJournalHtml(x);
+    $all("#histJournal [data-jr-photo]").forEach(function (img) { spotPhotoUrl("jr-" + img.getAttribute("data-jr-photo")).then(function (u) { if (u) { img.src = u; img.hidden = false; } }); });
     drawStars(); openModal("#modalHist");
   }
   $("#histStars").addEventListener("click", function (e) {
@@ -2013,7 +2017,8 @@
     if (!confirm("Terminer « " + (t.lieu || "ce bivouac") + " » ? Il passe dans tes anciens bivouacs, et le sac est remis à zéro pour le prochain.")) return;
     var plan = getPlan().map(function (id) { var f = TECHS.filter(function (x) { return x.id === id; })[0]; return f ? { id: id, titre: f.titre } : null; }).filter(Boolean);
     var x = { id: uid(), lieu: t.lieu || t.pointLabel || "Bivouac", date: t.date || new Date().toISOString().slice(0, 10), lat: t.lat, lon: t.lon, plan: plan, stars: 0, note: "", fin: Date.now() };
-    var hs = getHist(); hs.push(x); save("sylva_hist", hs);
+    journalToHist(x);
+    var hs = getHist(); hs.push(x); save("sylva_hist", hs); checkBadges();
     var cl = getChecklist().filter(function (g) { return !g.src; });
     cl.forEach(function (g) { g.items.forEach(function (it) { it.done = false; }); });
     saveChecklist(cl); save("sylva_plan", []); save("sylva_trip", { lieu: "", date: "" }); try { localStorage.removeItem("sylva_meteo_trip"); } catch (e2) {}
@@ -2087,6 +2092,7 @@
         '<span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + "</span></span><b>" + esc(s.nom) + "</b></button>";
     }).join("") || '<p class="muted">Rien de particulier ce mois-ci.</p>';
     renderLearnGuide();
+    renderSeasonAlerts();
   }
   $("#homeSeason").addEventListener("click", function (e) { var b = e.target.closest("[data-esp]"); if (b) openEspece(b.getAttribute("data-esp")); });
   $("#tripCard").addEventListener("click", function () { showView("bivouac"); });
@@ -2097,6 +2103,8 @@
     $("#learnHome").hidden = which !== "home";
     $("#panelEspeces").hidden = which !== "especes";
     $("#panelGuide").hidden = which !== "guide";
+    $("#panelQuiz").hidden = which !== "quiz";
+    $("#panelBadges").hidden = which !== "badges";
     $("#view-apprendre").scrollTop = 0;
   }
   function setCat(cat) {
@@ -2159,6 +2167,306 @@
   });
 
   // ---------- Démarrage ----------
+
+  // =====================================================================
+  // ---------- Journal de bord : trajet GPS, notes et photos ----------
+  // =====================================================================
+  function getJournal() { var j = load("sylva_journal", null); return j && j.track ? j : { rec: false, track: [], entries: [], t0: 0 }; }
+  function saveJournal(j) { save("sylva_journal", j); }
+  function trackKm(tr) { var d = 0; for (var i = 1; i < tr.length; i++) d += distKm(tr[i - 1], tr[i]); return d; }
+  var trackLine = null, histLine = null;
+  function drawTrack() {
+    if (!map || !window.L) return;
+    var j = getJournal();
+    if (trackLine) { map.removeLayer(trackLine); trackLine = null; }
+    if (j.track.length > 1) trackLine = L.polyline(j.track.map(function (p) { return [p[0], p[1]]; }), { color: "#C9472E", weight: 4, opacity: .8 }).addTo(map);
+  }
+  function journalOnPos() {
+    var j = getJournal(); if (!j.rec || !me || me[2] > 60) return;
+    var last = j.track[j.track.length - 1];
+    if (last && distKm(last, [me[0], me[1]]) * 1000 < 15) return;
+    j.track.push([+me[0].toFixed(6), +me[1].toFixed(6), Date.now()]);
+    saveJournal(j); drawTrack();
+    if ($("#journalStats")) renderJournal();
+  }
+  function fmtDur(ms) { var m = Math.round(ms / 60000); return m < 60 ? m + " min" : Math.floor(m / 60) + " h " + String(m % 60).padStart(2, "0"); }
+  function renderJournal() {
+    var j = getJournal(), km = trackKm(j.track);
+    $("#btnJournalRec").textContent = j.rec ? "⏸ Arrêter l'enregistrement" : (j.track.length ? "▶ Reprendre l'enregistrement" : "▶ Enregistrer mon trajet");
+    $("#btnJournalRec").classList.toggle("btn-primary", !j.rec);
+    $("#journalStats").innerHTML = (j.rec ? '<span class="rec-dot" aria-hidden="true"></span>Enregistrement en cours · ' : "") +
+      km.toFixed(2).replace(".", ",") + " km" + (j.track.length > 1 ? " · " + fmtDur(j.track[j.track.length - 1][2] - j.track[0][2]) : "") +
+      " · " + j.entries.length + " note" + (j.entries.length > 1 ? "s" : "");
+    var list = j.entries.slice().reverse();
+    $("#journalList").innerHTML = list.length ? list.map(function (e) {
+      return '<div class="jr-entry">' + (e.photo ? '<img class="jr-photo" data-jr-photo="' + esc(e.id) + '" alt="" hidden>' : "") +
+        '<div class="jr-main"><span class="jr-time">' + esc(new Date(e.t).toLocaleString("fr-BE", { weekday: "short", hour: "2-digit", minute: "2-digit" })) + "</span>" +
+        (e.txt ? "<p>" + esc(e.txt) + "</p>" : "") + "</div>" +
+        '<button class="icon-mini danger" data-jr-del="' + esc(e.id) + '" aria-label="Supprimer cette note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>';
+    }).join("") : '<p class="muted small" style="margin:6px 0 0">Note ce que tu vois, ce qui marche, ce qui ne marche pas. Chaque note garde l\'heure et l\'endroit.</p>';
+    $all("#journalList [data-jr-photo]").forEach(function (img) {
+      spotPhotoUrl("jr-" + img.getAttribute("data-jr-photo")).then(function (u) { if (u) { img.src = u; img.hidden = false; } });
+    });
+  }
+  $("#btnJournalRec").addEventListener("click", function () {
+    var j = getJournal(); j.rec = !j.rec; if (j.rec && !j.t0) j.t0 = Date.now();
+    saveJournal(j); renderJournal();
+    if (j.rec) { toast(me ? "Trajet enregistré : garde Sylva ouverte, écran allumé" : "En attente du GPS…"); journalOnPos(); }
+  });
+  var jrBlob = null;
+  $("#btnJournalNote").addEventListener("click", function () {
+    $("#jrText").value = ""; jrBlob = null; $("#jrPreview").hidden = true; openModal("#modalJournal");
+  });
+  $("#jrPhoto").addEventListener("change", function (e) {
+    var f = e.target.files && e.target.files[0]; e.target.value = ""; if (!f) return;
+    resizeImage(f, 900).then(function (b) { jrBlob = b; var pv = $("#jrPreview"); pv.src = URL.createObjectURL(b); pv.hidden = false; }).catch(function () { toast("Photo illisible"); });
+  });
+  $("#formJournal").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var txt = $("#jrText").value.trim(); if (!txt && !jrBlob) { closeModal($("#modalJournal")); return; }
+    var j = getJournal(), id = uid(), en = { id: id, t: Date.now(), txt: txt, photo: !!jrBlob };
+    if (me) { en.lat = me[0]; en.lon = me[1]; }
+    j.entries.push(en); saveJournal(j); closeModal($("#modalJournal"));
+    var done = function () { renderJournal(); checkBadges(); };
+    if (jrBlob) idbDo("readwrite", function (st) { return st.put(jrBlob, "jr-" + id); }).then(done, function () { en.photo = false; saveJournal(j); done(); });
+    else done();
+  });
+  $("#journalList").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-jr-del]"); if (!b || !confirm("Supprimer cette note ?")) return;
+    var id = b.getAttribute("data-jr-del"), j = getJournal();
+    j.entries = j.entries.filter(function (x) { return x.id !== id; }); saveJournal(j);
+    idbDo("readwrite", function (st) { return st.delete("jr-" + id); }).catch(function () {});
+    renderJournal();
+  });
+  // Au moment de « Terminer ce bivouac » : le journal part dans l'historique
+  function journalToHist(x) {
+    var j = getJournal();
+    x.track = j.track.map(function (p) { return [p[0], p[1]]; });
+    x.km = +trackKm(j.track).toFixed(2);
+    x.entries = j.entries;
+    var mt = load("sylva_meteo_trip", null) || load("sylva_meteo", null);
+    if (mt && mt.data && mt.data.daily) x.tmin = Math.min.apply(null, mt.data.daily.temperature_2m_min.slice(0, 2));
+    saveJournal({ rec: false, track: [], entries: [], t0: 0 }); drawTrack();
+  }
+  function histJournalHtml(x) {
+    if (!x || (!(x.track && x.track.length > 1) && !(x.entries && x.entries.length))) return "";
+    var h = '<div class="hist-journal"><b>Journal de bord</b> · ' + (x.km ? String(x.km).replace(".", ",") + " km parcourus" : "") +
+      (x.tmin != null ? " · nuit à " + Math.round(x.tmin) + " °C" : "") +
+      (x.track && x.track.length > 1 ? ' <button type="button" class="link-btn" data-hist-track="' + esc(x.id) + '">Voir le trajet</button>' : "");
+    (x.entries || []).forEach(function (e) {
+      h += '<div class="jr-entry">' + (e.photo ? '<img class="jr-photo" data-jr-photo="' + esc(e.id) + '" alt="" hidden>' : "") +
+        '<div class="jr-main"><span class="jr-time">' + esc(new Date(e.t).toLocaleString("fr-BE", { weekday: "short", hour: "2-digit", minute: "2-digit" })) + "</span>" +
+        (e.txt ? "<p>" + esc(e.txt) + "</p>" : "") + "</div></div>";
+    });
+    return h + "</div>";
+  }
+  $("#histJournal").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-hist-track]"); if (!b || !map) return;
+    var x = getHist().filter(function (y) { return y.id === b.getAttribute("data-hist-track"); })[0]; if (!x) return;
+    closeModal($("#modalHist")); showView("carte");
+    if (histLine) map.removeLayer(histLine);
+    histLine = L.polyline(x.track, { color: "#7A5BC7", weight: 4, opacity: .85 }).addTo(map);
+    setTimeout(function () { if (histLine.getBounds) map.fitBounds(histLine.getBounds(), { padding: [50, 50] }); }, 150);
+    toast("Trajet de « " + (x.lieu || "Bivouac") + " » affiché en violet");
+  });
+
+  // =====================================================================
+  // ---------- Quiz de survie ----------
+  // =====================================================================
+  var QZ_LV = { novice: ["Novice", 5], apprenti: ["Apprenti", 10], maitre: ["Maître trappeur", 15] };
+  var qz = null;
+  function shuffle(a) { a = a.slice(); for (var i = a.length - 1; i > 0; i--) { var k = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[k]; a[k] = t; } return a; }
+  function pick(a, n) { return shuffle(a).slice(0, n); }
+  var VERD = { ok: "Comestible", caution: "Comestible avec précautions", danger: "Toxique ou mortel" };
+  function qEspece() {
+    var s = pick(ESPECES.filter(function (e) { return VERD[e.niveau] && e.cat !== "animal" && e.cat !== "poisson"; }), 1)[0]; if (!s) return null;
+    return { q: "« " + s.nom + " » (" + s.latin + ") : que faut-il savoir ?", opts: shuffle([VERD.ok, VERD.caution, VERD.danger]), ok: VERD[s.niveau],
+      why: s.statut + (s.resume ? ". " + s.resume : ""), esp: s.id };
+  }
+  function ficheOpts(t) {
+    var same = TECHS.filter(function (x) { return x.cat === t.cat && x.id !== t.id; });
+    var other = TECHS.filter(function (x) { return x.cat !== t.cat; });
+    var d = pick(same, 3); if (d.length < 3) d = d.concat(pick(other, 3 - d.length));
+    return shuffle([t.titre].concat(d.map(function (x) { return x.titre; })));
+  }
+  function qImage() {
+    var t = pick(TECHS.filter(function (x) { return IMGS[x.id] && x.cat !== "Nœuds"; }), 1)[0]; if (!t) return null;
+    return { img: IMGS[t.id], q: "Quelle fiche illustre cette gravure ?", opts: ficheOpts(t), ok: t.titre, why: t.intro, tech: t.id };
+  }
+  function qIntro() {
+    var t = pick(TECHS.filter(function (x) { return x.intro && x.intro.length > 40; }), 1)[0]; if (!t) return null;
+    var txt = t.intro.length > 220 ? t.intro.slice(0, 217) + "…" : t.intro;
+    return { q: "De quelle fiche vient ce passage ?\n« " + txt + " »", opts: ficheOpts(t), ok: t.titre, why: "Fiche « " + t.titre + " » (" + t.cat + ").", tech: t.id };
+  }
+  function qSosie() {
+    var s = pick(ESPECES.filter(function (e) { return e.sosies && e.sosies.some(function (x) { return x.niveau === "danger"; }); }), 1)[0]; if (!s) return null;
+    var so = s.sosies.filter(function (x) { return x.niveau === "danger"; })[0];
+    var wrong = pick(ESPECES.filter(function (e) { return e.id !== s.id && e.niveau !== "danger" && e.cat === s.cat; }), 3).map(function (e) { return e.nom; });
+    if (wrong.length < 3) return null;
+    return { q: "Quel sosie dangereux peut se confondre avec « " + s.nom + " » ?", opts: shuffle([so.nom].concat(wrong)), ok: so.nom, why: so.diff || "", esp: s.id };
+  }
+  function qAlerte() {
+    var t = pick(TECHS.filter(function (x) { return x.alerte && x.alerte.length; }), 1)[0]; if (!t) return null;
+    var others = TECHS.filter(function (x) { return x.alerte && x.alerte.length && x.id !== t.id; });
+    var wrong = pick(others, 3).map(function (x) { return x.titre; }); if (wrong.length < 3) return null;
+    return { q: "Seul et sans secours, ce signe doit te faire sortir au plus vite :\n« " + t.alerte[0] + " »\nÀ quelle fiche correspond-il ?", opts: shuffle([t.titre].concat(wrong)), ok: t.titre, why: "Les signes d'alerte sont en haut de la fiche « " + t.titre + " ».", tech: t.id };
+  }
+  function buildQuiz(lv) {
+    var gens = lv === "novice" ? [qImage, qEspece] : lv === "apprenti" ? [qImage, qEspece, qIntro, qAlerte] : [qEspece, qIntro, qSosie, qAlerte, qSosie];
+    var n = QZ_LV[lv][1], out = [], seen = {}, guard = 0;
+    while (out.length < n && guard++ < 200) {
+      var q = gens[out.length % gens.length]();
+      if (q && !seen[q.q + q.ok]) { seen[q.q + q.ok] = 1; out.push(q); }
+    }
+    return out;
+  }
+  function getQuizStats() { return load("sylva_quiz", {}); }
+  function renderQuizHome() {
+    var st = getQuizStats();
+    $("#quizBox").innerHTML = '<p class="muted">Teste ce que tu sais avant de partir. Les questions viennent des fiches et des espèces de Sylva, et changent à chaque partie.</p>' +
+      '<div class="list">' + Object.keys(QZ_LV).map(function (k, i) {
+        var best = st[k] != null ? " · meilleur score " + st[k] + " %" : "";
+        return '<button class="item" data-quiz-lv="' + k + '"><span class="quiz-lv quiz-lv' + (i + 1) + '">' + (i + 1) + '</span><span class="item-main"><span class="item-name">Niveau ' + (i + 1) + " · " + QZ_LV[k][0] + '</span><span class="item-sub">' +
+          QZ_LV[k][1] + " questions" + esc(best) + "</span></span></button>";
+      }).join("") + "</div>";
+  }
+  function renderQuizQ() {
+    var q = qz.qs[qz.i];
+    $("#quizBox").innerHTML = '<div class="quiz-top"><span>Question ' + (qz.i + 1) + " / " + qz.qs.length + "</span><span>Score " + qz.score + '</span></div><div class="progress"><span style="width:' + Math.round(qz.i / qz.qs.length * 100) + '%"></span></div>' +
+      (q.img ? '<figure class="engr quiz-img"><img src="' + q.img + '" alt=""></figure>' : "") +
+      '<p class="quiz-q">' + esc(q.q).replace(/\n/g, "<br>") + '</p><div class="quiz-opts">' +
+      q.opts.map(function (o, i) { return '<button type="button" class="quiz-opt" data-qopt="' + i + '">' + esc(o) + "</button>"; }).join("") + '</div><div id="quizFeedback"></div>';
+  }
+  $("#quizBox").addEventListener("click", function (e) {
+    var lv = e.target.closest("[data-quiz-lv]");
+    if (lv) { qz = { lv: lv.dataset.quizLv, qs: buildQuiz(lv.dataset.quizLv), i: 0, score: 0, done: false }; renderQuizQ(); return; }
+    var o = e.target.closest("[data-qopt]");
+    if (o && qz && !qz.done) {
+      qz.done = true;
+      var q = qz.qs[qz.i], val = q.opts[+o.dataset.qopt], good = val === q.ok;
+      if (good) qz.score++;
+      $all("#quizBox .quiz-opt").forEach(function (b) { b.disabled = true; var v = q.opts[+b.dataset.qopt]; if (v === q.ok) b.classList.add("good"); else if (b === o) b.classList.add("bad"); });
+      $("#quizFeedback").innerHTML = '<div class="alert ' + (good ? "alert-ok" : "alert-warn") + '"><strong>' + (good ? "Bien vu !" : "Raté : " + esc(q.ok)) + "</strong><span>" + esc(q.why || "") + "</span></div>" +
+        '<div class="row">' + (q.tech ? '<button type="button" class="btn" data-qtech="' + esc(q.tech) + '">Voir la fiche</button>' : q.esp ? '<button type="button" class="btn" data-qesp="' + esc(q.esp) + '">Voir l\'espèce</button>' : "") +
+        '<button type="button" class="btn btn-primary" data-qnext>' + (qz.i + 1 < qz.qs.length ? "Question suivante" : "Voir mon score") + "</button></div>";
+      return;
+    }
+    var t = e.target.closest("[data-qtech]"); if (t) { openTechnique(t.dataset.qtech); return; }
+    var sp = e.target.closest("[data-qesp]"); if (sp) { openEspece(sp.dataset.qesp); return; }
+    if (e.target.closest("[data-qnext]")) {
+      qz.i++; qz.done = false;
+      if (qz.i < qz.qs.length) { renderQuizQ(); $("#view-apprendre").scrollTop = 0; return; }
+      var pct = Math.round(qz.score / qz.qs.length * 100), st = getQuizStats();
+      if (st[qz.lv] == null || pct > st[qz.lv]) st[qz.lv] = pct;
+      st.parties = (st.parties || 0) + 1; save("sylva_quiz", st);
+      $("#quizBox").innerHTML = '<div class="quiz-end"><b>' + qz.score + " / " + qz.qs.length + "</b><span>" + pct + " % · niveau " + esc(QZ_LV[qz.lv][0]) + "</span><p>" +
+        (pct === 100 ? "Parfait. Tu es prêt pour le terrain." : pct >= 80 ? "Très bien. Relis les fiches ratées et tu y es." : pct >= 50 ? "Pas mal. Revois les fiches avant de partir." : "Il reste du travail : les fiches sont là pour ça.") +
+        '</p></div><div class="row"><button type="button" class="btn" data-quiz-home>Changer de niveau</button><button type="button" class="btn btn-primary" data-quiz-lv="' + qz.lv + '">Rejouer</button></div>';
+      checkBadges();
+      return;
+    }
+    if (e.target.closest("[data-quiz-home]")) renderQuizHome();
+  });
+
+  // =====================================================================
+  // ---------- Défis et badges ----------
+  // =====================================================================
+  function readSet() { return load("sylva_read", []); }
+  function markRead(id) { var r = readSet(); if (r.indexOf(id) === -1) { r.push(id); save("sylva_read", r); checkBadges(); } }
+  var DEFIS = [
+    ["feu_sans", "Allumer un feu sans briquet ni allumettes", "feu"], ["abri_bache", "Monter un abri en bâche en moins de 10 minutes", "bache_montages"],
+    ["eau_pure", "Rendre potable de l'eau trouvée dehors", ""], ["nuit_seul", "Passer une nuit seul en bivouac", ""],
+    ["recette_feu", "Cuisiner une recette du feu sur place", ""], ["orient", "Retrouver son chemin avec carte et boussole, sans téléphone", ""],
+    ["noeuds5", "Faire 5 nœuds les yeux fermés", ""], ["zero_trace", "Repartir sans laisser aucune trace", ""]
+  ];
+  function badgeStats() {
+    var hs = getHist(), r = readSet(), q = getQuizStats(), d = load("sylva_defis", {});
+    var km = hs.reduce(function (a, x) { return a + (x.km || 0); }, 0) + trackKm(getJournal().track);
+    var knots = r.filter(function (id) { var t = TECHS.filter(function (x) { return x.id === id; })[0]; return t && t.cat === "Nœuds"; }).length;
+    var recettes = hs.reduce(function (a, x) { return a + (x.plan || []).filter(function (p) { return /^rj_/.test(p.id); }).length; }, 0) + getPlan().filter(function (id) { return /^rj_/.test(id); }).length;
+    return { spots: getSpots().length, biv: hs.length, froid: hs.some(function (x) { return x.tmin != null && x.tmin <= 0; }), read: r.length, knots: knots, km: km,
+      recettes: recettes, q: q, defis: Object.keys(d).filter(function (k) { return d[k]; }).length,
+      notes: hs.reduce(function (a, x) { return a + (x.entries || []).length; }, 0) + getJournal().entries.length };
+  }
+  var BADGES = [
+    ["spot1", "🗺️", "Premier repère", "Placer un spot sur la carte", function (s) { return s.spots >= 1; }],
+    ["spot10", "📍", "Cartographe", "Placer 10 spots", function (s) { return s.spots >= 10; }],
+    ["biv1", "⛺", "Première nuit", "Terminer un bivouac", function (s) { return s.biv >= 1; }],
+    ["biv5", "🏕️", "Vétéran", "Terminer 5 bivouacs", function (s) { return s.biv >= 5; }],
+    ["froid", "❄️", "Nuit sous zéro", "Terminer un bivouac où il a gelé", function (s) { return s.froid; }],
+    ["km10", "🥾", "Marcheur", "Enregistrer 10 km de trajet", function (s) { return s.km >= 10; }],
+    ["km50", "🧭", "Explorateur", "Enregistrer 50 km de trajet", function (s) { return s.km >= 50; }],
+    ["notes", "📓", "Carnet de bord", "Écrire 10 notes de journal", function (s) { return s.notes >= 10; }],
+    ["read25", "📖", "Studieux", "Lire 25 fiches", function (s) { return s.read >= 25; }],
+    ["read100", "📚", "Encyclopédie", "Lire 100 fiches", function (s) { return s.read >= 100; }],
+    ["knots", "🪢", "Matelot", "Étudier 10 fiches de nœuds", function (s) { return s.knots >= 10; }],
+    ["chef", "🍲", "Chef du feu", "Prévoir 5 recettes du feu", function (s) { return s.recettes >= 5; }],
+    ["qz1", "🥉", "Novice confirmé", "80 % au quiz Novice", function (s) { return (s.q.novice || 0) >= 80; }],
+    ["qz2", "🥈", "Apprenti confirmé", "80 % au quiz Apprenti", function (s) { return (s.q.apprenti || 0) >= 80; }],
+    ["qz3", "🥇", "Maître trappeur", "80 % au quiz Maître trappeur", function (s) { return (s.q.maitre || 0) >= 80; }],
+    ["defis4", "🔥", "Débrouillard", "Réussir 4 défis de terrain", function (s) { return s.defis >= 4; }],
+    ["defis8", "🏆", "Survivant", "Réussir les 8 défis de terrain", function (s) { return s.defis >= 8; }]
+  ];
+  function checkBadges() {
+    var s = badgeStats(), seen = load("sylva_badges", []), fresh = [];
+    BADGES.forEach(function (b) { if (b[4](s) && seen.indexOf(b[0]) === -1) { seen.push(b[0]); fresh.push(b); } });
+    if (fresh.length) { save("sylva_badges", seen); toast(fresh[0][1] + " Badge débloqué : " + fresh[0][2] + (fresh.length > 1 ? " (+" + (fresh.length - 1) + ")" : "")); }
+    if ($("#panelBadges") && !$("#panelBadges").hidden) renderBadges();
+  }
+  function renderBadges() {
+    var s = badgeStats(), d = load("sylva_defis", {}), n = 0;
+    var h = '<div class="badge-grid">' + BADGES.map(function (b) {
+      var on = b[4](s); if (on) n++;
+      return '<div class="badge-tile' + (on ? " on" : "") + '"><span class="bt-ico">' + b[1] + "</span><b>" + esc(b[2]) + "</b><span>" + esc(b[3]) + "</span></div>";
+    }).join("") + "</div>";
+    h = '<p class="muted">' + n + " badge" + (n > 1 ? "s" : "") + " sur " + BADGES.length + " · " + s.read + " fiches lues · " + s.km.toFixed(1).replace(".", ",") + " km enregistrés</p>" + h;
+    h += '<div class="sec-head"><h2>Défis de terrain</h2><span class="muted small">à cocher toi-même</span></div><div class="card">' + DEFIS.map(function (x) {
+      return '<label class="check' + (d[x[0]] ? " done" : "") + '"><input type="checkbox" data-defi="' + x[0] + '"' + (d[x[0]] ? " checked" : "") + "><span>" + esc(x[1]) + "</span></label>";
+    }).join("") + "</div>";
+    $("#badgeBox").innerHTML = h;
+  }
+  $("#badgeBox").addEventListener("change", function (e) {
+    var c = e.target.closest("[data-defi]"); if (!c) return;
+    var d = load("sylva_defis", {}); d[c.dataset.defi] = c.checked; save("sylva_defis", d); renderBadges(); checkBadges();
+  });
+
+  // =====================================================================
+  // ---------- Alertes de saison (accueil) ----------
+  // =====================================================================
+  var SAISON = [
+    [[3, 4, 5, 6, 7, 8, 9, 10], "Tiques actives", "Pantalon dans les chaussettes, et inspection complète le soir. Retire une tique au tire-tique, sans l'écraser.", "tech:ps_tique", "warn"],
+    [[8, 9, 10, 11], "Champignons mortels de saison", "L'amanite phalloïde pousse en ce moment. Ne mange jamais un champignon sauvage sans certitude absolue.", "esp:phalloide", "danger"],
+    [[10, 11, 12, 1], "Chasse en battue", "Respecte les panneaux « Chasse » à l'entrée des bois : l'accès est interdit ce jour-là. Porte une couleur vive en forêt.", "", "danger"],
+    [[9, 10], "Brame du cerf", "Les cerfs sont agités la nuit, surtout en Ardenne. Garde tes distances, ne campe pas sur les places de brame.", "", "info"],
+    [[3, 4, 5], "Ail des ours et sosies", "Le muguet et la colchique, mortels, poussent au même endroit. Froisse la feuille : l'ail des ours sent l'ail, pas les autres.", "esp:aildesours", "warn"],
+    [[4, 5, 6, 7, 8, 9], "Vipères au soleil", "Regarde où tu poses les mains et les pieds sur les rochers ensoleillés. Morsure : reste calme et immobile.", "tech:ps_morsure", "warn"],
+    [[6, 7, 8], "Chaleur et orages", "Bois plus que tu n'as soif. En cas d'orage, quitte les crêtes et les arbres isolés.", "tech:chaleur", "warn"],
+    [[7, 8, 9], "Guêpes et frelons", "Ne laisse pas de sucré ouvert au camp. Une piqûre dans la bouche ou la gorge est une urgence.", "tech:ps_piqure", "info"],
+    [[11, 12, 1, 2, 3], "Nuits froides", "Le gel arrive vite la nuit. Couche-toi au sec et au chaud, et garde une tenue sèche pour dormir.", "tech:froid", "warn"],
+    [[9, 10, 11], "Nuit qui tombe tôt", "Il fait sombre en forêt bien avant le coucher du soleil. Monte le camp avec au moins une heure de jour.", "tech:doigts_soleil", "info"]
+  ];
+  function renderSeasonAlerts() {
+    var box = $("#homeSeasonAlerts"); if (!box) return;
+    var m = new Date().getMonth() + 1;
+    var list = SAISON.filter(function (a) { return a[0].indexOf(m) !== -1; }).slice(0, 4);
+    box.innerHTML = list.length ? '<div class="sec-head"><h2>En ce moment</h2><span class="muted small">alertes de saison</span></div>' + list.map(function (a) {
+      var link = a[3] ? a[3].split(":") : null;
+      var ok = link && (link[0] === "tech" ? TECHS.some(function (t) { return t.id === link[1]; }) : ESPECES.some(function (s) { return s.id === link[1]; }));
+      return '<button type="button" class="season-alert sa-' + a[4] + '"' + (ok ? " data-sa-" + link[0] + '="' + esc(link[1]) + '"' : "") + "><b>" + esc(a[1]) + "</b><span>" + esc(a[2]) + "</span>" + (ok ? '<i>Voir la fiche ›</i>' : "") + "</button>";
+    }).join("") : "";
+  }
+  $("#homeSeasonAlerts").addEventListener("click", function (e) {
+    var t = e.target.closest("[data-sa-tech]"); if (t) { openTechnique(t.getAttribute("data-sa-tech")); return; }
+    var s = e.target.closest("[data-sa-esp]"); if (s) openEspece(s.getAttribute("data-sa-esp"));
+  });
+  $all("[data-learn-x]").forEach(function (b) {
+    b.addEventListener("click", function () {
+      var w = b.getAttribute("data-learn-x");
+      learnShow(w);
+      if (w === "quiz") renderQuizHome(); else renderBadges();
+    });
+  });
+
   renderRegionBtn();
   renderEspeces();
   renderGuide();
@@ -2169,6 +2477,7 @@
   setTimeout(function () { prefetchPhotos(false); }, 3000);
   initMap();
   startGeo();
+  setTimeout(function () { drawTrack(); checkBadges(); }, 1500);
 
   if ("serviceWorker" in navigator) {
     var hadController = !!navigator.serviceWorker.controller, reloaded = false;
