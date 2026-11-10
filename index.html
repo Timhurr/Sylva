@@ -352,6 +352,13 @@
         <div id="journalList"></div>
       </div>
 
+      <div class="sec-head"><h2>Mon matériel</h2><button type="button" class="link-btn" id="btnAddGear">+ Ajouter</button></div>
+      <div class="card">
+        <p class="journal-stats" id="gearStats"></p>
+        <div id="gearList"></div>
+        <p class="tiny muted" style="margin:8px 0 0">Coche ce que tu emportes : ça s'ajoute au sac à dos et compte dans le poids.</p>
+      </div>
+
       <div class="sec-head"><h2>Sac à dos</h2></div>
       <div class="card">
         <div class="pack-head">
@@ -402,6 +409,27 @@
     </div>
     <button class="btn btn-ghost" data-close>Fermer</button>
   </div>
+</div>
+
+<div class="modal" id="modalGear" hidden role="dialog" aria-modal="true" aria-labelledby="gearTitle">
+  <form class="modal-box" id="formGear">
+    <h2 id="gearTitle">Ajouter du matériel</h2>
+    <div id="gSearchWrap">
+      <label class="field"><span class="field-label">Marque et modèle</span><input type="search" id="gSearch" autocomplete="off" placeholder="Ex. : Therm-a-Rest, Forclaz MT500…"></label>
+      <div class="place-list" id="gSugg"></div>
+    </div>
+    <label class="field"><span class="field-label">Catégorie</span><select id="gCat"><option value="matelas">Matelas</option><option value="sac">Sac de couchage</option><option value="abri">Abri, tente, bâche</option><option value="rechaud">Réchaud</option><option value="cuisine">Cuisine</option><option value="vetement">Vêtement</option><option value="autre">Autre</option></select></label>
+    <label class="field"><span class="field-label">Nom</span><input type="text" id="gNom" autocomplete="off"></label>
+    <label class="field"><span class="field-label">Poids (g)</span><input type="text" inputmode="decimal" id="gPoids" autocomplete="off"></label>
+    <label class="field" id="gRWrap"><span class="field-label">Valeur R</span><input type="text" inputmode="decimal" id="gR" autocomplete="off"></label>
+    <div id="gBagWrap" class="row">
+      <label class="field" style="flex:1"><span class="field-label">Confort (°C)</span><input type="text" inputmode="numeric" id="gComf" autocomplete="off"></label>
+      <label class="field" style="flex:1"><span class="field-label">Limite (°C)</span><input type="text" inputmode="numeric" id="gLim" autocomplete="off"></label>
+    </div>
+    <p class="tiny muted" id="gSrc"></p>
+    <p class="tiny muted">Vérifie les valeurs sur l'étiquette : elles changent selon la taille et l'année du modèle.</p>
+    <div class="row"><button type="button" class="btn btn-danger" id="btnGearDel" hidden>Supprimer</button><button type="button" class="btn btn-ghost" data-close>Annuler</button><button type="submit" class="btn btn-primary">Enregistrer</button></div>
+  </form>
 </div>
 
 <div class="modal" id="modalIce" hidden role="dialog" aria-modal="true" aria-labelledby="iceTitle">
@@ -626,6 +654,7 @@
 <script src="astuces.js"></script>
 <script src="cuisine_jeux.js"></script>
 <script src="rvalue.js"></script>
+<script src="materiel.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

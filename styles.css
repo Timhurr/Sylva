@@ -746,3 +746,14 @@ html.eco .sig-lamp{transition:none}
 .tl-cross::before{left:29px;top:0;width:2px;height:60px}
 .tl-cross::after{top:29px;left:0;height:2px;width:60px}
 .tl-angle{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.6);color:#fff;font-weight:800;padding:4px 10px;border-radius:10px;font-size:15px}
+
+/* Mon matériel */
+.gear-row{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+.gear-row:last-of-type{border-bottom:0}
+.gear-take{display:grid;place-items:center;width:44px;height:48px;flex:none}
+.gear-take input{width:22px;height:22px;accent-color:var(--accent)}
+.gear-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;text-align:left;border:0;background:transparent;color:var(--text);padding:10px 0;font:inherit}
+.gear-main b{font-size:15px}
+.gear-main span{font-size:12px;color:var(--muted)}
+.gear-online{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 0}
+#gSugg:empty{display:none}

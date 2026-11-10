@@ -198,6 +198,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 ### 2026-11-09 · v0.9.34 à v0.9.52
 - Raccourcis Savoir-faire, programme du bivouac qui remplit le sac, lieu et météo de la sortie, anciens bivouacs, guidage GPS (pied, vélo, voiture), services autour, recettes du feu (42 recettes et niveaux), journal de bord, quiz, badges, alertes de saison, chasse SPW, pouls, niveau et relief, MapTiler.
 
+- **v0.9.57** : « Mon matériel » (onglet Bivouac). Catalogue `materiel.js` (26 produits, valeurs fabricant ou test avec lien source), recherche marque/modèle, bouton « Chercher en ligne », saisie manuelle (`sylva_gear`). Le matériel coché forme le groupe « Mon matériel » du sac à dos (poids total, 3 objets les plus lourds). Le calculateur de valeur R propose ses matelas (★) et ses sacs ; « Préparer la sortie » compare matelas et sac à la nuit prévue (`gearNightCheck`). Test : `tools/tests/geartest.js`.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.

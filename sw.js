@@ -1,12 +1,12 @@
 /* Sylva – service worker : appli et fiches hors-ligne, tuiles de carte vues gardées en cache */
-var VERSION = "sylva-v0.9.56";
+var VERSION = "sylva-v0.9.57";
 var SHELL = VERSION + "-shell";
 var TILES = "sylva-tiles";
 var PHOTOS = "sylva-photos";
 var MAX_TILES = 4000;
 
 var LOCAL = [
-  "./", "index.html", "styles.css", "app.js", "data.js", "especes_plus.js", "especes_champignons.js", "especes_regions.js", "techniques_plus.js", "illus.js", "images.js", "guide.js", "secours_isole.js", "noeuds_plus.js", "classiques.js", "abris_plus.js", "poissons.js", "astuces.js", "cuisine_jeux.js", "rvalue.js", "manifest.webmanifest",
+  "./", "index.html", "styles.css", "app.js", "data.js", "especes_plus.js", "especes_champignons.js", "especes_regions.js", "techniques_plus.js", "illus.js", "images.js", "guide.js", "secours_isole.js", "noeuds_plus.js", "classiques.js", "abris_plus.js", "poissons.js", "astuces.js", "cuisine_jeux.js", "rvalue.js", "materiel.js", "manifest.webmanifest",
   "icons/icon-180.png", "icons/icon-192.png", "icons/icon-512.png"
 ];
 var CDN = [

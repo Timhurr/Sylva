@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.56";
+  var VERSION = "0.9.57";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -2026,7 +2026,7 @@
     setTimeout(function () { map.setView([s.lat, s.lon], 16); if (spotMarkers[id]) spotMarkers[id].openPopup(); }, 120);
   });
 
-  function renderBivouac() { renderTrip(); renderPrepState(); renderCar(); loadBivMeteo(); tripChasse(); renderPlan(); renderJournal(); renderChecklist(); renderHist(); renderCarnet(); }
+  function renderBivouac() { renderTrip(); renderPrepState(); renderCar(); loadBivMeteo(); tripChasse(); renderPlan(); renderJournal(); renderGear(); renderChecklist(); renderHist(); renderCarnet(); }
 
   // ---------- Aujourd'hui ----------
   var MOIS_COURTS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
@@ -2493,7 +2493,8 @@
       '<li id="prep-chasse" class="prep-wait"><i></i><span>Chasses annoncées</span></li>' +
       '<li id="prep-poi" class="prep-wait"><i></i><span>Services autour (magasins, santé…)</span></li>' +
       '<li id="prep-relief" class="prep-wait"><i></i><span>Relief : cuvette ou crête</span></li>' +
-      '<li id="prep-imgs" class="prep-wait"><i></i><span>Fiches et gravures hors ligne</span></li></ul><div class="progress"><span id="prepBar" style="width:0%"></span></div>';
+      '<li id="prep-imgs" class="prep-wait"><i></i><span>Fiches et gravures hors ligne</span></li>' +
+      '<li id="prep-gear" class="prep-wait"><i></i><span>Ton matériel face à la nuit</span></li></ul><div class="progress"><span id="prepBar" style="width:0%"></span></div>';
     var done = 0, fail = 0, i = 0, N = 6;
     var bar = function () { $("#prepBar").style.width = Math.round(done / urls.length * 70) + "%"; };
     var tilesDone = new Promise(function (res) {
@@ -2542,6 +2543,8 @@
       if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(function (e) {
         if (e && e.usage) $("#prepBox").insertAdjacentHTML("beforeend", '<p class="tiny muted" style="margin:6px 0 0">Sylva occupe environ ' + Math.round(e.usage / 1048576) + " Mo sur ce téléphone.</p>");
       }).catch(function () {});
+      var gc = gearNightCheck();
+      prepStep("gear", gc ? (gc.cls === "danger" ? "ko" : "ok") : "ok", gc ? "Nuit à " + gc.t + " °C · " + gc.txt : "Matériel : ajoute ton matelas et ton sac dans « Mon matériel » pour le vérifier");
       $("#prepBar").style.width = "100%"; prepRunning = false;
       save("sylva_prep", { t: Date.now(), c: c });
       $("#prepBox").insertAdjacentHTML("beforeend", '<p class="small" style="margin:10px 0 0"><b>Prêt.</b> Ouvre Sylva une fois en mode avion pour vérifier, et garde ton téléphone chargé.</p>');
@@ -2914,6 +2917,119 @@
   }
   $("#btnExportGpx").addEventListener("click", function () { var g = buildGpx(); if (!g.n && g.tr < 2) { toast("Rien à exporter"); return; } downloadFile("sylva-" + ymd(new Date()) + ".gpx", "application/gpx+xml", g.x); });
   $("#btnExportKml").addEventListener("click", function () { var g = buildKml(); if (!g.n && g.tr < 2) { toast("Rien à exporter"); return; } downloadFile("sylva-" + ymd(new Date()) + ".kml", "application/vnd.google-earth.kml+xml", g.x); });
+
+
+  // =====================================================================
+  // ---------- Mon matériel : inventaire, catalogue, poids du sac ----------
+  // =====================================================================
+  var GEAR_CATS = { matelas: "Matelas", sac: "Sac de couchage", abri: "Abri, tente, bâche", rechaud: "Réchaud", cuisine: "Cuisine", vetement: "Vêtement", autre: "Autre" };
+  var GCAT = window.SYLVA_GEAR_CAT || [];
+  function getGear() { var g = load("sylva_gear", []); return Array.isArray(g) ? g : []; }
+  function saveGear(g) { save("sylva_gear", g); syncGearChecklist(); }
+  function fmtG(g) { return g >= 1000 ? (g / 1000).toFixed(2).replace(".", ",") + " kg" : Math.round(g) + " g"; }
+  function gearSub(x) {
+    var p = [GEAR_CATS[x.cat] || "Autre"];
+    if (x.poids) p.push(fmtG(+x.poids));
+    if (x.r) p.push("R " + String(x.r).replace(".", ","));
+    if (x.comf !== "" && x.comf != null) p.push("confort " + x.comf + " °C");
+    if (x.lim !== "" && x.lim != null) p.push("limite " + x.lim + " °C");
+    return p.join(" · ");
+  }
+  // Le matériel « à emporter » forme un groupe du sac à dos
+  function syncGearChecklist() {
+    var cl = getChecklist(), g = getGear().filter(function (x) { return x.take; });
+    var grp = cl.filter(function (x) { return x.src === "gear"; })[0];
+    if (!g.length) { if (grp) { saveChecklist(cl.filter(function (x) { return x.src !== "gear"; })); } return; }
+    if (!grp) { grp = { id: uid(), src: "gear", titre: "Mon matériel", items: [] }; cl.unshift(grp); }
+    var old = {}; grp.items.forEach(function (it) { old[it.gid] = it; });
+    grp.items = g.map(function (x) { var o = old[x.id]; return { id: o ? o.id : uid(), gid: x.id, label: x.nom + (x.poids ? " (" + fmtG(+x.poids) + ")" : ""), done: o ? o.done : false, photo: false }; });
+    saveChecklist(cl);
+  }
+  function renderGear() {
+    var g = getGear(), tk = g.filter(function (x) { return x.take; }), w = tk.reduce(function (a, x) { return a + (+x.poids || 0); }, 0);
+    var miss = tk.filter(function (x) { return !x.poids; }).length;
+    $("#gearStats").innerHTML = g.length ? "<b>" + fmtG(w) + "</b> à emporter · " + tk.length + " / " + g.length + " objets" + (miss ? ' <span class="muted">(' + miss + " sans poids)</span>" : "") : "";
+    var order = Object.keys(GEAR_CATS);
+    var sorted = g.slice().sort(function (a, b) { return order.indexOf(a.cat) - order.indexOf(b.cat) || (+b.poids || 0) - (+a.poids || 0); });
+    $("#gearList").innerHTML = sorted.length ? sorted.map(function (x) {
+      return '<div class="gear-row"><label class="gear-take" aria-label="À emporter"><input type="checkbox" data-gtake="' + esc(x.id) + '"' + (x.take ? " checked" : "") + '></label>' +
+        '<button type="button" class="gear-main" data-gedit="' + esc(x.id) + '"><b>' + esc(x.nom) + "</b><span>" + esc(gearSub(x)) + "</span></button></div>";
+    }).join("") : '<p class="muted small" style="margin:0">Ajoute ton matos : Sylva calcule le poids du sac, utilise ton matelas et ton sac de couchage dans le calcul de valeur R, et les compare à la météo de la sortie.</p>';
+    if (g.length) {
+      var heavy = tk.filter(function (x) { return +x.poids; }).sort(function (a, b) { return b.poids - a.poids; }).slice(0, 3);
+      if (heavy.length && w) $("#gearList").insertAdjacentHTML("beforeend", '<p class="tiny muted" style="margin:8px 0 0">Le plus lourd : ' + heavy.map(function (x) { return esc(x.nom) + " (" + Math.round(x.poids / w * 100) + " %)"; }).join(", ") + ".</p>");
+    }
+  }
+  var gearEdit = null;
+  function gearFormFill(x) {
+    $("#gCat").value = x.cat || "autre"; $("#gNom").value = x.nom || ""; $("#gPoids").value = x.poids || "";
+    $("#gR").value = x.r != null && x.r !== "" ? String(x.r).replace(".", ",") : ""; $("#gComf").value = x.comf != null ? x.comf : ""; $("#gLim").value = x.lim != null ? x.lim : "";
+    $("#gSrc").innerHTML = x.src ? 'Valeurs : <a href="' + esc(x.src) + '" target="_blank" rel="noopener">source</a>' + (x.note ? " · " + esc(x.note) : "") : "";
+    gearFields();
+  }
+  function gearFields() {
+    var c = $("#gCat").value;
+    $("#gRWrap").hidden = c !== "matelas"; $("#gBagWrap").hidden = c !== "sac";
+  }
+  function openGear(id) {
+    var x = id ? getGear().filter(function (y) { return y.id === id; })[0] : null;
+    gearEdit = x ? x.id : null;
+    $("#gearTitle").textContent = x ? "Modifier" : "Ajouter du matériel";
+    $("#btnGearDel").hidden = !x; $("#gSugg").innerHTML = ""; $("#gSearch").value = "";
+    gearFormFill(x || { cat: "matelas", take: true });
+    $("#gSearchWrap").hidden = !!x;
+    openModal("#modalGear");
+  }
+  $("#btnAddGear").addEventListener("click", function () { openGear(null); });
+  $("#gCat").addEventListener("change", gearFields);
+  $("#gSearch").addEventListener("input", function () {
+    var q = norm(this.value.trim()); if (q.length < 2) { $("#gSugg").innerHTML = ""; return; }
+    var words = q.split(/\s+/);
+    var hits = GCAT.filter(function (p) { var n = norm(p.nom); return words.every(function (w) { return n.indexOf(w) !== -1; }); }).slice(0, 6);
+    $("#gSugg").innerHTML = hits.map(function (p, i) { return '<button type="button" class="place-item" data-gpick="' + GCAT.indexOf(p) + '"><b>' + esc(p.nom) + "</b><span>" + esc(gearSub(p)) + "</span></button>"; }).join("") +
+      '<div class="gear-online"><span class="tiny muted">' + (hits.length ? "Pas dans la liste ?" : "Pas dans le catalogue de Sylva.") + '</span> <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/search?q=' + encodeURIComponent(this.value.trim() + " fiche technique poids") + '">Chercher en ligne</a> <button type="button" class="btn" data-gmanual>Saisir à la main</button></div>';
+  });
+  $("#gSugg").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-gpick]");
+    if (b) { var p = GCAT[+b.dataset.gpick]; gearFormFill(p); $("#gSugg").innerHTML = ""; $("#gSearch").value = p.nom; return; }
+    if (e.target.closest("[data-gmanual]")) { $("#gNom").value = $("#gSearch").value.trim(); $("#gSugg").innerHTML = ""; $("#gNom").focus(); }
+  });
+  function numOrEmpty(v) { v = String(v).replace(",", ".").trim(); return v === "" || isNaN(+v) ? "" : +v; }
+  $("#formGear").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var nom = $("#gNom").value.trim(); if (!nom) { toast("Donne un nom (marque et modèle)"); $("#gNom").focus(); return; }
+    var g = getGear(), x = gearEdit ? g.filter(function (y) { return y.id === gearEdit; })[0] : null;
+    if (!x) { x = { id: uid(), take: true }; g.push(x); }
+    x.cat = $("#gCat").value; x.nom = nom; x.poids = numOrEmpty($("#gPoids").value);
+    x.r = x.cat === "matelas" ? numOrEmpty($("#gR").value) : ""; x.comf = x.cat === "sac" ? numOrEmpty($("#gComf").value) : ""; x.lim = x.cat === "sac" ? numOrEmpty($("#gLim").value) : "";
+    var srcA = $("#gSrc a"); x.src = srcA ? srcA.getAttribute("href") : (x.src || "");
+    saveGear(g); closeModal($("#modalGear")); renderGear(); renderChecklist(); toast("Matériel enregistré");
+  });
+  $("#btnGearDel").addEventListener("click", function () {
+    if (!gearEdit || !confirm("Supprimer cet objet de ton matériel ?")) return;
+    saveGear(getGear().filter(function (y) { return y.id !== gearEdit; })); closeModal($("#modalGear")); renderGear(); renderChecklist();
+  });
+  $("#gearList").addEventListener("click", function (e) { var b = e.target.closest("[data-gedit]"); if (b) openGear(b.dataset.gedit); });
+  $("#gearList").addEventListener("change", function (e) {
+    var c = e.target.closest("[data-gtake]"); if (!c) return;
+    var g = getGear(); g.forEach(function (x) { if (x.id === c.dataset.gtake) x.take = c.checked; }); saveGear(g); renderGear(); renderChecklist();
+  });
+  // Matériel face à la nuit prévue (affiché dans Préparer la sortie et le calculateur)
+  function gearNightCheck() {
+    var g = getGear().filter(function (x) { return x.take; }), n = nightTemp();
+    var pads = g.filter(function (x) { return x.cat === "matelas" && x.r; }), bags = g.filter(function (x) { return x.cat === "sac"; });
+    if (!pads.length && !bags.length) return null;
+    if (!n.src) return { cls: "ok", t: "?", txt: "pas de météo pour vérifier ton matelas et ton sac." };
+    var R = pads.reduce(function (a, x) { return a + +x.r; }, 0), need = rNeed(n.t), out = [], worst = "ok";
+    if (pads.length) { var ok = R >= need; out.push("Matelas : R " + R.toFixed(1).replace(".", ",") + " pour R " + need.toFixed(1).replace(".", ",") + " conseillé" + (ok ? "" : " : ajoute une couche")); if (!ok) worst = R >= need - 1 ? "warn" : "danger"; }
+    if (bags.length) {
+      var b = bags.slice().sort(function (a, c) { return (a.lim === "" ? 99 : a.lim) - (c.lim === "" ? 99 : c.lim); })[0];
+      if (b.comf !== "" && n.t >= b.comf) out.push("Sac : confort " + b.comf + " °C, bon pour " + n.t + " °C");
+      else if (b.lim !== "" && n.t >= b.lim) { out.push("Sac : entre confort et limite, dors avec bonnet et une couche sèche"); if (worst === "ok") worst = "warn"; }
+      else if (b.lim !== "") { out.push("Sac : limite " + b.lim + " °C, trop juste pour " + n.t + " °C (risque d'hypothermie)"); worst = "danger"; }
+    }
+    return { cls: worst, txt: out.join(". ") + ".", t: n.t };
+  }
 
   // =====================================================================
   // ---------- Quiz de survie ----------
@@ -3321,10 +3437,11 @@
   }
   function renderRv() {
     var d = getRv(), n = nightTemp();
-    var opts = function (sel) { return RPADS.map(function (p) { return '<option value="' + p[0] + '"' + (p[0] === sel ? " selected" : "") + ">" + esc(p[1]) + (p[2] != null ? " · R " + String(p[2]).replace(".", ",") : "") + "</option>"; }).join(""); };
+    var myPads = getGear().filter(function (x) { return x.cat === "matelas" && x.r; });
+    var opts = function (sel) { return myPads.map(function (x) { return '<option value="gear:' + esc(x.id) + '"' + ("gear:" + x.id === sel ? " selected" : "") + ">★ " + esc(x.nom) + " · R " + String(x.r).replace(".", ",") + "</option>"; }).join("") + RPADS.map(function (p) { return '<option value="' + p[0] + '"' + (p[0] === sel ? " selected" : "") + ">" + esc(p[1]) + (p[2] != null ? " · R " + String(p[2]).replace(".", ",") : "") + "</option>"; }).join(""); };
     var h = '<p class="muted">Ajoute tout ce que tu mets entre toi et le sol. Les valeurs R s\'additionnent. <button type="button" class="link-btn" data-qtech="isolation_sol">Comprendre la valeur R</button></p>';
     h += '<div class="card"><div class="rv-k">Sous toi</div>' + d.pads.map(function (p, i) {
-      var preset = RPADS.filter(function (x) { return x[0] === p.k; })[0];
+      var preset = RPADS.filter(function (x) { return x[0] === p.k; })[0] || (String(p.k).indexOf("gear:") === 0 ? [p.k, "", 0] : null);
       return '<div class="rv-pad"><select data-rv-k="' + i + '">' + opts(p.k) + "</select>" +
         (preset && preset[2] == null ? '<input type="text" inputmode="decimal" data-rv-r="' + i + '" value="' + (p.r || "") + '" placeholder="R" aria-label="Valeur R">' : "") +
         (d.pads.length > 1 ? '<button type="button" class="icon-mini danger" data-rv-del="' + i + '" aria-label="Retirer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' : "") + "</div>";
@@ -3333,7 +3450,8 @@
       '<p class="tiny muted" style="margin:0 0 8px">' + (d.auto && n.src ? "D'après " + n.src + "." : "Saisie à la main.") + (n.src ? ' <button type="button" class="link-btn" data-rv-auto>Reprendre la météo</button>' : "") + "</p>" +
       '<label class="check"><input type="checkbox" id="rvFri"' + (d.frileux ? " checked" : "") + '><span>Je suis frileux (+1)</span></label>' +
       '<label class="check"><input type="checkbox" id="rvWet"' + (d.mouille ? " checked" : "") + '><span>Sol mouillé ou neige (+1)</span></label></div>';
-    h += '<div class="card"><div class="rv-k">Mon sac de couchage (facultatif)</div><label class="rv-row"><span>Température confort</span><span><input type="number" inputmode="numeric" id="rvComf" value="' + esc(d.comf) + '"> °C</span></label>' +
+    var myBags = getGear().filter(function (x) { return x.cat === "sac"; });
+    h += '<div class="card"><div class="rv-k">Mon sac de couchage (facultatif)</div>' + (myBags.length ? '<div class="rv-pad"><select id="rvBag"><option value="">Choisir dans mon matériel…</option>' + myBags.map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.nom) + "</option>"; }).join("") + "</select></div>" : "") + '<label class="rv-row"><span>Température confort</span><span><input type="number" inputmode="numeric" id="rvComf" value="' + esc(d.comf) + '"> °C</span></label>' +
       '<label class="rv-row"><span>Température limite</span><span><input type="number" inputmode="numeric" id="rvLim" value="' + esc(d.lim) + '"> °C</span></label><p class="tiny muted" style="margin:0">Inscrites sur l\'étiquette (norme EN 13537 ou ISO 23537).</p></div>';
     h += '<div id="rvRes"></div>';
     $("#rvBox").innerHTML = h; rvResult();
@@ -3359,7 +3477,11 @@
   function rvSave(d, full) { save("sylva_rvalue", d); if (full) renderRv(); else rvResult(); }
   $("#rvBox").addEventListener("change", function (e) {
     var d = getRv(), el = e.target;
-    if (el.dataset.rvK != null) { var p = RPADS.filter(function (x) { return x[0] === el.value; })[0]; d.pads[+el.dataset.rvK] = { k: el.value, r: p[2] != null ? p[2] : 3 }; return rvSave(d, true); }
+    if (el.dataset.rvK != null) {
+      if (el.value.indexOf("gear:") === 0) { var gx = getGear().filter(function (y) { return "gear:" + y.id === el.value; })[0]; d.pads[+el.dataset.rvK] = { k: el.value, r: gx ? +gx.r : 0 }; return rvSave(d, true); }
+      var p = RPADS.filter(function (x) { return x[0] === el.value; })[0]; d.pads[+el.dataset.rvK] = { k: el.value, r: p[2] != null ? p[2] : 3 }; return rvSave(d, true);
+    }
+    if (el.id === "rvBag") { var bg = getGear().filter(function (y) { return y.id === el.value; })[0]; if (bg) { d.comf = bg.comf === "" ? "" : String(bg.comf); d.lim = bg.lim === "" ? "" : String(bg.lim); } return rvSave(d, true); }
     if (el.id === "rvFri") d.frileux = el.checked; if (el.id === "rvWet") d.mouille = el.checked;
     rvSave(d);
   });
