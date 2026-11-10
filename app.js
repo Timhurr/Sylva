@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.50";
+  var VERSION = "0.9.51";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -2253,6 +2253,7 @@
     $("#panelBadges").hidden = which !== "badges";
     $("#panelPouls").hidden = which !== "pouls";
     $("#panelNiveau").hidden = which !== "niveau";
+    $("#panelRv").hidden = which !== "rvalue";
     $("#panelAsk").hidden = which !== "ask";
     if (which !== "pouls" && typeof stopCam === "function") stopCam();
     $("#view-apprendre").scrollTop = 0;
@@ -2615,7 +2616,7 @@
     var w = b.getAttribute("data-learn-x");
     if (b.closest("#view-accueil")) showView("apprendre");
     learnShow(w);
-    if (w === "quiz") renderQuizHome(); else if (w === "badges") renderBadges(); else if (w === "pouls") renderPouls(); else if (w === "niveau") renderNiveau(); else if (w === "ask") { setTimeout(function () { $("#askInput").focus(); }, 100); }
+    if (w === "quiz") renderQuizHome(); else if (w === "badges") renderBadges(); else if (w === "pouls") renderPouls(); else if (w === "niveau") renderNiveau(); else if (w === "rvalue") renderRv(); else if (w === "ask") { setTimeout(function () { $("#askInput").focus(); }, 100); }
   });
 
   // =====================================================================
@@ -2815,6 +2816,89 @@
     }
   });
 
+
+  // =====================================================================
+  // ---------- Calculateur de valeur R (isolation du sol + sac de couchage) ----------
+  // =====================================================================
+  var RPADS = [
+    ["ccf_fin", "Mousse fermée fine (8 à 10 mm)", 2.0], ["ccf_ep", "Mousse fermée épaisse (15 à 20 mm)", 2.6],
+    ["auto25", "Autogonflant 2,5 cm", 3.0], ["auto5", "Autogonflant 5 cm", 4.5],
+    ["air_nu", "Gonflable sans isolant", 1.0], ["air_3s", "Gonflable isolé 3 saisons", 4.0], ["air_hiver", "Gonflable hiver", 6.5],
+    ["feuilles", "Lit de feuilles ou fougères sèches (30 cm) · estimation", 1.5], ["sac_dos", "Sac à dos et corde sous les jambes · estimation", 0.5],
+    ["perso", "Mon matelas (valeur R inscrite dessus)", null]
+  ];
+  function rNeed(t) { return t >= 10 ? 2 : t >= 5 ? 3 : t >= 0 ? 3.8 : t >= -5 ? 4.5 : t >= -10 ? 5.5 : 6.5; }
+  function nightTemp() {
+    var mt = load("sylva_meteo_trip", null), src = "la météo de ta sortie";
+    if (!(mt && mt.data && mt.data.daily)) { mt = load("sylva_meteo", null); src = "la météo d'ici"; }
+    if (mt && mt.data && mt.data.daily && mt.data.daily.temperature_2m_min) return { t: Math.round(mt.data.daily.temperature_2m_min[0]), src: src };
+    return { t: 5, src: "" };
+  }
+  function getRv() {
+    var d = load("sylva_rvalue", null);
+    if (!d) { var n = nightTemp(); d = { pads: [{ k: "ccf_fin", r: 2 }], frileux: false, mouille: false, t: n.t, auto: true, comf: "", lim: "" }; }
+    if (d.auto) d.t = nightTemp().t;
+    return d;
+  }
+  function renderRv() {
+    var d = getRv(), n = nightTemp();
+    var opts = function (sel) { return RPADS.map(function (p) { return '<option value="' + p[0] + '"' + (p[0] === sel ? " selected" : "") + ">" + esc(p[1]) + (p[2] != null ? " · R " + String(p[2]).replace(".", ",") : "") + "</option>"; }).join(""); };
+    var h = '<p class="muted">Ajoute tout ce que tu mets entre toi et le sol. Les valeurs R s\'additionnent. <button type="button" class="link-btn" data-qtech="isolation_sol">Comprendre la valeur R</button></p>';
+    h += '<div class="card"><div class="rv-k">Sous toi</div>' + d.pads.map(function (p, i) {
+      var preset = RPADS.filter(function (x) { return x[0] === p.k; })[0];
+      return '<div class="rv-pad"><select data-rv-k="' + i + '">' + opts(p.k) + "</select>" +
+        (preset && preset[2] == null ? '<input type="text" inputmode="decimal" data-rv-r="' + i + '" value="' + (p.r || "") + '" placeholder="R" aria-label="Valeur R">' : "") +
+        (d.pads.length > 1 ? '<button type="button" class="icon-mini danger" data-rv-del="' + i + '" aria-label="Retirer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' : "") + "</div>";
+    }).join("") + '<button type="button" class="link-btn" data-rv-add>+ Ajouter une couche</button></div>';
+    h += '<div class="card"><div class="rv-k">La nuit</div><label class="rv-row"><span>Température minimale</span><span><input type="number" inputmode="numeric" step="1" id="rvT" value="' + d.t + '"> °C</span></label>' +
+      '<p class="tiny muted" style="margin:0 0 8px">' + (d.auto && n.src ? "D'après " + n.src + "." : "Saisie à la main.") + (n.src ? ' <button type="button" class="link-btn" data-rv-auto>Reprendre la météo</button>' : "") + "</p>" +
+      '<label class="check"><input type="checkbox" id="rvFri"' + (d.frileux ? " checked" : "") + '><span>Je suis frileux (+1)</span></label>' +
+      '<label class="check"><input type="checkbox" id="rvWet"' + (d.mouille ? " checked" : "") + '><span>Sol mouillé ou neige (+1)</span></label></div>';
+    h += '<div class="card"><div class="rv-k">Mon sac de couchage (facultatif)</div><label class="rv-row"><span>Température confort</span><span><input type="number" inputmode="numeric" id="rvComf" value="' + esc(d.comf) + '"> °C</span></label>' +
+      '<label class="rv-row"><span>Température limite</span><span><input type="number" inputmode="numeric" id="rvLim" value="' + esc(d.lim) + '"> °C</span></label><p class="tiny muted" style="margin:0">Inscrites sur l\'étiquette (norme EN 13537 ou ISO 23537).</p></div>';
+    h += '<div id="rvRes"></div>';
+    $("#rvBox").innerHTML = h; rvResult();
+  }
+  function rvResult() {
+    var d = getRv(), tot = d.pads.reduce(function (a, p) { return a + (+p.r || 0); }, 0);
+    var need = rNeed(d.t) + (d.frileux ? 1 : 0) + (d.mouille ? 1 : 0), gap = tot - need, f = function (v) { return v.toFixed(1).replace(".", ","); };
+    var cls = gap >= 0 ? "ok" : gap >= -1 ? "warn" : "danger";
+    var msg = gap >= 0 ? "Ton isolation suffit pour cette nuit." : gap >= -1 ? "Un peu juste : tu risques d'avoir froid au petit matin. Ajoute une couche (mousse, lit de feuilles sèches)." : "Insuffisant : le sol va te refroidir toute la nuit. Ajoute une mousse sous ton matelas, ou un lit épais de feuilles sèches.";
+    var h = '<div class="rv-score rv-' + cls + '"><div><span>Ton total</span><b>R ' + f(tot) + '</b></div><div><span>Conseillé</span><b>R ' + f(need) + "</b></div></div>" +
+      '<div class="alert alert-' + cls + '"><strong>' + (gap >= 0 ? "Bon pour " : "Pour ") + d.t + " °C</strong><span>" + msg + "</span></div>";
+    if (d.comf !== "" || d.lim !== "") {
+      var c = d.comf === "" ? null : +d.comf, l = d.lim === "" ? null : +d.lim, cs, ms;
+      if (c != null && d.t >= c) { cs = "ok"; ms = "La nuit prévue est au-dessus de la température confort : tu dormiras bien."; }
+      else if (l != null && d.t >= l) { cs = "warn"; ms = "Entre confort et limite : garde bonnet, chaussettes et une couche sèche pour dormir" + (d.frileux ? ". Frileux : c'est trop juste, prévois plus chaud." : "."); }
+      else if (l != null) { cs = "danger"; ms = "Sous la température limite de ton sac : risque d'hypothermie. Prends un sac plus chaud ou un drap de sac, et dors tout habillé au sec."; }
+      else { cs = "warn"; ms = "Sous la température confort : prévois des vêtements chauds pour dormir."; }
+      h += '<div class="alert alert-' + cs + '"><strong>Sac de couchage</strong><span>' + ms + "</span></div>";
+    }
+    h += '<p class="tiny muted">Repères indicatifs basés sur les valeurs ASTM F3340 et les recommandations des fabricants. La sensation de froid varie selon la fatigue, le repas du soir et le vent.</p>';
+    $("#rvRes").innerHTML = h;
+  }
+  function rvSave(d, full) { save("sylva_rvalue", d); if (full) renderRv(); else rvResult(); }
+  $("#rvBox").addEventListener("change", function (e) {
+    var d = getRv(), el = e.target;
+    if (el.dataset.rvK != null) { var p = RPADS.filter(function (x) { return x[0] === el.value; })[0]; d.pads[+el.dataset.rvK] = { k: el.value, r: p[2] != null ? p[2] : 3 }; return rvSave(d, true); }
+    if (el.id === "rvFri") d.frileux = el.checked; if (el.id === "rvWet") d.mouille = el.checked;
+    rvSave(d);
+  });
+  $("#rvBox").addEventListener("input", function (e) {
+    var d = getRv(), el = e.target;
+    if (el.dataset.rvR != null) d.pads[+el.dataset.rvR].r = parseFloat(String(el.value).replace(",", ".")) || 0;
+    else if (el.id === "rvT") { if (el.value === "" || isNaN(+el.value)) return; d.t = Math.round(+el.value); d.auto = false; }
+    else if (el.id === "rvComf") d.comf = el.value; else if (el.id === "rvLim") d.lim = el.value; else return;
+    rvSave(d);
+  });
+  $("#rvBox").addEventListener("click", function (e) {
+    var t = e.target.closest("[data-qtech]"); if (t) { openTechnique(t.dataset.qtech); return; }
+    var d = getRv();
+    if (e.target.closest("[data-rv-add]")) { d.pads.push({ k: "ccf_fin", r: 2 }); rvSave(d, true); }
+    var del = e.target.closest("[data-rv-del]"); if (del) { d.pads.splice(+del.dataset.rvDel, 1); rvSave(d, true); }
+    if (e.target.closest("[data-rv-auto]")) { d.auto = true; d.t = nightTemp().t; rvSave(d, true); }
+  });
+
   // =====================================================================
   // ---------- Demande à Sylva : questions en langage courant -> fiches (hors ligne) ----------
   // =====================================================================
@@ -2826,7 +2910,7 @@
     [/casse|fractur|\bos\b|\bbras\b|jambe|poignet/, "attelle immobiliser fracture echarpe"], [/inconscien|evanoui|respire|reveille pas/, "pls position laterale"],
     [/choc|pale|sueur|malaise/, "choc"], [/ampoule|pied/, "ampoule"], [/\beaux?\b|boire|soif|potable|tourbe|brune|riviere|source/, "eau potable filtre bouillir"],
     [/perdu|orient|nord|direction|chemin/, "orientation boussole"], [/secour|aide|appel|112|reseau|helico|signal/, "signaux detresse secours"],
-    [/\bfeux?\b|allum|briquet|bois mouill|pluie/, "feu"], [/abri|bache|tente|dormir|nuit|vent/, "abri bache"], [/faim|manger|nourrit/, "nourriture"],
+    [/\bfeux?\b|allum|briquet|bois mouill|pluie/, "feu"], [/abri|bache|tente|dormir|nuit|vent/, "abri bache"], [/matelas|valeur r|r-value|rvalue|isolation|isoler|sol froid|sac de couchage|duvet/, "isolation matelas valeur"], [/faim|manger|nourrit/, "nourriture"],
     [/poisson|peche/, "peche poisson"], [/noeud|corde|attach/, "noeud"], [/orage|foudre|eclair/, "orage foudre"]
   ];
   var URGENT = /inconscien|respire (pas|plus|mal)|ne respire|beaucoup de sang|gicl|hemorrag|reveille pas|convuls|arret cardiaque|crise cardiaque|poitrine|paralys|noy/;

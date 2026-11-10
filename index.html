@@ -228,6 +228,7 @@
           <button type="button" class="train-card" data-learn-x="ask"><span class="tc-ico">💬</span><b>Demande à Sylva</b><span>Ta question, les bonnes fiches, hors ligne</span></button>
           <button type="button" class="train-card" data-learn-x="pouls"><span class="tc-ico">❤️</span><b>Prendre le pouls</b><span>Minuteur guidé, ou caméra</span></button>
           <button type="button" class="train-card" data-learn-x="niveau"><span class="tc-ico">📐</span><b>Niveau et relief</b><span>Pente du sol, cuvette ou crête</span></button>
+          <button type="button" class="train-card" data-learn-x="rvalue"><span class="tc-ico">🛏️</span><b>Valeur R</b><span>Ton matelas suffit-il pour la nuit ?</span></button>
         </div>
 
         <div class="sec-head"><h2>S'entraîner</h2></div>
@@ -258,6 +259,10 @@
         <button type="button" class="chip" data-ask="je suis perdu sans réseau">Perdu</button><button type="button" class="chip" data-ask="mordu par un serpent">Serpent</button>
       </div>
       <div id="askOut"><p class="muted">Pose ta question avec tes mots. Sylva cherche dans ses fiches, sans réseau, et t'affiche les bonnes étapes.</p></div>
+    </div>
+    <div class="pad page" id="panelRv" hidden>
+      <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Valeur R</h1></div>
+      <div id="rvBox"></div>
     </div>
     <div class="pad page" id="panelQuiz" hidden>
       <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Quiz de survie</h1></div>
@@ -559,6 +564,7 @@
 <script src="poissons.js"></script>
 <script src="astuces.js"></script>
 <script src="cuisine_jeux.js"></script>
+<script src="rvalue.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

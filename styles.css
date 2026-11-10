@@ -674,3 +674,16 @@ a.season-alert{text-decoration:none}
 .lv-deg{text-align:center;font-size:36px;font-weight:800}
 .center{text-align:center}
 #lvVerdict{margin:8px 0 10px}
+
+/* Valeur R */
+.rv-k{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px}
+.rv-pad{display:flex;gap:6px;align-items:center;margin-bottom:8px}
+.rv-pad select{flex:1;min-width:0;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:10px;font:inherit;font-size:14px}
+.rv-pad input,.rv-row input{width:70px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);padding:10px;font:inherit;font-size:16px;text-align:center}
+.rv-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;font-size:15px}
+.rv-score{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 10px}
+.rv-score div{background:var(--surface);border-radius:16px;padding:12px;text-align:center;box-shadow:var(--shadow)}
+.rv-score span{display:block;font-size:12px;font-weight:700;color:var(--muted)}
+.rv-score b{font-size:28px}
+.rv-ok div:first-child b{color:#3E7A3A}.rv-warn div:first-child b{color:#B07A2A}.rv-danger div:first-child b{color:#C9472E}
+#rvRes .alert{margin-bottom:8px}
