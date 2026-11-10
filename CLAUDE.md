@@ -176,6 +176,10 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 
 À mettre à jour **à la fin de chaque session de travail** (le plus récent en haut, quelques lignes) : ce qui a été fait, ce qui est en cours, ce que Tim doit vérifier sur son iPhone. C'est ce qui permet à une autre session de reprendre au milieu d'un chantier.
 
+### 2026-11-10 · v0.9.54
+- Fait : onglet Bivouac, « Préparer la sortie » (télécharge cartes IGN + MapTiler Outdoor sur 2,5 km aux zooms 11 à 16, météo, chasse, services, relief) ; « Prévenir un proche » (SMS avec lieu, coordonnées, retour prévu, alerte 2 h après) et « Je suis rentré » ; « Ma voiture est garée ici » et « Retour à la voiture » (guidage, marche hors ligne) ; économie de batterie (thème nuit forcé, GPS économe hors guidage, alerte 20 % là où l'API batterie existe, donc pas sur iPhone) ; annonces vocales du guidage (bouton 🔊 dans le panneau).
+- À vérifier par Tim sur iPhone : envoi du SMS (format `sms:` iOS), voix en français pendant le guidage, durée et poids de « Préparer la sortie ».
+
 ### 2026-11-10 · v0.9.53
 - Fait : calculateur de valeur R et fiche « Isolation du sol » (avec sa gravure) ; retrait de « Demande à Sylva » ; fonds de carte réduits à IGN Belgique, MapTiler Outdoor et MapTiler Satellite ; passation (ce fichier, `tools/`, `docs/BASCULE.md`, copie de l'atelier).
 - En cours : rien.

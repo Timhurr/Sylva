@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.53";
+  var VERSION = "0.9.54";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -83,6 +83,7 @@
     var h = now.getHours(); return h < 7 || h >= 18;
   }
   function applyTheme() {
+    if (load("sylva_eco", false)) { document.documentElement.setAttribute("data-theme", "nuit"); return; }
     var night = themePref === "nuit" || (themePref === "auto" && isNight());
     document.documentElement.setAttribute("data-theme", night ? "nuit" : "jour");
     var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute("content", night ? "#0C110E" : "#F5F3EE");
@@ -145,10 +146,13 @@
   function onPosErr(err) {
     if (err && err.code === 1) toast("Localisation refusée : activez-la dans Réglages > Safari");
   }
+  var geoWatch = null;
   function startGeo() {
     if (!navigator.geolocation) return;
-    navigator.geolocation.watchPosition(onPos, onPosErr, { enableHighAccuracy: true, maximumAge: 15000, timeout: 30000 });
+    var eco = !!load("sylva_eco", false) && !nav;
+    geoWatch = navigator.geolocation.watchPosition(onPos, onPosErr, eco ? { enableHighAccuracy: false, maximumAge: 60000, timeout: 60000 } : { enableHighAccuracy: true, maximumAge: 15000, timeout: 30000 });
   }
+  function restartGeo() { if (geoWatch != null && navigator.geolocation) navigator.geolocation.clearWatch(geoWatch); startGeo(); }
 
   // ---------- Carte ----------
   var layers = {};
@@ -830,7 +834,7 @@
     if (!nav.straightLine) nav.straightLine = L.polyline([p, tg], { color: "#E9A23B", weight: 3, dashArray: "6 8" }).addTo(map);
     else nav.straightLine.setLatLngs([p, tg]);
     if (straight < 25 + Math.min(me[2] || 0, 40)) {
-      if (!nav.arrived) { nav.arrived = true; if (navigator.vibrate) navigator.vibrate([200, 100, 200]); toast("Tu es arrivé"); }
+      if (!nav.arrived) { nav.arrived = true; if (navigator.vibrate) navigator.vibrate([200, 100, 200]); toast("Tu es arrivé"); say("Tu es arrivé : " + (nav.t.label || "destination")); }
       $("#navDist").textContent = "Arrivé"; $("#navInfo").textContent = nav.t.label + " est à moins de 30 m.";
       drawNavArrow(); return;
     }
@@ -844,8 +848,17 @@
     var info = (onRoute ? md.by : "à vol d'oiseau") + " · environ " + eta + " " + md.how;
     if (onRoute && nav.steps) {
       var next = nav.steps.filter(function (st) { return mDist(p, st.at) > 15; }).sort(function (a, b) { return mDist(p, a.at) - mDist(p, b.at); })[0];
-      if (next && mDist(p, next.at) < md.step) info = "Dans " + fmtM(mDist(p, next.at)) + " : " + next.txt;
+      if (next && mDist(p, next.at) < md.step) {
+        var dn = mDist(p, next.at); info = "Dans " + fmtM(dn) + " : " + next.txt;
+        var near = nav.mode === "voiture" ? [800, 200] : nav.mode === "velo" ? [300, 60] : [150, 30];
+        var key = next.at.join(",");
+        nav.spoken = nav.spoken || {};
+        if (dn <= near[1] && nav.spoken[key] !== 2) { nav.spoken[key] = 2; say(next.txt); }
+        else if (dn <= near[0] && !nav.spoken[key]) { nav.spoken[key] = 1; say("Dans " + fmtM(dn).replace(",", " virgule ") + ", " + next.txt.charAt(0).toLowerCase() + next.txt.slice(1)); }
+      }
     }
+    if (nav.route && !onRoute && !nav.offSaid) { nav.offSaid = true; say(nav.mode === "voiture" ? "Recalcul de l'itinéraire" : "Tu t'es écarté du chemin"); }
+    if (onRoute) nav.offSaid = false;
     if (!navigator.onLine && !nav.route) info += " · hors ligne : suis la flèche";
     else if (nav.route && !onRoute) info += nav.mode === "voiture" ? " · recalcul de l'itinéraire" : " · tu t'es écarté du chemin";
     $("#navInfo").textContent = info;
@@ -858,6 +871,7 @@
     nav = { t: t, follow: true, mode: load("sylva_navmode", "pied") };
     $all("#navModes [data-navmode]").forEach(function (x) { x.classList.toggle("on", x.dataset.navmode === nav.mode); });
     $("#navTo").textContent = t.label || "Destination";
+    say("Guidage vers " + (t.label || "ta destination"));
     var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
     $("#navExt").href = ios ? "https://maps.apple.com/?daddr=" + t.lat + "," + t.lon + "&dirflg=w" : "https://www.google.com/maps/dir/?api=1&destination=" + t.lat + "," + t.lon + "&travelmode=walking";
     $("#navGoogle").href = "https://www.google.com/maps/dir/?api=1&destination=" + t.lat + "," + t.lon + "&travelmode=walking";
@@ -875,6 +889,7 @@
   }
   function stopNav(silent) {
     if (!nav) return;
+    if (window.speechSynthesis) try { speechSynthesis.cancel(); } catch (e) {}
     ["line", "straightLine", "marker"].forEach(function (k) { if (nav[k]) map.removeLayer(nav[k]); });
     try { if (nav.wake) nav.wake.release(); } catch (e) {}
     nav = null; $("#navPanel").hidden = true; document.body.classList.remove("navigating");
@@ -2011,7 +2026,7 @@
     setTimeout(function () { map.setView([s.lat, s.lon], 16); if (spotMarkers[id]) spotMarkers[id].openPopup(); }, 120);
   });
 
-  function renderBivouac() { renderTrip(); loadBivMeteo(); tripChasse(); renderPlan(); renderJournal(); renderChecklist(); renderHist(); renderCarnet(); }
+  function renderBivouac() { renderTrip(); renderPrepState(); renderCar(); loadBivMeteo(); tripChasse(); renderPlan(); renderJournal(); renderChecklist(); renderHist(); renderCarnet(); }
 
   // ---------- Aujourd'hui ----------
   var MOIS_COURTS = ["janv.", "févr.", "mars", "avr.", "mai", "juin", "juil.", "août", "sept.", "oct.", "nov.", "déc."];
@@ -2420,6 +2435,201 @@
     toast("Trajet de « " + (x.lieu || "Bivouac") + " » affiché en violet");
   });
 
+
+  // =====================================================================
+  // ---------- Avant et pendant la sortie : préparer, prévenir, voiture, batterie ----------
+  // =====================================================================
+  // --- Préparer la sortie : télécharge d'un coup ce qu'il faut autour du lieu ---
+  function tileXY(lat, lon, z) {
+    var n = Math.pow(2, z), x = Math.floor((lon + 180) / 360 * n);
+    var r = lat * Math.PI / 180, y = Math.floor((1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n);
+    return [x, y];
+  }
+  function tileUrls(c, km) {
+    var out = [], dLat = km / 111, dLon = km / (111 * Math.cos(c[0] * Math.PI / 180));
+    var maps = ["ign_be"].concat(BASEMAPS.mt_outdoor ? ["mt_outdoor"] : []);
+    maps.forEach(function (id) {
+      var b = BASEMAPS[id];
+      for (var z = 11; z <= Math.min(16, b.maxNative); z++) {
+        var a = tileXY(c[0] + dLat, c[1] - dLon, z), d = tileXY(c[0] - dLat, c[1] + dLon, z);
+        for (var x = a[0]; x <= d[0]; x++) for (var y = a[1]; y <= d[1]; y++)
+          out.push({ u: b.url.replace("{z}", z).replace("{x}", x).replace("{y}", y).replace("{s}", "a"), cors: !!b.cors });
+      }
+    });
+    return out;
+  }
+  function prepStep(id, state, txt) {
+    var li = $("#prep-" + id); if (!li) return;
+    li.className = "prep-" + state; li.querySelector("span").textContent = txt || li.querySelector("span").textContent;
+  }
+  function analyzeRelief(c) {
+    var lats = [c[0]], lons = [c[1]];
+    [75, 200].forEach(function (dm) {
+      for (var k = 0; k < 8; k++) { var a = k * Math.PI / 4; lats.push(c[0] + dm * Math.cos(a) / 111320); lons.push(c[1] + dm * Math.sin(a) / (111320 * Math.cos(c[0] * Math.PI / 180))); }
+    });
+    return fetch("https://api.open-meteo.com/v1/elevation?latitude=" + lats.map(function (v) { return v.toFixed(5); }).join(",") + "&longitude=" + lons.map(function (v) { return v.toFixed(5); }).join(","))
+      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      .then(function (j) {
+        var z = j.elevation; if (!z || z.length < 17) throw new Error();
+        var near = z.slice(1, 9), far = z.slice(9, 17), mean = function (a) { return a.reduce(function (s, v) { return s + v; }, 0) / a.length; };
+        var res = { c: c, z: z[0], tpi: z[0] - (mean(near) * 0.4 + mean(far) * 0.6), slope: Math.max.apply(null, near.map(function (v) { return Math.abs(v - z[0]); })) / 75 * 100, t: Date.now() };
+        save("sylva_relief", res); return res;
+      });
+  }
+  var prepRunning = false;
+  function runPrep() {
+    var t = getTrip();
+    if (t.lat == null) { toast("Choisis d'abord le lieu de la sortie"); $("#btnTrip").click(); return; }
+    if (!navigator.onLine) { toast("Il faut du réseau pour préparer la sortie"); return; }
+    if (prepRunning) return; prepRunning = true;
+    var c = [t.lat, t.lon], urls = tileUrls(c, 2.5);
+    $("#prepBox").innerHTML = '<ul class="prep-list">' +
+      '<li id="prep-tiles" class="prep-run"><i></i><span>Cartes (' + urls.length + " morceaux, 2,5 km autour)</span></li>" +
+      '<li id="prep-meteo" class="prep-wait"><i></i><span>Météo du lieu</span></li>' +
+      '<li id="prep-chasse" class="prep-wait"><i></i><span>Chasses annoncées</span></li>' +
+      '<li id="prep-poi" class="prep-wait"><i></i><span>Services autour (magasins, santé…)</span></li>' +
+      '<li id="prep-relief" class="prep-wait"><i></i><span>Relief : cuvette ou crête</span></li></ul><div class="progress"><span id="prepBar" style="width:0%"></span></div>';
+    var done = 0, fail = 0, i = 0, N = 6;
+    var bar = function () { $("#prepBar").style.width = Math.round(done / urls.length * 70) + "%"; };
+    var tilesDone = new Promise(function (res) {
+      if (!urls.length) return res();
+      function next() {
+        if (i >= urls.length) { if (done + fail >= urls.length) res(); return; }
+        var it = urls[i++];
+        fetch(it.u, it.cors ? { mode: "cors" } : { mode: "no-cors" }).then(function (r) { if (r.type !== "opaque" && !r.ok) fail++; else done++; }, function () { fail++; })
+          .then(function () { bar(); prepStep("tiles", "run", "Cartes : " + (done + fail) + " / " + urls.length); if (done + fail >= urls.length) res(); else next(); });
+      }
+      for (var k = 0; k < N; k++) next();
+    });
+    tilesDone.then(function () {
+      prepStep("tiles", fail > urls.length / 3 ? "ko" : "ok", "Cartes : " + done + " morceaux gardés hors ligne" + (fail ? " (" + fail + " en échec)" : ""));
+      prepStep("meteo", "run"); try { localStorage.removeItem("sylva_meteo_trip"); } catch (e) {}
+      loadBivMeteo();
+      return new Promise(function (r) { setTimeout(r, 2500); });
+    }).then(function () {
+      prepStep("meteo", load("sylva_meteo_trip", null) ? "ok" : "ko", load("sylva_meteo_trip", null) ? "Météo du lieu gardée" : "Météo indisponible");
+      prepStep("chasse", "run");
+      if (!inWallonie(c)) { prepStep("chasse", "ok", "Chasse : hors Wallonie, pas de données"); return; }
+      return fetchChasse(c, 3).then(function (f) { save("sylva_chasse_trip2", { key: c[0].toFixed(3) + "," + c[1].toFixed(3), t: Date.now(), f: f }); tripChasse(); prepStep("chasse", "ok", "Chasse : " + f.length + " territoire(s) vérifiés"); })
+        .catch(function () { prepStep("chasse", "ko", "Chasse : serveur injoignable, vérifie la carte officielle"); });
+    }).then(function () {
+      prepStep("poi", "run"); $("#prepBar").style.width = "85%";
+      return fetch("https://overpass-api.de/api/interpreter", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "data=" + encodeURIComponent(poiQuery(c[0].toFixed(5), c[1].toFixed(5))) })
+        .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+        .then(function (d) { save("sylva_poi", { t: Date.now(), c: c, elements: d.elements || [] }); prepStep("poi", "ok", "Services : " + (d.elements || []).length + " lieux gardés"); })
+        .catch(function () { prepStep("poi", "ko", "Services indisponibles"); });
+    }).then(function () {
+      prepStep("relief", "run");
+      return analyzeRelief(c).then(function (r) { prepStep("relief", "ok", "Relief : " + (r.tpi <= -4 ? "cuvette" : r.tpi <= -1.5 ? "léger creux" : r.tpi >= 8 ? "crête" : r.tpi >= 3 ? "position haute" : "terrain intermédiaire") + " (" + Math.round(r.z) + " m)"); })
+        .catch(function () { prepStep("relief", "ko", "Relief indisponible"); });
+    }).then(function () {
+      $("#prepBar").style.width = "100%"; prepRunning = false;
+      save("sylva_prep", { t: Date.now(), c: c });
+      $("#prepBox").insertAdjacentHTML("beforeend", '<p class="small" style="margin:10px 0 0"><b>Prêt.</b> Ouvre Sylva une fois en mode avion pour vérifier, et garde ton téléphone chargé.</p>');
+      checkBadges();
+    });
+  }
+  function renderPrepState() {
+    var p = load("sylva_prep", null), t = getTrip(), box = $("#prepBox"); if (!box || prepRunning) return;
+    box.innerHTML = p && t.lat != null && distKm(p.c, [t.lat, t.lon]) < 0.5
+      ? '<p class="small muted" style="margin:0">Sortie préparée le ' + new Date(p.t).toLocaleString("fr-BE", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + ". Refais-le la veille pour une météo fraîche.</p>"
+      : '<p class="small muted" style="margin:0">Télécharge d\'un coup, pour le hors ligne : cartes, météo, chasse, services et relief autour du lieu de la sortie.</p>';
+  }
+  $("#btnPrep").addEventListener("click", runPrep);
+
+  // --- Prévenir un proche ---
+  function fmtHeure(v) { return v ? new Date(v).toLocaleString("fr-BE", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) : ""; }
+  function safetyMsg() {
+    var t = getTrip(), ret = $("#safeRet").value, alarm = ret ? new Date(new Date(ret).getTime() + 2 * 3600e3) : null;
+    var pt = t.lat != null ? [t.lat, t.lon] : me ? [me[0], me[1]] : null;
+    var m = "Je pars en bivouac seul" + (t.lieu ? " à " + t.lieu : "") + ".";
+    if (pt) m += "\nLieu : " + pt[0].toFixed(5) + ", " + pt[1].toFixed(5) + "\nhttps://maps.google.com/?q=" + pt[0].toFixed(5) + "," + pt[1].toFixed(5);
+    if (ret) m += "\nRetour prévu : " + fmtHeure(ret) + ".";
+    if (alarm) m += "\nSi tu n'as pas de nouvelles de moi le " + fmtHeure(alarm) + ", appelle le 112, donne-leur ce message et dis que je suis seul.";
+    var extra = $("#safeExtra").value.trim(); if (extra) m += "\n" + extra;
+    return m;
+  }
+  function smsHref(num, body) {
+    var ios = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    return "sms:" + encodeURIComponent(num.replace(/\s/g, "")) + (ios ? "&" : "?") + "body=" + encodeURIComponent(body);
+  }
+  $("#btnSafety").addEventListener("click", function () {
+    var s = load("sylva_safety", {}), t = getTrip();
+    $("#safeName").value = s.name || ""; $("#safeNum").value = s.num || ""; $("#safeExtra").value = s.extra || "";
+    var def = t.date ? t.date + "T16:00" : "";
+    $("#safeRet").value = s.ret && (!t.date || s.ret.slice(0, 10) >= t.date) ? s.ret : (t.date ? new Date(new Date(t.date + "T16:00:00").getTime() + 864e5).toISOString().slice(0, 10) + "T16:00" : def);
+    $("#safePreview").textContent = safetyMsg(); openModal("#modalSafety");
+  });
+  ["#safeRet", "#safeExtra"].forEach(function (s) { $(s).addEventListener("input", function () { $("#safePreview").textContent = safetyMsg(); }); });
+  function saveSafety() { save("sylva_safety", { name: $("#safeName").value.trim(), num: $("#safeNum").value.trim(), ret: $("#safeRet").value, extra: $("#safeExtra").value.trim() }); }
+  $("#btnSafeSms").addEventListener("click", function () {
+    saveSafety(); var num = $("#safeNum").value.trim();
+    if (!num) { toast("Ajoute le numéro de ton proche"); $("#safeNum").focus(); return; }
+    location.href = smsHref(num, safetyMsg());
+  });
+  $("#btnSafeShare").addEventListener("click", function () {
+    saveSafety(); var m = safetyMsg();
+    if (navigator.share) navigator.share({ text: m }).catch(function () {});
+    else if (navigator.clipboard) navigator.clipboard.writeText(m).then(function () { toast("Message copié"); });
+  });
+  $("#btnSafeBack").addEventListener("click", function () {
+    var s = load("sylva_safety", {}); if (!s.num) { toast("Enregistre d'abord le numéro de ton proche"); return; }
+    location.href = smsHref(s.num, "Je suis bien rentré du bivouac. Tout va bien, merci d'avoir veillé !");
+  });
+
+  // --- Retour à la voiture ---
+  var carMarker = null;
+  function drawCar() {
+    if (!map || !window.L) return;
+    var c = load("sylva_car", null);
+    if (carMarker) { map.removeLayer(carMarker); carMarker = null; }
+    if (c) carMarker = L.marker([c.lat, c.lon], { icon: pinIcon("#33497A", "🚗"), zIndexOffset: 900 }).bindPopup("<b>Ma voiture</b><br><span style=\"font-size:12px;opacity:.75\">Garée le " + esc(new Date(c.t).toLocaleString("fr-BE", { weekday: "short", hour: "2-digit", minute: "2-digit" })) + "</span>").addTo(map);
+  }
+  function renderCar() {
+    var c = load("sylva_car", null);
+    $("#btnCarGo").hidden = !c;
+    $("#btnCarSet").textContent = c ? "Déplacer ma voiture ici" : "🚗 Ma voiture est garée ici";
+    $("#carInfo").textContent = c ? "Voiture marquée le " + new Date(c.t).toLocaleString("fr-BE", { weekday: "short", hour: "2-digit", minute: "2-digit" }) + (me ? " · à " + fmtKm(distKm([me[0], me[1]], [c.lat, c.lon])) : "") : "Marque l'endroit où tu te gares en arrivant : le retour marche même sans réseau.";
+  }
+  $("#btnCarSet").addEventListener("click", function () {
+    if (!me) { toast("En attente du GPS : active la localisation"); return; }
+    if (me[2] > 80) toast("GPS peu précis (" + Math.round(me[2]) + " m) : attends un peu à découvert si possible");
+    save("sylva_car", { lat: me[0], lon: me[1], t: Date.now() }); drawCar(); renderCar(); toast("Voiture marquée");
+  });
+  $("#btnCarGo").addEventListener("click", function () { var c = load("sylva_car", null); if (c) startNav({ lat: c.lat, lon: c.lon, label: "Ma voiture" }); });
+
+  // --- Économie de batterie ---
+  function ecoOn() { return !!load("sylva_eco", false); }
+  function applyEco() {
+    var on = ecoOn();
+    document.documentElement.classList.toggle("eco", on);
+    if (on) document.documentElement.setAttribute("data-theme", "nuit"); else applyTheme();
+    $("#ecoToggle").checked = on;
+  }
+  $("#ecoToggle").addEventListener("change", function () {
+    save("sylva_eco", this.checked); applyEco();
+    restartGeo();
+    toast(this.checked ? "Économie de batterie : écran sombre, GPS économe" : "Économie de batterie désactivée");
+  });
+  var lowWarned = false;
+  if (navigator.getBattery) navigator.getBattery().then(function (b) {
+    var chk = function () {
+      var p = Math.round(b.level * 100); $("#batInfo").textContent = "Batterie : " + p + " %" + (b.charging ? " (en charge)" : "");
+      if (!b.charging && p <= 20 && !lowWarned) { lowWarned = true; toast("Batterie à " + p + " % : active l'économie et coupe ce qui ne sert pas"); if (!ecoOn()) { save("sylva_eco", true); applyEco(); restartGeo(); } }
+    };
+    chk(); b.addEventListener("levelchange", chk); b.addEventListener("chargingchange", chk);
+  }).catch(function () {});
+
+  // --- Annonces vocales du guidage ---
+  var voiceOn = !!load("sylva_voice", true);
+  function say(txt) {
+    if (!voiceOn || !window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
+    try { var u = new SpeechSynthesisUtterance(txt); u.lang = "fr-FR"; u.rate = 1; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
+  }
+  function renderVoiceBtn() { var b = $("#navVoice"); if (b) { b.textContent = voiceOn ? "🔊" : "🔇"; b.setAttribute("aria-label", voiceOn ? "Couper la voix" : "Activer la voix"); } }
+  $("#navVoice").addEventListener("click", function () { voiceOn = !voiceOn; save("sylva_voice", voiceOn); renderVoiceBtn(); if (voiceOn) say("Guidage vocal activé"); else if (window.speechSynthesis) speechSynthesis.cancel(); });
+  renderVoiceBtn();
+
   // =====================================================================
   // ---------- Quiz de survie ----------
   // =====================================================================
@@ -2796,22 +3006,7 @@
       var rp = reliefPoint(); if (!rp) return;
       if (!navigator.onLine) { $("#rlRes").innerHTML = '<p class="muted">Pas de réseau : fais l\'analyse avant de partir (elle reste en mémoire pour ce lieu).</p>'; return; }
       $("#rlRes").innerHTML = '<p class="muted">Analyse…</p>';
-      var c = rp.c, lats = [c[0]], lons = [c[1]];
-      [75, 200].forEach(function (dm) {
-        for (var k = 0; k < 8; k++) {
-          var a = k * Math.PI / 4; lats.push(c[0] + dm * Math.cos(a) / 111320); lons.push(c[1] + dm * Math.sin(a) / (111320 * Math.cos(c[0] * Math.PI / 180)));
-        }
-      });
-      fetch("https://api.open-meteo.com/v1/elevation?latitude=" + lats.map(function (v) { return v.toFixed(5); }).join(",") + "&longitude=" + lons.map(function (v) { return v.toFixed(5); }).join(","))
-        .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
-        .then(function (j) {
-          var z = j.elevation; if (!z || z.length < 17) throw new Error();
-          var near = z.slice(1, 9), far = z.slice(9, 17), mean = function (a) { return a.reduce(function (s, v) { return s + v; }, 0) / a.length; };
-          var tpi = z[0] - (mean(near) * 0.4 + mean(far) * 0.6);
-          var slope = Math.max.apply(null, near.map(function (v) { return Math.abs(v - z[0]); })) / 75 * 100;
-          var res = { c: c, z: z[0], tpi: tpi, slope: slope, t: Date.now() };
-          save("sylva_relief", res); showRelief(res);
-        }).catch(function () { $("#rlRes").innerHTML = '<p class="muted">Service d\'altitude indisponible, réessaie.</p>'; });
+      analyzeRelief(rp.c).then(showRelief).catch(function () { $("#rlRes").innerHTML = '<p class="muted">Service d\'altitude indisponible, réessaie.</p>'; });
     }
   });
 
@@ -2909,7 +3104,8 @@
   setTimeout(function () { prefetchPhotos(false); }, 3000);
   initMap();
   startGeo();
-  setTimeout(function () { drawTrack(); checkBadges(); }, 1500);
+  setTimeout(function () { drawTrack(); drawCar(); checkBadges(); }, 1500);
+  applyEco();
 
   if ("serviceWorker" in navigator) {
     var hadController = !!navigator.serviceWorker.controller, reloaded = false;

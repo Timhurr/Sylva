@@ -113,6 +113,7 @@
         <button type="button" data-navmode="pied" class="on">À pied</button><button type="button" data-navmode="velo">Vélo</button><button type="button" data-navmode="voiture">Voiture</button>
       </div>
       <div class="nav-actions">
+        <button type="button" class="btn nav-voice" id="navVoice" aria-label="Couper la voix">🔊</button>
         <button type="button" class="btn" id="navCenter">Suivre</button>
         <a class="btn" id="navExt" target="_blank" rel="noopener">Plans</a>
         <a class="btn" id="navGoogle" target="_blank" rel="noopener">Google</a>
@@ -310,6 +311,18 @@
       <header class="page-head"><div class="page-title"><span class="eyebrow" id="tripWhen">Prochaine sortie</span><h1 id="tripName">Mon bivouac</h1></div></header>
       <div class="trip-actions"><button class="link-btn" id="btnTrip" type="button">Choisir la date et le lieu</button><button class="link-btn" id="btnTripGo" type="button" hidden>Y aller</button><button class="link-btn" id="btnTripEnd" type="button" hidden>Terminer ce bivouac</button></div>
 
+      <div class="card prep-card">
+        <button type="button" class="btn btn-primary" id="btnPrep">⬇ Préparer la sortie (hors ligne)</button>
+        <div id="prepBox"></div>
+      </div>
+      <div class="card onsite-card">
+        <div class="row"><button type="button" class="btn" id="btnSafety">📨 Prévenir un proche</button><button type="button" class="btn" id="btnSafeBack">✅ Je suis rentré</button></div>
+        <div class="row"><button type="button" class="btn" id="btnCarSet">🚗 Ma voiture est garée ici</button><button type="button" class="btn btn-primary" id="btnCarGo" hidden>Retour à la voiture</button></div>
+        <p class="tiny muted" id="carInfo"></p>
+        <label class="check"><input type="checkbox" id="ecoToggle"><span>Économie de batterie <small class="muted">(écran sombre, GPS économe hors guidage)</small></span></label>
+        <p class="tiny muted" id="batInfo"></p>
+      </div>
+
       <div class="sec-head"><h2>Météo</h2><span class="muted small" id="bivPlace">Vallée de l'Ourthe</span></div>
       <div id="meteo" class="card"><p class="muted">Chargement…</p></div>
       <div id="tripChasse"></div>
@@ -460,6 +473,21 @@
     </div>
     <p class="tiny muted" id="appVersion"></p>
   </form>
+</div>
+
+<div class="modal" id="modalSafety" hidden role="dialog" aria-modal="true" aria-labelledby="safeTitle">
+  <div class="modal-box">
+    <h2 id="safeTitle">Prévenir un proche</h2>
+    <p class="small muted" style="margin-top:0">Avant de partir seul, envoie ce message à quelqu'un de confiance. S'il n'a pas de nouvelles, il saura où te chercher.</p>
+    <label class="field"><span class="field-label">Prénom du proche</span><input type="text" id="safeName" autocomplete="off"></label>
+    <label class="field"><span class="field-label">Son numéro</span><input type="tel" id="safeNum" placeholder="+32 4…" autocomplete="tel"></label>
+    <label class="field"><span class="field-label">Retour prévu</span><input type="datetime-local" id="safeRet"></label>
+    <label class="field"><span class="field-label">À ajouter (facultatif)</span><input type="text" id="safeExtra" placeholder="Ex. : voiture garée au parking du barrage"></label>
+    <div class="field"><span class="field-label">Message</span><pre class="safe-preview" id="safePreview"></pre></div>
+    <p class="tiny muted">L'alerte est fixée 2 h après ton retour prévu. Pense à envoyer « Je suis rentré » en revenant.</p>
+    <div class="row"><button type="button" class="btn" id="btnSafeShare">Partager…</button><button type="button" class="btn btn-primary" id="btnSafeSms">Envoyer par SMS</button></div>
+    <div class="row"><button type="button" class="btn btn-ghost" data-close>Fermer</button></div>
+  </div>
 </div>
 
 <div class="modal" id="modalJournal" hidden role="dialog" aria-modal="true" aria-labelledby="jrTitle">

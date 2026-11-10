@@ -686,3 +686,24 @@ a.season-alert{text-decoration:none}
 .rv-score b{font-size:28px}
 .rv-ok div:first-child b{color:#3E7A3A}.rv-warn div:first-child b{color:#B07A2A}.rv-danger div:first-child b{color:#C9472E}
 #rvRes .alert{margin-bottom:8px}
+
+/* Préparer la sortie, sur place */
+.prep-card .btn{width:100%}
+#prepBox{margin-top:10px}
+.prep-list{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:6px;font-size:14px}
+.prep-list li{display:flex;gap:8px;align-items:center}
+.prep-list i{width:18px;height:18px;border-radius:50%;flex:none;border:2px solid var(--line)}
+.prep-run i{border-color:#E9A23B;border-top-color:transparent;animation:spin 1s linear infinite}
+.prep-ok i{background:#5E8C5A;border-color:#5E8C5A}
+.prep-ko i{background:#C9472E;border-color:#C9472E}
+.prep-wait{opacity:.5}
+@keyframes spin{to{transform:rotate(360deg)}}
+.onsite-card .row{margin-bottom:8px}
+.onsite-card .row .btn{flex:1}
+.safe-preview{white-space:pre-wrap;font:inherit;font-size:13px;background:var(--bg);border-radius:12px;padding:10px;margin:0;max-height:180px;overflow:auto}
+.nav-actions .nav-voice{flex:0 0 44px;font-size:18px}
+/* Économie de batterie */
+html.eco *{animation:none!important;transition:none!important}
+html.eco .lv-bubble,html.eco .nav-arrow{transition:none!important}
+html.eco #map.skin-terminal::after{display:none}
+@media (prefers-reduced-motion:reduce){.prep-run i{animation:none}}
