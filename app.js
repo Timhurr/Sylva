@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.55";
+  var VERSION = "0.9.56";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -2269,6 +2269,10 @@
     $("#panelPouls").hidden = which !== "pouls";
     $("#panelNiveau").hidden = which !== "niveau";
     $("#panelRv").hidden = which !== "rvalue";
+    $("#panelEau").hidden = which !== "eau";
+    $("#panelCiel").hidden = which !== "ciel";
+    $("#panelTele").hidden = which !== "tele";
+    if (which !== "tele" && typeof stopTele === "function") stopTele();
     if (which !== "pouls" && typeof stopCam === "function") stopCam();
     $("#view-apprendre").scrollTop = 0;
   }
@@ -2729,6 +2733,188 @@
     save("sylva_ice", d); f.hidden = true; $("#iceView").hidden = false; this.textContent = "Modifier"; renderIce(); toast("Infos d'urgence enregistrées sur ce téléphone");
   });
 
+
+  // =====================================================================
+  // ---------- Outils photo et visée : clarté de l'eau, ciel et soleil, télémètre ----------
+  // =====================================================================
+  function imgData(file, max) {
+    return new Promise(function (res, rej) {
+      var u = URL.createObjectURL(file), im = new Image();
+      im.onload = function () {
+        var k = Math.min(1, max / Math.max(im.width, im.height)), c = document.createElement("canvas");
+        c.width = Math.round(im.width * k); c.height = Math.round(im.height * k);
+        var x = c.getContext("2d"); x.drawImage(im, 0, 0, c.width, c.height); URL.revokeObjectURL(u);
+        res({ c: c, d: x.getImageData(0, 0, c.width, c.height) });
+      };
+      im.onerror = rej; im.src = u;
+    });
+  }
+  // --- Clarté de l'eau ---
+  function renderEau() {
+    $("#eauBox").innerHTML = '<div class="alert alert-danger"><strong>Une eau claire peut rendre malade</strong><span>Cet outil mesure seulement la clarté, jamais les microbes. Toute eau trouvée dehors se traite (ébullition 1 minute, filtre ou pastilles).</span></div>' +
+      '<p class="muted">Remplis une bouteille transparente. Pose-la devant un fond blanc avec un trait noir (une ligne au stylo sur un papier, ou le texte d\'un emballage), à la lumière du jour, et prends la photo de face, la bouteille au centre.</p>' +
+      '<label class="btn btn-primary" style="width:100%"><input type="file" accept="image/*" capture="environment" id="eauPhoto" hidden>📷 Photographier l\'eau</label><div id="eauRes"></div>';
+  }
+  $("#eauBox").addEventListener("change", function (e) {
+    if (e.target.id !== "eauPhoto") return;
+    var f = e.target.files && e.target.files[0]; e.target.value = ""; if (!f) return;
+    $("#eauRes").innerHTML = '<p class="muted">Analyse…</p>';
+    imgData(f, 400).then(function (o) {
+      var d = o.d.data, W = o.d.width, H = o.d.height, x0 = Math.floor(W * .3), x1 = Math.ceil(W * .7), y0 = Math.floor(H * .3), y1 = Math.ceil(H * .7);
+      var n = 0, sl = 0, sl2 = 0, R = 0, G = 0, B = 0;
+      for (var y = y0; y < y1; y++) for (var x = x0; x < x1; x++) {
+        var i = (y * W + x) * 4, l = 0.2126 * d[i] + 0.7152 * d[i + 1] + 0.0722 * d[i + 2];
+        n++; sl += l; sl2 += l * l; R += d[i]; G += d[i + 1]; B += d[i + 2];
+      }
+      var m = sl / n, sd = Math.sqrt(Math.max(0, sl2 / n - m * m)), contrast = sd / Math.max(20, m);
+      R /= n; G /= n; B /= n;
+      var brun = ((R + G) / 2 - B) / Math.max(1, (R + G + B) / 3);
+      var cls, lvl, txt;
+      if (contrast > .28) { cls = "ok"; lvl = "Claire"; txt = "Le trait reste net : pas de préfiltrage nécessaire. Traite-la quand même : ébullition 1 minute, ou filtre puis pastilles."; }
+      else if (contrast > .15) { cls = "warn"; lvl = "Un peu trouble"; txt = "Filtre-la dans un tissu propre (t-shirt, chaussette) avant de la traiter. Les pastilles marchent mal dans une eau trouble : l'ébullition est plus sûre."; }
+      else if (contrast > .07) { cls = "warn"; lvl = "Trouble"; txt = "Laisse reposer 30 minutes pour que la boue tombe, verse doucement le dessus, filtre au tissu, puis fais bouillir 1 minute. Évite les pastilles seules."; }
+      else { cls = "danger"; lvl = "Très trouble"; txt = "Cherche une autre source si possible (plus en amont, source qui sort du sol). Sinon : décanter, filtrer plusieurs fois, puis bouillir. Méfie-toi d'une eau près des champs ou de la route."; }
+      var tint = brun > .25 ? "Couleur brune ou thé : souvent des tanins de tourbière ou de feuilles. Pas dangereux en soi, mais elle se traite comme les autres." : brun > .12 ? "Légère teinte jaune : tanins probables." : "";
+      $("#eauRes").innerHTML = '<div class="eau-thumb"></div><div class="alert alert-' + cls + '"><strong>' + lvl + " · netteté " + Math.round(Math.min(1, contrast / .4) * 100) + " %</strong><span>" + txt + (tint ? "<br>" + tint : "") + "</span></div>" +
+        '<div class="row"><button type="button" class="btn" data-qtech="eau">Rendre l\'eau potable</button><button type="button" class="btn" data-qtech="filtre">Filtres de fortune</button></div>' +
+        '<p class="tiny muted">Estimation à partir de la photo : la lumière et le fond changent le résultat. Une odeur chimique, une mousse ou une couleur verte vive : n\'en bois pas, même traitée.</p>';
+      o.c.className = "eau-img"; $("#eauRes .eau-thumb").appendChild(o.c);
+    }).catch(function () { $("#eauRes").innerHTML = '<p class="muted">Photo illisible, réessaie.</p>'; });
+  });
+  $("#eauBox").addEventListener("click", function (e) { var t = e.target.closest("[data-qtech]"); if (t && TECHS.some(function (x) { return x.id === t.dataset.qtech; })) openTechnique(t.dataset.qtech); });
+
+  // --- Ciel et soleil : ouverture de la canopée + course du soleil ---
+  function sunPos(date, lat, lon) {
+    var rad = Math.PI / 180, d = date / 864e5 - 10957.5; // jours depuis J2000
+    var g = (357.529 + 0.98560028 * d) * rad, q = 280.459 + 0.98564736 * d;
+    var L = (q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * rad, e = (23.439 - 0.00000036 * d) * rad;
+    var ra = Math.atan2(Math.cos(e) * Math.sin(L), Math.cos(L)), dec = Math.asin(Math.sin(e) * Math.sin(L));
+    var gmst = (18.697374558 + 24.06570982441908 * d) % 24, ha = ((gmst * 15 + lon) * rad) - ra;
+    var la = lat * rad, alt = Math.asin(Math.sin(la) * Math.sin(dec) + Math.cos(la) * Math.cos(dec) * Math.cos(ha));
+    return alt / rad;
+  }
+  function sunDay(lat, lon, day) {
+    var t0 = new Date(day + "T00:00:00").getTime(), up = 0, good = 0, maxA = -90, rise = null, set = null;
+    for (var m = 0; m < 1440; m += 10) {
+      var a = sunPos(t0 + m * 6e4, lat, lon);
+      if (a > 0) { up += 10; if (rise == null) rise = m; set = m; } if (a > 15) good += 10; if (a > maxA) maxA = a;
+    }
+    return { up: up, good: good, maxA: maxA, rise: rise, set: set };
+  }
+  function hm(m) { return Math.floor(m / 60) + " h " + String(m % 60).padStart(2, "0"); }
+  function renderCiel() {
+    $("#cielBox").innerHTML = '<p class="muted">Allonge-toi ou tiens le téléphone à plat, écran vers le sol, caméra vers le ciel, là où tu veux dormir. Prends la photo bien à la verticale.</p>' +
+      '<label class="btn btn-primary" style="width:100%"><input type="file" accept="image/*" capture="environment" id="cielPhoto" hidden>📷 Photographier le ciel</label><div id="cielRes"></div>';
+  }
+  $("#cielBox").addEventListener("change", function (e) {
+    if (e.target.id !== "cielPhoto") return;
+    var f = e.target.files && e.target.files[0]; e.target.value = ""; if (!f) return;
+    $("#cielRes").innerHTML = '<p class="muted">Analyse…</p>';
+    imgData(f, 360).then(function (o) {
+      var d = o.d.data, N = d.length / 4, hist = new Array(256).fill(0), bl = new Uint8Array(N);
+      for (var i = 0; i < N; i++) { var b = d[i * 4 + 2]; bl[i] = b; hist[b]++; }
+      // Seuil d'Otsu sur le canal bleu (méthode des photos hémisphériques)
+      var sum = 0; for (var k = 0; k < 256; k++) sum += k * hist[k];
+      var sB = 0, wB = 0, best = 0, th = 128;
+      for (k = 0; k < 256; k++) { wB += hist[k]; if (!wB) continue; var wF = N - wB; if (!wF) break; sB += k * hist[k]; var mB = sB / wB, mF = (sum - sB) / wF, v = wB * wF * (mB - mF) * (mB - mF); if (v > best) { best = v; th = k; } }
+      var sky = 0, out = o.c.getContext("2d").createImageData(o.d.width, o.d.height);
+      for (i = 0; i < N; i++) { var s = bl[i] > th; if (s) sky++; out.data[i * 4] = s ? 140 : 30; out.data[i * 4 + 1] = s ? 200 : 60; out.data[i * 4 + 2] = s ? 255 : 30; out.data[i * 4 + 3] = 255; }
+      if (best < 200) sky = bl.reduce(function (a, v) { return a + (v > 150 ? 1 : 0); }, 0); // image presque uniforme
+      var pct = Math.round(sky / N * 100);
+      o.c.getContext("2d").putImageData(out, 0, 0); o.c.className = "eau-img";
+      var t = getTrip(), pt = t.lat != null ? [t.lat, t.lon] : me ? [me[0], me[1]] : [50.5, 5], day = t.date || ymd(new Date()), sd = sunDay(pt[0], pt[1], day);
+      var real = Math.round(sd.good * pct / 100), cls = pct < 20 ? "info" : pct < 55 ? "ok" : "warn";
+      var msg = pct < 20 ? "Couvert fermé : nuit plus douce et moins de rosée sous les arbres, mais le bois et tes affaires sècheront mal, et un panneau solaire ne servira à rien."
+        : pct < 55 ? "Ouverture moyenne : un bon compromis. Un peu de soleil pour sécher, et les arbres limitent la rosée et le froid de la nuit."
+        : "Ciel très ouvert : bon pour sécher et charger au solaire, mais plus de rosée, de givre et de froid la nuit (le sol perd sa chaleur vers le ciel). Prévois une bâche bien tendue.";
+      $("#cielRes").innerHTML = '<div class="eau-thumb"></div><div class="rv-score"><div><span>Ciel visible</span><b>' + pct + ' %</b></div><div><span>Soleil utile (au-dessus de 15°)</span><b>' + hm(real) + "</b></div></div>" +
+        '<div class="alert alert-' + cls + '"><span>' + msg + "</span></div>" +
+        '<p class="small">Le ' + esc(new Date(day + "T12:00:00").toLocaleDateString("fr-BE", { weekday: "long", day: "numeric", month: "long" })) + " : soleil levé environ " + hm(sd.up) + ", au plus haut à " + Math.round(sd.maxA) + "° au-dessus de l'horizon" +
+        (sd.maxA < 25 ? " (soleil bas : les arbres au sud cachent l'essentiel)" : "") + ".</p>" +
+        '<div class="alert alert-warn"><strong>Regarde aussi au-dessus de toi</strong><span>Pas de branche morte, ni d\'arbre mort ou penché au-dessus de l\'abri : c\'est l\'un des premiers dangers en forêt, surtout avec du vent.</span></div>' +
+        '<p class="tiny muted">Estimation : les nuages blancs et les reflets faussent un peu le calcul. En bleu, ce que Sylva a compté comme ciel.</p>';
+      $("#cielRes .eau-thumb").appendChild(o.c);
+    }).catch(function () { $("#cielRes").innerHTML = '<p class="muted">Photo illisible, réessaie.</p>'; });
+  });
+
+  // --- Télémètre par visée (clinomètre) ---
+  var tele = { top: null, base: null, pitch: null, on: false, stream: null };
+  function onTelePitch(e) { if (e.beta != null) { tele.pitch = e.beta - 90; var el = $("#tlAngle"); if (el) el.textContent = (tele.pitch >= 0 ? "+" : "") + tele.pitch.toFixed(1).replace(".", ",") + "°"; } }
+  function renderTele() {
+    var m = load("sylva_telemode", "distance");
+    $("#teleBox").innerHTML = '<div class="seg-row"><button type="button" class="chip' + (m === "distance" ? " on" : "") + '" data-tlmode="distance">Distance d\'un objet connu</button><button type="button" class="chip' + (m === "hauteur" ? " on" : "") + '" data-tlmode="hauteur">Hauteur d\'un arbre</button></div>' +
+      '<label class="rv-row"><span>' + (m === "distance" ? "Hauteur réelle de l'objet" : "Distance jusqu'au pied (compte tes pas × 0,75)") + '</span><span><input type="text" inputmode="decimal" id="tlKnown" value="' + esc(String(load(m === "distance" ? "sylva_tlh" : "sylva_tld", m === "distance" ? 1.8 : 20)).replace(".", ",")) + '"> m</span></label>' +
+      (m === "distance" ? '<p class="tiny muted" style="margin:-4px 0 8px">Repères : une personne 1,75 m ; une porte 2 m ; une voiture 1,5 m ; un étage 3 m ; un poteau électrique 9 m.</p>' : "") +
+      '<div class="tl-view"><video id="tlVid" playsinline muted autoplay></video><div class="tl-cross"></div><div class="tl-angle" id="tlAngle">–</div></div>' +
+      '<p class="small muted">Tiens le téléphone droit devant toi, à hauteur des yeux, et vise avec la croix.</p>' +
+      '<div class="row"><button type="button" class="btn" id="tlTop">Viser le sommet</button><button type="button" class="btn" id="tlBase">Viser la base</button></div><div id="tlRes"></div>';
+    tele.top = tele.base = null;
+    startTeleSensors();
+  }
+  function startTeleSensors() {
+    var go = function () { if (!tele.on) { tele.on = true; window.addEventListener("deviceorientation", onTelePitch); } };
+    if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") DeviceOrientationEvent.requestPermission().then(go).catch(go); else go();
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia && !tele.stream) navigator.mediaDevices.getUserMedia({ video: { facingMode: { ideal: "environment" } }, audio: false }).then(function (s) {
+      tele.stream = s; var v = $("#tlVid"); if (v) { v.srcObject = s; v.play().catch(function () {}); }
+    }).catch(function () { var v = $("#tlVid"); if (v) v.parentNode.classList.add("no-cam"); });
+    else if (tele.stream) { var v = $("#tlVid"); if (v) { v.srcObject = tele.stream; v.play().catch(function () {}); } }
+  }
+  function stopTele() { if (tele.stream) { tele.stream.getTracks().forEach(function (t) { t.stop(); }); tele.stream = null; } }
+  function teleCalc() {
+    if (tele.top == null || tele.base == null) return;
+    var m = load("sylva_telemode", "distance"), k = parseFloat(String($("#tlKnown").value).replace(",", ".")) || 0, rad = Math.PI / 180;
+    var dt = Math.tan(tele.top * rad) - Math.tan(tele.base * rad), r;
+    if (dt <= 0.002 || k <= 0) { $("#tlRes").innerHTML = '<div class="alert alert-warn"><span>Visée trop serrée ou valeur manquante : recommence en visant bien le haut puis le bas.</span></div>'; return; }
+    if (m === "distance") { r = k / dt; save("sylva_tlh", k); $("#tlRes").innerHTML = '<div class="rv-score"><div><span>Distance</span><b>' + (r < 1000 ? Math.round(r) + " m" : (r / 1000).toFixed(1).replace(".", ",") + " km") + "</b></div><div><span>Angle visé</span><b>" + (tele.top - tele.base).toFixed(1).replace(".", ",") + "°</b></div></div>" +
+      '<p class="small">Précision de l\'ordre de 10 à 20 % à quelques dizaines de mètres, moins bonne au-delà ou sous 2° d\'angle visé : prends un repère plus grand ou rapproche-toi.</p>'; }
+    else { r = k * dt; save("sylva_tld", k); $("#tlRes").innerHTML = '<div class="rv-score"><div><span>Hauteur</span><b>' + r.toFixed(r < 10 ? 1 : 0).replace(".", ",") + ' m</b></div><div><span>Chute possible jusqu\'à</span><b>' + Math.round(r * 1.2) + " m</b></div></div>" +
+      '<p class="small">Un arbre peut tomber à une distance égale à sa hauteur, plus les branches : garde au moins ' + Math.round(r * 1.2) + " m entre ton abri et un arbre mort ou penché.</p>"; }
+    $("#tlRes").insertAdjacentHTML("beforeend", '<p class="tiny muted">Visée ' + tele.top.toFixed(1).replace(".", ",") + "° / " + tele.base.toFixed(1).replace(".", ",") + "°. Plus l'objet est loin et petit, moins c'est précis.</p>");
+  }
+  $("#teleBox").addEventListener("click", function (e) {
+    var md = e.target.closest("[data-tlmode]"); if (md) { save("sylva_telemode", md.dataset.tlmode); renderTele(); return; }
+    if (e.target.id === "tlTop" || e.target.id === "tlBase") {
+      if (tele.pitch == null) { toast("Capteurs de mouvement indisponibles : autorise-les"); startTeleSensors(); return; }
+      if (e.target.id === "tlTop") tele.top = tele.pitch; else tele.base = tele.pitch;
+      e.target.textContent = (e.target.id === "tlTop" ? "Sommet " : "Base ") + (tele.pitch >= 0 ? "+" : "") + tele.pitch.toFixed(1).replace(".", ",") + "° ✓";
+      if (navigator.vibrate) navigator.vibrate(20);
+      teleCalc();
+    }
+  });
+  $("#teleBox").addEventListener("input", function (e) { if (e.target.id === "tlKnown") teleCalc(); });
+
+  // --- Export GPX et KML (ATAK, iTAK, Garmin, OsmAnd…) ---
+  function xmlEsc(s) { return String(s == null ? "" : s).replace(/[<>&"']/g, function (c) { return { "<": "&lt;", ">": "&gt;", "&": "&amp;", '"': "&quot;", "'": "&apos;" }[c]; }); }
+  function exportPoints() {
+    var pts = getSpots().map(function (s) { var ty = SPOT_TYPES[s.type] || SPOT_TYPES.autre; return { lat: s.lat, lon: s.lon, name: ty[2] + (s.note ? " : " + s.note.slice(0, 60) : ""), desc: s.note || "", t: s.date }; });
+    var t = getTrip(); if (t.lat != null) pts.push({ lat: t.lat, lon: t.lon, name: "Bivouac : " + (t.lieu || ""), desc: "Lieu de la sortie " + (t.date || "") });
+    var car = load("sylva_car", null); if (car) pts.push({ lat: car.lat, lon: car.lon, name: "Ma voiture", desc: "", t: car.t });
+    return pts;
+  }
+  function downloadFile(name, mime, text) {
+    var blob = new Blob([text], { type: mime }), file;
+    try { file = new File([blob], name, { type: mime }); } catch (e) {}
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) { navigator.share({ files: [file], title: name }).catch(function () {}); return; }
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click();
+    setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 2000);
+  }
+  function buildGpx() {
+    var pts = exportPoints(), tr = getJournal().track;
+    var x = '<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Sylva" xmlns="http://www.topografix.com/GPX/1/1">\n';
+    pts.forEach(function (p) { x += '<wpt lat="' + p.lat.toFixed(6) + '" lon="' + p.lon.toFixed(6) + '"><name>' + xmlEsc(p.name) + "</name>" + (p.desc ? "<desc>" + xmlEsc(p.desc) + "</desc>" : "") + (p.t ? "<time>" + new Date(p.t).toISOString() + "</time>" : "") + "</wpt>\n"; });
+    if (tr.length > 1) x += "<trk><name>Trajet Sylva</name><trkseg>\n" + tr.map(function (p) { return '<trkpt lat="' + p[0] + '" lon="' + p[1] + '">' + (p[2] ? "<time>" + new Date(p[2]).toISOString() + "</time>" : "") + "</trkpt>"; }).join("\n") + "\n</trkseg></trk>\n";
+    return { x: x + "</gpx>\n", n: pts.length, tr: tr.length };
+  }
+  function buildKml() {
+    var pts = exportPoints(), tr = getJournal().track;
+    var x = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Sylva</name>\n';
+    pts.forEach(function (p) { x += "<Placemark><name>" + xmlEsc(p.name) + "</name>" + (p.desc ? "<description>" + xmlEsc(p.desc) + "</description>" : "") + "<Point><coordinates>" + p.lon.toFixed(6) + "," + p.lat.toFixed(6) + ",0</coordinates></Point></Placemark>\n"; });
+    if (tr.length > 1) x += "<Placemark><name>Trajet Sylva</name><LineString><coordinates>" + tr.map(function (p) { return p[1] + "," + p[0] + ",0"; }).join(" ") + "</coordinates></LineString></Placemark>\n";
+    return { x: x + "</Document></kml>\n", n: pts.length, tr: tr.length };
+  }
+  $("#btnExportGpx").addEventListener("click", function () { var g = buildGpx(); if (!g.n && g.tr < 2) { toast("Rien à exporter"); return; } downloadFile("sylva-" + ymd(new Date()) + ".gpx", "application/gpx+xml", g.x); });
+  $("#btnExportKml").addEventListener("click", function () { var g = buildKml(); if (!g.n && g.tr < 2) { toast("Rien à exporter"); return; } downloadFile("sylva-" + ymd(new Date()) + ".kml", "application/vnd.google-earth.kml+xml", g.x); });
+
   // =====================================================================
   // ---------- Quiz de survie ----------
   // =====================================================================
@@ -2924,7 +3110,7 @@
     var w = b.getAttribute("data-learn-x");
     if (b.closest("#view-accueil")) showView("apprendre");
     learnShow(w);
-    if (w === "quiz") renderQuizHome(); else if (w === "badges") renderBadges(); else if (w === "pouls") renderPouls(); else if (w === "niveau") renderNiveau(); else if (w === "rvalue") renderRv();
+    if (w === "quiz") renderQuizHome(); else if (w === "badges") renderBadges(); else if (w === "pouls") renderPouls(); else if (w === "niveau") renderNiveau(); else if (w === "rvalue") renderRv(); else if (w === "eau") renderEau(); else if (w === "ciel") renderCiel(); else if (w === "tele") renderTele();
   });
 
   // =====================================================================

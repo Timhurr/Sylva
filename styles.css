@@ -733,3 +733,16 @@ html.eco .sig-lamp{transition:none}
 .ice-row span{font-size:12px;color:var(--muted);font-weight:700}
 .ice-row b{font-size:18px;white-space:pre-wrap}
 #iceForm textarea{font:inherit}
+
+/* Outils photo et visée */
+.eau-thumb{margin:12px 0 8px;text-align:center}
+.eau-img{max-width:100%;max-height:220px;border-radius:14px}
+.seg-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.tl-view{position:relative;border-radius:18px;overflow:hidden;background:#111;aspect-ratio:3/4;max-height:52vh;margin:8px auto;width:100%}
+.tl-view video{width:100%;height:100%;object-fit:cover;display:block}
+.tl-view.no-cam::before{content:"Caméra indisponible : vise en alignant le bord haut du téléphone";position:absolute;inset:0;display:grid;place-items:center;color:#ccc;font-size:13px;padding:20px;text-align:center}
+.tl-cross{position:absolute;left:50%;top:50%;width:60px;height:60px;margin:-30px 0 0 -30px;pointer-events:none}
+.tl-cross::before,.tl-cross::after{content:"";position:absolute;background:#ff3b1f;box-shadow:0 0 0 1px rgba(0,0,0,.5)}
+.tl-cross::before{left:29px;top:0;width:2px;height:60px}
+.tl-cross::after{top:29px;left:0;height:2px;width:60px}
+.tl-angle{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.6);color:#fff;font-weight:800;padding:4px 10px;border-radius:10px;font-size:15px}

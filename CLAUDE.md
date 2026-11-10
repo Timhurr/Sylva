@@ -176,6 +176,11 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 
 À mettre à jour **à la fin de chaque session de travail** (le plus récent en haut, quelques lignes) : ce qui a été fait, ce qui est en cours, ce que Tim doit vérifier sur son iPhone. C'est ce qui permet à une autre session de reprendre au milieu d'un chantier.
 
+### 2026-11-10 · v0.9.56
+- Ajouté dans Outils de terrain : Clarté de l'eau (photo d'une bouteille devant un trait noir, contraste et teinte → préfiltrage conseillé ; dit toujours de traiter l'eau), Ciel et soleil (photo vers le ciel, seuil d'Otsu sur le canal bleu → % de ciel ; course du soleil calculée pour le lieu et la date de la sortie), Télémètre (clinomètre : angles de visée du sommet et de la base via `deviceorientation`, caméra en fond ; distance d'un objet de hauteur connue, ou hauteur d'un arbre à distance connue avec rayon de chute). Réglages : export GPX et KML (spots, bivouac, voiture, trajet) pour ATAK, iTAK, Garmin, OsmAnd.
+- Écartés à dessein (ne pas refaire sans en reparler avec Tim) : écoute acoustique de nuit (Safari coupe le micro écran verrouillé, et une fausse alerte ou une alerte manquée est dangereuse), diffusion CoT en UDP vers ATAK (impossible depuis un navigateur : l'export KML/GPX le remplace), détecteur magnétique de métaux ou de câbles (iPhone n'expose pas le magnétomètre au web, et promettre de détecter des munitions enfouies serait dangereux).
+- À vérifier par Tim sur iPhone : autorisation caméra et capteurs du télémètre, résultats des photos d'eau et de ciel en conditions réelles, ouverture des fichiers GPX/KML.
+
 ### 2026-11-10 · v0.9.55
 - Révision complète : 366 fiches, espèces et chapitres ouverts sans erreur ; tous les écrans en jour, nuit et économie, sur iPhone SE et 13 ; aucune erreur console ; mode avion OK (243/243 gravures). Zones tactiles des liens et puces agrandies (44 px utiles). « Préparer la sortie » vérifie aussi les gravures hors ligne, demande le stockage persistant et affiche la place occupée.
 - Ajouté dans la fenêtre SOS : signal lumineux SOS en morse (blanc ou rouge, écran maintenu allumé), sifflet de détresse (3 coups à 3,15 kHz puis pause, Web Audio), « Mes infos d'urgence » (groupe sanguin, allergies, traitements, contact ; uniquement sur le téléphone, et conseil de remplir la fiche médicale iPhone).

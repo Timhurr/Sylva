@@ -228,6 +228,9 @@
           <button type="button" class="train-card" data-learn-x="pouls"><span class="tc-ico">❤️</span><b>Prendre le pouls</b><span>Minuteur guidé, ou caméra</span></button>
           <button type="button" class="train-card" data-learn-x="niveau"><span class="tc-ico">📐</span><b>Niveau et relief</b><span>Pente du sol, cuvette ou crête</span></button>
           <button type="button" class="train-card" data-learn-x="rvalue"><span class="tc-ico">🛏️</span><b>Valeur R</b><span>Ton matelas suffit-il pour la nuit ?</span></button>
+          <button type="button" class="train-card" data-learn-x="eau"><span class="tc-ico">💧</span><b>Clarté de l'eau</b><span>Faut-il la préfiltrer ?</span></button>
+          <button type="button" class="train-card" data-learn-x="ciel"><span class="tc-ico">🌤️</span><b>Ciel et soleil</b><span>Ouverture des arbres, soleil utile</span></button>
+          <button type="button" class="train-card" data-learn-x="tele"><span class="tc-ico">📏</span><b>Télémètre</b><span>Distance ou hauteur par visée</span></button>
         </div>
 
         <div class="sec-head"><h2>S'entraîner</h2></div>
@@ -248,6 +251,18 @@
     <div class="pad page" id="panelNiveau" hidden>
       <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Niveau et relief</h1></div>
       <div id="niveauBox"></div>
+    </div>
+    <div class="pad page" id="panelEau" hidden>
+      <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Clarté de l'eau</h1></div>
+      <div id="eauBox"></div>
+    </div>
+    <div class="pad page" id="panelCiel" hidden>
+      <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Ciel et soleil</h1></div>
+      <div id="cielBox"></div>
+    </div>
+    <div class="pad page" id="panelTele" hidden>
+      <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Télémètre</h1></div>
+      <div id="teleBox"></div>
     </div>
     <div class="pad page" id="panelRv" hidden>
       <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Valeur R</h1></div>
@@ -492,6 +507,11 @@
     <div class="row">
       <button type="button" class="btn" id="btnExportSpots">Copier mes spots</button>
     </div>
+    <div class="row">
+      <button type="button" class="btn" id="btnExportGpx">Exporter en GPX</button>
+      <button type="button" class="btn" id="btnExportKml">Exporter en KML</button>
+    </div>
+    <p class="tiny muted">Spots, lieu du bivouac, voiture et trajet du journal, pour ATAK, iTAK, Garmin, OsmAnd ou Google Earth.</p>
     <div class="row">
       <button type="button" class="btn btn-ghost" data-close>Fermer</button>
       <button type="submit" class="btn btn-primary">Enregistrer</button>
