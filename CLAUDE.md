@@ -200,6 +200,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 
 - **v0.9.57** : « Mon matériel » (onglet Bivouac). Catalogue `materiel.js` (26 produits, valeurs fabricant ou test avec lien source), recherche marque/modèle, bouton « Chercher en ligne », saisie manuelle (`sylva_gear`). Le matériel coché forme le groupe « Mon matériel » du sac à dos (poids total, 3 objets les plus lourds). Le calculateur de valeur R propose ses matelas (★) et ses sacs ; « Préparer la sortie » compare matelas et sac à la nuit prévue (`gearNightCheck`). Test : `tools/tests/geartest.js`.
 
+- **v0.9.58** : bouton « ± » devant chaque champ de température (le pavé numérique de l'iPhone n'a pas de « - ») : calculateur de valeur R et sacs dans « Mon matériel ». La fenêtre « Ajouter du matériel » affiche le catalogue par catégorie (puces) avant toute recherche ; la recherche montre tous les résultats, toutes catégories.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.

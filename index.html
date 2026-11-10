@@ -423,8 +423,8 @@
     <label class="field"><span class="field-label">Poids (g)</span><input type="text" inputmode="decimal" id="gPoids" autocomplete="off"></label>
     <label class="field" id="gRWrap"><span class="field-label">Valeur R</span><input type="text" inputmode="decimal" id="gR" autocomplete="off"></label>
     <div id="gBagWrap" class="row">
-      <label class="field" style="flex:1"><span class="field-label">Confort (°C)</span><input type="text" inputmode="numeric" id="gComf" autocomplete="off"></label>
-      <label class="field" style="flex:1"><span class="field-label">Limite (°C)</span><input type="text" inputmode="numeric" id="gLim" autocomplete="off"></label>
+      <label class="field" style="flex:1"><span class="field-label">Confort (°C)</span><span class="pm-wrap"><button type="button" class="pm-btn" data-pm="gComf" aria-label="Changer le signe (moins)">±</button><input type="text" inputmode="decimal" id="gComf" autocomplete="off"></span></label>
+      <label class="field" style="flex:1"><span class="field-label">Limite (°C)</span><span class="pm-wrap"><button type="button" class="pm-btn" data-pm="gLim" aria-label="Changer le signe (moins)">±</button><input type="text" inputmode="decimal" id="gLim" autocomplete="off"></span></label>
     </div>
     <p class="tiny muted" id="gSrc"></p>
     <p class="tiny muted">Vérifie les valeurs sur l'étiquette : elles changent selon la taille et l'année du modèle.</p>

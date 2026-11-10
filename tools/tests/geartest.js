@@ -35,6 +35,9 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   await pg.waitForTimeout(300);
   ok('section visible', await pg.isVisible('#btnAddGear'));
   await pg.click('#btnAddGear');
+  const br = await pg.textContent('#gSugg'); ok('browse cats', br.includes('Sac de couchage (4)') && br.includes('Réchaud (5)'), br.slice(0,120));
+  await pg.click('[data-gcatpick=rechaud]'); ok('browse rechaud', (await pg.textContent('#gSugg')).includes('PocketRocket'));
+  await pg.fill('#gSearch', 'decathlon'); ok('search all cats', (await pg.$$('#gSugg [data-gpick]')).length === 6);
   await pg.fill('#gSearch', 'xlite nxt');
   ok('suggestion', (await pg.textContent('#gSugg')).includes('NeoAir XLite NXT'));
   ok('chercher en ligne', !!(await pg.$('#gSugg a[href*="google"]')));
@@ -70,6 +73,8 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   ok('rv mes matelas', rv.includes('★'), rv);
   await pg.evaluate(() => { const s=document.querySelector('#rvBox select[data-rv-k]'); s.value=s.options[0].value; s.dispatchEvent(new Event('change',{bubbles:true})); const b=document.querySelector('#rvBag'); if(b){b.value=b.options[1].value; b.dispatchEvent(new Event('change',{bubbles:true}));} });
   const rr = await pg.evaluate(() => [document.querySelector('#rvComf') && document.querySelector('#rvComf').value, document.querySelector('#rvBox').textContent.slice(0,0)+ (document.querySelector('#rvRes')||document.querySelector('#rvBox .rv-res')||{}).textContent]);
+  await pg.evaluate(()=>{const i=document.querySelector('#rvT'); i.value='5'; i.dispatchEvent(new Event('change',{bubbles:true})); document.querySelector('[data-pm=rvT]').click();});
+  ok('minus rvT', await pg.inputValue('#rvT') === '-5' && JSON.parse(await pg.evaluate(()=>localStorage.getItem('sylva_rvalue'))).t === -5);
   ok('rv bag fill', rr[0] === '0', JSON.stringify(rr).slice(0,200));
   const gn = await pg.evaluate(() => { localStorage.setItem('sylva_meteo_trip', JSON.stringify({data:{daily:{temperature_2m_min:[-8]}}})); return 1; });
   console.log(errs.join('\n') || 'no errors');

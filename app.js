@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.57";
+  var VERSION = "0.9.58";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -2919,6 +2919,15 @@
   $("#btnExportKml").addEventListener("click", function () { var g = buildKml(); if (!g.n && g.tr < 2) { toast("Rien à exporter"); return; } downloadFile("sylva-" + ymd(new Date()) + ".kml", "application/vnd.google-earth.kml+xml", g.x); });
 
 
+  // Bouton ± : le pavé numérique de l'iPhone n'a pas de touche « - »
+  document.addEventListener("click", function (e) {
+    var b = e.target.closest("[data-pm]"); if (!b) return;
+    var inp = document.getElementById(b.dataset.pm); if (!inp) return;
+    var v = String(inp.value).trim();
+    inp.value = v.charAt(0) === "-" ? v.slice(1) : "-" + v;
+    inp.dispatchEvent(new Event("input", { bubbles: true })); inp.dispatchEvent(new Event("change", { bubbles: true }));
+    if (v === "" || v === "-") inp.focus();
+  });
   // =====================================================================
   // ---------- Mon matériel : inventaire, catalogue, poids du sac ----------
   // =====================================================================
@@ -2978,18 +2987,32 @@
     $("#btnGearDel").hidden = !x; $("#gSugg").innerHTML = ""; $("#gSearch").value = "";
     gearFormFill(x || { cat: "matelas", take: true });
     $("#gSearchWrap").hidden = !!x;
+    if (!x) gearBrowse();
     openModal("#modalGear");
   }
   $("#btnAddGear").addEventListener("click", function () { openGear(null); });
-  $("#gCat").addEventListener("change", gearFields);
+  $("#gCat").addEventListener("change", function () { gearFields(); if (!gearEdit && !$("#gSearch").value.trim()) gearBrowse(); });
+  function gearItemBtn(p) { return '<button type="button" class="place-item" data-gpick="' + GCAT.indexOf(p) + '"><b>' + esc(p.nom) + "</b><span>" + esc(gearSub(p)) + "</span></button>"; }
+  function gearOnline(q, n) {
+    return '<div class="gear-online"><span class="tiny muted">' + (n ? "Pas dans la liste ?" : "Pas dans le catalogue de Sylva.") + "</span>" +
+      (q ? ' <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/search?q=' + encodeURIComponent(q + " fiche technique poids") + '">Chercher en ligne</a>' : "") +
+      ' <button type="button" class="btn" data-gmanual>Saisir à la main</button></div>';
+  }
+  // Sans recherche : catalogue de la catégorie choisie
+  function gearBrowse() {
+    var c = $("#gCat").value, list = GCAT.filter(function (p) { return p.cat === c; });
+    var chips = Object.keys(GEAR_CATS).map(function (k) { var n = GCAT.filter(function (p) { return p.cat === k; }).length; return n ? '<button type="button" class="chip' + (k === c ? " on" : "") + '" data-gcatpick="' + k + '">' + esc(GEAR_CATS[k]) + " (" + n + ")</button>" : ""; }).join("");
+    $("#gSugg").innerHTML = '<div class="chips gear-chips">' + chips + "</div>" + (list.length ? '<div class="gear-scroll">' + list.map(gearItemBtn).join("") + "</div>" : '<p class="tiny muted">Rien dans le catalogue pour cette catégorie : tape la marque et le modèle, ou saisis à la main.</p>') + gearOnline("", list.length);
+  }
   $("#gSearch").addEventListener("input", function () {
-    var q = norm(this.value.trim()); if (q.length < 2) { $("#gSugg").innerHTML = ""; return; }
+    var q = norm(this.value.trim()); if (q.length < 2) { gearBrowse(); return; }
     var words = q.split(/\s+/);
-    var hits = GCAT.filter(function (p) { var n = norm(p.nom); return words.every(function (w) { return n.indexOf(w) !== -1; }); }).slice(0, 6);
-    $("#gSugg").innerHTML = hits.map(function (p, i) { return '<button type="button" class="place-item" data-gpick="' + GCAT.indexOf(p) + '"><b>' + esc(p.nom) + "</b><span>" + esc(gearSub(p)) + "</span></button>"; }).join("") +
-      '<div class="gear-online"><span class="tiny muted">' + (hits.length ? "Pas dans la liste ?" : "Pas dans le catalogue de Sylva.") + '</span> <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/search?q=' + encodeURIComponent(this.value.trim() + " fiche technique poids") + '">Chercher en ligne</a> <button type="button" class="btn" data-gmanual>Saisir à la main</button></div>';
+    var hits = GCAT.filter(function (p) { var n = norm(p.nom + " " + (GEAR_CATS[p.cat] || "")); return words.every(function (w) { return n.indexOf(w) !== -1; }); });
+    $("#gSugg").innerHTML = (hits.length ? '<div class="gear-scroll">' + hits.map(gearItemBtn).join("") + "</div>" : "") + gearOnline(this.value.trim(), hits.length);
   });
   $("#gSugg").addEventListener("click", function (e) {
+    var cp = e.target.closest("[data-gcatpick]");
+    if (cp) { $("#gCat").value = cp.dataset.gcatpick; gearFields(); gearBrowse(); return; }
     var b = e.target.closest("[data-gpick]");
     if (b) { var p = GCAT[+b.dataset.gpick]; gearFormFill(p); $("#gSugg").innerHTML = ""; $("#gSearch").value = p.nom; return; }
     if (e.target.closest("[data-gmanual]")) { $("#gNom").value = $("#gSearch").value.trim(); $("#gSugg").innerHTML = ""; $("#gNom").focus(); }
@@ -3446,13 +3469,13 @@
         (preset && preset[2] == null ? '<input type="text" inputmode="decimal" data-rv-r="' + i + '" value="' + (p.r || "") + '" placeholder="R" aria-label="Valeur R">' : "") +
         (d.pads.length > 1 ? '<button type="button" class="icon-mini danger" data-rv-del="' + i + '" aria-label="Retirer"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' : "") + "</div>";
     }).join("") + '<button type="button" class="link-btn" data-rv-add>+ Ajouter une couche</button></div>';
-    h += '<div class="card"><div class="rv-k">La nuit</div><label class="rv-row"><span>Température minimale</span><span><input type="number" inputmode="numeric" step="1" id="rvT" value="' + d.t + '"> °C</span></label>' +
+    h += '<div class="card"><div class="rv-k">La nuit</div><label class="rv-row"><span>Température minimale</span><span><button type="button" class="pm-btn" data-pm="rvT" aria-label="Changer le signe (moins)">±</button><input type="text" inputmode="decimal" id="rvT" value="' + d.t + '"> °C</span></label>' +
       '<p class="tiny muted" style="margin:0 0 8px">' + (d.auto && n.src ? "D'après " + n.src + "." : "Saisie à la main.") + (n.src ? ' <button type="button" class="link-btn" data-rv-auto>Reprendre la météo</button>' : "") + "</p>" +
       '<label class="check"><input type="checkbox" id="rvFri"' + (d.frileux ? " checked" : "") + '><span>Je suis frileux (+1)</span></label>' +
       '<label class="check"><input type="checkbox" id="rvWet"' + (d.mouille ? " checked" : "") + '><span>Sol mouillé ou neige (+1)</span></label></div>';
     var myBags = getGear().filter(function (x) { return x.cat === "sac"; });
-    h += '<div class="card"><div class="rv-k">Mon sac de couchage (facultatif)</div>' + (myBags.length ? '<div class="rv-pad"><select id="rvBag"><option value="">Choisir dans mon matériel…</option>' + myBags.map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.nom) + "</option>"; }).join("") + "</select></div>" : "") + '<label class="rv-row"><span>Température confort</span><span><input type="number" inputmode="numeric" id="rvComf" value="' + esc(d.comf) + '"> °C</span></label>' +
-      '<label class="rv-row"><span>Température limite</span><span><input type="number" inputmode="numeric" id="rvLim" value="' + esc(d.lim) + '"> °C</span></label><p class="tiny muted" style="margin:0">Inscrites sur l\'étiquette (norme EN 13537 ou ISO 23537).</p></div>';
+    h += '<div class="card"><div class="rv-k">Mon sac de couchage (facultatif)</div>' + (myBags.length ? '<div class="rv-pad"><select id="rvBag"><option value="">Choisir dans mon matériel…</option>' + myBags.map(function (x) { return '<option value="' + esc(x.id) + '">' + esc(x.nom) + "</option>"; }).join("") + "</select></div>" : "") + '<label class="rv-row"><span>Température confort</span><span><button type="button" class="pm-btn" data-pm="rvComf" aria-label="Changer le signe (moins)">±</button><input type="text" inputmode="decimal" id="rvComf" value="' + esc(d.comf) + '"> °C</span></label>' +
+      '<label class="rv-row"><span>Température limite</span><span><button type="button" class="pm-btn" data-pm="rvLim" aria-label="Changer le signe (moins)">±</button><input type="text" inputmode="decimal" id="rvLim" value="' + esc(d.lim) + '"> °C</span></label><p class="tiny muted" style="margin:0">Inscrites sur l\'étiquette (norme EN 13537 ou ISO 23537).</p></div>';
     h += '<div id="rvRes"></div>';
     $("#rvBox").innerHTML = h; rvResult();
   }
@@ -3488,8 +3511,8 @@
   $("#rvBox").addEventListener("input", function (e) {
     var d = getRv(), el = e.target;
     if (el.dataset.rvR != null) d.pads[+el.dataset.rvR].r = parseFloat(String(el.value).replace(",", ".")) || 0;
-    else if (el.id === "rvT") { if (el.value === "" || isNaN(+el.value)) return; d.t = Math.round(+el.value); d.auto = false; }
-    else if (el.id === "rvComf") d.comf = el.value; else if (el.id === "rvLim") d.lim = el.value; else return;
+    else if (el.id === "rvT") { var tv = String(el.value).replace(",", ".").trim(); if (tv === "" || isNaN(+tv)) return; d.t = Math.round(+tv); d.auto = false; }
+    else if (el.id === "rvComf") d.comf = String(numOrEmpty(el.value)); else if (el.id === "rvLim") d.lim = String(numOrEmpty(el.value)); else return;
     rvSave(d);
   });
   $("#rvBox").addEventListener("click", function (e) {
