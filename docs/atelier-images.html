@@ -1,0 +1,406 @@
+<title>Atelier d'images Sylva</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Manrope:wght@500;600;700;800&display=swap">
+<style>
+/* Layout : colonne d'atelier — mode d'emploi en haut, puis la liste des images à produire, groupée par thème */
+:root{
+  --bg:#F3EDE0; --paper:#FBF7EE; --ink:#2B2219; --muted:#6E6153; --line:#E1D6C2;
+  --forest:#1F5A3D; --forest-soft:#E1ECDF; --ochre:#B7791F; --ochre-soft:#F4E4C4; --rust:#A63E26; --rust-soft:#F6DCD3;
+  --code:#F1E9D8;
+  --display:"IM Fell English", Georgia, "Times New Roman", serif;
+  --body:Manrope, system-ui, -apple-system, sans-serif;
+  --mono:ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#17130E; --paper:#211B14; --ink:#EFE6D6; --muted:#A99A86; --line:#382E23;
+  --forest:#8CCB9E; --forest-soft:#1E2B22; --ochre:#E0A84E; --ochre-soft:#33281A; --rust:#E58A72; --rust-soft:#35201A; --code:#2A2219; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#17130E; --paper:#211B14; --ink:#EFE6D6; --muted:#A99A86; --line:#382E23;
+  --forest:#8CCB9E; --forest-soft:#1E2B22; --ochre:#E0A84E; --ochre-soft:#33281A; --rust:#E58A72; --rust-soft:#35201A; --code:#2A2219; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.5}
+.wrap{max-width:860px;margin:0 auto;padding-block:36px 80px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));display:flex;flex-direction:column;gap:28px}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(34px,6vw,52px);line-height:1.05;margin:0;text-wrap:balance}
+h2{font-family:var(--display);font-weight:400;font-size:28px;margin:0;text-wrap:balance}
+.lead{color:var(--muted);max-width:62ch;margin:8px 0 0;font-size:16px}
+.eyebrow{font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--ochre)}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;counter-reset:s;margin:0;padding:0;list-style:none}
+.steps li{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:12px 14px;font-size:14px;min-width:0}
+.steps li::before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--paper);font-weight:800;font-size:13px;margin-bottom:8px}
+.steps b{display:block}
+.block{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.block-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+pre{margin:0;background:var(--code);border-radius:12px;padding:14px;font-family:var(--mono);font-size:12.5px;line-height:1.55;white-space:pre-wrap;overflow-x:auto;color:var(--ink)}
+.btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:12px;border:0;background:var(--forest);color:var(--paper);font:800 14px var(--body);cursor:pointer;white-space:nowrap}
+.btn.soft{background:var(--forest-soft);color:var(--forest)}
+.btn:focus-visible,.chip:focus-visible,.done:focus-visible{outline:3px solid var(--ochre);outline-offset:2px}
+.bar{position:sticky;top:env(safe-area-inset-top, 0px);z-index:5;background:var(--bg);padding:10px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top, 0px);z-index:10;background:var(--bg)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{height:36px;padding:0 14px;border-radius:99px;border:1px solid var(--line);background:var(--paper);color:var(--ink);font:700 13px var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.count{margin-left:auto;font-weight:800;font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
+.meter{height:6px;border-radius:6px;background:var(--line);overflow:hidden;width:120px}
+.meter span{display:block;height:100%;background:var(--forest);width:0;transition:width .2s}
+.group{display:flex;flex-direction:column;gap:10px}
+.group h2{display:flex;align-items:baseline;gap:10px}
+.group h2 small{font-family:var(--body);font-size:13px;font-weight:700;color:var(--muted)}
+.item{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:14px;display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:start}
+.item.is-done{opacity:.55}
+.done{width:26px;height:26px;margin:2px 0 0;accent-color:var(--forest);cursor:pointer}
+.it-main{min-width:0;display:flex;flex-direction:column;gap:4px}
+.it-title{font-weight:800;font-size:16px}
+.it-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.file{font-family:var(--mono);font-size:12px;background:var(--code);padding:2px 8px;border-radius:6px}
+.tag{font-size:11px;font-weight:800;padding:2px 8px;border-radius:99px;letter-spacing:.03em}
+.tag.prio{background:var(--rust-soft);color:var(--rust)}
+.tag.check{background:var(--ochre-soft);color:var(--ochre)}
+.it-sub{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+details{font-size:13px}
+details summary{cursor:pointer;color:var(--forest);font-weight:700}
+details pre{margin-top:8px}
+.copied{background:var(--ochre);color:var(--paper)}
+.note{background:var(--ochre-soft);color:var(--ink);border-radius:14px;padding:12px 14px;font-size:14px}
+@media (max-width:560px){ .item{grid-template-columns:auto 1fr} .item .btn{grid-column:1 / -1;justify-content:center} .count{margin-left:0} }
+@media (prefers-reduced-motion:reduce){ *{transition:none!important} }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Sylva · production des illustrations</div>
+    <h1>Atelier d'images</h1>
+    <p class="lead">Chaque image a un prompt prêt à copier pour ChatGPT et un nom de fichier. Coche une image quand elle est faite : tes coches restent dans ce navigateur.</p>
+  </header>
+
+  <ol class="steps" aria-label="Mode d'emploi">
+    <li><b>Ta référence</b>Garde ta meilleure image PLS : c'est ton « image de style » pour toutes les autres.</li>
+    <li><b>Joins-la</b>Dans ChatGPT, joins l'image de style, puis colle le prompt copié ici.</li>
+    <li><b>Vérifie</b>Contrôle le geste. Si un détail est faux, demande la correction précise.</li>
+    <li><b>Renomme</b>Télécharge l'image et donne-lui le nom indiqué, par exemple <span class="file">ps_pls.png</span>.</li>
+    <li><b>Envoie</b>Envoie-moi les images par lots de 10 dans la conversation : je les intègre à l'appli.</li>
+  </ol>
+
+  <section class="block" aria-labelledby="styleTitle">
+    <div class="block-head"><h2 id="styleTitle">Le style commun</h2><button class="btn soft" type="button" id="copyStyle">Copier le style seul</button></div>
+    <pre id="styleText"></pre>
+    <p class="it-sub" style="margin:0">Chaque prompt ci-dessous contient déjà ce style. Tu n'as besoin de ce bloc que pour créer une image qui n'est pas dans la liste.</p>
+  </section>
+
+  <div class="bar" role="group" aria-label="Filtres">
+    <div class="chips">
+      <button class="chip" type="button" data-f="prio" aria-pressed="true">Avant le 12 nov.</button>
+      <button class="chip" type="button" data-f="todo" aria-pressed="false">À faire</button>
+      <button class="chip" type="button" data-f="all" aria-pressed="false">Toutes</button>
+    </div>
+    <span class="count" id="count">0 / 0</span>
+    <span class="meter" aria-hidden="true"><span id="meter"></span></span>
+  </div>
+
+  <div id="list"></div>
+
+  <section class="block" aria-labelledby="knotTitle">
+    <h2 id="knotTitle">Nœuds : phase 2</h2>
+    <p class="it-sub" style="margin:0;font-size:14px">Les IA inventent les croisements des nœuds. La méthode fiable : tu fais le nœud toi-même avec une vraie corde, tu photographies chaque étape, et ChatGPT redessine ta photo dans le style gravure. Le nœud est exact, et l'image t'appartient.</p>
+    <ol class="steps">
+      <li><b>Corde</b>Une corde de 6 à 10 mm, d'une couleur qui ressort, sur un fond uni (table en bois, drap clair). Pour un nœud qui joint deux cordes, prends deux couleurs.</li>
+      <li><b>Photo</b>Prise du dessus, bien éclairée, sans ombre, une photo par étape. Les mains peuvent tenir la corde.</li>
+      <li><b>ChatGPT</b>Joins ta photo, puis ton image de style, et colle le prompt ci-dessous.</li>
+      <li><b>Vérifie</b>Compare chaque croisement (dessus / dessous) avec ta photo avant de me l'envoyer.</li>
+    </ol>
+    <div class="block-head"><b>Prompt pour redessiner une photo de nœud</b><button class="btn" type="button" id="copyKnot">Copier le prompt</button></div>
+    <pre id="knotPrompt"></pre>
+    <div id="knotList"></div>
+  </section>
+</div>
+
+<script>
+var STYLE = "Use the attached image ONLY as a style reference: same hand-drawn pen-and-ink engraving look, same fine cross-hatching, same soft muted watercolor wash, same aged parchment paper texture and warm sepia tones. Do not copy its subject, layout or text.\n\nCreate a new illustration for a survival field guide set in a temperate European forest (Belgian Ardennes).";
+var END = "\n\nONLY ONE PERSON in the whole image: a lone hiker alone in the wilderness, helping himself. No second person, no companion, no other human anywhere in the scene.\nRealistic proportions, technically accurate.\nComposition: subject centered, plenty of empty parchment around it, no frame.\nAbsolutely NO text, NO letters, NO numbers, NO labels, NO title.\nLandscape format 4:3, high detail.";
+// [fichier, groupe, titre, sujet, prioritaire, à vérifier de près]
+var ITEMS = [
+ ["ps_pls","Premiers secours","Position latérale de sécurité (PLS)","An adult hiker lying in the first-aid recovery position on forest ground with a few dead leaves, seen from above at a 3/4 angle. Exact posture (very important, medically accurate): lying on their side, facing the viewer; head tilted slightly back, mouth pointing toward the ground; the back of the top hand placed under the cheek; the bottom arm extended at a right angle to the body, elbow bent, palm facing up; the top leg bent with the hip and knee at right angles and the knee resting on the ground in front of the body; the bottom leg straight. Outdoor clothing in muted colors (faded green jacket, brown trousers, hiking boots). Calm and respectful.",1,1],
+ ["ps_saignement","Premiers secours","Plaie qui saigne","First aid: a hiker pressing a folded clean cloth firmly with the flat of one hand on a wound on his own forearm, the injured arm held raised, an open first aid kit on the ground beside them.",1,1],
+ ["ps_entorse","Premiers secours","Entorse de la cheville","A hiker sitting on the ground with the injured ankle raised and resting on a backpack, a cold wet cloth wrapped around the ankle, the boot removed beside it.",1,0],
+ ["ps_ampoule","Premiers secours","Ampoules aux pieds","A hiker sitting on a rock with one bare foot, carefully applying a blister plaster on the heel, boots and wool socks set beside them.",1,0],
+ ["ps_tique","Premiers secours","Morsure de tique","Close-up of a small tick-removal hook (tick twister) sliding under a tick attached to the skin of a leg, removing it with a gentle twisting motion. Scientific engraving detail of the tick.",1,1],
+ ["ps_brulure","Premiers secours","Brûlure","A hiker pouring cool water from a water bottle over his own burnt hand for a long time, near a campfire.",0,0],
+ ["ps_intox","Premiers secours","Intoxication (plante, champignon)","A hiker phoning emergency services, holding a small bag containing the leaves and mushroom that were eaten, kept as a sample for identification.",0,0],
+ ["ps_morsure","Premiers secours","Morsure de serpent","A hiker sitting still and calm on the ground, the bitten lower leg kept motionless and lower than the heart, the boot of the bitten leg removed and placed beside him; a European adder (Vipera berus) slithering away in the grass in the background.",0,1],
+ ["ps_piqure","Premiers secours","Piqûre de guêpe, d'abeille ou de frelon","Close-up of a forearm with a small red insect sting mark, a hand pressing a cold wet cloth on it, a wasp flying away.",0,0],
+ ["ps_choc","Premiers secours","État de choc","A pale injured hiker lying on their back on an insulating sleeping pad, legs slightly raised on a backpack, covered with a jacket.",0,1],
+ ["ps_attelle","Premiers secours","Immobiliser un membre (attelle de fortune)","Improvised splint on a lower leg: two straight sticks placed on each side of the leg, padded with folded clothing, tied with strips of fabric above and below the injury, the hiker himself tying the last knot. The foot stays free.",0,1],
+ ["ps_brancard","Premiers secours","Brancard de fortune","Improvised stretcher made of two long sturdy poles threaded through the sleeves of two zipped jackets, A lone hiker dragging an injured load on an improvised travois: two long poles in a V shape joined by cross sticks and a tarp, the hiker pulling it by the tip along a forest path, seen from the side, the load being a large bundle of gear (no second person).",0,1],
+ ["ps_laisser","Premiers secours","Laisser une victime pour chercher les secours","An injured hiker resting in a sheltered spot under trees, on a sleeping pad, wrapped in warm layers and a survival blanket, a water bottle and a whistle within reach, a brightly colored backpack hung on a branch as a marker, the hiker blowing a whistle to signal.",0,0],
+
+ ["ps_garrot","Premiers secours","Garrot de fortune","Improvised tourniquet on a hiker's upper arm: a wide folded cloth band (5 cm wide) placed a hand's width above a forearm wound, a short sturdy stick tied into the knot and twisted to tighten, the stick secured under the band so it cannot unwind. The wound below is no longer bleeding. Calm, instructive, no gore.",0,1],
+ ["ps_plaie_soin","Premiers secours","Soigner une plaie sur plusieurs jours","A hiker sitting on a log rinsing a cut on their forearm with a strong jet of clean water squeezed from a water bottle with a pierced cap, an open first aid kit with adhesive wound-closure strips and clean dressings beside them.",0,0],
+ ["ps_surveiller","Premiers secours","Surveiller un blessé dans la durée","At dusk under a tarp shelter, an injured hiker sitting on a sleeping pad, wrapped in a blanket, taking his own pulse with two fingers on his wrist, a small notebook, a pencil and a watch beside him.",0,0],
+ ["eau","Eau","Rendre l'eau potable","A small metal pot of water at a rolling boil on a small campfire, steam rising, a clear forest stream in the background and a filled water bottle ready.",1,0],
+ ["filtre","Eau","Filtre improvisé (sable et charbon)","An improvised water filter: a cut plastic bottle hanging upside down from a branch, drawn as a cross-section so the layers are visible from top to bottom: gravel, sand, crushed charcoal, fine sand, a piece of cloth at the neck; water dripping from the neck into a metal cup below.",0,1],
+ ["pluie","Eau","Récupérer l'eau de pluie","A tarp stretched between trees, sloping toward one lower corner, rainwater running off that corner into a cooking pot placed on the ground.",0,0],
+ ["transpiration","Eau","Sac de transpiration","A clear plastic bag tied tightly around a leafy branch of a tree in the sun, condensation droplets inside and a small pool of water collected in the lowest corner of the bag.",0,0],
+ ["rosee","Eau","Collecter la rosée","Early morning in a misty meadow: a hiker walking through tall dewy grass with a cloth tied around the lower legs to soak up the dew, and a close-up of hands wringing the wet cloth into a metal cup.",0,0],
+ ["alambic","Eau","Alambic solaire","Cross-section of a solar still: a hole dug in the ground, a cup in the center, green plants around it, covered with a clear plastic sheet held by stones, a small stone in the middle making the sheet dip above the cup, droplets running down into the cup.",0,1],
+ ["pierres_chaudes","Eau","Faire bouillir sans casserole","Hot stones being moved with two sticks from a campfire into a hollowed wooden container (or a bark container) full of water, steam rising.",0,0],
+
+ ["feu","Feu","Préparer son feu","Fire preparation laid out on a piece of bark next to a stone fire ring, three neat piles from left to right: a ball of dry tinder (birch bark curls, dry grass), a bundle of matchstick-thin twigs, a stack of thumb-thick dry sticks.",1,0],
+ ["tipi","Feu","Feu en tipi","A teepee fire lay inside a ring of stones: thin dry sticks leaning together in a cone over a tinder bundle, an opening on one side, a small flame starting at the base inside the cone.",1,0],
+ ["cabane","Feu","Feu en cabane (rondins croisés)","A log cabin fire lay inside a stone ring: sticks stacked in alternating crossed layers like a small square tower, tinder and kindling in the center, burning well.",0,0],
+ ["ferro","Feu","Allumer au ferrocérium","Close-up of hands striking a ferrocerium rod with the spine of a knife, a shower of bright sparks landing on a nest of fine birch bark shavings on the ground.",1,0],
+ ["feupluie","Feu","Faire du feu sous la pluie","Lighting a fire in the rain under a small tarp: a platform of dry sticks raised off the wet ground, feather sticks and birch bark, a small flame starting, raindrops falling around the tarp.",1,0],
+ ["essences_bois","Feu","Choisir son bois de chauffe","A neat row of split firewood logs from different European trees laid side by side on the ground (oak, beech, ash, birch, hazel, pine), each with its distinctive bark clearly drawn, like a naturalist comparison plate.",1,0],
+ ["feu_appentis","Feu","Feu en appentis","A lean-to fire lay: a thick log lying on the ground as a windbreak, thin dry sticks leaning against it over a tinder bundle, a small flame, smoke drifting away showing the wind direction.",0,0],
+ ["feu_croix","Feu","Feu sur tranchée en croix","A fire built over two shallow trenches dug in the ground crossing each other in an X, the fire lay placed over the center so air can flow underneath, small flames.",0,0],
+ ["feu_pyramide","Feu","Feu pyramide (toute la nuit)","An upside-down pyramid fire: layers of logs stacked crosswise, the biggest at the bottom and smaller ones toward the top, a small fire burning on the top layer.",0,0],
+ ["feu_dakota","Feu","Trou de feu dakota","Cross-section of a Dakota fire hole: two holes dug side by side in the ground and connected by a tunnel at the bottom, a small fire in the main hole, air entering through the side hole, a pot resting on top.",0,1],
+ ["reflecteur","Feu","Mur réflecteur","A campfire with a reflector wall of stacked logs held by stakes behind it, a hiker sitting on the other side of the fire, warmed by the reflected heat, in front of a tarp shelter at dusk.",0,0],
+ ["arc_feu","Feu","Arc à feu (archet et foret)","Bow drill in use: a person kneeling, one foot holding a flat wooden fireboard, a vertical wooden spindle turned by a bow with a cord wrapped once around it, the other hand pressing a bearing block on top, smoke at the base, a notch in the board with a leaf underneath to catch the ember.",0,1],
+ ["tissu_charbonne","Feu","Tissu charbonné et amadouvier","Making char cloth: a small metal tin with a tiny hole in the lid sitting in campfire coals, a thin jet of smoke; beside it squares of black charred cotton, and a hoof-shaped tinder fungus (Fomes fomentarius) growing on a birch trunk.",0,0],
+
+ ["bache","Abri","Abri en A avec une bâche","A-frame tarp shelter: a rope ridgeline tied tight between two trees, a tarp draped over it in an A shape, the edges staked to the ground, a sleeping pad inside, the closed side facing the wind.",1,0],
+ ["abri","Abri","Choisir son emplacement","A good campsite in a forest: flat, slightly raised ground far from the river bank, no dead branches overhead, sheltered from the wind by bushes, a small tarp shelter set up there. Wide view of the surroundings.",1,0],
+ ["froid","Abri","Prévenir l'hypothermie","A hiker at dusk with frost on the ground, wearing warm layers, a hat and gloves, sitting on an insulating sleeping pad and drinking a hot drink by a small fire.",1,0],
+ ["cold","Abri","La règle COLD pour rester au chaud","A hiker walking uphill opening the jacket zipper to avoid sweating, the clothing layers visible (wool base layer, fleece, rain jacket), breath visible in the cold air.",1,0],
+ ["nuit_sans_duvet","Abri","Passer la nuit sans sac de couchage","A person resting at night in a small debris shelter, lying on a thick bed of dry leaves and spruce boughs that insulates them from the ground, covered with more leaves, moonlight.",1,0],
+ ["appentis","Abri","Appentis en branchages","A lean-to shelter: a horizontal pole tied between two trees, many long branches leaning against it at an angle on one side, covered with leafy boughs and dead leaves, a small fire in front of the open side.",0,0],
+ ["debris","Abri","Hutte de débris","A debris hut: a long ridge pole resting on a forked stick at the front and on the ground at the back, ribs of sticks on both sides, covered with a very thick layer of dry leaves, a small entrance at the front, just big enough for one person.",0,0],
+ ["chaleur","Abri","Se protéger de la chaleur","A hiker resting in the shade under a tarp stretched high as a sun shelter on a hot summer day, wearing a hat, drinking water.",0,0],
+ ["ligne_faitiere","Abri","Tendre une ligne faîtière","A hiker tightening a rope ridgeline tied between two healthy trees about one meter above the ground, pulling the line taut through a loop (trucker's hitch), a folded tarp waiting on the ground.",0,0],
+ ["goutte_eau","Abri","Empêcher l'eau de couler dans l'abri","Close-up in the rain of a taut ridgeline entering under a tarp, a short piece of string tied on the line just before the tarp edge hanging down, raindrops running along the line and dripping off the end of the string onto the ground outside.",0,0],
+ ["appentis_bache","Abri","Appentis à la bâche","A tarp lean-to: one edge tied along a ridgeline at chest height between two trees, the other edge sloping down and staked to the ground on the windward side, a sleeping pad and bag at the back, the open side facing away from the wind.",0,0],
+ ["soc_charrue","Abri","Bâche en soc de charrue","A square tarp pitched as a plow-point shelter: one corner tied to a tree trunk at about 1.2 m, the opposite corner and the two side corners staked tight to the ground, forming a low triangular wind shelter, a hiker crawling inside head first toward the tree.",0,0],
+ ["bache_tube","Abri","Abri en A avec plancher","A low A-frame tarp shelter on a ridgeline one meter high, the two bottom edges of the tarp folded inward underneath to form an integrated floor, a backpack holding the folded edges, wet forest ground around it.",0,0],
+ ["abri_poncho","Abri","Abri avec un poncho","A rain poncho used as a small emergency shelter: stretched over a cord tied between two trees at knee height, its corners tied to roots and sticks, the hood tied closed, a hiker lying underneath on a bed of dry leaves.",0,0],
+ ["bache_tempete","Abri","Monter sa bâche sous la pluie et le vent","In heavy rain and wind, a hiker in a hooded rain jacket staking down the windward edge of a very low A-frame tarp, stakes driven at 45 degrees, a second stake doubling one corner, trees bending in the wind in the background.",0,0],
+ ["ancrages","Abri","Sardines et ancrages de fortune","Like a naturalist plate, several improvised tarp anchors side by side: a carved wooden stake with a notch at an angle, a cord tied around a large stone, a cord around a tree root, and a cross-section of a stick buried horizontally in sand with the cord tied in its middle.",0,1],
+ ["hamac","Abri","Dormir en hamac","A camping hammock hung between two trees with wide tree straps at a 30 degree angle, a hiker lying diagonally inside on a sleeping pad, a tarp stretched on a higher ridgeline above it, autumn forest.",0,0],
+ ["abri_conique","Abri","Abri conique en perches","A conical shelter made of dead poles: three poles lashed at the top as a tripod with many more poles leaning around, covered from bottom to top with dead bark slabs and a thick layer of dead leaves, a narrow low entrance.",0,0],
+ ["abri_chablis","Abri","S'abriter contre un arbre déraciné","A large fallen tree lying flat on the forest floor with its big root plate standing up like a wall, a lean-to of dead poles and dead branches built against the sheltered side of the trunk, a hiker resting inside on dry leaves.",0,0],
+ ["abri_rocher","Abri","Dormir sous un surplomb rocheux","A hiker inspecting the ceiling of a rock overhang at the foot of a limestone cliff, a sleeping pad on dry ground under the overhang, a tarp closing the front against the wind, no fire under the rock.",0,0],
+ ["abri_neige","Abri","Abri dans la neige","Cross-section of a snow trench shelter: a body-length trench dug in deep snow, covered with dead poles, a tarp and a layer of snow, a hiker lying inside on a sleeping pad and branches, a small ventilation hole in the roof, a snowy spruce forest around.",0,1],
+ ["dangers_camp","Abri","Repérer les dangers du camp","A hiker standing in a forest clearing looking up at a large dead branch hanging above a possible campsite, with around him an anthill, a dry stream bed and wild boar rooting marks on the ground, a better flat spot visible a bit higher up.",0,0],
+ ["plan_camp","Abri","Organiser son camp","A well organized bivouac seen from slightly above: a tarp shelter, a cooking area a few meters downwind with a small stove, a food bag hanging from a branch at a distance, a water bottle and a headlamp by the sleeping bag, a small stream further away.",0,0],
+ ["nourriture_animaux","Abri","Protéger sa nourriture des animaux","A hiker hoisting a food bag up to a high tree branch with a cord thrown over it, the other end being tied to a nearby trunk, at a distance from his tarp shelter, a fox watching curiously from the bushes.",0,0],
+ ["nuit_chaude","Abri","Bien dormir au chaud","A hiker in a sleeping bag under a tarp at night, wearing a wool hat, his nose and mouth outside the hood, sliding a metal water bottle wrapped in a sock into the sleeping bag, his backpack under his feet, frost on the ground.",0,0],
+ ["condensation","Abri","Gérer l'humidité et la condensation","Early misty morning, a hiker wiping water droplets from the inside of a tarp with a cloth, his sleeping bag turned inside out drying over a rope in the first sun rays.",0,0],
+ ["camp_pluie","Abri","Installer le camp sous la pluie","In the rain, a hiker under a freshly pitched tarp unpacking a dry bag, changing into dry clothes, a sleeping pad already laid on a groundsheet, his wet jacket rolled aside.",0,0],
+
+ ["orientation","Orientation","S'orienter sans réseau","A hiker on a forest trail checking a paper topographic map with a baseplate compass laid on it, the sun low in the sky.",1,0],
+ ["baton","Orientation","Méthode du bâton et de l'ombre","Shadow-stick method on flat ground: a straight stick planted vertically, two small stones marking the tip of its shadow at two different moments, a straight stick laid on the ground joining the two stones.",0,1],
+ ["polaire","Orientation","Trouver le nord la nuit","Night sky above a dark forest silhouette, the Big Dipper constellation clearly drawn, a faint dotted guide line extended from its two front stars up to the North Star.",0,1],
+
+ ["urgence","Secours","Urgence et secours","A hiker on a small hilltop holding a phone up to search for signal, a whistle and a headlamp around the neck, a backpack beside them.",1,0],
+ ["signaux","Secours","Signaux de détresse","Distress signals in a forest clearing seen from slightly above: three smoky fires arranged in a triangle and a brightly colored tarp spread flat on the grass.",1,0],
+ ["miroir","Secours","Miroir de signalisation","Close-up of a hand holding a small signal mirror toward the sun, aiming the reflection through the V of the other hand's fingers toward a distant helicopter above the forest.",0,0],
+ ["solair","Secours","Codes sol-air internationaux","Large geometric symbols made of logs and stones laid out on a grassy clearing, seen from above: a large X and a single long straight line, a small helicopter in the sky.",0,0],
+
+ ["riviere","Déplacement","Traverser un cours d'eau","A hiker crossing a shallow river in knee-deep water, facing upstream, moving sideways, leaning on a sturdy stick as a third support, backpack hip belt unbuckled, boots on.",1,0],
+ ["pas","Déplacement","Mesurer une distance en comptant ses pas","A hiker walking along a forest track, sliding a bead on a small knotted cord (pace counter) hanging from the backpack strap.",0,0],
+ ["recoupement","Déplacement","Se situer par recoupement","Hands holding a compass aimed at a distant hilltop, a paper map on a rock beside with two pencil lines crossing, a landscape with two clear landmarks: a church tower and a rounded hill.",0,0],
+ ["navigation","Déplacement","Les astuces de navigation","A hiker at a trail junction in the forest, checking the map and compass, a stream and a ridge visible as landmarks.",0,0],
+ ["contourner","Déplacement","Contourner un obstacle sans perdre le cap","Seen from above like a map: a hiker going around a pond with three right-angle turns, using a compass, a dotted path showing the detour and the original direction continuing on the other side.",0,1],
+
+ ["traces","Éthique","Ne laisser aucune trace","Leaving a campsite clean: a hiker scattering cold ashes, putting stones back in place, carrying a small bag of rubbish, the forest floor looking natural again.",0,0],
+ ["piege","Nourriture","Observer la faune","A wild rabbit near a game trail in tall grass at dusk, a hiker observing quietly from a distance behind a bush.",0,0],
+ ["cordelette","Nourriture","Fabriquer une cordelette en ortie","Making nettle cordage: hands twisting stripped stinging-nettle fibers into a two-ply cord, nettle stems and a finished coil of cord lying on a log.",0,0],
+ ["priorites","Priorités","La règle des 3","A survivor sitting calmly against a tree and thinking, with a small tarp shelter, a water bottle and a small fire nearby, showing the survival priorities: warmth and shelter, water, food.",0,0],
+
+ ["partir_leger","Équipement","Partir léger","Hiking gear laid out neatly on a forest floor before packing: a small backpack, a tarp, a cooking pot, a knife, a fire steel, a water bottle, a coil of cord, a wool sweater, a small scale weighing the pack.",0,0],
+ ["habits_couches","Équipement","S'habiller pour le bivouac","A hiker shown in three layers side by side like a naturalist plate: a thin wool base layer, a warm fleece, a hooded rain jacket, with a wool hat and gloves.",0,0],
+ ["secher","Équipement","Sécher chaussures et vêtements","Wet hiking boots stuffed with dry grass and socks hanging on a stick at a safe distance from a small campfire, a tarp shelter behind.",0,0],
+ ["affuter","Équipement","Entretenir couteau et hachette","Close-up of hands sharpening a bushcraft knife on a small whetstone at a low angle, a hatchet with a cord-wrapped handle resting on a log beside it.",0,0],
+ ["ustensiles","Équipement","Ustensiles de fortune","Handmade camp utensils carved from dead wood laid on a log: a forked stick fork, a carved spoon, bent-wood tongs, a notched poker, a small twig broom.",0,0],
+ ["silex","Feu","Feu au silex et à l'acier","Close-up of hands striking a C-shaped fire steel against a sharp flint stone, a piece of black char cloth held on the flint, bright sparks flying.",0,0],
+ ["amadou_naturel","Feu","Trouver de l'amadou naturel","Natural tinder laid out like a naturalist plate: curls of white birch bark, dry grass, cattail fluff, a dry puffball mushroom, resinous pine shavings, a small tin box.",0,0],
+ ["feu_neige","Feu","Faire du feu sur la neige","A small campfire burning on a platform of dry sticks laid in two crossed layers on packed snow, snowy forest around, a log windbreak.",0,0],
+ ["feu_pierre","Feu","Feu sur rocher : attention aux pierres","A hiker kneeling on a large flat rock slab, spreading a layer of sand and soil on it with his hands before building a small fire, a ring of dry stones taken far from the water beside him, a river with wet round pebbles in the background, which he avoids.",0,0],
+ ["feu_trois_buches","Feu","Feu à trois bûches","Seen from slightly above: a small fire in the center with three thick logs pointing into it like the spokes of a star, glowing embers.",0,0],
+ ["feu_cuisine","Nourriture","Préparer un feu de cuisine","A bed of glowing red embers between two parallel logs, a small cooking pot resting across the logs, no flames, a second small fire beside producing more embers.",0,0],
+ ["cremaillere","Nourriture","Crémaillère et support de casserole","A camp crane over a fire: two forked sticks planted on each side, a crossbar, a notched hanging stick holding a pot above the fire.",0,0],
+ ["cuire_sans","Nourriture","Cuire sans ustensiles","Cooking without utensils around a campfire: a fish clamped between split sticks planted facing the embers, bread dough twisted in a spiral around a stick, a potato in the ashes.",0,0],
+ ["trou_braises","Nourriture","Four en trou de braises","Cross-section of a bean-hole oven: a pit in the ground, a cast-iron pot with lid sitting in glowing coals, covered with more coals and earth on top.",0,1],
+ ["bannock","Nourriture","Pain de trappeur (bannock)","A golden bannock flatbread cooking in a small skillet over campfire embers, a second piece of dough wrapped in a spiral around a stick.",0,0],
+ ["lit_camp","Abri","Faire un lit de camp isolant","Cross-section of an insulating camp bed under a tarp: a thick layer of dry dead leaves between two dead logs marking the head and the foot, a sleeping pad and sleeping bag on top.",0,0],
+ ["azimut_retour","Orientation","Revenir sur ses pas à la boussole","A hiker in the forest holding a baseplate compass at chest height, aiming at a distinct tree ahead, a dotted trail line behind showing the way back.",0,0],
+ ["perdu_calme","Orientation","Se croire perdu : les bons réflexes","A hiker sitting calmly on a log in a dense forest, drinking water and looking at a map and compass, a bright colored cloth tied to a branch to mark the spot.",0,0],
+ ["chap_mental","Couvertures des chapitres","Le mental et les priorités","A lone hiker sitting on a rock in a misty forest, taking a deep breath, map on the knees, calm and focused.",0,0],
+ ["chap_preparer","Couvertures des chapitres","Préparer sa sortie","Flat lay of hiking gear on a wooden table: backpack, paper map, compass, headlamp, knife, water bottle, first aid kit, warm clothes.",0,0],
+ ["chap_campement","Couvertures des chapitres","Le campement","A cozy bivouac camp at dusk in a European forest by a river: a tarp shelter, a small fire, a pot hanging over it.",1,0],
+ ["chap_abris","Couvertures des chapitres","Les abris","Three survival shelters side by side in a forest: a tarp A-frame, a branch lean-to and a debris hut.",0,0],
+ ["chap_feu","Couvertures des chapitres","Le feu","A campfire burning in a stone ring at night, sparks rising, firewood stacked by size beside it.",1,0],
+ ["chap_eau_guide","Couvertures des chapitres","L'eau","A clear forest stream, a hiker filling a water bottle, a pot ready to boil on a small fire.",0,0],
+ ["chap_nourriture","Couvertures des chapitres","Se nourrir","A small basket on a mossy log holding sweet chestnuts, hazelnuts, rose hips and young nettle leaves, botanical engraving detail.",0,1],
+ ["chap_cuisine","Couvertures des chapitres","La cuisine de bivouac","Bivouac cooking: a small pot on a camping stove and a skillet over a campfire, a wooden spoon and a tin mug.",0,0],
+ ["chap_orientation_guide","Couvertures des chapitres","S'orienter","A compass, a topographic map and a pencil on a rock, a valley landscape in the background.",0,0],
+ ["chap_deplacement","Couvertures des chapitres","Se déplacer en sécurité","A hiker with trekking poles walking along a ridge trail above a winding river valley in the Ardennes hills.",0,0],
+ ["chap_meteo_dangers","Couvertures des chapitres","Météo et dangers naturels","A dark storm cloud with lightning over a forested hilltop, a hiker heading down away from the ridge.",0,0],
+ ["chap_couteau","Couvertures des chapitres","Couteau, outils et nœuds","A fixed-blade bushcraft knife, a folding saw, a small axe and a coil of rope on a log among wood shavings.",0,0],
+ ["chap_hygiene","Couvertures des chapitres","Hygiène et santé","A hiker washing hands far from a stream with water from a bottle, a small trowel and a toothbrush beside a clean camp.",0,0],
+ ["chap_secours_guide","Couvertures des chapitres","Se signaler et être secouru","A rescue helicopter flying over a forest clearing where a hiker waves a bright orange tarp.",0,0],
+ ["chap_loi","Couvertures des chapitres","Loi et éthique, pays par pays","A small official bivouac area at the edge of a forest with a blank wooden signpost, a tent set up, a ranger walking in the distance.",0,0],
+ ["peche_regles","Pêche","Pêcher : ce que dit la loi","A hiker fishing with a simple rod from the bank of a clear Ardennes river, a small fishing permit card visible in a clear pouch on his backpack strap, gently releasing a large eel back into the water with wet hands.",0,0],
+ ["poisson_pollution","Pêche","Peut-on manger le poisson de rivière ?","Like a naturalist comparison plate on a riverbank: on one side small lean trout and perch laid on fresh leaves next to a clean mountain stream, on the other side a large carp, a big catfish and an eel set apart near a murky river with a factory chimney far in the background.",0,0],
+ ["poisson_frais","Pêche","Reconnaître un poisson sain et frais","Close-up of hands gently lifting the gill cover of a freshly caught trout on a flat stone, showing bright red gills and a clear bulging eye, a stream in the background.",0,0],
+ ["poisson_preparer","Pêche","Préparer et cuire un poisson","A hiker kneeling away from the river cleaning a trout with a knife on a flat stone, a second fish cooking on a stick over campfire embers, a small hole dug to bury the guts.",0,0],
+ ["peche_survie","Pêche","Pêcher en situation de survie","An improvised survival fishing kit laid out like a naturalist plate on a log: a bent safety pin hook, a hawthorn thorn hook tied to a twig, a small gorge hook (stick pointed at both ends), a coil of thin cord wound on a stick, earthworms in a leaf, a river eddy behind a rock in the background.",0,1],
+ ["piqure_vive","Premiers secours","Piqûre de vive ou de rascasse","On a sandy North Sea beach, a hiker sitting on the sand with his foot soaking in a bucket of steaming hot water, testing the water with his other hand, a small sand-colored weever fish half buried in the wet sand nearby.",0,0],
+ ["blessure_poisson","Premiers secours","Blessures d'épines et de dents de poisson","Close-up of a hiker rinsing a small puncture wound on his hand with water from a bottle, a perch with raised spiny dorsal fin and a pike with sharp teeth lying on the grass beside a pair of pliers.",0,0],
+ ["chap_poissons","Couvertures des chapitres","Poissons et pêche","A calm Ardennes river at dawn, a hiker fishing from a rocky bank, trout visible under the clear water, a heron on the other bank.",0,0],
+ ["bache_montages","Astuces de terrain","Dix façons de monter une bâche","A grid plate of six small vignettes, each showing a different square tarp shelter pitched in a forest clearing: A-frame, lean-to, plough-point tied to a tree, arrow-head, small pyramid tent held by a stick, flat roof between four trees. No people.",0,0],
+ ["sac_charger","Astuces de terrain","Charger son sac à dos","Cutaway view of a hiking backpack standing upright, showing the packed layers inside: sleeping bag at the bottom, heavy food and cooking pot in the middle against the back panel, clothes around, rain jacket on top, map and compass in the lid pocket.",0,0],
+ ["filtre_meche","Astuces de terrain","Filtre à mèche","Two cooking pots on a flat rock by a stream, the upper one full of muddy water, a strip of cotton cloth running from it over the rim down into the lower pot where clear drops fall, a small campfire with a billy can boiling in the background.",0,0],
+ ["nasse_bouteille","Astuces de terrain","Nasse en bouteille","A cut plastic bottle with its neck inverted inside to form a funnel trap, tied with string, lying on the gravel bottom of a shallow clear stream, small fish nosing at the entrance, the string running to the bank.",0,0],
+ ["ligne_ressort","Astuces de terrain","Ligne à ressort","A springy sapling bent down over a riverbank and held by two notched wooden pegs hooked together, a fishing line hanging from the sapling tip into the water.",0,0],
+ ["ps_echarpe","Premiers secours","Écharpe de bras","A lone hiker sitting on a log in a forest, his left forearm supported against his chest in a triangular cloth sling knotted at the side of his neck, his backpack beside him.",1,0],
+ ["empreintes","Astuces de terrain","Empreintes d'Europe","A naturalist plate of animal footprints pressed in mud, arranged in a grid: wild boar hoof with dew claws, roe deer heart-shaped hoof, red fox oval paw, badger five-toed paw with long claws, hare Y-shaped track, otter webbed paw. No labels, no text.",0,0],
+ ["rj_brochette_champi","Recettes du feu","Brochette de champignons","Close-up of a green hazel stick skewer threaded with plump button mushrooms, golden and glistening, held above glowing campfire embers, forest at dusk behind.",1,0],
+ ["rj_brochette_viande","Recettes du feu","Brochette de viande aux herbes","Wooden stick skewers of beef cubes alternating with red pepper and onion, sizzling above red embers, a sprig of thyme on a stone beside.",1,0],
+ ["rj_pomme_miel","Recettes du feu","Pomme cuite au miel","A baked apple opened from its foil wrapper at the edge of campfire embers, honey and cinnamon bubbling in its cored center, steam rising.",1,0],
+ ["rj_ragout_champi","Recettes du feu","Ragoût de champignons","A battered camping pot full of thick creamy mushroom stew, a wooden spoon resting in it, set on stones by a small cooking fire.",0,0],
+ ["rj_patate_braise","Recettes du feu","Pomme de terre dans la braise","A foil-wrapped potato pulled from the embers and split open in a cross, fluffy steaming inside with melting butter and coarse salt.",0,0],
+ ["rj_ragout_lapin","Recettes du feu","Ragoût de lapin","A cast-iron pot hanging from a wooden pot-hanger tripod over a fire, simmering stew with meat, carrots and potatoes, bay leaf on top.",0,0],
+ ["rj_poisson_baton","Recettes du feu","Poisson grillé sur bâton","A whole trout skewered lengthwise on a green stick planted in the ground, leaning toward the campfire embers, crisp golden skin, lemon slice in its belly.",0,0],
+ ["rj_steak_broche","Recettes du feu","Gros steak à la broche","A thick piece of beef on a wooden spit resting on two Y-shaped forked sticks over a bed of glowing embers, juices dripping, forest clearing.",1,0],
+ ["rj_ragout_camp","Recettes du feu","Ragoût du campement","A large blackened stew pot over a campfire at a frontier-style forest camp at dusk, chunky meat, beans and vegetables, a ladle, tin plates nearby. No people.",1,0],
+ ["rj_viande_herbes","Recettes du feu","Viande grillée aux herbes","Pork chops sizzling on a flat hot stone at the edge of a campfire, sprinkled with thyme and oregano, small bundles of dried herbs beside.",0,0],
+ ["rj_pommes_chou","Recettes du feu","Ragoût pommes et chou","A rustic pot of braised white cabbage with apple quarters and smoked sausage slices, steaming beside a fire in a snowy northern pine forest.",0,0],
+ ["rj_roule_cannelle","Recettes du feu","Roulé à la cannelle sur bâton","A spiral of golden bread dough wrapped around a peeled stick over embers, next to a finished cinnamon-sugar roll drizzled with white icing on a wooden board.",1,0],
+ ["rj_soupe_carotte","Recettes du feu","Soupe de carottes","A steaming tin mug and camping pot of thick orange carrot soup on a log by a small fire, a few whole carrots with green tops beside.",0,0],
+ ["rj_saucisses","Recettes du feu","Saucisses au feu de bois","Several sausages on sharpened green sticks grilling over a campfire, one tucked into a bread roll with mustard on a log bench.",0,0],
+ ["rj_iguane_baton","Recettes du feu","Brochette « iguane » au poulet","Long strips of paprika-spiced chicken threaded in a zigzag on rough sticks, grilling over embers, a halved lime and a small pile of spices on a flat rock.",0,0],
+ ["rj_potion_soin","Recettes du feu","Potion de soin (tisane d'ortie)","A small glass bottle and a tin mug of warm reddish-amber herbal tea with honey, fresh nettle leaves and a lemon half beside, a kettle on the campfire behind.",1,0],
+ ["rj_papillote_vigor","Recettes du feu","La papillote Vigor","A foil parcel opened on a bed of embers, revealing seared beef cubes, halved mushrooms, a crushed garlic clove and melting butter, steam rising.",1,0],
+ ["rj_ragout_taverne","Recettes du feu","Le ragoût de la taverne","A camping pot of baked beans in tomato sauce with thick slices of smoked sausage and melting cubes of cheese forming strings, on a flat stone at the edge of a fire.",0,0],
+ ["rj_grilled_cheese","Recettes du feu","Le grilled cheese de l'abri","A rustic sandwich half-unwrapped from foil beside the embers, crisp golden bread and molten cheese with bacon oozing out, a flat stone used as a press next to it.",1,0],
+ ["rj_chaudron_ermite","Recettes du feu","Le chaudron de l'ermite","A small metal camping pot hanging over a low fire, filled with a creamy mushroom broth, a carved wooden stick stirring it, a baked potato on a stone beside.",0,0],
+ ["rj_pain_elmoth","Recettes du feu","Le pain de voyage d'Elmoth","Thin round flatbreads baking directly on a hot flat stone in the middle of a fire ring, one wrapped in a linen cloth on a leather satchel nearby.",0,0],
+ ["rj_cafe_cowboy","Recettes du feu","Le café du cow-boy","A dented enamel coffee pot steaming beside a campfire at dawn, black coffee being poured carefully into a tin mug with a square of dark chocolate at the bottom.",1,0],
+ ["rj_onigiri","Recettes du feu","Les rations du samouraï","Three triangular rice balls with a strip of dried seaweed at their base, resting on a large leaf on a mossy rock, a lidded camping pot of rice by a small fire.",1,0],
+ ["rj_soupe_monstre","Recettes du feu","La soupe de monstre","A large pot of dark meaty broth with chunks of braised beef, carrot rounds and onion quarters, set on two stones over embers, a ladle filling a tin mug.",0,0],
+ ["rj_galette_stalker","Recettes du feu","La galette de la Zone","Thick golden potato pancakes frying in a small camping pan over embers, a battered tin of corned beef open beside, a gloomy pine forest at dusk.",0,0],
+ ["rj_porridge","Recettes du feu","Le porridge du pionnier","A camping pot of creamy oat porridge with raisins, cranberries and almond flakes, drizzled with honey, steam rising in a snowy forest morning.",0,0],
+ ["rj_lembas","Recettes du feu","Le lembas des coureurs des bois","A spiral of golden bread wound around a peeled green branch held over embers, a finished hollow bread roll with a square of chocolate in its center beside.",0,0],
+ ["rj_ragout_goule","Recettes du feu","Le ragoût de goule","A dented camping pot of thick rustic corned-beef stew with crumbled crackers on top, an empty opened tin beside, harsh dusty light.",0,0],
+ ["rj_jerky","Recettes du feu","Le séchage du chasseur","Thin strips of dark beef jerky hanging on cords and small wooden skewers from a green-wood tripod above smoking embers, wisps of smoke drifting.",1,0],
+ ["rj_crispy_boite","Recettes du feu","Le crispy de la boîte","An opened tin can of caramelized peaches topped with a crumbly biscuit crust, bubbling on a nest of small embers, a spoon resting on the rim.",0,0],
+ ["rj_elixir_mana","Recettes du feu","L'élixir de mana","A tin mug of golden pine-needle tea with honey, a sprig of fresh pine needles and slices of ginger beside a steaming pot on the fire.",0,0],
+ ["rj_fondue_pelerin","Recettes du feu","La fondue du pèlerin","A camping pot of bubbling melted cheese fondue on gentle embers under a tarp shelter at night, a chunk of bread on a wooden skewer dipping into it.",1,0],
+ ["rj_galettes_ration","Recettes du feu","Galettes de ration","Small flat dense oat cakes studded with raisins, the size of a credit card, toasting on the upturned lid of a camping pot set on embers, a few finished ones stacked on a cloth.",0,0],
+ ["rj_bouillon_sainte","Recettes du feu","Bouillon de vitalité","A camping pot of green herbal broth with soft nettle and dandelion leaves, steam rising, a gloved hand's worth of fresh nettle tops on a rock beside, a tin mug.",0,0],
+ ["rj_brocheton_pirate","Recettes du feu","Le brocheton du pirate","A long peeled hazel skewer threaded with chunks of white fish, onion petals and squares of smoked bacon, held over glowing embers, fat dripping.",0,0],
+ ["rj_pemmican","Recettes du feu","Le pemmican","Dense dark bars and balls of pemmican speckled with dried berries, wrapped half in parchment paper on a flat bark board, a small jar of melted fat beside.",0,0],
+ ["rj_pochee_espace","Recettes du feu","La pochée de ration","A steaming tin mug full of instant noodles with flakes of tuna, a lid resting on it, wedged between two stones, a pair of whittled wooden chopsticks on top.",0,0],
+ ["rj_etouffee_trappeur","Recettes du feu","L'étouffée du trappeur","A dome-shaped foil parcel half-buried in grey ashes at the foot of a campfire, a second one opened showing tender chicken strips on onions with mustard.",0,0],
+ ["rj_kari_sud","Recettes du feu","Le kari de la mer du Sud","A camping pot of creamy golden coconut curry with whole sardines and rice, simmering at the edge of the embers, an open sardine tin and a small spice pouch beside.",0,0],
+ ["rj_biscuits_abri","Recettes du feu","Les biscuits de l'abri","Small thick round biscuits on a sheet of foil inside an opened camping pot, the lid with a heavy stone set aside, gentle embers below, a mug of broth nearby.",0,0],
+ ["rj_bouillie_necrophage","Recettes du feu","La bouillie de nécrophage","A camping pot of thick oat porridge marbled with melted chocolate and caramel swirls, a spoon in it, a torn chocolate bar wrapper-free pieces on a rock.",0,0],
+ ["rj_crumble_balmora","Recettes du feu","Le crumble de Balmora","A steel camping mug filled with caramelized apple pieces topped with a crunchy crumble of crushed biscuits and nuts, set on a hot flat stone by the fire.",0,0],
+ ["isolation_sol","Astuces de terrain","Isolation du sol (valeur R)","Cutaway side view of a lone sleeper in a sleeping bag under a tarp on frosty ground, showing the layers beneath him: a thin closed-cell foam mat on the ground, an inflatable mat on top, a thick bed of dry leaves at the edge, frost on the grass around.",1,0],
+ ["doigts_soleil","Astuces de terrain","Temps avant le coucher du soleil","Seen from behind, a lone hiker on a hill stretching his arm toward the horizon, his hand flat and horizontal with fingers stacked between the horizon and the low setting sun over Ardennes forests.",0,0],
+ ["chap_secourisme","Couvertures des chapitres","Premiers secours en pleine nature","An open first aid kit on a rock: bandages, compresses, a tick remover, a survival blanket, gloves and scissors.",0,0]
+];
+
+var KEY = "sylva_atelier_done";
+var done = {};
+try { done = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { done = {}; }
+function saveDone() { try { localStorage.setItem(KEY, JSON.stringify(done)); } catch (e) {} }
+var filter = "prio";
+try { filter = localStorage.getItem("sylva_atelier_f") || "prio"; } catch (e) {}
+
+function promptOf(it) { return STYLE + "\n\nSubject: " + it[3] + END; }
+function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+
+document.getElementById("styleText").textContent = STYLE + END;
+
+function copy(text, btn) {
+  var label = btn.textContent;
+  function ok() { btn.textContent = "Copié ✓"; btn.classList.add("copied"); setTimeout(function () { btn.textContent = label; btn.classList.remove("copied"); }, 1600); }
+  function fallback() {
+    var ta = document.createElement("textarea"); ta.value = text; ta.setAttribute("readonly", ""); ta.style.position = "fixed"; ta.style.opacity = "0";
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); ok(); } catch (e) { btn.textContent = "Sélectionne le texte"; }
+    document.body.removeChild(ta);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok, fallback); else fallback();
+}
+document.getElementById("copyStyle").addEventListener("click", function () { copy(STYLE + END, this); });
+
+function render() {
+  var groups = [], byG = {};
+  ITEMS.forEach(function (it) {
+    if (filter === "prio" && !it[4]) return;
+    if (filter === "todo" && done[it[0]]) return;
+    if (!byG[it[1]]) { byG[it[1]] = []; groups.push(it[1]); }
+    byG[it[1]].push(it);
+  });
+  var h = "";
+  groups.forEach(function (g) {
+    h += '<section class="group"><h2>' + esc(g) + " <small>" + byG[g].length + " image" + (byG[g].length > 1 ? "s" : "") + "</small></h2>";
+    byG[g].forEach(function (it) {
+      var id = it[0];
+      h += '<article class="item' + (done[id] ? " is-done" : "") + '">' +
+        '<input class="done" type="checkbox" id="d_' + id + '" data-id="' + id + '"' + (done[id] ? " checked" : "") + ' aria-label="Image faite : ' + esc(it[2]) + '">' +
+        '<div class="it-main"><label class="it-title" for="d_' + id + '">' + esc(it[2]) + "</label>" +
+        '<div class="it-meta"><span class="file">' + id + ".png</span>" +
+        (it[4] ? '<span class="tag prio">Avant le 12 nov.</span>' : "") +
+        (it[5] ? '<span class="tag check">Geste à vérifier de près</span>' : "") + "</div>" +
+        '<details><summary>Voir le prompt</summary><pre>' + esc(promptOf(it)) + "</pre></details></div>" +
+        '<button class="btn" type="button" data-copy="' + id + '">Copier le prompt</button></article>';
+    });
+    h += "</section>";
+  });
+  document.getElementById("list").innerHTML = h || '<p class="note">Tout est fait dans ce filtre. Bravo !</p>';
+  var total = ITEMS.length, n = ITEMS.filter(function (it) { return done[it[0]]; }).length;
+  document.getElementById("count").textContent = n + " / " + total + " faites";
+  document.getElementById("meter").style.width = Math.round(n / total * 100) + "%";
+  Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (c) { c.setAttribute("aria-pressed", c.getAttribute("data-f") === filter ? "true" : "false"); });
+}
+document.getElementById("list").addEventListener("click", function (e) {
+  var b = e.target.closest("[data-copy]"); if (!b) return;
+  var it = ITEMS.filter(function (x) { return x[0] === b.getAttribute("data-copy"); })[0];
+  if (it) copy(promptOf(it), b);
+});
+document.getElementById("list").addEventListener("change", function (e) {
+  var c = e.target.closest(".done"); if (!c) return;
+  if (c.checked) done[c.getAttribute("data-id")] = 1; else delete done[c.getAttribute("data-id")];
+  saveDone(); render();
+});
+Array.prototype.forEach.call(document.querySelectorAll(".chip"), function (c) {
+  c.addEventListener("click", function () { filter = c.getAttribute("data-f"); try { localStorage.setItem("sylva_atelier_f", filter); } catch (e) {} render(); });
+});
+render();
+
+var KNOT_PROMPT = "Two images are attached. Image 1 is a photo of a real rope knot. Image 2 is a STYLE reference only.\n\nRedraw EXACTLY the rope in image 1: same knot, same crossings (which strand goes over and which goes under), same path of every strand, same number of turns and loops, same position and angle. Do not add, remove, simplify or \"fix\" any crossing. If hands hold the rope in the photo, draw them the same way.\n\nUse image 2 ONLY for the look: hand-drawn pen-and-ink engraving, fine cross-hatching, soft muted watercolor wash, aged parchment paper, warm sepia tones. Draw the rope as natural-fiber rope with a clearly visible twist. Replace the background with plain parchment.\n\nAbsolutely NO text, NO letters, NO numbers, NO arrows, NO labels. Landscape format 4:3, high detail.";
+// [id, titre, prioritaire, à compléter, étapes, étapes manquantes]
+var KNOTS = [["prusik", "Nœud de Prusik", 0, 1, ["Prendre une cordelette plus fine que la corde principale, fermée en anneau (double nœud de pêcheur).", "Passer l'anneau derrière la corde principale.", "Faire passer l'anneau dans lui-même autour de la corde, trois fois.", "Ranger les tours bien parallèles et serrer : pousser le nœud pour le déplacer, tirer l'anneau pour le bloquer."], [1]], ["bois", "Nœud de bois", 0, 1, ["Passer la corde autour du tronc ou du fagot.", "Faire une demi-clé autour de la partie dormante.", "Enrouler le brin libre trois fois autour de lui-même, le long de la boucle.", "Tirer pour serrer. Pour traîner un long tronc, ajouter une demi-clé plus loin vers le bout."], [1]], ["chirurgien", "Nœud de chirurgien", 0, 1, ["Croiser les deux bouts et les enrouler deux fois l'un autour de l'autre.", "Tirer pour serrer ce double croisement : il tient tout seul.", "Croiser à nouveau, dans l'autre sens, une seule fois.", "Serrer les quatre brins de façon égale."], [2]], ["huit_boucle", "Boucle de huit (huit en double)", 0, 1, ["Plier la corde pour former une ganse d'environ 30 cm.", "Avec ce double, faire une boucle en le croisant par-dessus les deux brins.", "Faire passer la ganse derrière les deux brins.", "La ramener par-devant dans la boucle.", "Serrer en tirant la boucle d'un côté et les deux brins de l'autre. Les brins doivent rester parallèles, sans se croiser."], [1, 3]], ["huit_rengaine", "Huit rengainé", 0, 1, ["Faire un nœud de huit simple, sans le serrer, à environ 1 m du bout.", "Passer le brin libre autour de l'arbre ou dans l'anneau.", "Le faire rentrer dans le huit par l'endroit où sort le brin libre du premier huit.", "Suivre exactement le chemin du premier brin, à l'envers, en restant toujours du même côté de lui.", "Ressortir parallèle à la partie dormante, serrer, et laisser au moins 10 cm de queue."], [1, 3]], ["papillon", "Nœud de papillon", 0, 1, ["Au milieu de la corde, faire une ganse.", "Tordre cette ganse deux fois sur elle-même, dans le même sens : elle forme un huit, avec une petite ouverture en bas.", "Replier le sommet de la ganse vers le bas, par-devant les torsions.", "Le faire passer dans l'ouverture du bas, puis le tirer vers le haut.", "Serrer en tirant la boucle d'un côté et les deux brins dans des directions opposées."], [1]], ["chaise_double", "Nœud de chaise sur le double", 0, 1, ["Plier la corde en deux pour former une longue ganse.", "Avec ce double, faire une petite boucle comme pour un nœud de chaise.", "Passer la ganse dans la petite boucle, par en dessous.", "Ouvrir la ganse et la faire passer par-dessus les deux grandes boucles, jusqu'à ce qu'elle entoure le nœud par l'arrière.", "Serrer en tirant les deux grandes boucles d'un côté et la partie dormante de l'autre."], [1, 4]], ["brelagecarre", "Brêlage carré", 1, 0, ["Croiser les deux perches à angle droit.", "Faire un nœud de cabestan sur la perche verticale, juste sous la traverse.", "Faire 3 à 4 tours : par-dessus la traverse, derrière la verticale, par-dessus la traverse de l'autre côté, derrière la verticale.", "Faire 2 à 3 tours de serrage entre les deux perches, autour des tours précédents.", "Terminer par un nœud de cabestan sur la traverse."], [1, 2, 3, 4, 5]], ["brelagetrepied", "Brêlage en bigue ou trépied", 1, 0, ["Poser les perches côte à côte, extrémités alignées.", "Faire un nœud de cabestan sur une perche extérieure.", "Faire 8 à 10 tours lâches autour de toutes les perches.", "Faire 2 tours de serrage entre chaque perche.", "Terminer par un cabestan, puis écarter les pieds : les tours se serrent tout seuls."], [1, 2, 3, 4, 5]], ["vache", "Tête d'alouette (nœud de vache)", 1, 0, ["Plier la corde en deux pour former une ganse.", "Passer la ganse autour de la branche ou dans l'anneau.", "Passer les deux brins dans la ganse.", "Tirer les deux brins pour serrer."], [1, 2, 3, 4]], ["machard", "Nœud de Machard (Klemheist)", 1, 0, ["Prendre un anneau de cordelette plus fine que la corde principale.", "L'enrouler 4 ou 5 fois autour de la corde en montant, en spires serrées qui ne se chevauchent pas.", "Passer l'extrémité du bas dans la boucle du haut.", "Tirer cette extrémité vers le bas : le nœud se bloque. Pour le déplacer, pousser les spires à la main."], [1, 2, 3, 4]], ["largage", "Nœud à largage rapide", 1, 0, ["Passer une ganse du brin libre derrière la branche.", "Former une ganse dans la partie qui va porter la charge et la passer, par-devant, dans la première ganse.", "Tirer le brin libre pour serrer la première ganse sur la seconde.", "Former une ganse avec le brin libre et la passer dans la deuxième ganse.", "Tirer la partie qui porte la charge pour bloquer le tout. Pour libérer, tirer le bout libre."], [1, 2, 3, 4, 5]], ["jambe_chien", "Jambe de chien", 1, 0, ["Plier la corde en S pour former trois brins parallèles, de la longueur à supprimer. La partie abîmée doit être dans le brin du milieu.", "À un bout, faire une boucle dans le brin simple et la passer sur la ganse de ce côté.", "Faire la même chose à l'autre bout.", "Mettre la corde en tension : le nœud tient tant qu'il est chargé."], [1, 2, 3, 4]], ["palomar", "Nœud Palomar", 1, 0, ["Plier environ 15 cm de fil en double et passer la boucle dans l'œillet de l'hameçon.", "Faire un nœud simple lâche avec le double, l'hameçon pendant en dessous.", "Passer l'hameçon entier dans la boucle.", "Mouiller le nœud, serrer en tirant les deux brins, puis couper la queue."], [1, 2, 3, 4]], ["clinch", "Nœud clinch amélioré", 1, 0, ["Passer le bout du fil dans l'œillet.", "Enrouler le bout 5 à 7 fois autour du fil principal.", "Passer le bout dans la petite boucle qui s'est formée près de l'œillet.", "Le repasser ensuite dans la grande boucle qui vient de se former.", "Mouiller et serrer doucement, puis couper la queue."], [1, 2, 3, 4, 5]], ["surliure", "Surliure", 1, 0, ["Plier le fil en ganse et la poser le long de la corde, boucle vers le bout de la corde.", "Enrouler le fil serré autour de la corde et de la ganse, en allant vers le bout, sur une longueur d'environ 1,5 fois le diamètre de la corde. Laisser la boucle dépasser.", "Passer le bout du fil dans la boucle.", "Tirer l'autre extrémité du fil, celle du départ, pour faire rentrer la boucle sous les tours, jusqu'au milieu.", "Couper les deux bouts au ras."], [1, 2, 3, 4, 5]], ["roulant", "Nœud roulant", 1, 0, ["Passer le bout autour de la perche en croisant la partie dormante, du côté vers lequel tu vas tirer.", "Faire un deuxième tour à côté du premier, en croisant de nouveau la partie dormante, toujours du côté de la traction.", "Passer le bout autour de la perche de l'autre côté de la partie dormante et le glisser sous lui-même.", "Serrer, puis tirer dans l'axe, du côté des deux tours."], [1, 2, 3, 4]], ["boucle_simple", "Boucle simple", 1, 0, ["Plier le bout de la corde en ganse.", "Faire un nœud simple avec ce double.", "Serrer en tirant la boucle et les deux brins."], [1, 2, 3]], ["filet", "Filet de fortune", 1, 0, ["Tendre une corde de tête entre deux arbres.", "Y fixer des longueurs égales de cordelette, à intervalles réguliers, par des têtes d'alouette.", "Nouer chaque brin avec son voisin par un nœud simple, tous à la même hauteur : c'est la première rangée de mailles.", "Rangée suivante : décaler d'une demi-maille et nouer chaque brin avec l'autre voisin.", "Continuer rangée après rangée en gardant des mailles de taille égale, puis nouer le bas sur une seconde corde."], [1, 2, 3, 4, 5]], ["plat_ganse", "Nœud plat gansé", 0, 0, ["Faire la première moitié d'un nœud plat : croiser le bout gauche sur le droit et le passer dessous.", "Pour la seconde moitié, plier un des bouts en ganse (une boucle en U).", "Croiser cette fois le bout droit sur le gauche et nouer avec la ganse.", "Serrer. Pour défaire, il suffit de tirer le bout libre de la ganse."], [1, 2, 3, 4]], ["demi_cabestan", "Demi-cabestan", 0, 0, ["Faire deux boucles identiques, côte à côte, dans la corde.", "Les replier l'une contre l'autre comme on ferme un livre, et non l'une derrière l'autre comme pour un cabestan.", "Clipper le mousqueton dans les deux boucles et fermer le verrou.", "Tenir en permanence le brin libre : c'est ta main qui freine. Plus le brin libre est ramené vers le brin chargé, moins ça freine."], [1, 2, 3, 4]], ["ruban", "Nœud de sangle", 0, 0, ["Faire un nœud simple lâche au bout d'une sangle, bien à plat, sans torsion.", "Faire entrer le bout de l'autre sangle par où sort le premier bout.", "Suivre exactement le chemin du nœud, à l'envers, en restant à plat contre la première sangle.", "Serrer très fort en tirant chaque brin, et laisser des queues d'au moins 7 cm."], [1, 2, 3, 4]], ["ancre", "Nœud d'ancre", 0, 0, ["Faire deux tours morts autour de l'anneau ou de la branche.", "Passer le brin libre autour de la partie dormante.", "Le glisser sous les deux tours morts.", "Finir par une demi-clé sur la partie dormante et serrer."], [1, 2, 3, 4]], ["brelage_diagonal", "Brêlage diagonal", 0, 0, ["Faire un nœud de bois autour des deux perches, en diagonale, au point de croisement.", "Faire 3 ou 4 tours serrés dans la même diagonale.", "Faire 3 ou 4 tours dans l'autre diagonale.", "Faire 2 ou 3 tours de serrage entre les deux perches, autour des tours précédents.", "Finir par un nœud de cabestan sur l'une des perches."], [1, 2, 3, 4, 5]], ["simple_ganse", "Nœud simple gansé", 0, 0, ["Faire une boucle comme pour un nœud simple.", "Au lieu de passer le bout, passer une ganse du brin libre dans la boucle.", "Serrer. Pour défaire, tirer le bout de la ganse."], [1, 2, 3]], ["huit_ganse", "Nœud de huit gansé", 0, 0, ["Faire une boucle, puis passer le brin libre derrière la partie dormante, comme pour un nœud de huit.", "Pour le dernier passage dans la boucle, passer une ganse du brin libre au lieu du bout.", "Serrer. Pour défaire, tirer le bout de la ganse."], [1, 2, 3]], ["stevedore", "Nœud d'arrêt de docker", 0, 0, ["Faire une boucle en croisant le brin libre par-dessus la partie dormante.", "Enrouler le brin libre deux fois autour de la partie dormante, au lieu d'une seule fois pour le huit.", "Passer le brin libre dans la boucle de départ.", "Serrer en tirant les deux brins."], [1, 2, 3, 4]], ["pomme", "Pomme de touline", 0, 0, ["Enrouler la corde 3 fois autour de deux doigts, en laissant pendre la partie dormante.", "Faire 3 tours autour des premiers, à angle droit, en les serrant au milieu.", "Passer le bout à l'intérieur du premier groupe de tours, puis faire 3 tours autour du deuxième groupe, en passant chaque fois à l'intérieur du premier.", "Retirer les doigts. Resserrer petit à petit en suivant la corde dans l'ordre, jusqu'à obtenir une boule ferme.", "Attacher le bout à la partie dormante avec deux demi-clés."], [1, 2, 3, 4, 5]], ["ecoute_double", "Nœud d'écoute double", 0, 0, ["Faire une ganse avec la corde la plus grosse.", "Passer le bout de la corde fine dans la ganse, par en dessous.", "Le faire passer derrière les deux brins de la ganse, puis le glisser sous lui-même.", "Faire un deuxième tour au même endroit, à côté du premier, et le glisser aussi sous lui-même.", "Serrer en tirant les deux cordes."], [1, 2, 3, 4, 5]], ["carrick", "Nœud de carrick", 0, 0, ["Avec la première corde, faire une boucle dont le bout passe par-dessus la partie dormante.", "Poser le bout de la seconde corde sous cette boucle.", "Faire avancer la seconde corde en alternant à chaque croisement : par-dessus la partie dormante de la première, sous son bout, par-dessus la boucle.", "Continuer l'alternance : sous sa propre partie, puis par-dessus la boucle. Les deux bouts sortent en diagonale, de part et d'autre.", "Tirer les deux cordes : le nœud se renverse et se tasse. C'est normal."], [1, 2, 3, 4, 5]], ["pecheur_simple", "Nœud de pêcheur", 0, 0, ["Poser les deux bouts côte à côte, en sens opposés.", "Avec le premier bout, faire un nœud simple autour de l'autre corde.", "Avec le second bout, faire un nœud simple autour de la première corde.", "Tirer les deux cordes : les deux nœuds glissent l'un vers l'autre et se bloquent."], [1, 2, 3, 4]], ["sang", "Nœud de sang", 0, 0, ["Croiser les deux fils sur une dizaine de centimètres.", "Enrouler le premier bout 5 fois autour de l'autre fil, puis le ramener entre les deux fils, au point de croisement.", "Enrouler le second bout 5 fois autour du premier fil, dans l'autre sens.", "Passer ce second bout dans le même espace central, mais dans la direction opposée au premier.", "Mouiller, tirer lentement les deux fils, puis couper les bouts."], [1, 2, 3, 4, 5]], ["hune", "Nœud de hune", 0, 0, ["Passer le bout dans l'œillet ou l'anneau.", "Avec le bout, faire un tour autour de la partie dormante.", "Faire un second tour autour de la partie dormante, entre le premier tour et l'anneau.", "Glisser le bout sous ce second tour : c'est un nœud de cabestan fait autour de la partie dormante.", "Serrer en tirant la partie dormante."], [1, 2, 3, 4, 5]], ["levier", "Nœud de levier", 0, 0, ["Faire une boucle dans la corde.", "La rabattre par-dessus la partie dormante.", "Glisser le bâton par-dessus les côtés de la boucle et sous la partie dormante.", "Tirer : la corde se bloque sur le bâton. Pour libérer, retirer le bâton."], [1, 2, 3, 4]], ["bachmann", "Nœud de Bachmann", 0, 0, ["Clipper un anneau de cordelette dans un mousqueton.", "Plaquer le mousqueton contre la corde principale, ouverture vers l'extérieur.", "Enrouler la cordelette 3 ou 4 fois autour de la corde et du dos du mousqueton, en montant, en passant chaque fois dans le mousqueton.", "Charger la boucle de cordelette vers le bas : le nœud bloque. Pousser le mousqueton pour le déplacer."], [1, 2, 3, 4]], ["chaise_tours", "Nœud de chaise à double tour", 0, 0, ["Faire deux petites boucles superposées au lieu d'une, le brin libre passant par-dessus.", "Passer le brin libre dans les deux boucles, par en dessous.", "Le faire passer derrière la partie dormante.", "Le redescendre dans les deux boucles.", "Serrer et laisser une queue d'au moins 10 cm."], [1, 2, 3, 4, 5]], ["chainette", "Chaînette", 0, 0, ["Faire une boucle près du bout de la corde.", "Passer une ganse de la partie dormante dans cette boucle.", "Passer une nouvelle ganse dans la précédente, et continuer ainsi sur toute la longueur.", "Pour bloquer, passer le bout dans la dernière ganse. Pour défaire, retirer le bout et tirer : tout se déroule."], [1, 2, 3, 4]], ["tresse", "Tresse à trois brins", 0, 0, ["Attacher ensemble les trois brins à un bout, ou les coincer sous une pierre.", "Passer le brin de droite par-dessus celui du milieu : il devient le brin du milieu.", "Passer le brin de gauche par-dessus le nouveau brin du milieu.", "Recommencer en alternant droite et gauche, en serrant de façon régulière.", "Ajouter un nouveau brin en le superposant sur quelques centimètres quand l'un d'eux devient court. Finir par un nœud simple."], [1, 2, 3, 4, 5]], ["epissure_oeil", "Épissure en œil", 0, 0, ["Défaire les trois torons sur environ 15 cm et faire une petite surliure au bout de chacun.", "Plier la corde pour former l'œil de la taille voulue.", "Glisser le toron du milieu sous un toron de la partie dormante, contre le sens de la torsion.", "Glisser le toron de gauche sous le toron suivant de la partie dormante, à gauche du premier.", "Retourner l'épissure et glisser le dernier toron sous le toron de la partie dormante qui reste libre.", "Continuer : chaque toron passe par-dessus un toron et sous le suivant. Faire au moins 5 passages, puis couper les bouts."], [1, 2, 3, 4, 5, 6]], ["epissure_arriere", "Épissure arrière", 0, 0, ["Défaire les torons sur une dizaine de centimètres.", "Faire une tête : plier chaque toron par-dessus son voisin, dans le même sens, et passer le dernier dans la boucle du premier. Serrer.", "Glisser chaque toron vers la corde, par-dessus un toron et sous le suivant, contre le sens de la torsion.", "Faire 3 passages pour chaque toron.", "Rouler l'épissure sous le pied pour la tasser, puis couper les bouts."], [1, 2, 3, 4, 5]], ["epissure_courte", "Épissure courte", 0, 0, ["Défaire les torons des deux bouts sur environ 15 cm et faire une surliure au bout de chaque toron.", "Emboîter les deux bouts : chaque toron d'une corde vient se placer entre deux torons de l'autre.", "Ligaturer provisoirement le centre avec une ficelle pour que ça tienne.", "D'un côté, glisser chaque toron par-dessus un toron et sous le suivant, contre le sens de la torsion. Faire 3 passages.", "Retirer la ligature et faire la même chose de l'autre côté.", "Rouler l'épissure sous le pied pour la tasser, puis couper les bouts."], [1, 2, 3, 4, 5, 6]], ["surliure_francaise", "Surliure à demi-clés", 0, 0, ["Attacher le fil fin sur la corde avec un nœud simple.", "Faire une demi-clé autour de la corde et la serrer contre le nœud.", "Faire la suivante juste à côté, toujours dans le même sens : les nœuds forment une petite arête en spirale.", "Continuer sur une longueur égale à 1,5 fois le diamètre, ou sur toute la longueur du manche.", "Finir par deux demi-clés serrées et couper le fil."], [1, 2, 3, 4, 5]], ["noeuds_eviter", "Deux nœuds à ne pas confondre", 0, 0, ["Nœud plat correct : gauche sur droite, puis droite sur gauche. Les deux bouts sortent du même côté et le nœud est bien symétrique.", "Nœud de vache : deux fois gauche sur droite. Les bouts sortent en biais, le nœud est tordu et il glisse.", "Nœud de voleur : il ressemble au nœud plat, mais les deux bouts sortent en diagonale, de part et d'autre. Il lâche très facilement.", "En cas de doute, défaire et refaire en disant à voix haute : « gauche sur droite, droite sur gauche »."], [1, 2, 3, 4]]];
+document.getElementById("knotPrompt").textContent = KNOT_PROMPT;
+document.getElementById("copyKnot").addEventListener("click", function () { copy(KNOT_PROMPT, this); });
+function renderKnots() {
+  var sec = [["À compléter (étapes manquantes)", function (k) { return k[3]; }], ["Utiles au bivouac", function (k) { return !k[3] && k[2]; }], ["Les autres", function (k) { return !k[3] && !k[2]; }]];
+  var h = "";
+  sec.forEach(function (sx) {
+    var ks = KNOTS.filter(sx[1]); if (!ks.length) return;
+    h += '<section class="group"><h2>' + esc(sx[0]) + " <small>" + ks.length + " nœud" + (ks.length > 1 ? "s" : "") + "</small></h2>";
+    ks.forEach(function (k) {
+      var key = "k_" + k[0];
+      var files = k[5].map(function (n) { return '<span class="file">' + k[0] + "_" + n + ".png</span>"; }).join(" ");
+      var steps = k[4].map(function (e, i) { var miss = k[5].indexOf(i + 1) !== -1; return "<li" + (miss ? "" : ' style="opacity:.5"') + ">" + esc(e) + (miss ? "" : " <i>(déjà fait)</i>") + "</li>"; }).join("");
+      h += '<article class="item' + (done[key] ? " is-done" : "") + '" style="grid-template-columns:auto 1fr">' +
+        '<input class="done" type="checkbox" id="d_' + key + '" data-id="' + key + '"' + (done[key] ? " checked" : "") + ' aria-label="Nœud fait : ' + esc(k[1]) + '">' +
+        '<div class="it-main"><label class="it-title" for="d_' + key + '">' + esc(k[1]) + "</label>" +
+        '<div class="it-meta">' + files + "</div>" +
+        '<details><summary>Étapes à photographier</summary><ol style="margin:8px 0 0;padding-left:20px">' + steps + "</ol></details></div></article>";
+    });
+    h += "</section>";
+  });
+  document.getElementById("knotList").innerHTML = h;
+}
+document.getElementById("knotList").addEventListener("change", function (e) {
+  var c = e.target.closest(".done"); if (!c) return;
+  if (c.checked) done[c.getAttribute("data-id")] = 1; else delete done[c.getAttribute("data-id")];
+  saveDone(); renderKnots();
+});
+renderKnots();
+</script>

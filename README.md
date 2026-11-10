@@ -33,3 +33,7 @@ Autoriser la localisation quand l'appli la demande.
 ## Mettre à jour
 
 Remplacer les fichiers sur GitHub, puis changer `VERSION` dans `sw.js` pour forcer la mise à jour sur le téléphone.
+
+## Pour reprendre le développement
+
+Voir [`CLAUDE.md`](CLAUDE.md) : architecture, conventions, tests, publication et règles du projet.
