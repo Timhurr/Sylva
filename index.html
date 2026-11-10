@@ -380,7 +380,32 @@
       <a class="btn" id="btnSmsPos" href="#">Envoyer par SMS</a>
     </div>
     <p class="tiny muted">Donnez ces coordonnées au secouriste. Si l'appel ne passe pas, montez sur une hauteur pour chercher du réseau.</p>
+    <div class="sos-tools">
+      <button type="button" class="btn" id="btnSigLight">🔦 Signal lumineux SOS</button>
+      <button type="button" class="btn" id="btnSigWhistle">📣 Sifflet de détresse</button>
+      <button type="button" class="btn" id="btnIce">🩺 Mes infos d'urgence</button>
+    </div>
     <button class="btn btn-ghost" data-close>Fermer</button>
+  </div>
+</div>
+
+<div class="modal" id="modalIce" hidden role="dialog" aria-modal="true" aria-labelledby="iceTitle">
+  <div class="modal-box">
+    <h2 id="iceTitle">Mes infos d'urgence</h2>
+    <div id="iceView"></div>
+    <div id="iceForm" hidden></div>
+    <p class="tiny muted">Ces infos restent uniquement sur ce téléphone. Remplis aussi la <b>fiche médicale de l'iPhone</b> (appli Santé), lisible par un secouriste même téléphone verrouillé.</p>
+    <div class="row"><button type="button" class="btn btn-ghost" data-close>Fermer</button><button type="button" class="btn btn-primary" id="btnIceEdit">Modifier</button></div>
+  </div>
+</div>
+
+<div class="sig-overlay" id="sigOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="sigTitle">
+  <div class="sig-lamp" id="sigLamp"></div>
+  <div class="sig-ui">
+    <b id="sigTitle">Signal SOS</b>
+    <p id="sigHelp"></p>
+    <div class="row"><button type="button" class="btn" id="sigColor">Blanc / rouge</button><button type="button" class="btn" id="sigSound">Son</button></div>
+    <button type="button" class="btn btn-danger btn-big" id="sigStop">Arrêter</button>
   </div>
 </div>
 

@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.54";
+  var VERSION = "0.9.55";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -2488,7 +2488,8 @@
       '<li id="prep-meteo" class="prep-wait"><i></i><span>Météo du lieu</span></li>' +
       '<li id="prep-chasse" class="prep-wait"><i></i><span>Chasses annoncées</span></li>' +
       '<li id="prep-poi" class="prep-wait"><i></i><span>Services autour (magasins, santé…)</span></li>' +
-      '<li id="prep-relief" class="prep-wait"><i></i><span>Relief : cuvette ou crête</span></li></ul><div class="progress"><span id="prepBar" style="width:0%"></span></div>';
+      '<li id="prep-relief" class="prep-wait"><i></i><span>Relief : cuvette ou crête</span></li>' +
+      '<li id="prep-imgs" class="prep-wait"><i></i><span>Fiches et gravures hors ligne</span></li></ul><div class="progress"><span id="prepBar" style="width:0%"></span></div>';
     var done = 0, fail = 0, i = 0, N = 6;
     var bar = function () { $("#prepBar").style.width = Math.round(done / urls.length * 70) + "%"; };
     var tilesDone = new Promise(function (res) {
@@ -2523,6 +2524,20 @@
       return analyzeRelief(c).then(function (r) { prepStep("relief", "ok", "Relief : " + (r.tpi <= -4 ? "cuvette" : r.tpi <= -1.5 ? "léger creux" : r.tpi >= 8 ? "crête" : r.tpi >= 3 ? "position haute" : "terrain intermédiaire") + " (" + Math.round(r.z) + " m)"); })
         .catch(function () { prepStep("relief", "ko", "Relief indisponible"); });
     }).then(function () {
+      prepStep("imgs", "run");
+      if (!window.caches) { prepStep("imgs", "ko", "Cache indisponible sur ce navigateur"); return; }
+      var keys = Object.keys(IMGS), miss = [];
+      return Promise.all(keys.map(function (k) { return caches.match(IMGS[k]).then(function (r) { if (!r) miss.push(k); }); })).then(function () {
+        if (!miss.length) { prepStep("imgs", "ok", "Gravures : " + keys.length + " / " + keys.length + " hors ligne"); return; }
+        return Promise.all(miss.map(function (k) { return fetch(IMGS[k]).catch(function () {}); })).then(function () {
+          prepStep("imgs", "ok", "Gravures : " + keys.length + " hors ligne (" + miss.length + " ajoutées)");
+        });
+      });
+    }).then(function () {
+      if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
+      if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(function (e) {
+        if (e && e.usage) $("#prepBox").insertAdjacentHTML("beforeend", '<p class="tiny muted" style="margin:6px 0 0">Sylva occupe environ ' + Math.round(e.usage / 1048576) + " Mo sur ce téléphone.</p>");
+      }).catch(function () {});
       $("#prepBar").style.width = "100%"; prepRunning = false;
       save("sylva_prep", { t: Date.now(), c: c });
       $("#prepBox").insertAdjacentHTML("beforeend", '<p class="small" style="margin:10px 0 0"><b>Prêt.</b> Ouvre Sylva une fois en mode avion pour vérifier, et garde ton téléphone chargé.</p>');
@@ -2629,6 +2644,90 @@
   function renderVoiceBtn() { var b = $("#navVoice"); if (b) { b.textContent = voiceOn ? "🔊" : "🔇"; b.setAttribute("aria-label", voiceOn ? "Couper la voix" : "Activer la voix"); } }
   $("#navVoice").addEventListener("click", function () { voiceOn = !voiceOn; save("sylva_voice", voiceOn); renderVoiceBtn(); if (voiceOn) say("Guidage vocal activé"); else if (window.speechSynthesis) speechSynthesis.cancel(); });
   renderVoiceBtn();
+
+
+  // =====================================================================
+  // ---------- SOS : signal lumineux, sifflet de détresse, infos d'urgence ----------
+  // =====================================================================
+  // Morse SOS : · · · — — — · · · (unité 250 ms : point 1, trait 3, entre signes 1, entre lettres 3, entre mots 7)
+  var SOS_SEQ = (function () {
+    var u = 250, out = [], L = function (a) { a.forEach(function (d, i) { out.push([1, d * u]); out.push([0, (i < a.length - 1 ? 1 : 3) * u]); }); };
+    L([1, 1, 1]); L([3, 3, 3]); L([1, 1, 1]); out[out.length - 1][1] = 7 * u; return out;
+  })();
+  var sig = null;
+  var actx = null;
+  function beep(ms) {
+    try {
+      actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+      if (actx.state === "suspended") actx.resume();
+      var o = actx.createOscillator(), g = actx.createGain(), t = actx.currentTime;
+      o.type = "square"; o.frequency.value = 3150;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.9, t + 0.02);
+      g.gain.setValueAtTime(0.9, t + ms / 1000 - 0.03); g.gain.exponentialRampToValueAtTime(0.0001, t + ms / 1000);
+      o.connect(g); g.connect(actx.destination); o.start(t); o.stop(t + ms / 1000 + 0.02);
+    } catch (e) {}
+  }
+  function stopSignal() {
+    if (!sig) return;
+    clearTimeout(sig.timer); try { if (sig.wake) sig.wake.release(); } catch (e) {}
+    sig = null; $("#sigOverlay").hidden = true; document.body.classList.remove("signaling");
+  }
+  function startSignal(kind) {
+    stopSignal();
+    sig = { kind: kind, color: load("sylva_sigcolor", "blanc"), i: 0, sound: kind === "sifflet" };
+    $("#sigOverlay").hidden = false; document.body.classList.add("signaling");
+    $("#sigOverlay").className = "sig-overlay sig-" + sig.color;
+    $("#sigTitle").textContent = kind === "sifflet" ? "Sifflet de détresse" : "Signal SOS lumineux";
+    $("#sigHelp").textContent = kind === "sifflet"
+      ? "3 coups de sifflet, une pause, en boucle : le signal de détresse. Volume à fond, mode silencieux coupé (bouton sur le côté de l'iPhone)."
+      : "SOS en morse (· · · — — — · · ·). Luminosité de l'écran au maximum, écran tourné vers les secours.";
+    $("#sigColor").hidden = kind === "sifflet";
+    $("#sigSound").textContent = sig.sound ? "🔊 Son activé" : "🔇 Son coupé";
+    try { if (navigator.wakeLock) navigator.wakeLock.request("screen").then(function (w) { if (sig) sig.wake = w; else w.release(); }).catch(function () {}); } catch (e) {}
+    var seq = kind === "sifflet" ? [[1, 1000], [0, 500], [1, 1000], [0, 500], [1, 1000], [0, 5000]] : SOS_SEQ;
+    (function step() {
+      if (!sig) return;
+      var s = seq[sig.i % seq.length]; sig.i++;
+      $("#sigLamp").classList.toggle("on", !!s[0] && kind !== "sifflet");
+      $("#sigLamp").classList.toggle("blink", !!s[0] && kind === "sifflet");
+      if (s[0] && sig.sound) beep(s[1]);
+      sig.timer = setTimeout(step, s[1]);
+    })();
+  }
+  $("#btnSigLight").addEventListener("click", function () { closeModal($("#modalSos")); startSignal("lumiere"); });
+  $("#btnSigWhistle").addEventListener("click", function () { closeModal($("#modalSos")); beep(30); startSignal("sifflet"); });
+  $("#sigStop").addEventListener("click", stopSignal);
+  $("#sigColor").addEventListener("click", function () {
+    if (!sig) return; sig.color = sig.color === "blanc" ? "rouge" : "blanc"; save("sylva_sigcolor", sig.color);
+    $("#sigOverlay").className = "sig-overlay sig-" + sig.color;
+  });
+  $("#sigSound").addEventListener("click", function () { if (!sig) return; sig.sound = !sig.sound; if (sig.sound) beep(30); $("#sigSound").textContent = sig.sound ? "🔊 Son activé" : "🔇 Son coupé"; });
+  document.addEventListener("visibilitychange", function () {
+    if (sig && document.visibilityState === "visible" && navigator.wakeLock) navigator.wakeLock.request("screen").then(function (w) { if (sig) sig.wake = w; }).catch(function () {});
+  });
+
+  // --- Mes infos d'urgence (restent sur le téléphone) ---
+  var ICE_F = [["nom", "Nom et prénom"], ["naiss", "Date de naissance"], ["sang", "Groupe sanguin"], ["allergies", "Allergies"], ["traitements", "Traitements en cours"],
+    ["sante", "Problèmes de santé à connaître"], ["contact", "Personne à prévenir"], ["tel", "Son numéro"], ["notes", "Autres infos"]];
+  function getIce() { return load("sylva_ice", {}); }
+  function renderIce() {
+    var d = getIce(), filled = ICE_F.filter(function (f) { return d[f[0]]; });
+    $("#iceView").innerHTML = filled.length ? '<div class="ice-card"><div class="ice-head">INFOS MÉDICALES D\'URGENCE</div>' + filled.map(function (f) {
+      var v = esc(d[f[0]]); if (f[0] === "tel") v = '<a href="tel:' + esc(d.tel.replace(/\s/g, "")) + '">' + v + "</a>";
+      return '<div class="ice-row"><span>' + esc(f[1]) + "</span><b>" + v + "</b></div>";
+    }).join("") + "</div>" : '<p class="muted">Rien d\'enregistré. Remplis tes infos : un secouriste pourra les lire si tu ne peux pas parler.</p>';
+    $("#iceForm").innerHTML = ICE_F.map(function (f) {
+      return '<label class="field"><span class="field-label">' + esc(f[1]) + "</span>" + (f[0] === "notes" || f[0] === "sante" || f[0] === "traitements"
+        ? '<textarea rows="2" data-ice="' + f[0] + '">' + esc(d[f[0]] || "") + "</textarea>" : '<input type="' + (f[0] === "tel" ? "tel" : "text") + '" data-ice="' + f[0] + '" value="' + esc(d[f[0]] || "") + '">') + "</label>";
+    }).join("");
+  }
+  $("#btnIce").addEventListener("click", function () { closeModal($("#modalSos")); renderIce(); $("#iceForm").hidden = true; $("#btnIceEdit").textContent = "Modifier"; openModal("#modalIce"); });
+  $("#btnIceEdit").addEventListener("click", function () {
+    var f = $("#iceForm");
+    if (f.hidden) { f.hidden = false; $("#iceView").hidden = true; this.textContent = "Enregistrer"; return; }
+    var d = {}; $all("#iceForm [data-ice]").forEach(function (el) { var v = el.value.trim(); if (v) d[el.dataset.ice] = v; });
+    save("sylva_ice", d); f.hidden = true; $("#iceView").hidden = false; this.textContent = "Modifier"; renderIce(); toast("Infos d'urgence enregistrées sur ce téléphone");
+  });
 
   // =====================================================================
   // ---------- Quiz de survie ----------
@@ -3102,6 +3201,7 @@
   renderAccueil();
   loadMeteo();
   setTimeout(function () { prefetchPhotos(false); }, 3000);
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {}); } catch (e) {}
   initMap();
   startGeo();
   setTimeout(function () { drawTrack(); drawCar(); checkBadges(); }, 1500);

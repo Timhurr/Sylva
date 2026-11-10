@@ -707,3 +707,29 @@ html.eco *{animation:none!important;transition:none!important}
 html.eco .lv-bubble,html.eco .nav-arrow{transition:none!important}
 html.eco #map.skin-terminal::after{display:none}
 @media (prefers-reduced-motion:reduce){.prep-run i{animation:none}}
+/* Zones tactiles : au moins 44 px de hauteur utile (sans changer la mise en page) */
+.link-btn{position:relative}
+.link-btn::after{content:"";position:absolute;left:-6px;right:-6px;top:-6px;bottom:-6px}
+.chip{height:40px}
+
+/* SOS : outils */
+.sos-tools{display:flex;flex-direction:column;gap:8px;margin:10px 0}
+.sos-tools .btn{width:100%}
+.sig-overlay{position:fixed;inset:0;z-index:2000;background:#000;color:#fff;display:flex;flex-direction:column}
+.sig-lamp{flex:1;background:#000}
+.sig-blanc .sig-lamp.on{background:#fff}
+.sig-rouge .sig-lamp.on{background:#ff1a00}
+.sig-lamp.blink{background:#2a2a2a}
+.sig-ui{padding:16px 16px calc(env(safe-area-inset-bottom) + 16px);background:rgba(0,0,0,.85)}
+.sig-ui b{font-size:18px}
+.sig-ui p{font-size:13px;opacity:.85;margin:6px 0 10px}
+.sig-ui .row{margin-bottom:8px}
+.sig-ui .row .btn{flex:1;background:rgba(255,255,255,.14);color:#fff}
+.sig-ui .btn-big{width:100%}
+html.eco .sig-lamp{transition:none}
+.ice-card{border:3px solid #C9472E;border-radius:18px;overflow:hidden;margin-bottom:10px}
+.ice-head{background:#C9472E;color:#fff;font-weight:800;letter-spacing:.06em;padding:8px 12px;font-size:13px}
+.ice-row{padding:8px 12px;border-top:1px solid var(--line);display:flex;flex-direction:column}
+.ice-row span{font-size:12px;color:var(--muted);font-weight:700}
+.ice-row b{font-size:18px;white-space:pre-wrap}
+#iceForm textarea{font:inherit}
