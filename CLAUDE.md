@@ -6,7 +6,7 @@ Ce fichier est lu automatiquement par Claude Code à l'ouverture du dépôt. Il 
 
 ## 1. Avec qui tu travailles et comment
 
-- **Tim**, francophone, en Belgique. Administrateur réseaux de métier. Sylva est son **activité complémentaire**, qu'il veut rendre rémunérée. Elle ne doit pas concurrencer son employeur (rien qui touche à l'administration IT).
+- **Tim**, francophone, porteur du projet. Le contexte personnel (métier, planning des sorties) n'est volontairement pas écrit ici : demande-le-lui si besoin.
 - **Langue :** tout en français, tutoiement. Réponses courtes et directes : ce qui a changé, ce qu'il doit faire, puis une question s'il y a un vrai choix. Pas de récapitulatif des étapes techniques.
 - **Il teste sur iPhone (Safari, appli installée sur l'écran d'accueil)** et sur PC. Il envoie souvent des captures d'écran sans texte : déduis la demande de l'image (bug à corriger, image à intégrer, idée à ajouter).
 - **Images :** il génère les gravures lui-même avec ChatGPT à partir des prompts de l'atelier (`docs/atelier-images.html`), puis te les envoie. Identifie chaque image à son contenu et range-la sur la bonne fiche.
@@ -22,7 +22,6 @@ Ce fichier est lu automatiquement par Claude Code à l'ouverture du dépôt. Il 
 - En ligne : https://timhurr.github.io/Sylva/ (GitHub Pages, branche `main`, racine du dépôt).
 - Dépôt : `Timhurr/Sylva`, compte GitHub **personnel** de Tim.
 - **Objectif central :** aider quelqu'un qui est **seul, sans secours joignables**, en Belgique (Ardenne) et en Europe de l'Ouest. Tout doit marcher **hors ligne**.
-- Premier test terrain : 12 et 13 novembre 2026, près du barrage de Nisramont (Ourthe).
 
 ### Ce que fait l'appli (onglets)
 - **Aujourd'hui :** prochaine sortie, météo locale, alertes météo et alertes de saison (« En ce moment »), espèces de saison, bouton **SOS** (112, coordonnées GPS, SMS).
@@ -154,7 +153,7 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 
 ## 9. Ce qui reste à faire
 
-**Avant ou juste après le test de Nisramont :**
+**Après le premier test terrain :**
 - Confirmer avec Tim, sur son iPhone : l'alerte chasse sur le lieu (rouge, orange, verte ou message d'erreur), le niveau à bulle, le pouls par caméra, le guidage GPS en marche réelle, le journal de bord.
 - Si l'alerte chasse ne correspond pas à la carte officielle, inspecter le format réel des champs `LISTOFDATE*` du service SPW et corriger `parseDates` / `chasseDates` dans `app.js`.
 - Idées proposées et pas encore faites :
@@ -169,9 +168,7 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 - Encadrés « Conseil de terrain » dans les fiches, d'après les retours du test.
 
 **Avant de vendre Sylva :**
-- Licences : Pl@ntNet commercial, Open-Meteo commercial, MapTiler Flex, service d'itinéraires.
-- Choix du modèle économique : gratuit avec options payantes, ou abonnement.
-- Vérifier avec Tim ce que son contrat de travail dit des créations personnelles (conseil, pas avis juridique).
+- Licences des services listés au §8 avant tout usage commercial.
 - Conditions d'utilisation et avertissement médical.
 
 ## 10. Démarrer une nouvelle session
