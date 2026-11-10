@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.52";
+  var VERSION = "0.9.53";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -2254,7 +2254,6 @@
     $("#panelPouls").hidden = which !== "pouls";
     $("#panelNiveau").hidden = which !== "niveau";
     $("#panelRv").hidden = which !== "rvalue";
-    $("#panelAsk").hidden = which !== "ask";
     if (which !== "pouls" && typeof stopCam === "function") stopCam();
     $("#view-apprendre").scrollTop = 0;
   }
@@ -2616,7 +2615,7 @@
     var w = b.getAttribute("data-learn-x");
     if (b.closest("#view-accueil")) showView("apprendre");
     learnShow(w);
-    if (w === "quiz") renderQuizHome(); else if (w === "badges") renderBadges(); else if (w === "pouls") renderPouls(); else if (w === "niveau") renderNiveau(); else if (w === "rvalue") renderRv(); else if (w === "ask") { setTimeout(function () { $("#askInput").focus(); }, 100); }
+    if (w === "quiz") renderQuizHome(); else if (w === "badges") renderBadges(); else if (w === "pouls") renderPouls(); else if (w === "niveau") renderNiveau(); else if (w === "rvalue") renderRv();
   });
 
   // =====================================================================
@@ -2899,62 +2898,6 @@
     if (e.target.closest("[data-rv-auto]")) { d.auto = true; d.t = nightTemp().t; rvSave(d, true); }
   });
 
-  // =====================================================================
-  // ---------- Demande à Sylva : questions en langage courant -> fiches (hors ligne) ----------
-  // =====================================================================
-  var STOP = "le la les un une des de du d l au aux et ou a à en dans sur sous pour par avec sans ce cet cette ces mon ma mes ton ta tes son sa ses je j tu il elle on nous vous ils elles me m te t se s y est suis es sont ai as a ont fait faire comment quoi que qu qui quel quelle quels quelles est-ce ne n pas plus tres très bien peu trop mal je je suis ca ça cela c comme si alors donc mais car quand puis-je peux peut dois doit faut il-faut".split(" ");
-  var SYN = [
-    [/chevill|tordu|foul|entors/, "entorse cheville"], [/saign|sang|coupur|entaill|plaie|blessur/, "saignement plaie"], [/hemorrag|gicl|pisse le sang|beaucoup de sang/, "garrot saignement"],
-    [/brul|ebouillant/, "brulure"], [/froid|gel|tremble|frisson|hypotherm|glace|congel/, "hypothermie froid"], [/chaud|insolation|coup de chaleur|deshydrat/, "chaleur"],
-    [/serpent|vipere|aspic/, "morsure serpent"], [/tique/, "tique"], [/guepe|abeille|frelon|piqu/, "piqure guepe"], [/champignon|mange|empoison|intox|vomi|baie/, "intoxication"],
-    [/casse|fractur|\bos\b|\bbras\b|jambe|poignet/, "attelle immobiliser fracture echarpe"], [/inconscien|evanoui|respire|reveille pas/, "pls position laterale"],
-    [/choc|pale|sueur|malaise/, "choc"], [/ampoule|pied/, "ampoule"], [/\beaux?\b|boire|soif|potable|tourbe|brune|riviere|source/, "eau potable filtre bouillir"],
-    [/perdu|orient|nord|direction|chemin/, "orientation boussole"], [/secour|aide|appel|112|reseau|helico|signal/, "signaux detresse secours"],
-    [/\bfeux?\b|allum|briquet|bois mouill|pluie/, "feu"], [/abri|bache|tente|dormir|nuit|vent/, "abri bache"], [/matelas|valeur r|r-value|rvalue|isolation|isoler|sol froid|sac de couchage|duvet/, "isolation matelas valeur"], [/faim|manger|nourrit/, "nourriture"],
-    [/poisson|peche/, "peche poisson"], [/noeud|corde|attach/, "noeud"], [/orage|foudre|eclair/, "orage foudre"]
-  ];
-  var URGENT = /inconscien|respire (pas|plus|mal)|ne respire|beaucoup de sang|gicl|hemorrag|reveille pas|convuls|arret cardiaque|crise cardiaque|poitrine|paralys|noy/;
-  function stemW(w) { return w.length > 5 ? w.slice(0, 5) : w; }
-  function askSylva(qRaw) {
-    var q = norm(qRaw).replace(/[^a-z0-9' -]/g, " ");
-    var words = q.split(/[\s'-]+/).filter(function (w) { return w && w.length > 2 && STOP.indexOf(w) === -1; });
-    var own = words.map(stemW);
-    SYN.forEach(function (s) { if (s[0].test(q)) words = words.concat(s[1].split(" ")); });
-    var stems = words.map(stemW).filter(function (v, i, a) { return a.indexOf(v) === i; });
-    if (!stems.length) return { urgent: false, res: [] };
-    var res = TECHS.map(function (t) {
-      var ti = norm(t.titre), it = norm(t.intro), body = norm((t.etapes || []).concat(t.isole || [], t.alerte || []).join(" "));
-      var sc = 0;
-      stems.forEach(function (st) { if (ti.indexOf(st) !== -1) sc += 6; if (it.indexOf(st) !== -1) sc += 2; if (body.indexOf(st) !== -1) sc += 1; });
-      if (/^rj_/.test(t.id)) sc *= 0.5;
-      if (t.cat === "Premiers secours" || t.cat === "Secours") sc *= 1.15;
-      return { t: t, sc: sc };
-    }).filter(function (x) { return x.sc >= 4; }).sort(function (a, b) { return b.sc - a.sc; });
-    if (res.length) { var top = res[0].sc; res = res.filter(function (x) { return x.sc >= top * 0.45; }).slice(0, 4); }
-    var esp = ESPECES.filter(function (s) { var n = norm(s.nom); return own.some(function (st) { return st.length > 3 && n.indexOf(st) !== -1; }); }).slice(0, 2);
-    return { urgent: URGENT.test(q), res: res, esp: esp };
-  }
-  function renderAsk(q) {
-    var a = askSylva(q), h = '<div class="ask-q">' + esc(q) + "</div>";
-    if (a.urgent) h += '<div class="alert alert-danger"><strong>Urgence vitale possible</strong><span>Appelle le 112 si tu peux (même sans réseau de ton opérateur, essaie). Sinon, suis la fiche ci-dessous et fais-toi repérer.</span><div class="row" style="margin-top:8px"><a class="btn" href="tel:112">Appeler le 112</a></div></div>';
-    if (!a.res.length && !(a.esp && a.esp.length)) h += '<div class="ask-a"><p>Je n\'ai pas trouvé de fiche pour ça. Essaie avec d\'autres mots (« cheville », « saigne », « froid », « eau trouble »…), ou parcours les fiches par catégorie.</p></div>';
-    a.res.forEach(function (x, i) {
-      var t = x.t, steps = (t.isole && t.isole.length ? t.isole : t.etapes || []).slice(0, i === 0 ? 4 : 0);
-      h += '<div class="ask-a' + (i === 0 ? " best" : "") + '"><span class="ask-k">' + (i === 0 ? "La fiche la plus proche" : "Voir aussi") + " · " + esc(t.cat) + "</span><b>" + esc(t.titre) + "</b>" +
-        (i === 0 ? "<p>" + esc(t.intro) + "</p>" : "") +
-        (t.alerte && t.alerte.length && i === 0 ? '<div class="alert alert-danger" style="margin:8px 0"><strong>Signes d\'alerte</strong><span>' + esc(t.alerte.join(" · ")) + "</span></div>" : "") +
-        (steps.length ? "<ol>" + steps.map(function (s) { return "<li>" + esc(s) + "</li>"; }).join("") + "</ol>" : "") +
-        '<button type="button" class="btn ' + (i === 0 ? "btn-primary" : "") + '" data-qtech="' + esc(t.id) + '">Ouvrir la fiche' + (i === 0 && (t.etapes || t.isole || []).length > 4 ? " complète" : "") + "</button></div>";
-    });
-    (a.esp || []).forEach(function (s) { h += '<div class="ask-a"><span class="ask-k">Espèce</span><b>' + esc(s.nom) + "</b><p>" + esc(s.statut) + '</p><button type="button" class="btn" data-qesp="' + esc(s.id) + '">Voir l\'espèce</button></div>'; });
-    $("#askOut").innerHTML = h + '<p class="tiny muted">Réponses tirées uniquement des fiches de Sylva, sans connexion. Rien n\'est inventé.</p>';
-  }
-  $("#formAsk").addEventListener("submit", function (e) { e.preventDefault(); var q = $("#askInput").value.trim(); if (q) { renderAsk(q); $("#askInput").blur(); } });
-  $("#askOut").addEventListener("click", function (e) {
-    var t = e.target.closest("[data-qtech]"); if (t) { openTechnique(t.dataset.qtech); return; }
-    var s = e.target.closest("[data-qesp]"); if (s) openEspece(s.dataset.qesp);
-  });
-  $all("#askSugg [data-ask]").forEach(function (b) { b.addEventListener("click", function () { $("#askInput").value = b.dataset.ask; renderAsk(b.dataset.ask); }); });
 
   renderRegionBtn();
   renderEspeces();

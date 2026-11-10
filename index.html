@@ -52,7 +52,6 @@
         </span>
       </button>
       <div id="homeAlerts"></div>
-      <button type="button" class="ask-home" data-learn-x="ask"><span>💬</span><b>Un problème ? Demande à Sylva</b><i>Fonctionne sans réseau ›</i></button>
       <div id="homeSeasonAlerts"></div>
 
       <div class="sec-head"><h2>Ton prochain bivouac</h2><button class="link-btn" type="button" data-goto="bivouac">Voir</button></div>
@@ -225,7 +224,6 @@
 
         <div class="sec-head"><h2>Outils de terrain</h2></div>
         <div class="train-grid tools-grid">
-          <button type="button" class="train-card" data-learn-x="ask"><span class="tc-ico">💬</span><b>Demande à Sylva</b><span>Ta question, les bonnes fiches, hors ligne</span></button>
           <button type="button" class="train-card" data-learn-x="pouls"><span class="tc-ico">❤️</span><b>Prendre le pouls</b><span>Minuteur guidé, ou caméra</span></button>
           <button type="button" class="train-card" data-learn-x="niveau"><span class="tc-ico">📐</span><b>Niveau et relief</b><span>Pente du sol, cuvette ou crête</span></button>
           <button type="button" class="train-card" data-learn-x="rvalue"><span class="tc-ico">🛏️</span><b>Valeur R</b><span>Ton matelas suffit-il pour la nuit ?</span></button>
@@ -249,16 +247,6 @@
     <div class="pad page" id="panelNiveau" hidden>
       <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Niveau et relief</h1></div>
       <div id="niveauBox"></div>
-    </div>
-    <div class="pad page" id="panelAsk" hidden>
-      <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Demande à Sylva</h1></div>
-      <form id="formAsk" class="ask-form" role="search"><input type="search" id="askInput" placeholder="Ex. : je me suis tordu la cheville" enterkeyhint="search" autocomplete="off"><button class="btn btn-primary" type="submit">Demander</button></form>
-      <div class="ask-sugg" id="askSugg">
-        <button type="button" class="chip" data-ask="je me suis tordu la cheville">Cheville tordue</button><button type="button" class="chip" data-ask="ça saigne beaucoup">Ça saigne</button>
-        <button type="button" class="chip" data-ask="j'ai froid et je tremble">J'ai froid</button><button type="button" class="chip" data-ask="l'eau de la rivière est brune">Eau brune</button>
-        <button type="button" class="chip" data-ask="je suis perdu sans réseau">Perdu</button><button type="button" class="chip" data-ask="mordu par un serpent">Serpent</button>
-      </div>
-      <div id="askOut"><p class="muted">Pose ta question avec tes mots. Sylva cherche dans ses fiches, sans réseau, et t'affiche les bonnes étapes.</p></div>
     </div>
     <div class="pad page" id="panelRv" hidden>
       <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Valeur R</h1></div>

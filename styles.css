@@ -643,7 +643,6 @@ a.season-alert{text-decoration:none}
 
 /* Outils de terrain */
 .tools-grid{grid-template-columns:1fr 1fr}
-.tools-grid .train-card:first-child{grid-column:1 / -1}
 .ask-home{display:flex;align-items:center;gap:10px;width:100%;border:0;border-radius:18px;background:var(--surface);box-shadow:var(--shadow);padding:14px 16px;margin:12px 0 4px;font:inherit;color:var(--text);text-align:left}
 .ask-home span{font-size:22px}.ask-home b{flex:1;font-size:15px}.ask-home i{font-style:normal;font-size:12px;color:var(--muted);font-weight:700}
 .ask-form{display:flex;gap:8px;margin:8px 0}
