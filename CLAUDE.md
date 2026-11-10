@@ -116,7 +116,8 @@ Toutes les données utilisateur sont **sur le téléphone**, clés `sylva_*` dan
    - Pour une nouvelle fonction, écris un petit test Playwright du même modèle (serveur local sur le port 8766, Leaflet simulé, services externes simulés avec `page.route`). L'environnement ne joint pas les services externes (MapTiler, SPW, OpenFreeMap…) : simule-les et dis à Tim ce qui reste à vérifier sur son iPhone.
 3. **Commit** en français : `V0.9.xx : description courte`, avec les lignes d'attribution demandées par l'environnement.
 4. **Push** sur `main`. GitHub répond parfois en erreur 500 : réessaie en boucle (jusqu'à 8 fois, 20 s d'écart).
-5. **Vérifie la publication** :
+5. **Mets à jour le journal de développement (§10)** à la fin de la session.
+6. **Vérifie la publication** :
    ```sh
    gh api repos/Timhurr/Sylva/actions/runs --jq '.workflow_runs[0]|.head_sha[0:7]+" "+.status+" "+(.conclusion//"")'
    ```
@@ -171,10 +172,26 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 - Licences des services listés au §8 avant tout usage commercial.
 - Conditions d'utilisation et avertissement médical.
 
-## 10. Démarrer une nouvelle session
+## 10. Journal de développement
+
+À mettre à jour **à la fin de chaque session de travail** (le plus récent en haut, quelques lignes) : ce qui a été fait, ce qui est en cours, ce que Tim doit vérifier sur son iPhone. C'est ce qui permet à une autre session de reprendre au milieu d'un chantier.
+
+### 2026-11-10 · v0.9.53
+- Fait : calculateur de valeur R et fiche « Isolation du sol » (avec sa gravure) ; retrait de « Demande à Sylva » ; fonds de carte réduits à IGN Belgique, MapTiler Outdoor et MapTiler Satellite ; passation (ce fichier, `tools/`, `docs/BASCULE.md`, copie de l'atelier).
+- En cours : rien.
+- À vérifier par Tim sur iPhone : alerte chasse sur son lieu de bivouac (couleur et dates cohérentes avec la carte officielle SPW), niveau à bulle, pouls par caméra, guidage GPS en marchant, journal de bord pendant une sortie.
+
+### 2026-11-09 · v0.9.34 à v0.9.52
+- Raccourcis Savoir-faire, programme du bivouac qui remplit le sac, lieu et météo de la sortie, anciens bivouacs, guidage GPS (pied, vélo, voiture), services autour, recettes du feu (42 recettes et niveaux), journal de bord, quiz, badges, alertes de saison, chasse SPW, pouls, niveau et relief, MapTiler.
+
+## 11. Basculer sur un autre compte
+
+Voir `docs/BASCULE.md`.
+
+## 12. Démarrer une nouvelle session
 
 Message d'amorce que Tim peut envoyer à une nouvelle session Claude Code reliée à ce dépôt :
 
-> Tu reprends le projet Sylva. Lis `CLAUDE.md` en entier, lance `node tools/tests/fulltest.js` pour vérifier que tout passe, puis dis-moi en trois lignes où on en est et ce que tu proposes en premier.
+> Tu reprends le projet Sylva. Lis `CLAUDE.md` en entier (surtout le journal de développement), lance `node tools/tests/fulltest.js` pour vérifier que tout passe, puis dis-moi en trois lignes où on en est et ce que tu proposes en premier.
 
 Ensuite, travaille comme décrit au §1 : en français, en tutoyant, réponses courtes, et toujours vérifier la publication.
