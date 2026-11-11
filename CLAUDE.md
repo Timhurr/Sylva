@@ -205,6 +205,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 
 - **v0.9.59** : nouvelle gravure « Récupérer l'eau de pluie » (mains corrigées). Ajout de `IMG_REV` pour forcer le rechargement d'une gravure remplacée. Connecteur Adobe essayé : il ne peut pas redessiner une partie d'image (pas de remplissage génératif) et refuse les URL github.io ; les mains se corrigent dans ChatGPT (prompt complet avec bloc HANDS).
 
+- **v0.9.60** : nouvelle gravure « Filtre improvisé » (mains corrigées), `IMG_REV` filtre: 2.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.

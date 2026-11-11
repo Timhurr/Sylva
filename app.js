@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.59";
+  var VERSION = "0.9.60";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -1328,7 +1328,7 @@
   // ---------- Techniques ----------
   var ILLUS = window.SYLVA_ILLUS || {};
   // Gravures remplacées : le numéro change l'adresse, sinon l'iPhone garde l'ancienne en cache
-  var IMG_REV = window.SYLVA_IMG_REV = { pluie: 2 };
+  var IMG_REV = window.SYLVA_IMG_REV = { pluie: 2, filtre: 2 };
   var IMGS = {}; (window.SYLVA_IMAGES || []).forEach(function (k) { IMGS[k] = "img/" + k + ".webp" + (IMG_REV[k] ? "?r=" + IMG_REV[k] : ""); });
   function thumbKey(key) { if (IMGS[key]) return key; for (var q = 12; q >= 1; q--) if (IMGS[key + "_" + q]) return key + "_" + q; return key; }
   function thumbOf(key, illus) {
