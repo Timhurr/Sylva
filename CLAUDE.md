@@ -87,6 +87,7 @@ Toutes les données utilisateur sont **sur le téléphone**, clés `sylva_*` dan
   - `<id>_seul_<n>.webp` : étape n du mode « Seul, sans secours » ;
   - `chap_<id>.webp` : couverture de chapitre.
 - Ajouter des images : `python3 tools/add_images.py chemin/a.png rj_pemmican chemin/b.png ps_tique` (convertit, puis régénère `images.js`).
+- **Remplacer une gravure existante :** le service worker garde les images d'une version à l'autre (cache d'abord). Après `add_images.py`, incrémente son numéro dans `IMG_REV` (`app.js`, juste avant `var IMGS`), par exemple `{ pluie: 2 }`, sinon l'iPhone garde l'ancienne.
 - **Style imposé** (dans tous les prompts) : gravure à la plume, hachures fines, lavis aquarelle sourd, papier parchemin vieilli, tons sépia chauds ; **une seule personne**, aucun compagnon ; **aucun texte**, lettre ni chiffre ; format paysage 4:3.
 - **Nœuds :** les IA inventent les croisements. Méthode retenue : Tim fait le nœud avec une vraie corde, le photographie à chaque étape, et ChatGPT redessine la photo dans le style. Le prompt est dans la section « Nœuds : phase 2 » de l'atelier. Ne jamais générer de schéma de nœud en SVG ou en 3D : ça a été essayé et jugé faux.
 - Après un ajout de fiche, ajoute son prompt dans `docs/atelier-images.html` (tableau `ITEMS` : `[fichier, groupe, titre, sujet en anglais, prioritaire 0/1, à vérifier 0/1]`). L'atelier est aussi publié comme artefact claude.ai dans le compte de Tim. Si tu n'y as pas accès, la copie du dépôt fait foi.
@@ -201,6 +202,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 - **v0.9.57** : « Mon matériel » (onglet Bivouac). Catalogue `materiel.js` (26 produits, valeurs fabricant ou test avec lien source), recherche marque/modèle, bouton « Chercher en ligne », saisie manuelle (`sylva_gear`). Le matériel coché forme le groupe « Mon matériel » du sac à dos (poids total, 3 objets les plus lourds). Le calculateur de valeur R propose ses matelas (★) et ses sacs ; « Préparer la sortie » compare matelas et sac à la nuit prévue (`gearNightCheck`). Test : `tools/tests/geartest.js`.
 
 - **v0.9.58** : bouton « ± » devant chaque champ de température (le pavé numérique de l'iPhone n'a pas de « - ») : calculateur de valeur R et sacs dans « Mon matériel ». La fenêtre « Ajouter du matériel » affiche le catalogue par catégorie (puces) avant toute recherche ; la recherche montre tous les résultats, toutes catégories.
+
+- **v0.9.59** : nouvelle gravure « Récupérer l'eau de pluie » (mains corrigées). Ajout de `IMG_REV` pour forcer le rechargement d'une gravure remplacée. Connecteur Adobe essayé : il ne peut pas redessiner une partie d'image (pas de remplissage génératif) et refuse les URL github.io ; les mains se corrigent dans ChatGPT (prompt complet avec bloc HANDS).
 
 ## 11. Basculer sur un autre compte
 

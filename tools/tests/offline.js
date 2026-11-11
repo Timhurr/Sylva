@@ -42,7 +42,7 @@ const stub = `(function(){function mk(){var f=function(){return p};var p=new Pro
     // toutes les images de l'appli
     let okN = 0, ko = [];
     for (const k of window.SYLVA_IMAGES) {
-      const ok = await new Promise(res => { const i = new Image(); i.onload = () => res(true); i.onerror = () => res(false); i.src = 'img/' + k + '.webp'; });
+      const ok = await new Promise(res => { const i = new Image(); i.onload = () => res(true); i.onerror = () => res(false); i.src = 'img/' + k + '.webp' + ((window.SYLVA_IMG_REV||{})[k] ? '?r=' + window.SYLVA_IMG_REV[k] : ''); });
       ok ? okN++ : ko.push(k);
     }
     out.imgs = okN + '/' + window.SYLVA_IMAGES.length; out.ko = ko.slice(0, 10);
