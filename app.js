@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.61";
+  var VERSION = "0.9.62";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -1007,8 +1007,10 @@
   });
   $("#btnReloadOsm").addEventListener("click", function () {
     if (focusPoint && map) { var c = map.getCenter(); focusPoint = [c.lat, c.lng]; }
-    loadOsm(true);
+    loadOsm(true); loadPoi(true);
   });
+  // Services gardés avant l'ajout des parkings : on les recharge une fois
+  if (!load("sylva_poi_v2", false)) { save("sylva_poi_v2", true); var oldPoi = load("sylva_poi", null); if (oldPoi) { oldPoi.t = 0; save("sylva_poi", oldPoi); } }
 
   // ---------- Recherche de lieu (Nominatim / OpenStreetMap) ----------
   var placeMarker = null, placeList = [], lastSearch = 0;
