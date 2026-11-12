@@ -96,12 +96,20 @@
       <button class="fab" id="btnLocate" aria-label="Me localiser">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3"/></svg>
       </button>
+      <button class="fab" id="btnMeasure" aria-label="Mesurer une distance">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg>
+      </button>
       <button class="fab" id="btnReloadOsm" aria-label="Recharger les zones autour de moi">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>
       </button>
       <button class="fab fab-accent" id="btnAddSpot" aria-label="Ajouter un spot">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
       </button>
+    </div>
+    <div class="meas-panel" id="measPanel" hidden role="region" aria-label="Mesure de distance">
+      <div class="meas-top"><div><span class="meas-k">Distance</span><b id="measTot">—</b></div><button type="button" class="meas-x" id="measClose" aria-label="Fermer la mesure">✕</button></div>
+      <div class="meas-info" id="measInfo"></div>
+      <div class="meas-btns"><button type="button" id="measMe">Depuis moi</button><button type="button" id="measUndo">Retour</button><button type="button" id="measClear">Effacer</button></div>
     </div>
     <div class="nav-panel" id="navPanel" hidden role="region" aria-label="Guidage">
       <div class="nav-top">

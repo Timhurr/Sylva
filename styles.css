@@ -765,3 +765,18 @@ html.eco .sig-lamp{transition:none}
 .gear-scroll{max-height:260px;overflow-y:auto;border:1px solid var(--line);border-radius:14px}
 .rv-row > span:last-child{display:flex;align-items:center;gap:4px;flex:none;white-space:nowrap}
 .rv-row .pm-btn{margin-right:2px}
+
+/* Mesure de distance */
+.fab.on{background:#E0584A;color:#fff}
+.meas-panel{position:absolute;left:12px;right:12px;bottom:calc(var(--bottom) + 100px);z-index:700;background:var(--dark-card,#16201A);color:#fff;border-radius:22px;padding:12px 14px;box-shadow:0 14px 36px rgba(0,0,0,.3)}
+.meas-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.meas-k{display:block;font-size:12px;opacity:.7}
+.meas-top b{font-size:24px;line-height:1.1}
+.meas-x{width:40px;height:40px;border-radius:14px;border:0;background:rgba(255,255,255,.1);color:#fff;font-size:18px}
+.meas-info{font-size:12px;opacity:.85;margin:2px 0 8px}
+.meas-btns{display:flex;gap:6px}
+.meas-btns button{flex:1;min-height:40px;padding:0 6px;border-radius:12px;border:0;background:rgba(255,255,255,.12);color:#fff;font:inherit;font-size:13px;font-weight:600}
+.meas-btns button:disabled{opacity:.4}
+.meas-lbl{position:absolute;transform:translate(-50%,-150%);white-space:nowrap;background:#E0584A;color:#fff;font:700 12px/1 var(--font,system-ui);padding:4px 7px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+body.measuring .map-card{display:none}
+body.measuring #btnAddSpot{display:none}

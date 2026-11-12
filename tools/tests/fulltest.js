@@ -106,7 +106,7 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   ok('Accueil : espèces de saison', acc.season > 0, acc.season + ' cartes');
   ok('Accueil : reprise du guide', acc.guide > 10);
   await pg.click('#tripCard'); await pg.waitForTimeout(300);
-  await pg.click('#btnTrip'); await pg.fill('#tripLieu', "Vallée de l'Ourthe"); await pg.fill('#tripDate', '2026-11-12'); await pg.click('#formTrip button[type="submit"]'); await pg.waitForTimeout(200);
+  await pg.click('#btnTrip'); await pg.fill('#tripLieu', "Vallée de l'Ourthe"); await pg.fill('#tripDate', new Date(Date.now() + 3 * 864e5).toISOString().slice(0, 10)); await pg.click('#formTrip button[type="submit"]'); await pg.waitForTimeout(200);
   const trip = await pg.evaluate(() => [document.querySelector('#tripName').textContent, document.querySelector('#tripWhen').textContent]);
   ok('Bivouac : enregistrer la sortie', trip[0] === "Vallée de l'Ourthe" && /jours|Demain/.test(trip[1]), trip.join(' / '));
   const met = await pg.evaluate(() => document.querySelectorAll('#meteo .day').length);

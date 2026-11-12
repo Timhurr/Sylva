@@ -207,6 +207,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 
 - **v0.9.60** : nouvelle gravure « Filtre improvisé » (mains corrigées), `IMG_REV` filtre: 2.
 
+- **v0.9.61** : carte : parkings publics dans la couche Services (OSM `amenity=parking`, privés exclus ; type, places, gratuit/payant), police passe en 👮. Outil « Mesurer » (bouton règle) : points posés au toucher, distance cumulée, temps à pied à 4 km/h, « Depuis moi », retour, effacer (`meas`, test `tools/tests/measuretest.js`). `fulltest.js` : date de sortie relative à aujourd'hui.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.

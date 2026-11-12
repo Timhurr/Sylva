@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.60";
+  var VERSION = "0.9.61";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -558,18 +558,21 @@
     ["argent", "Distributeur", "#4E8F7A", "€", function (t) { return t.amenity === "atm" || t.amenity === "bank"; }],
     ["transport", "Gare", "#6B6B9A", "🚆", function (t) { return t.railway === "station" || t.public_transport === "station"; }],
     ["wc", "Toilettes", "#7C8A80", "WC", function (t) { return t.amenity === "toilets"; }],
-    ["police", "Police", "#33497A", "P", function (t) { return t.amenity === "police"; }]
+    ["police", "Police", "#33497A", "👮", function (t) { return t.amenity === "police"; }],
+    ["parking", "Parking", "#2F6FB5", "P", function (t) { return t.amenity === "parking" && !/^(private|no|customers|permit|delivery)$/.test(t.access || ""); }]
   ];
+  var PARK_FR = { surface: "en plein air", underground: "souterrain", "multi-storey": "à étages", street_side: "le long de la route", lane: "le long de la route", rooftop: "sur le toit" };
   var POI_FR = { supermarket: "Supermarché", convenience: "Épicerie", bakery: "Boulangerie", butcher: "Boucherie", greengrocer: "Primeur", farm: "Vente à la ferme", deli: "Traiteur", general: "Magasin",
     pharmacy: "Pharmacie", doctors: "Médecin", hospital: "Hôpital", clinic: "Clinique", dentist: "Dentiste", fuel: "Station-service", restaurant: "Restaurant", cafe: "Café",
-    bar: "Bar", pub: "Café", fast_food: "Snack", outdoor: "Magasin outdoor", sports: "Magasin de sport", hardware: "Quincaillerie", doityourself: "Bricolage",
+    bar: "Bar", pub: "Café", parking: "Parking", fast_food: "Snack", outdoor: "Magasin outdoor", sports: "Magasin de sport", hardware: "Quincaillerie", doityourself: "Bricolage",
     atm: "Distributeur", bank: "Banque", toilets: "Toilettes", police: "Police", station: "Gare" };
   function poiQuery(lat, lon) {
     var a = "(around:8000," + lat + "," + lon + ");";
     return "[out:json][timeout:25];(" +
       'nwr["shop"~"^(supermarket|convenience|bakery|butcher|greengrocer|farm|deli|general|outdoor|sports|hardware|doityourself)$"]' + a +
       'nwr["amenity"~"^(pharmacy|doctors|hospital|clinic|dentist|fuel|restaurant|cafe|bar|pub|fast_food|atm|bank|toilets|police)$"]' + a +
-      'nwr["railway"="station"]' + a + ");out center tags 400;";
+      'nwr["amenity"="parking"]["access"!~"^(private|no|customers|permit|delivery)$"]' + a +
+      'nwr["railway"="station"]' + a + ");out center tags 700;";
   }
   function hoursFr(h) {
     var D = { Mo: "lun", Tu: "mar", We: "mer", Th: "jeu", Fr: "ven", Sa: "sam", Su: "dim", PH: "fériés" };
@@ -597,6 +600,12 @@
       var t = el.tags || {}, k = POI.filter(function (x) { return x[4](t); })[0]; if (!k) return;
       var typ = POI_FR[t.shop] || POI_FR[t.amenity] || (t.railway === "station" ? "Gare" : k[1]);
       var name = t.name || typ, lines = [];
+      if (k[0] === "parking") {
+        var pk = [PARK_FR[t.parking] || "", t.capacity ? t.capacity + " places" : "", t.fee === "yes" ? "payant" : t.fee === "no" ? "gratuit" : "", t.maxstay ? "durée max. " + t.maxstay : "", t.supervised === "yes" ? "surveillé" : ""].filter(Boolean);
+        if (pk.length) lines.push(esc(pk.join(" · ")));
+        if (t.fee === "yes" && t.charge) lines.push("Tarif : " + esc(t.charge));
+        if (t.access === "destination") lines.push("Réservé aux visiteurs du lieu");
+      }
       if (t.opening_hours) lines.push("Horaires : " + esc(hoursFr(t.opening_hours)));
       var tel = t.phone || t["contact:phone"]; if (tel) lines.push('Tél. : <a href="tel:' + esc(tel.replace(/\s/g, "")) + '">' + esc(tel) + "</a>");
       var addr = [t["addr:street"] && (t["addr:street"] + (t["addr:housenumber"] ? " " + t["addr:housenumber"] : "")), t["addr:city"]].filter(Boolean).join(", ");
@@ -912,7 +921,43 @@
   // Toucher la carte : épingle provisoire, puis « Placer un spot ici »
   var tapMarker = null;
   function clearTap() { if (tapMarker && map) { map.removeLayer(tapMarker); tapMarker = null; } }
+  // ---------- Mesurer une distance : points posés au doigt ----------
+  var meas = { on: false, pts: [], line: null, dots: null };
+  function measDraw() {
+    if (!map) return;
+    if (!meas.dots) { meas.dots = L.layerGroup().addTo(map); }
+    meas.dots.clearLayers(); if (meas.line) { map.removeLayer(meas.line); meas.line = null; }
+    var tot = 0;
+    meas.pts.forEach(function (p, i) {
+      if (i) tot += map.distance(meas.pts[i - 1], p);
+      meas.dots.addLayer(L.circleMarker(p, { radius: i ? 6 : 7, color: "#fff", weight: 2, fillColor: "#E0584A", fillOpacity: 1 }));
+      if (i) meas.dots.addLayer(L.marker(p, { interactive: false, icon: L.divIcon({ className: "", iconSize: [0, 0], html: '<span class="meas-lbl">' + fmtKm(tot / 1000) + "</span>" }) }));
+    });
+    if (meas.pts.length > 1) meas.line = L.polyline(meas.pts, { color: "#E0584A", weight: 4, dashArray: "8 8" }).addTo(map);
+    var km = tot / 1000, min = Math.round(km / 4 * 60);
+    $("#measTot").textContent = meas.pts.length > 1 ? fmtKm(km) : "—";
+    $("#measInfo").textContent = meas.pts.length < 2 ? (meas.pts.length ? "Touche le point suivant" : "Touche la carte pour poser le premier point")
+      : (meas.pts.length - 1) + " segment" + (meas.pts.length > 2 ? "s" : "") + " · à pied ≈ " + (min >= 60 ? Math.floor(min / 60) + " h " + String(min % 60).padStart(2, "0") : min + " min") + " (sans dénivelé)";
+    $("#measUndo").disabled = !meas.pts.length;
+  }
+  function measStart() {
+    meas.on = true; meas.pts = []; clearTap(); document.body.classList.add("measuring"); $("#measPanel").hidden = false; $("#btnMeasure").classList.add("on"); measDraw();
+  }
+  function measStop() {
+    meas.on = false; meas.pts = []; if (meas.dots) meas.dots.clearLayers(); if (meas.line && map) { map.removeLayer(meas.line); meas.line = null; }
+    $("#measPanel").hidden = true; document.body.classList.remove("measuring"); $("#btnMeasure").classList.remove("on");
+  }
+  $("#btnMeasure").addEventListener("click", function () { if (meas.on) measStop(); else measStart(); });
+  $("#measClose").addEventListener("click", measStop);
+  $("#measUndo").addEventListener("click", function () { meas.pts.pop(); measDraw(); });
+  $("#measClear").addEventListener("click", function () { meas.pts = []; measDraw(); });
+  $("#measMe").addEventListener("click", function () {
+    if (!me) { toast("Position GPS pas encore trouvée"); return; }
+    meas.pts.unshift([me[0], me[1]]); measDraw();
+  });
+
   function onMapTap(e) {
+    if (meas.on) { meas.pts.push([e.latlng.lat, e.latlng.lng]); measDraw(); return; }
     var bp = $("#basemapPanel");
     if (bp && !bp.hidden) { bp.hidden = true; return; }
     var ll = e.latlng; clearTap();
