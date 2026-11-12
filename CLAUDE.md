@@ -211,6 +211,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 
 - **v0.9.63** : retrait de `camionneur_1` et `tourmort_4` (même dessin, nœud faux d'après Tim). Les deux étapes sont ajoutées en tête de « Nœuds : phase 2 » dans l'atelier, à refaire à partir d'une photo.
 
+- **v0.9.64** : `prusik_1` = copie de `pecheur_4` (double nœud de pêcheur qui ferme l'anneau), en attendant une photo de Tim de l'anneau fermé.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.
