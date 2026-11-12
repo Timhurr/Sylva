@@ -209,6 +209,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 
 - **v0.9.61** : carte : parkings publics dans la couche Services (OSM `amenity=parking`, privés exclus ; type, places, gratuit/payant), police passe en 👮. Outil « Mesurer » (bouton règle) : points posés au toucher, distance cumulée, temps à pied à 4 km/h, « Depuis moi », retour, effacer (`meas`, test `tools/tests/measuretest.js`). `fulltest.js` : date de sortie relative à aujourd'hui.
 
+- **v0.9.63** : retrait de `camionneur_1` et `tourmort_4` (même dessin, nœud faux d'après Tim). Les deux étapes sont ajoutées en tête de « Nœuds : phase 2 » dans l'atelier, à refaire à partir d'une photo.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.
