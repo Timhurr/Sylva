@@ -221,6 +221,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 
 - **v0.9.68** : Overpass surchargé répond parfois HTTP 200 avec une liste vide et une `remark` d'erreur (« Query timed out ») : c'est maintenant traité comme un échec (serveur suivant, rien d'enregistré). Délai serveur 40 s, client 50 s. Le bouton ↻ annonce le résultat des services (nombre de lieux, aucun, ou serveurs saturés). À vérifier par Tim : services autour de son spot de Nisramont.
 
+- **v0.9.69** : le bandeau « Bivouac le plus proche » part de l'endroit regardé (centre de la carte ; la position GPS seulement si la carte est centrée sur toi à moins de 1,5 km, `mapRefPoint`) et se met à jour quand la carte bouge. Une zone pas encore chargée se charge seule quand la carte s'arrête dessus (zoom ≥ 11, en ligne ; `loadOsm(force, at)`). Test : `tools/tests/cardtest.js`.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.

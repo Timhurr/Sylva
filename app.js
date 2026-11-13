@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.68";
+  var VERSION = "0.9.69";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -219,6 +219,17 @@
     });
     map.on("click", onMapTap);
     map.on("dragstart", function () { if (nav) nav.follow = false; });
+    map.on("moveend", function () {
+      clearTimeout(cardTimer);
+      cardTimer = setTimeout(function () {
+        updateMapCard();
+        // Zone regardée pas encore chargée : on la charge (une fois la carte immobile, zoom suffisant)
+        if (navigator.onLine && map.getZoom() >= 11) {
+          var ce = map.getCenter(), pt = [ce.lat, ce.lng];
+          if (!zoneFresh("sylva_osm", pt, 8) || (map.hasLayer(layers.services) && !zoneFresh("sylva_poi", pt, 5))) loadOsm(false, pt);
+        }
+      }, 1500);
+    });
 
     renderSpots();
     if (zoneGet("sylva_osm").length) renderOsm(zoneEls("sylva_osm"));
@@ -427,9 +438,9 @@
   }
   function zoneFresh(key, c, km) { return zoneGet(key).some(function (z) { return z.c && Date.now() - z.t < 7 * 864e5 && distKm(z.c, c) < km; }); }
 
-  function loadOsm(force) {
-    loadPoi(force); loadChasse(force);
-    var c = refPoint();
+  function loadOsm(force, at) {
+    loadPoi(force, at); if (!at) loadChasse(force);
+    var c = at || refPoint();
     var fresh = zoneFresh("sylva_osm", c, 8);
     if (fresh && !force) { updateMapCard(); return; }
     if (!navigator.onLine) {
@@ -437,11 +448,14 @@
       updateMapCard(); return;
     }
     setMapCard("Chargement des zones…", "Aires de bivouac et points d'eau depuis OpenStreetMap");
+    osmLoading = true;
     overpass(osmQuery(c[0].toFixed(5), c[1].toFixed(5))).then(function (data) {
+      osmLoading = false;
       zonePut("sylva_osm", c, data.elements || []);
       renderOsm(zoneEls("sylva_osm"));
       if (force) toast("Zones mises à jour");
     }).catch(function () {
+      osmLoading = false;
       if (force) toast("Serveurs OpenStreetMap surchargés : zones en cache affichées, réessaie dans une minute");
       updateMapCard();
     });
@@ -607,9 +621,9 @@
     return String(h).replace(/\b(Mo|Tu|We|Th|Fr|Sa|Su|PH)\b/g, function (m) { return D[m]; })
       .replace(/\boff\b|\bclosed\b/g, "fermé").replace(/24\/7/, "24 h/24, 7 j/7").replace(/\s*;\s*/g, " · ").replace(/(\d\d):(\d\d)/g, "$1h$2");
   }
-  function loadPoi(force) {
+  function loadPoi(force, at) {
     if (!map || !map.hasLayer(layers.services)) return;
-    var c = refPoint(), fresh = zoneFresh("sylva_poi", c, 5);
+    var c = at || refPoint(), fresh = zoneFresh("sylva_poi", c, 5);
     if (zoneGet("sylva_poi").length) renderPoi(zoneEls("sylva_poi"));
     if ((fresh && !force) || !navigator.onLine) return;
     overpass(poiQuery(c[0].toFixed(5), c[1].toFixed(5)))
@@ -703,20 +717,27 @@
     card.onclick = onClick || null;
   }
 
+  // Point de référence du bandeau : l'endroit regardé sur la carte (ma position seulement si la carte est centrée sur moi)
+  function mapRefPoint() {
+    var c = map.getCenter(), ctr = [c.lat, c.lng];
+    if (me && distKm([me[0], me[1]], ctr) < 1.5) return { p: [me[0], me[1]], de: "de toi" };
+    return { p: ctr, de: "du centre de la carte" };
+  }
+  var osmLoading = false, cardTimer = 0;
   function updateMapCard() {
-    if (!map) return;
-    var from = refPoint();
-    var biv = osmPlaces.filter(function (p) { return p.kind === "bivouac"; });
+    if (!map || osmLoading) return;
+    var ref = mapRefPoint(), from = ref.p;
+    var biv = osmPlaces.filter(function (p) { return p.kind === "bivouac" && distKm(from, [p.lat, p.lon]) <= 25; });
     if (!biv.length) {
       var cached = zoneGet("sylva_osm").length;
-      setMapCard(cached ? "Aucune aire de bivouac référencée dans un rayon de 25 km" : "Zones pas encore chargées",
-        cached ? "Plan B : terrain privé avec l'accord du propriétaire" : "Ouvrez la carte avec du réseau avant de partir");
+      setMapCard(cached ? "Aucune aire de bivouac référencée à 25 km " + ref.de : "Zones pas encore chargées",
+        cached ? "Touche ↻ pour charger cette zone · plan B : terrain privé avec l'accord du propriétaire" : "Ouvre la carte avec du réseau avant de partir");
       return;
     }
     biv.sort(function (a, b) { return distKm(from, [a.lat, a.lon]) - distKm(from, [b.lat, b.lon]); });
     var n = biv[0];
-    setMapCard("Bivouac le plus proche : " + fmtKm(distKm(from, [n.lat, n.lon])),
-      (n.tags.name || "Aire de bivouac") + " · " + biv.length + " aire(s) dans la zone · toucher pour voir",
+    setMapCard("Bivouac le plus proche " + ref.de + " : " + fmtKm(distKm(from, [n.lat, n.lon])),
+      (n.tags.name || "Aire de bivouac") + " · " + biv.length + " aire(s) à moins de 25 km · toucher pour voir",
       function () { map.setView([n.lat, n.lon], 15); n.marker && n.marker.openPopup(); });
   }
 
