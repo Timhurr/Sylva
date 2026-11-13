@@ -144,7 +144,7 @@ Toutes les données utilisateur sont **sur le téléphone**, clés `sylva_*` dan
 | IGN Belgique CartoWeb | Fond de carte par défaut | Données ouvertes, usage commercial possible. Zoom natif 17. |
 | MapTiler (Outdoor, Satellite) | Fonds de carte avec la clé de l'utilisateur | Clé restreinte au domaine `timhurr.github.io` (et `?` pour les requêtes sans origine). Formule gratuite = usage personnel ; pour la version payante : formule Flex (30 $/mois, 25 000 sessions) et clé intégrée à l'appli. |
 | OpenFreeMap + MapLibre GL (unpkg) | Style vectoriel « Terminal » | Gratuit, usage commercial autorisé. |
-| Overpass (OpenStreetMap) | Bivouacs, points d'eau, services | Usage léger ; données ODbL à attribuer. |
+| Overpass (OpenStreetMap) | Bivouacs, points d'eau, services | Usage léger ; données ODbL à attribuer. Serveurs essayés dans l'ordre : overpass-api.de, overpass.private.coffee, overpass.kumi.systems. |
 | Nominatim | Recherche de lieu | 1 requête par seconde maximum. |
 | Open-Meteo | Météo, altitude (relief) | Gratuit pour un usage non commercial : licence payante à prévoir. |
 | OSRM (routing.openstreetmap.de, FOSSGIS) | Itinéraires à pied, vélo, voiture | Serveur de démonstration : prévoir un service payant pour une version commerciale. |
@@ -214,6 +214,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 - **v0.9.64** : `prusik_1` = copie de `pecheur_4` (double nœud de pêcheur qui ferme l'anneau), en attendant une photo de Tim de l'anneau fermé.
 
 - **v0.9.65** : carte, bouton « Mes spots » (épingle, en haut de la colonne) : liste des spots triée par distance (position GPS, sinon centre de la carte), recherche par note ou type, filtres par type ; toucher un spot centre la carte dessus et ouvre sa fiche (GPS, Modifier, Supprimer). Colonne de boutons resserrée sur petits écrans. Test : `tools/tests/spotstest.js`.
+
+- **v0.9.66** : Tim voyait « OpenStreetMap indisponible ». Requêtes Overpass passées par `overpass()` : une seule à la fois (le bouton ↻ en lançait deux en même temps, et overpass-api.de refuse au-delà de 2 par appareil), délai de 30 s, puis serveurs de secours overpass.private.coffee et overpass.kumi.systems. Test : `tools/tests/overpasstest.js`.
 
 ## 11. Basculer sur un autre compte
 

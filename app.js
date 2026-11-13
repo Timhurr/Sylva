@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.65";
+  var VERSION = "0.9.66";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -376,6 +376,22 @@
     $all("#skinList [data-skin]").forEach(function (x) { x.classList.toggle("on", x.dataset.skin === id); });
   }
 
+  // Overpass : une requête à la fois (le serveur limite par appareil) et serveurs de secours
+  var OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.private.coffee/api/interpreter", "https://overpass.kumi.systems/api/interpreter"];
+  var opQueue = Promise.resolve();
+  function overpass(q) {
+    var run = function () {
+      var i = 0;
+      function tryOne() {
+        var ctl = window.AbortController ? new AbortController() : null, tm = ctl ? setTimeout(function () { ctl.abort(); }, 30000) : 0;
+        return fetch(OVERPASS[i], { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "data=" + encodeURIComponent(q), signal: ctl ? ctl.signal : undefined })
+          .then(function (r) { clearTimeout(tm); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+          .catch(function (e) { clearTimeout(tm); i++; if (i < OVERPASS.length) return tryOne(); throw e; });
+      }
+      return tryOne();
+    };
+    var p = opQueue.then(run, run); opQueue = p.catch(function () {}); return p;
+  }
   function osmQuery(lat, lon) {
     return "[out:json][timeout:25];(" +
       'nwr["tourism"="camp_site"](around:25000,' + lat + "," + lon + ");" +
@@ -402,19 +418,12 @@
       updateMapCard(); return;
     }
     setMapCard("Chargement des zones…", "Aires de bivouac et points d'eau depuis OpenStreetMap");
-    fetch("https://overpass-api.de/api/interpreter", {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: "data=" + encodeURIComponent(osmQuery(c[0].toFixed(5), c[1].toFixed(5)))
-    }).then(function (r) {
-      if (!r.ok) throw new Error("HTTP " + r.status);
-      return r.json();
-    }).then(function (data) {
+    overpass(osmQuery(c[0].toFixed(5), c[1].toFixed(5))).then(function (data) {
       save("sylva_osm", { t: Date.now(), c: c, elements: data.elements || [] });
       renderOsm(data.elements || []);
       if (force) toast("Zones mises à jour");
     }).catch(function () {
-      if (force) toast("Serveur OpenStreetMap indisponible, réessayez");
+      if (force) toast("Serveurs OpenStreetMap surchargés : zones en cache affichées, réessaie dans une minute");
       updateMapCard();
     });
   }
@@ -585,9 +594,7 @@
     var fresh = cached && (Date.now() - cached.t < 7 * 864e5) && distKm(cached.c, c) < 5;
     if (cached) renderPoi(cached.elements);
     if ((fresh && !force) || !navigator.onLine) return;
-    fetch("https://overpass-api.de/api/interpreter", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: "data=" + encodeURIComponent(poiQuery(c[0].toFixed(5), c[1].toFixed(5))) })
-      .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+    overpass(poiQuery(c[0].toFixed(5), c[1].toFixed(5)))
       .then(function (d) { save("sylva_poi", { t: Date.now(), c: c, elements: d.elements || [] }); renderPoi(d.elements || []); })
       .catch(function () {});
   }
@@ -2607,8 +2614,7 @@
         .catch(function () { prepStep("chasse", "ko", "Chasse : serveur injoignable, vérifie la carte officielle"); });
     }).then(function () {
       prepStep("poi", "run"); $("#prepBar").style.width = "85%";
-      return fetch("https://overpass-api.de/api/interpreter", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "data=" + encodeURIComponent(poiQuery(c[0].toFixed(5), c[1].toFixed(5))) })
-        .then(function (r) { if (!r.ok) throw new Error(); return r.json(); })
+      return overpass(poiQuery(c[0].toFixed(5), c[1].toFixed(5)))
         .then(function (d) { save("sylva_poi", { t: Date.now(), c: c, elements: d.elements || [] }); prepStep("poi", "ok", "Services : " + (d.elements || []).length + " lieux gardés"); })
         .catch(function () { prepStep("poi", "ko", "Services indisponibles"); });
     }).then(function () {
