@@ -217,6 +217,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 
 - **v0.9.66** : Tim voyait « OpenStreetMap indisponible ». Requêtes Overpass passées par `overpass()` : une seule à la fois (le bouton ↻ en lançait deux en même temps, et overpass-api.de refuse au-delà de 2 par appareil), délai de 30 s, puis serveurs de secours overpass.private.coffee et overpass.kumi.systems. Test : `tools/tests/overpasstest.js`.
 
+- **v0.9.67** : le bouton ↻ de la carte charge toujours la **zone affichée à l'écran** (avant : la position GPS, donc la maison de Tim au lieu de son spot). `sylva_osm` et `sylva_poi` gardent jusqu'à 6 zones (`zoneGet`, `zonePut`, `zoneEls`, `zoneFresh`), pour qu'une zone n'écrase plus l'autre. « Préparer la sortie » garde aussi les bivouacs et l'eau du lieu.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.

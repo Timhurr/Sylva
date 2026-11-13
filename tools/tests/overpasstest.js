@@ -40,7 +40,11 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   await pg.$eval('#btnReloadOsm', e => e.click());
   await pg.waitForTimeout(1500);
   ok('fallback used', hits.includes('overpass.private.coffee'), hits.join(','));
-  ok('poi saved', JSON.parse(await pg.evaluate(() => localStorage.getItem('sylva_poi') || '{}')).elements?.length === 1);
+  ok('poi saved', (JSON.parse(await pg.evaluate(() => localStorage.getItem('sylva_poi') || '{}')).zones || []).some(z => z.elements.length === 1));
+  await pg.evaluate(() => { localStorage.setItem('sylva_osm', JSON.stringify({ t: Date.now(), c: [50.85, 4.35], elements: [{ type: 'node', id: 1, lat: 50.85, lon: 4.35, tags: { amenity: 'drinking_water' } }] })); });
+  await pg.$eval('#btnReloadOsm', e => e.click()); await pg.waitForTimeout(1500);
+  const z = JSON.parse(await pg.evaluate(() => localStorage.getItem('sylva_osm')));
+  ok('zones kept', Array.isArray(z.zones) && z.zones.length === 2, JSON.stringify(z).slice(0,160));
   console.log(errs.join('\n') || 'no errors');
   await b.close(); srv.close();
 })();

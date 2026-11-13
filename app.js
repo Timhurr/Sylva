@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.66";
+  var VERSION = "0.9.67";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -221,8 +221,7 @@
     map.on("dragstart", function () { if (nav) nav.follow = false; });
 
     renderSpots();
-    var cached = load("sylva_osm", null);
-    if (cached && cached.elements) renderOsm(cached.elements);
+    if (zoneGet("sylva_osm").length) renderOsm(zoneEls("sylva_osm"));
     loadOsm(false);
   }
 
@@ -407,11 +406,29 @@
     return map ? [map.getCenter().lat, map.getCenter().lng] : ZONE.centre;
   }
 
+  // Zones OpenStreetMap gardées : plusieurs à la fois (maison, spot de bivouac…), pour ne pas écraser l'une par l'autre
+  function zoneGet(key) {
+    var v = load(key, null); if (!v) return [];
+    if (Array.isArray(v.zones)) return v.zones;
+    return v.elements ? [{ t: v.t || 0, c: v.c, elements: v.elements }] : [];
+  }
+  function zonePut(key, c, els) {
+    var z = zoneGet(key).filter(function (x) { return !x.c || distKm(x.c, c) > 3; });
+    z.push({ t: Date.now(), c: c, elements: els || [] });
+    z.sort(function (a, b) { return b.t - a.t; });
+    save(key, { zones: z.slice(0, 6) });
+  }
+  function zoneEls(key) {
+    var seen = {}, out = [];
+    zoneGet(key).forEach(function (z) { (z.elements || []).forEach(function (e) { var k = e.type + (e.id != null ? e.id : e.lat + "," + e.lon); if (!seen[k]) { seen[k] = 1; out.push(e); } }); });
+    return out;
+  }
+  function zoneFresh(key, c, km) { return zoneGet(key).some(function (z) { return z.c && Date.now() - z.t < 7 * 864e5 && distKm(z.c, c) < km; }); }
+
   function loadOsm(force) {
     loadPoi(force); loadChasse(force);
     var c = refPoint();
-    var cached = load("sylva_osm", null);
-    var fresh = cached && (Date.now() - cached.t < 7 * 864e5) && distKm(cached.c, c) < 8;
+    var fresh = zoneFresh("sylva_osm", c, 8);
     if (fresh && !force) { updateMapCard(); return; }
     if (!navigator.onLine) {
       if (force) toast("Pas de réseau : zones en cache affichées");
@@ -419,8 +436,8 @@
     }
     setMapCard("Chargement des zones…", "Aires de bivouac et points d'eau depuis OpenStreetMap");
     overpass(osmQuery(c[0].toFixed(5), c[1].toFixed(5))).then(function (data) {
-      save("sylva_osm", { t: Date.now(), c: c, elements: data.elements || [] });
-      renderOsm(data.elements || []);
+      zonePut("sylva_osm", c, data.elements || []);
+      renderOsm(zoneEls("sylva_osm"));
       if (force) toast("Zones mises à jour");
     }).catch(function () {
       if (force) toast("Serveurs OpenStreetMap surchargés : zones en cache affichées, réessaie dans une minute");
@@ -590,12 +607,11 @@
   }
   function loadPoi(force) {
     if (!map || !map.hasLayer(layers.services)) return;
-    var c = refPoint(), cached = load("sylva_poi", null);
-    var fresh = cached && (Date.now() - cached.t < 7 * 864e5) && distKm(cached.c, c) < 5;
-    if (cached) renderPoi(cached.elements);
+    var c = refPoint(), fresh = zoneFresh("sylva_poi", c, 5);
+    if (zoneGet("sylva_poi").length) renderPoi(zoneEls("sylva_poi"));
     if ((fresh && !force) || !navigator.onLine) return;
     overpass(poiQuery(c[0].toFixed(5), c[1].toFixed(5)))
-      .then(function (d) { save("sylva_poi", { t: Date.now(), c: c, elements: d.elements || [] }); renderPoi(d.elements || []); })
+      .then(function (d) { zonePut("sylva_poi", c, d.elements || []); renderPoi(zoneEls("sylva_poi")); })
       .catch(function () {});
   }
   function renderPoi(els) {
@@ -687,7 +703,7 @@
     var from = refPoint();
     var biv = osmPlaces.filter(function (p) { return p.kind === "bivouac"; });
     if (!biv.length) {
-      var cached = load("sylva_osm", null);
+      var cached = zoneGet("sylva_osm").length;
       setMapCard(cached ? "Aucune aire de bivouac référencée dans un rayon de 25 km" : "Zones pas encore chargées",
         cached ? "Plan B : terrain privé avec l'accord du propriétaire" : "Ouvrez la carte avec du réseau avant de partir");
       return;
@@ -1051,11 +1067,13 @@
     else toast("Recherche de votre position…");
   });
   $("#btnReloadOsm").addEventListener("click", function () {
-    if (focusPoint && map) { var c = map.getCenter(); focusPoint = [c.lat, c.lng]; }
-    loadOsm(true); loadPoi(true);
+    // ↻ charge toujours la zone affichée à l'écran (pas la position GPS)
+    if (map) { var c = map.getCenter(); focusPoint = [c.lat, c.lng]; }
+    toast("Chargement de la zone affichée…");
+    loadOsm(true);
   });
   // Services gardés avant l'ajout des parkings : on les recharge une fois
-  if (!load("sylva_poi_v2", false)) { save("sylva_poi_v2", true); var oldPoi = load("sylva_poi", null); if (oldPoi) { oldPoi.t = 0; save("sylva_poi", oldPoi); } }
+  if (!load("sylva_poi_v2", false)) { save("sylva_poi_v2", true); var oldPoi = load("sylva_poi", null); if (oldPoi) { save("sylva_poi", { zones: zoneGet("sylva_poi").map(function (z) { z.t = 0; return z; }) }); } }
 
   // ---------- Recherche de lieu (Nominatim / OpenStreetMap) ----------
   var placeMarker = null, placeList = [], lastSearch = 0;
@@ -2615,7 +2633,7 @@
     }).then(function () {
       prepStep("poi", "run"); $("#prepBar").style.width = "85%";
       return overpass(poiQuery(c[0].toFixed(5), c[1].toFixed(5)))
-        .then(function (d) { save("sylva_poi", { t: Date.now(), c: c, elements: d.elements || [] }); prepStep("poi", "ok", "Services : " + (d.elements || []).length + " lieux gardés"); })
+        .then(function (d) { zonePut("sylva_poi", c, d.elements || []); return overpass(osmQuery(c[0].toFixed(5), c[1].toFixed(5))).then(function (o) { zonePut("sylva_osm", c, o.elements || []); if (map) renderOsm(zoneEls("sylva_osm")); prepStep("poi", "ok", "Services : " + (d.elements || []).length + " lieux, bivouacs et eau : " + (o.elements || []).length + " gardés"); }, function () { prepStep("poi", "ok", "Services : " + (d.elements || []).length + " lieux gardés (bivouacs et eau : serveur saturé)"); }); })
         .catch(function () { prepStep("poi", "ko", "Services indisponibles"); });
     }).then(function () {
       prepStep("relief", "run");
