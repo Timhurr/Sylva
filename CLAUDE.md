@@ -219,6 +219,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 
 - **v0.9.67** : le bouton ↻ de la carte charge toujours la **zone affichée à l'écran** (avant : la position GPS, donc la maison de Tim au lieu de son spot). `sylva_osm` et `sylva_poi` gardent jusqu'à 6 zones (`zoneGet`, `zonePut`, `zoneEls`, `zoneFresh`), pour qu'une zone n'écrase plus l'autre. « Préparer la sortie » garde aussi les bivouacs et l'eau du lieu.
 
+- **v0.9.68** : Overpass surchargé répond parfois HTTP 200 avec une liste vide et une `remark` d'erreur (« Query timed out ») : c'est maintenant traité comme un échec (serveur suivant, rien d'enregistré). Délai serveur 40 s, client 50 s. Le bouton ↻ annonce le résultat des services (nombre de lieux, aucun, ou serveurs saturés). À vérifier par Tim : services autour de son spot de Nisramont.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.

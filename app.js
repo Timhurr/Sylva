@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.67";
+  var VERSION = "0.9.68";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -382,9 +382,11 @@
     var run = function () {
       var i = 0;
       function tryOne() {
-        var ctl = window.AbortController ? new AbortController() : null, tm = ctl ? setTimeout(function () { ctl.abort(); }, 30000) : 0;
+        var ctl = window.AbortController ? new AbortController() : null, tm = ctl ? setTimeout(function () { ctl.abort(); }, 50000) : 0;
         return fetch(OVERPASS[i], { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "data=" + encodeURIComponent(q), signal: ctl ? ctl.signal : undefined })
           .then(function (r) { clearTimeout(tm); if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+          // Serveur surchargé : Overpass répond parfois « 200 » avec une liste vide et une remarque d'erreur
+          .then(function (d) { if (d && d.remark && /error|timed out|runtime|memory/i.test(d.remark)) throw new Error(d.remark); return d; })
           .catch(function (e) { clearTimeout(tm); i++; if (i < OVERPASS.length) return tryOne(); throw e; });
       }
       return tryOne();
@@ -392,7 +394,7 @@
     var p = opQueue.then(run, run); opQueue = p.catch(function () {}); return p;
   }
   function osmQuery(lat, lon) {
-    return "[out:json][timeout:25];(" +
+    return "[out:json][timeout:40];(" +
       'nwr["tourism"="camp_site"](around:25000,' + lat + "," + lon + ");" +
       'node["amenity"="drinking_water"](around:12000,' + lat + "," + lon + ");" +
       'node["natural"="spring"]["drinking_water"="yes"](around:12000,' + lat + "," + lon + ");" +
@@ -594,7 +596,7 @@
     atm: "Distributeur", bank: "Banque", toilets: "Toilettes", police: "Police", station: "Gare" };
   function poiQuery(lat, lon) {
     var a = "(around:8000," + lat + "," + lon + ");";
-    return "[out:json][timeout:25];(" +
+    return "[out:json][timeout:40];(" +
       'nwr["shop"~"^(supermarket|convenience|bakery|butcher|greengrocer|farm|deli|general|outdoor|sports|hardware|doityourself)$"]' + a +
       'nwr["amenity"~"^(pharmacy|doctors|hospital|clinic|dentist|fuel|restaurant|cafe|bar|pub|fast_food|atm|bank|toilets|police)$"]' + a +
       'nwr["amenity"="parking"]["access"!~"^(private|no|customers|permit|delivery)$"]' + a +
@@ -611,8 +613,11 @@
     if (zoneGet("sylva_poi").length) renderPoi(zoneEls("sylva_poi"));
     if ((fresh && !force) || !navigator.onLine) return;
     overpass(poiQuery(c[0].toFixed(5), c[1].toFixed(5)))
-      .then(function (d) { zonePut("sylva_poi", c, d.elements || []); renderPoi(zoneEls("sylva_poi")); })
-      .catch(function () {});
+      .then(function (d) {
+        zonePut("sylva_poi", c, d.elements || []); renderPoi(zoneEls("sylva_poi"));
+        if (force) { var n = (d.elements || []).filter(function (e) { return POI.some(function (x) { return x[4](e.tags || {}); }); }).length; toast(n ? "Services : " + n + " lieux à moins de 8 km" : "Aucun service référencé à moins de 8 km de ce point"); }
+      })
+      .catch(function () { if (force) toast("Services : serveurs OpenStreetMap saturés, réessaie dans une minute"); });
   }
   function renderPoi(els) {
     if (!map) return;

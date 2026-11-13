@@ -34,7 +34,7 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   const hits = [];
   await pg.unroute(/(fonts\.|openstreetmap|overpass|open-meteo|wikipedia|wikimedia|nominatim)/);
   await pg.route(/(fonts\.|open-meteo|wikipedia|wikimedia|nominatim|tile\.openstreetmap)/, r => r.abort());
-  await pg.route(/overpass/, r => { const u = r.request().url(); hits.push(u.split('/')[2]); if (u.includes('overpass-api.de')) return r.fulfill({ status: 429, body: 'busy' }); return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ elements: [{ lat: 50.1, lon: 5.7, tags: { amenity: 'parking', fee: 'no' } }] }) }); });
+  await pg.route(/overpass/, r => { const u = r.request().url(); hits.push(u.split('/')[2]); if (u.includes('overpass-api.de')) return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ elements: [], remark: 'runtime error: Query timed out in "query" at line 1 after 26 seconds.' }) }); return r.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ elements: [{ lat: 50.1, lon: 5.7, tags: { amenity: 'parking', fee: 'no' } }] }) }); });
   await pg.evaluate(() => { [...document.querySelectorAll('[data-view]')].find(x=>x.dataset.view==='carte').click(); });
   await pg.waitForTimeout(300); hits.length = 0;
   await pg.$eval('#btnReloadOsm', e => e.click());
