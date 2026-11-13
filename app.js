@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.64";
+  var VERSION = "0.9.65";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -283,7 +283,7 @@
       setBasemap(btn.dataset.basemap); $("#basemapPanel").hidden = true;
     });
     var fab = $("#btnBasemap");
-    if (fab) fab.addEventListener("click", function () { var p = $("#basemapPanel"); p.hidden = !p.hidden; });
+    if (fab) fab.addEventListener("click", function () { var p = $("#basemapPanel"); $("#spotsPanel").hidden = true; p.hidden = !p.hidden; });
     setBasemap(load("sylva_basemap", "ign_be"));
     var sl = $("#skinList");
     if (sl) {
@@ -714,6 +714,43 @@
       spotMarkers[s.id] = mk; layers.spots.addLayer(mk);
     });
   }
+  // ---------- Parcourir mes spots depuis la carte ----------
+  var spotsFilter = "";
+  function renderSpotsPanel() {
+    var all = getSpots(), q = norm($("#spotsQ").value.trim());
+    var ref = me ? [me[0], me[1]] : (map ? [map.getCenter().lat, map.getCenter().lng] : null);
+    var used = {}; all.forEach(function (s) { used[s.type in SPOT_TYPES ? s.type : "autre"] = 1; });
+    $("#spotsFilt").innerHTML = Object.keys(used).length > 1 ? '<button type="button" class="chip' + (!spotsFilter ? " on" : "") + '" data-sfilt="">Tous</button>' +
+      Object.keys(SPOT_TYPES).filter(function (k) { return used[k]; }).map(function (k) { return '<button type="button" class="chip' + (spotsFilter === k ? " on" : "") + '" data-sfilt="' + k + '">' + esc(SPOT_TYPES[k][2]) + "</button>"; }).join("") : "";
+    var list = all.filter(function (s) {
+      var ty = s.type in SPOT_TYPES ? s.type : "autre";
+      if (spotsFilter && ty !== spotsFilter) return false;
+      return !q || norm((s.note || "") + " " + SPOT_TYPES[ty][2]).indexOf(q) !== -1;
+    }).map(function (s) { return { s: s, d: ref ? distKm(ref, [s.lat, s.lon]) : null }; });
+    list.sort(function (a, b) { return a.d == null ? 0 : a.d - b.d; });
+    $("#spotsList").innerHTML = !all.length ? '<p class="tiny muted" style="margin:6px 4px">Aucun spot. Touche la carte puis « Ajouter un spot ».</p>'
+      : !list.length ? '<p class="tiny muted" style="margin:6px 4px">Aucun spot ne correspond.</p>'
+      : list.map(function (x) {
+        var s = x.s, ty = SPOT_TYPES[s.type] || SPOT_TYPES.autre;
+        return '<button type="button" class="spot-row" data-spot-go="' + esc(s.id) + '"><i style="background:' + ty[0] + '">' + esc(ty[1]) + "</i><span><b>" + esc(s.note || ty[2]) + "</b><small>" + esc(ty[2]) +
+          (x.d != null ? " · " + fmtKm(x.d) + (me ? "" : " du centre") : "") + "</small></span></button>";
+      }).join("");
+  }
+  $("#btnSpots").addEventListener("click", function () {
+    var p = $("#spotsPanel"); $("#basemapPanel").hidden = true;
+    p.hidden = !p.hidden; if (!p.hidden) { $("#spotsQ").value = ""; renderSpotsPanel(); }
+  });
+  $("#spotsQ").addEventListener("input", renderSpotsPanel);
+  $("#spotsFilt").addEventListener("click", function (e) { var b = e.target.closest("[data-sfilt]"); if (!b) return; spotsFilter = b.dataset.sfilt; renderSpotsPanel(); });
+  $("#spotsList").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-spot-go]"); if (!b || !map) return;
+    var s = getSpots().filter(function (x) { return x.id === b.dataset.spotGo; })[0]; if (!s) return;
+    $("#spotsPanel").hidden = true;
+    if (!map.hasLayer(layers.spots)) { map.addLayer(layers.spots); var c = document.querySelector('.map-chips [data-layer="spots"]'); if (c) c.classList.add("on"); }
+    map.setView([s.lat, s.lon], Math.max(map.getZoom(), 16));
+    setTimeout(function () { if (spotMarkers[s.id]) spotMarkers[s.id].openPopup(); }, 150);
+  });
+
   function deleteSpot(id) {
     save("sylva_spots", getSpots().filter(function (s) { return s.id !== id; }));
     idbDo("readwrite", function (st) { return st.delete(id); }).catch(function () {});
@@ -958,7 +995,8 @@
 
   function onMapTap(e) {
     if (meas.on) { meas.pts.push([e.latlng.lat, e.latlng.lng]); measDraw(); return; }
-    var bp = $("#basemapPanel");
+    var bp = $("#basemapPanel"), sp = $("#spotsPanel");
+    if (sp && !sp.hidden) { sp.hidden = true; return; }
     if (bp && !bp.hidden) { bp.hidden = true; return; }
     var ll = e.latlng; clearTap();
     var dist = "";

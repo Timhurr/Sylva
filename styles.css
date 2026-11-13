@@ -780,3 +780,17 @@ html.eco .sig-lamp{transition:none}
 .meas-lbl{position:absolute;transform:translate(-50%,-150%);white-space:nowrap;background:#E0584A;color:#fff;font:700 12px/1 var(--font,system-ui);padding:4px 7px;border-radius:8px;box-shadow:0 2px 6px rgba(0,0,0,.3)}
 body.measuring .map-card{display:none}
 body.measuring #btnAddSpot{display:none}
+
+/* Parcourir mes spots */
+.spots-panel{width:min(320px,calc(100vw - 104px));max-height:56vh}
+.spots-q{width:100%;box-sizing:border-box;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--bg,#fff);color:var(--text);padding:0 12px;font:inherit;font-size:15px;margin:2px 0 6px}
+.spots-filt{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.spots-filt .chip{flex:none;height:34px}
+.spot-row{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:0;background:transparent;color:var(--text);padding:8px 4px;border-radius:12px;font:inherit;min-height:48px}
+.spot-row:active{background:var(--line)}
+.spot-row i{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-weight:800;color:#1B241E;font-size:13px}
+.spot-row span{min-width:0;display:flex;flex-direction:column}
+.spot-row b{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spot-row small{font-size:12px;color:var(--muted)}
+@media (max-height:700px){.map-fabs{gap:6px}.map-fabs .fab{width:46px;height:46px;border-radius:16px}}
+.spot-row small{display:block}

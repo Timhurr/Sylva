@@ -213,6 +213,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 
 - **v0.9.64** : `prusik_1` = copie de `pecheur_4` (double nœud de pêcheur qui ferme l'anneau), en attendant une photo de Tim de l'anneau fermé.
 
+- **v0.9.65** : carte, bouton « Mes spots » (épingle, en haut de la colonne) : liste des spots triée par distance (position GPS, sinon centre de la carte), recherche par note ou type, filtres par type ; toucher un spot centre la carte dessus et ouvre sa fiche (GPS, Modifier, Supprimer). Colonne de boutons resserrée sur petits écrans. Test : `tools/tests/spotstest.js`.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.
