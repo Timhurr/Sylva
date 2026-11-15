@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.71";
+  var VERSION = "0.9.72";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -64,6 +64,7 @@
     if (name === "carte" && map) setTimeout(function () { map.invalidateSize(); }, 50);
     if (name === "bivouac") renderBivouac();
     if (name === "accueil") renderAccueil();
+    if (name === "pret") renderPret();
     var v = $("#view-" + name); if (v) v.scrollTop = 0;
   }
   $all("[data-goto]").forEach(function (b) { b.addEventListener("click", function () { showView(b.getAttribute("data-goto")); }); });
@@ -2356,8 +2357,8 @@
     var nmin = Math.min(d.temperature_2m_min[0], d.temperature_2m_min[1] != null ? d.temperature_2m_min[1] : 99);
     $("#heroTemp").textContent = Math.round(temp) + "°";
     $("#heroSky").textContent = (WMO[code] || "—") + " · nuit à " + Math.round(nmin) + " °C";
-    $("#heroSun").hidden = false;
-    $("#heroSun").textContent = night ? "Lever du soleil " + hm(d.sunrise[d.sunrise.length > 1 && new Date() > new Date(d.sunset[0]) ? 1 : 0]) : "Coucher du soleil " + hm(d.sunset[0]);
+    $("#heroSun").hidden = !(d.sunset && d.sunset[0] && d.sunrise);
+    if (!$("#heroSun").hidden) $("#heroSun").textContent = night ? "Lever du soleil " + hm(d.sunrise[d.sunrise.length > 1 && new Date() > new Date(d.sunset[0]) ? 1 : 0]) : "Coucher du soleil " + hm(d.sunset[0]);
     var al = [], rain = Math.max(d.precipitation_sum[0] || 0, d.precipitation_sum[1] || 0), gust = Math.max(d.wind_gusts_10m_max[0] || 0, d.wind_gusts_10m_max[1] || 0);
     if (nmin <= 0) al.push(["", "Gel cette nuit", "Duvet confort sous 0 °C, bonnet pour dormir, gourde dans le duvet."]);
     else if (nmin <= 5) al.push(["warn", "Nuit froide (" + Math.round(nmin) + " °C)", "Couche chaude et matelas bien isolant."]);
@@ -2387,6 +2388,7 @@
   $("#learnGuide").addEventListener("click", openNextChap);
   $("#homeGuide").addEventListener("click", openNextChap);
   function renderAccueil() {
+    renderPretCard();
     var now = new Date(), h = now.getHours();
     var j = now.toLocaleDateString("fr-BE", { weekday: "long", day: "numeric", month: "long" });
     $("#todayDate").textContent = j.charAt(0).toUpperCase() + j.slice(1);
@@ -3080,6 +3082,138 @@
     inp.value = v.charAt(0) === "-" ? v.slice(1) : "-" + v;
     inp.dispatchEvent(new Event("input", { bubbles: true })); inp.dispatchEvent(new Event("change", { bubbles: true }));
     if (v === "" || v === "-") inp.focus();
+  });
+
+  // =====================================================================
+  // ---------- Prêt 72 h : foyer, kit calculé, stock, plan familial, pays, crises ----------
+  // =====================================================================
+  var KIT72 = window.SYLVA_KIT72 || [], PAYS72 = window.SYLVA_PAYS72 || {};
+  var pretTab = "kit";
+  function getPret() {
+    var d = load("sylva_pret", null) || {};
+    d.foyer = d.foyer || { ad: 1, en: 0, bb: 0, an: 0, med: false, mob: false };
+    d.have = d.have || {}; d.stock = Array.isArray(d.stock) ? d.stock : [];
+    d.plan = d.plan || { contacts: [], rdv1: "", rdv2: "", abri: "", ecole: "", medecin: "", notes: "" };
+    if (!d.pays) { var l = (navigator.language || "").toUpperCase(); d.pays = /-(BE|FR|LU|NL|CH)$/.test(l) ? l.slice(-2) : "BE"; }
+    return d;
+  }
+  function savePret(d) { save("sylva_pret", d); }
+  function kitItems(f) { return KIT72.filter(function (k) { return !k.cond || k.cond(f); }); }
+  function stockState(s) {
+    if (!s.date) return { cls: "", txt: "sans date" };
+    var days = Math.round((new Date(s.date + "T00:00:00") - new Date().setHours(0, 0, 0, 0)) / 864e5);
+    if (days < 0) return { cls: "danger", txt: "périmé depuis " + (-days) + " j", d: days };
+    if (days <= 30) return { cls: "warn", txt: days === 0 ? "périme aujourd'hui" : "périme dans " + days + " j", d: days };
+    return { cls: "ok", txt: "jusqu'au " + new Date(s.date + "T00:00:00").toLocaleDateString("fr-BE"), d: days };
+  }
+  function pretStats(d) {
+    var it = kitItems(d.foyer), done = it.filter(function (k) { return d.have[k.id]; }).length;
+    var watch = d.stock.filter(function (s) { var st = stockState(s); return st.cls === "warn" || st.cls === "danger"; });
+    return { pct: it.length ? Math.round(done / it.length * 100) : 0, done: done, tot: it.length, watch: watch,
+      expired: watch.filter(function (s) { return stockState(s).cls === "danger"; }).length,
+      plan: !!(d.plan.contacts.length && d.plan.rdv1) };
+  }
+  function renderPretCard() {
+    var el = $("#pretCard"); if (!el) return;
+    var d = getPret(), st = pretStats(d), fresh = !load("sylva_pret", null);
+    el.innerHTML = '<span class="pret-ring" style="--p:' + st.pct + '"><b>' + st.pct + "%</b></span><span class=\"pret-txt\"><b>" +
+      (fresh ? "Prépare ton foyer pour une crise" : st.pct >= 100 ? "Kit complet" : "Kit : " + st.done + " sur " + st.tot) + "</b><small>" +
+      (fresh ? "Panne, inondation, tempête : l'UE demande à chaque foyer de tenir 72 h seul." :
+        st.expired ? "⚠ " + st.expired + " article" + (st.expired > 1 ? "s" : "") + " périmé" + (st.expired > 1 ? "s" : "") + " dans ton stock" :
+        st.watch.length ? st.watch.length + " article" + (st.watch.length > 1 ? "s" : "") + " à renouveler ce mois-ci" :
+        !st.plan ? "Plan familial à compléter" : "Stock à jour, plan familial prêt") + "</small></span>";
+    el.classList.toggle("alert", !!st.expired);
+  }
+  function stepper(k, label, v) {
+    return '<div class="pret-step"><span>' + label + '</span><button type="button" data-fst="' + k + '" data-dir="-1" aria-label="Moins de ' + label + '">−</button><b>' + v + '</b><button type="button" data-fst="' + k + '" data-dir="1" aria-label="Plus de ' + label + '">+</button></div>';
+  }
+  function renderPret() {
+    var d = getPret(), st = pretStats(d), f = d.foyer;
+    $("#pretSum").innerHTML = '<div class="pret-bar"><i style="width:' + st.pct + '%"></i></div><p class="journal-stats" style="margin:8px 0 0">Kit ' + st.pct + " % · " +
+      (st.watch.length ? st.watch.length + " article" + (st.watch.length > 1 ? "s" : "") + " à surveiller" : "stock à jour") + " · plan " + (st.plan ? "prêt" : "à faire") + "</p>";
+    $all("#pretTabs [data-ptab]").forEach(function (b) { b.classList.toggle("on", b.dataset.ptab === pretTab); });
+    var h = "";
+    if (pretTab === "kit") {
+      h += '<div class="card"><div class="rv-k">Mon foyer</div>' + stepper("ad", "Adultes", f.ad) + stepper("en", "Enfants", f.en) + stepper("bb", "Bébés", f.bb) + stepper("an", "Animaux", f.an) +
+        '<label class="pret-tog"><input type="checkbox" data-ftog="med"' + (f.med ? " checked" : "") + '> Quelqu\'un suit un traitement</label>' +
+        '<label class="pret-tog"><input type="checkbox" data-ftog="mob"' + (f.mob ? " checked" : "") + '> Mobilité réduite ou appareil médical</label></div>';
+      [["maison", "Rester chez soi : 72 h d'autonomie"], ["sac", "Sac d'évacuation, prêt à partir"]].forEach(function (g) {
+        var it = kitItems(f).filter(function (k) { return k.grp === g[0]; }), dn = it.filter(function (k) { return d.have[k.id]; }).length;
+        h += '<div class="sec-head"><h2>' + g[1] + '</h2><span class="tiny muted">' + dn + " / " + it.length + '</span></div><div class="card pret-list">' + it.map(function (k) {
+          return '<label class="pret-item' + (d.have[k.id] ? " done" : "") + '"><input type="checkbox" data-have="' + k.id + '"' + (d.have[k.id] ? " checked" : "") + '><span><b>' + esc(k.nom) + "</b>" +
+            (k.qte ? '<em>' + esc(k.qte(f)) + "</em>" : "") + (k.info ? "<small>" + esc(k.info) + "</small>" : "") + "</span></label>";
+        }).join("") + "</div>";
+      });
+    } else if (pretTab === "stock") {
+      var names = KIT72.map(function (k) { return k.nom; });
+      h += '<div class="card"><div class="rv-k">Ajouter au stock</div><form id="formStock" class="pret-form">' +
+        '<input type="text" id="stNom" list="stNames" placeholder="Article (eau, conserves, piles…)" autocomplete="off" aria-label="Article"><datalist id="stNames">' + names.map(function (n) { return '<option value="' + esc(n) + '">'; }).join("") + "</datalist>" +
+        '<div class="row"><input type="text" id="stQte" placeholder="Quantité" autocomplete="off" aria-label="Quantité"><input type="date" id="stDate" aria-label="Date de péremption"></div>' +
+        '<button class="btn btn-primary" type="submit">Ajouter</button></form><p class="tiny muted" style="margin:8px 0 0">Note la date de péremption : Sylva te prévient un mois avant, ici et sur l\'écran Aujourd\'hui.</p></div>';
+      var list = d.stock.slice().sort(function (a, b) { return (a.date || "9999") < (b.date || "9999") ? -1 : 1; });
+      h += '<div class="card pret-list">' + (list.length ? list.map(function (s) {
+        var ss = stockState(s);
+        return '<div class="pret-stock"><span><b>' + esc(s.nom) + "</b>" + (s.qte ? "<em>" + esc(s.qte) + "</em>" : "") + '<small class="st-' + ss.cls + '">' + esc(ss.txt) + "</small></span>" +
+          '<input type="date" value="' + esc(s.date || "") + '" data-stdate="' + esc(s.id) + '" aria-label="Changer la date de ' + esc(s.nom) + '"><button type="button" class="icon-mini" data-stdel="' + esc(s.id) + '" aria-label="Retirer ' + esc(s.nom) + '">✕</button></div>';
+      }).join("") : '<p class="muted small" style="margin:0">Rien encore. Ajoute ce que tu as déjà à la maison : eau, conserves, piles, médicaments.</p>') + "</div>";
+    } else if (pretTab === "plan") {
+      var p = d.plan;
+      h += '<div class="card"><div class="rv-k">Qui prévenir</div><div id="planContacts">' + p.contacts.map(function (c, i) {
+        return '<div class="pret-stock"><span><b>' + esc(c.nom) + "</b><small>" + esc(c.tel) + '</small></span><a class="btn" href="tel:' + esc(c.tel.replace(/[^\d+]/g, "")) + '">Appeler</a><button type="button" class="icon-mini" data-pcdel="' + i + '" aria-label="Retirer ' + esc(c.nom) + '">✕</button></div>';
+      }).join("") + '</div><form id="formContact" class="row pret-form"><input type="text" id="pcNom" placeholder="Nom" autocomplete="off" aria-label="Nom"><input type="tel" id="pcTel" placeholder="Téléphone" autocomplete="off" aria-label="Téléphone"><button class="btn" type="submit">Ajouter</button></form>' +
+        '<p class="tiny muted" style="margin:6px 0 0">Ajoute aussi un contact hors de ta région : si le réseau local sature, il sert de relais pour toute la famille.</p></div>';
+      [["rdv1", "Point de rendez-vous près de chez toi", "Ex. : devant l'école, chez un voisin"], ["rdv2", "Point de rendez-vous hors du quartier", "Si le quartier est évacué : chez un proche, une salle communale…"], ["abri", "Abri ou centre d'accueil le plus proche", "Demande à ta commune"], ["ecole", "Écoles et crèches : qui va chercher les enfants ?", "Nom de l'école, qui y va, plan B"], ["medecin", "Médecin, pharmacie, traitements", ""], ["notes", "Autres consignes du foyer", "Couper le gaz : vanne au garage…"]].forEach(function (x) {
+        h += '<label class="field"><span class="field-label">' + x[1] + '</span><textarea rows="2" data-pfield="' + x[0] + '" placeholder="' + esc(x[2]) + '">' + esc(p[x[0]] || "") + "</textarea></label>";
+      });
+      h += '<button type="button" class="btn btn-primary" id="btnPlanShare">Partager le plan au foyer</button><p class="tiny muted" style="margin:8px 2px 0">Imprime-le ou recopie-le aussi sur papier : il doit servir sans téléphone.</p>';
+    } else if (pretTab === "pays") {
+      var py = PAYS72[d.pays] || PAYS72.XX;
+      h += '<label class="field"><span class="field-label">Mon pays</span><select id="pretPays">' + Object.keys(PAYS72).map(function (k) { return '<option value="' + k + '"' + (k === d.pays ? " selected" : "") + ">" + esc(PAYS72[k].nom) + "</option>"; }).join("") + "</select></label>" +
+        '<div class="card"><div class="rv-k">Urgences</div><p style="margin:4px 0 10px"><b>' + esc(py.num) + '</b></p><a class="btn btn-primary" href="tel:112">Appeler le 112</a></div>' +
+        '<div class="card"><div class="rv-k">Alertes officielles</div><p style="margin:4px 0 8px">' + esc(py.alerte) + "</p>" + py.liens.map(function (l) { return '<a class="btn" target="_blank" rel="noopener" href="' + esc(l[1]) + '">' + esc(l[0]) + "</a>"; }).join(" ") + "</div>" +
+        '<div class="card"><div class="rv-k">Sans internet</div><p style="margin:4px 0 0">Garde une radio à piles ou à manivelle : en cas de crise, les autorités diffusent les consignes à la radio publique.</p></div>';
+    } else {
+      var cr = TECHS.filter(function (t) { return t.cat === "Crises"; });
+      h += '<div class="card pret-list">' + cr.map(function (t) { return '<button type="button" class="pret-crise" data-tech="' + esc(t.id) + '"><b>' + esc(t.titre) + "</b><small>" + esc(t.intro.slice(0, 90)) + "…</small></button>"; }).join("") + "</div>";
+    }
+    $("#pretBody").innerHTML = h;
+  }
+  $("#pretTabs").addEventListener("click", function (e) { var b = e.target.closest("[data-ptab]"); if (!b) return; pretTab = b.dataset.ptab; renderPret(); $("#view-pret").scrollTop = 0; });
+  $("#pretBody").addEventListener("click", function (e) {
+    var d = getPret(), b;
+    if ((b = e.target.closest("[data-fst]"))) { var k = b.dataset.fst; d.foyer[k] = Math.max(k === "ad" ? 1 : 0, Math.min(20, (d.foyer[k] || 0) + +b.dataset.dir)); savePret(d); renderPret(); return; }
+    if ((b = e.target.closest("[data-stdel]"))) { d.stock = d.stock.filter(function (s) { return s.id !== b.dataset.stdel; }); savePret(d); renderPret(); return; }
+    if ((b = e.target.closest("[data-pcdel]"))) { d.plan.contacts.splice(+b.dataset.pcdel, 1); savePret(d); renderPret(); return; }
+    if ((b = e.target.closest("[data-tech]"))) { openTechnique(b.dataset.tech); return; }
+    if (e.target.id === "btnPlanShare") {
+      var p = d.plan, txt = "Plan d'urgence du foyer (Sylva)\n" +
+        (p.contacts.length ? "\nContacts :\n" + p.contacts.map(function (c) { return "- " + c.nom + " : " + c.tel; }).join("\n") + "\n" : "") +
+        (p.rdv1 ? "\nRendez-vous près de la maison : " + p.rdv1 : "") + (p.rdv2 ? "\nRendez-vous hors du quartier : " + p.rdv2 : "") +
+        (p.abri ? "\nAbri / centre d'accueil : " + p.abri : "") + (p.ecole ? "\nEnfants : " + p.ecole : "") + (p.medecin ? "\nMédecin, traitements : " + p.medecin : "") +
+        (p.notes ? "\nConsignes : " + p.notes : "") + "\n\nUrgences : 112. Écoute la radio et suis les consignes des autorités.";
+      if (navigator.share) navigator.share({ title: "Plan d'urgence du foyer", text: txt }).catch(function () {});
+      else if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function () { toast("Plan copié : colle-le dans un message"); });
+    }
+  });
+  $("#pretBody").addEventListener("change", function (e) {
+    var d = getPret(), el = e.target;
+    if (el.dataset.have) { if (el.checked) d.have[el.dataset.have] = 1; else delete d.have[el.dataset.have]; savePret(d); renderPret(); return; }
+    if (el.dataset.ftog) { d.foyer[el.dataset.ftog] = el.checked; savePret(d); renderPret(); return; }
+    if (el.dataset.stdate) { d.stock.forEach(function (s) { if (s.id === el.dataset.stdate) s.date = el.value; }); savePret(d); renderPret(); return; }
+    if (el.dataset.pfield) { d.plan[el.dataset.pfield] = el.value.trim(); savePret(d); toast("Plan enregistré"); return; }
+    if (el.id === "pretPays") { d.pays = el.value; savePret(d); renderPret(); }
+  });
+  $("#pretBody").addEventListener("submit", function (e) {
+    e.preventDefault(); var d = getPret();
+    if (e.target.id === "formStock") {
+      var n = $("#stNom").value.trim(); if (!n) { toast("Indique l'article"); return; }
+      d.stock.push({ id: uid(), nom: n, qte: $("#stQte").value.trim(), date: $("#stDate").value });
+      var kk = KIT72.filter(function (k) { return k.nom === n; })[0]; if (kk) d.have[kk.id] = 1;
+      savePret(d); renderPret(); toast("Ajouté au stock");
+    } else if (e.target.id === "formContact") {
+      var cn = $("#pcNom").value.trim(), ct = $("#pcTel").value.trim(); if (!cn || !ct) { toast("Nom et téléphone"); return; }
+      d.plan.contacts.push({ nom: cn, tel: ct }); savePret(d); renderPret();
+    }
   });
   // =====================================================================
   // ---------- Mon matériel : inventaire, catalogue, poids du sac ----------
