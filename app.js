@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.73";
+  var VERSION = "0.9.74";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -2632,7 +2632,8 @@
   }
   function tileUrls(c, km) {
     var out = [], dLat = km / 111, dLon = km / (111 * Math.cos(c[0] * Math.PI / 180));
-    var maps = ["ign_be"].concat(BASEMAPS.mt_outdoor ? ["mt_outdoor"] : []);
+    // MapTiler interdit le téléchargement en masse (conditions, art. 6.3) : seules les cartes IGN (données ouvertes) sont préchargées
+    var maps = ["ign_be"];
     maps.forEach(function (id) {
       var b = BASEMAPS[id];
       for (var z = 11; z <= Math.min(16, b.maxNative); z++) {
