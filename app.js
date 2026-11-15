@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.72";
+  var VERSION = "0.9.73";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -1199,13 +1199,15 @@
 
   // ---------- Réglages ----------
   $("#btnSettings").addEventListener("click", function () {
-    $("#apiKey").value = load("sylva_key", "") || ""; $("#mtKey").value = load("sylva_mtkey", "") || ""; openModal("#modalSettings");
+    $("#apiKey").value = load("sylva_key", "") || ""; $("#mtKey").value = load("sylva_mtkey", "") || "";
+    $("#setCountry").value = getCountry(); $("#setLang").value = "fr"; openModal("#modalSettings");
   });
   $("#formSettings").addEventListener("submit", function (e) {
     e.preventDefault(); save("sylva_key", $("#apiKey").value.trim());
     var mk = $("#mtKey").value.replace(/\s+/g, ""), oldMk = load("sylva_mtkey", "");
     save("sylva_mtkey", mk);
     if (mk !== oldMk && map) { initBasemaps(); if (mk) toast("Cartes MapTiler ajoutées au menu des cartes"); }
+    var nc = $("#setCountry").value; if (nc !== getCountry()) applyCountry(nc);
     closeModal($("#modalSettings")); toast("Réglages enregistrés");
   });
   $("#btnPhotos").addEventListener("click", function () { toast("Téléchargement des photos…"); prefetchPhotos(true); });
@@ -1359,9 +1361,32 @@
     renderRegionModal();
   });
   $("#btnRegionOk").addEventListener("click", function () {
-    region = draft; save("sylva_region", region); closeModal($("#modalRegion"));
+    region = draft; save("sylva_region", region); save("sylva_country", region.pays); closeModal($("#modalRegion"));
     renderRegionBtn(); renderEspeces(); renderLearnCounts(); toast("Région : " + PAYS[region.pays].nom);
   });
+  // ---------- Pays de l'utilisateur : un seul réglage qui adapte toute l'appli ----------
+  function getCountry() {
+    var c = load("sylva_country", null); if (c) return c;
+    var l = (navigator.language || "").toUpperCase(), m = l.match(/-([A-Z]{2})$/);
+    return m && ["BE", "FR", "LU", "NL", "DE", "CH"].indexOf(m[1]) !== -1 ? m[1] : (m ? "XX" : "BE");
+  }
+  function applyCountry(c, silent) {
+    save("sylva_country", c);
+    // Espèces : région du pays (milieux gardés s'ils existent là-bas)
+    if (PAYS[c]) {
+      var dispo = PAYS[c].milieux; region = { pays: c, milieux: region.milieux.filter(function (m) { return dispo.indexOf(m) !== -1; }) };
+      if (!region.milieux.length) region.milieux = [dispo[0]];
+      save("sylva_region", region); renderRegionBtn(); renderEspeces(); renderLearnCounts();
+    }
+    // Prêt 72 h : numéros et alertes officielles
+    var pd = getPret(); pd.pays = (window.SYLVA_PAYS72 || {})[c] ? c : "XX"; savePret(pd);
+    // Carte : le fond IGN ne couvre que la Belgique
+    if (c !== "BE" && load("sylva_basemap", "ign_be") === "ign_be" && load("sylva_mtkey", "")) { save("sylva_basemap", "mt_outdoor"); if (map) { initBasemaps(); setBasemap("mt_outdoor"); } }
+    renderPretCard(); if ($("#view-pret").classList.contains("active")) renderPret();
+    if (!silent) toast("Pays : " + ((window.SYLVA_PAYS72 || {})[c] || { nom: "autre pays" }).nom);
+  }
+  if (!load("sylva_country", null)) { var c0 = getCountry(); save("sylva_country", c0); if (c0 !== region.pays) setTimeout(function () { applyCountry(c0, true); }, 0); }
+
   var MOIS_NOMS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
   function lvClass(n) { return "lv-" + (n || "info"); }
 
@@ -3115,7 +3140,7 @@
   }
   function renderPretCard() {
     var el = $("#pretCard"); if (!el) return;
-    var d = getPret(), st = pretStats(d), fresh = !load("sylva_pret", null);
+    var d = getPret(), st = pretStats(d), fresh = !Object.keys(d.have).length && !d.stock.length;
     el.innerHTML = '<span class="pret-ring" style="--p:' + st.pct + '"><b>' + st.pct + "%</b></span><span class=\"pret-txt\"><b>" +
       (fresh ? "Prépare ton foyer pour une crise" : st.pct >= 100 ? "Kit complet" : "Kit : " + st.done + " sur " + st.tot) + "</b><small>" +
       (fresh ? "Panne, inondation, tempête : l'UE demande à chaque foyer de tenir 72 h seul." :
@@ -3201,7 +3226,7 @@
     if (el.dataset.ftog) { d.foyer[el.dataset.ftog] = el.checked; savePret(d); renderPret(); return; }
     if (el.dataset.stdate) { d.stock.forEach(function (s) { if (s.id === el.dataset.stdate) s.date = el.value; }); savePret(d); renderPret(); return; }
     if (el.dataset.pfield) { d.plan[el.dataset.pfield] = el.value.trim(); savePret(d); toast("Plan enregistré"); return; }
-    if (el.id === "pretPays") { d.pays = el.value; savePret(d); renderPret(); }
+    if (el.id === "pretPays") { applyCountry(el.value); }
   });
   $("#pretBody").addEventListener("submit", function (e) {
     e.preventDefault(); var d = getPret();

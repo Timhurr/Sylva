@@ -236,6 +236,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 - Correctif au passage : « Coucher du soleil NaN h NaN » quand la météo n'a pas d'heure de coucher.
 - Suite proposée : traduction anglaise, puis app native (Capacitor) ; relecture des fiches Crises par un secouriste / la protection civile.
 
+- **v0.9.73** : Réglages > Pays et Langue. `sylva_country` (détecté à la 1re ouverture depuis la langue du téléphone, sinon BE) ; `applyCountry(c)` adapte les espèces (`sylva_region`), Prêt 72 h (numéros, alertes ; Allemagne ajoutée : NINA, BBK) et la carte (hors Belgique, passe sur MapTiler Outdoor si une clé existe, car IGN BE ne couvre que la Belgique). Langue : seul le français existe, EN/NL/DE/ES affichés « bientôt ». À faire pour l'international : fond de carte mondial sans clé (style naturel OpenFreeMap), puis traduction (interface d'abord, fiches ensuite).
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.

@@ -57,6 +57,7 @@
     FR: { nom: "France", alerte: "FR-Alert : les alertes arrivent seules sur les téléphones de la zone, sans inscription.", liens: [["georisques.gouv.fr (risques près de chez toi)", "https://www.georisques.gouv.fr"]], num: "112, 15 (SAMU), 18 (pompiers), 17 (police)" },
     LU: { nom: "Luxembourg", alerte: "LU-Alert : les alertes arrivent sur les téléphones de la zone.", liens: [["infocrise.public.lu", "https://infocrise.public.lu"]], num: "112, 113 (police)" },
     NL: { nom: "Pays-Bas", alerte: "NL-Alert : les alertes arrivent sur les téléphones de la zone, sans inscription.", liens: [["crisis.nl", "https://www.crisis.nl"]], num: "112" },
+    DE: { nom: "Allemagne", alerte: "NINA : installe l'application d'alerte officielle. Les alertes arrivent aussi sur les téléphones de la zone (Cell Broadcast).", liens: [["bbk.bund.de", "https://www.bbk.bund.de"]], num: "112 (secours, pompiers), 110 (police)" },
     CH: { nom: "Suisse", alerte: "Alertswiss : installe l'application officielle pour recevoir les alertes.", liens: [["alertswiss.ch", "https://www.alertswiss.ch"]], num: "112, 117 (police), 118 (feu), 144 (ambulance)" },
     XX: { nom: "Autre pays", alerte: "Renseigne-toi sur le système d'alerte officiel de ton pays et inscris-toi s'il le faut.", liens: [], num: "112 dans toute l'Union européenne" }
   };

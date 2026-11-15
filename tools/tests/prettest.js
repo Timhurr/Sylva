@@ -53,7 +53,7 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   await pg.fill('#pcNom', 'Maman'); await pg.fill('#pcTel', '0470 12 34 56'); await pg.click('#formContact button[type=submit]');
   await pg.fill('[data-pfield=rdv1]', "Devant l'école"); await pg.dispatchEvent('[data-pfield=rdv1]', 'change');
   ok('plan saved', JSON.parse(await pg.evaluate(() => localStorage.getItem('sylva_pret'))).plan.rdv1 === "Devant l'école");
-  await pg.click('[data-ptab=pays]'); ok('pays BE', (await pg.textContent('#pretBody')).includes('BE-Alert'));
+  await pg.click('[data-ptab=pays]'); await pg.selectOption('#pretPays', 'BE'); ok('pays BE', (await pg.textContent('#pretBody')).includes('BE-Alert'));
   await pg.selectOption('#pretPays', 'FR'); ok('pays FR', (await pg.textContent('#pretBody')).includes('FR-Alert'));
   await pg.click('[data-ptab=crises]'); const n = (await pg.$$('#pretBody [data-tech]')).length; ok('8 crises', n === 8, String(n));
   await pg.click('[data-tech=crise_panne]'); await pg.waitForTimeout(300);
@@ -63,6 +63,10 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   ok('home alert', (await pg.textContent('#pretCard')).includes('périmé'), await pg.textContent('#pretCard'));
   await pg.screenshot({ path: S + '/pret_home.png' });
   const ov = await pg.evaluate(() => document.documentElement.scrollWidth > innerWidth); ok('no overflow', !ov);
+  await pg.click('#btnSettings'); await pg.selectOption('#setCountry', 'DE'); await pg.click('#formSettings button[type=submit]');
+  await pg.waitForTimeout(300);
+  const st = await pg.evaluate(() => [localStorage.getItem('sylva_country'), JSON.parse(localStorage.getItem('sylva_region')).pays, JSON.parse(localStorage.getItem('sylva_pret')).pays]);
+  ok('country DE everywhere', st.join() === '"DE",DE,DE', st.join());
   console.log(errs.join('\n') || 'no errors');
   await b.close(); srv.close();
 })();
