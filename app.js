@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.70";
+  var VERSION = "0.9.71";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -136,7 +136,8 @@
         meCircle = L.circle(ll, { radius: me[2], color: "#E9A23B", weight: 1, fillOpacity: 0.08 }).addTo(map);
         meMarker = L.marker(ll, { icon: L.divIcon({ className: "", html: '<div class="me-dot"></div>', iconSize: [18, 18] }), zIndexOffset: 1000 }).addTo(map);
       } else { meMarker.setLatLng(ll); meCircle.setLatLng(ll).setRadius(me[2]); }
-      if (firstFix) { firstFix = false; map.setView(ll, 14); }
+      // Premier point GPS : on ne recentre que si je suis hors de la vue (sinon on garderait les tuiles déjà chargées)
+      if (firstFix) { firstFix = false; var bnd = map.getBounds && map.getBounds(); if (!bnd || !bnd.contains || !bnd.contains(ll)) map.setView(ll, Math.max(map.getZoom ? map.getZoom() : 14, 14)); }
       updateMapCard();
     }
     updateSosCoords();
@@ -170,7 +171,11 @@
       $("#mapCard").innerHTML = '<div class="map-card-title">Carte indisponible</div><div class="map-card-sub">Ouvrez l\'appli une première fois avec du réseau pour la mettre en cache.</div>';
       return;
     }
-    map = L.map("map", { zoomControl: false }).setView(ZONE.centre, ZONE.zoom);
+    // Démarre là où on a laissé la carte (sinon le lieu de la sortie) : évite de charger la vue d'ensemble puis tout recharger au zoom 14
+    var lastView = load("sylva_mapview", null), tv = getTrip();
+    var startC = lastView ? lastView.c : (tv.lat != null ? [tv.lat, tv.lon] : ZONE.centre), startZ = lastView ? lastView.z : (tv.lat != null ? 14 : ZONE.zoom);
+    map = L.map("map", { zoomControl: false }).setView(startC, startZ);
+    map.on("moveend", function () { var c = map.getCenter(); save("sylva_mapview", { c: [+c.lat.toFixed(5), +c.lng.toFixed(5)], z: map.getZoom() }); });
     initBasemaps();
     layers.bivouac = L.layerGroup().addTo(map);
     layers.eau = L.layerGroup().addTo(map);
@@ -260,7 +265,7 @@
     var b = BASEMAPS[id] || BASEMAPS.ign_be;
     if (!BASEMAPS[id]) id = "ign_be";
     if (baseLayer) map.removeLayer(baseLayer);
-    var opt = { maxZoom: 19, maxNativeZoom: b.maxNative, attribution: b.attr };
+    var opt = { maxZoom: 19, maxNativeZoom: b.maxNative, attribution: b.attr, keepBuffer: 3 };
     if (b.sub2) opt.subdomains = b.sub2;
     if (b.cors) opt.crossOrigin = true; // MapTiler : envoie l'en-tête Origin pour la restriction de domaine
     if (b.cors) opt.referrerPolicy = "strict-origin-when-cross-origin";

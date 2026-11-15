@@ -1,5 +1,5 @@
 /* Sylva – service worker : appli et fiches hors-ligne, tuiles de carte vues gardées en cache */
-var VERSION = "sylva-v0.9.70";
+var VERSION = "sylva-v0.9.71";
 var SHELL = VERSION + "-shell";
 var TILES = "sylva-tiles";
 var PHOTOS = "sylva-photos";
@@ -37,7 +37,10 @@ self.addEventListener("activate", function (e) {
   }).then(function () { return self.clients.claim(); }));
 });
 
+// Le tri du cache liste toutes les tuiles (lent sur iPhone avec des milliers) : une fois toutes les 150 nouvelles tuiles seulement
+var newTiles = 0;
 function trimTiles() {
+  if (++newTiles % 150 !== 0) return Promise.resolve();
   return caches.open(TILES).then(function (c) {
     return c.keys().then(function (keys) {
       var extra = keys.length - MAX_TILES;

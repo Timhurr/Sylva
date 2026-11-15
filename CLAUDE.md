@@ -228,6 +228,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 - Problèmes : guidage GPS « pas trop ça » (détails à demander) ; parkings chargés seulement une fois sur place.
 - **v0.9.70** : `preloadTripZone()` garde services, parkings, bivouacs et eau autour du lieu de la sortie dès qu'il est enregistré (et au démarrage, en ligne), sans ouvrir la carte.
 
+- **v0.9.71** : carte lente à charger. (1) Le service worker listait tout le cache de tuiles (jusqu'à 4 000) après **chaque** nouvelle tuile pour le limiter : 20 tuiles = 20 listes en parallèle, ~0,6 s sur Chromium PC, bien plus sur iPhone. Maintenant une fois toutes les 150 tuiles. (2) La carte démarrait sur la vue d'ensemble puis sautait au GPS au zoom 14 (deux chargements complets) : elle repart de la dernière vue (`sylva_mapview`) ou du lieu de la sortie, et ne recentre au premier point GPS que s'il est hors de l'écran. (3) `keepBuffer: 3`. Le serveur IGN reste plus lent que MapTiler (CDN).
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.
