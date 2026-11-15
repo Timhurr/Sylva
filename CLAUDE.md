@@ -143,7 +143,7 @@ Toutes les données utilisateur sont **sur le téléphone**, clés `sylva_*` dan
 |---|---|---|
 | IGN Belgique CartoWeb | Fond de carte par défaut | Données ouvertes, usage commercial possible. Zoom natif 17. |
 | MapTiler (Outdoor, Satellite) | Fonds de carte avec la clé de l'utilisateur | Clé restreinte au domaine `timhurr.github.io` (et `?` pour les requêtes sans origine). Formule gratuite = usage personnel ; pour la version payante : formule Flex (30 $/mois, 25 000 sessions, puis 2,50 $ / 1 000) et clé intégrée à l'appli. **Téléchargement en masse interdit** (art. 6.3) : pas de préchargement MapTiler, packs hors ligne seulement avec un contrat Custom. |
-| OpenFreeMap + MapLibre GL (unpkg) | Style vectoriel « Terminal » | Gratuit, usage commercial autorisé. |
+| OpenFreeMap + MapLibre GL (unpkg) | Fond mondial « OpenFreeMap » (style liberty) et style vectoriel « Terminal » | Gratuit, usage commercial autorisé. |
 | Overpass (OpenStreetMap) | Bivouacs, points d'eau, services | Usage léger ; données ODbL à attribuer. Serveurs essayés dans l'ordre : overpass-api.de, overpass.private.coffee, overpass.kumi.systems. |
 | Nominatim | Recherche de lieu | 1 requête par seconde maximum. |
 | Open-Meteo | Météo, altitude (relief) | Gratuit pour un usage non commercial : licence payante à prévoir. |
@@ -239,6 +239,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 - **v0.9.73** : Réglages > Pays et Langue. `sylva_country` (détecté à la 1re ouverture depuis la langue du téléphone, sinon BE) ; `applyCountry(c)` adapte les espèces (`sylva_region`), Prêt 72 h (numéros, alertes ; Allemagne ajoutée : NINA, BBK) et la carte (hors Belgique, passe sur MapTiler Outdoor si une clé existe, car IGN BE ne couvre que la Belgique). Langue : seul le français existe, EN/NL/DE/ES affichés « bientôt ». À faire pour l'international : fond de carte mondial sans clé (style naturel OpenFreeMap), puis traduction (interface d'abord, fiches ensuite).
 
 - **v0.9.74** : « Préparer la sortie » ne télécharge plus les tuiles MapTiler (conditions MapTiler Cloud art. 6.3 : téléchargement en masse interdit sans accord écrit ; seul le cache personnel des tuiles affichées est permis, art. 5.7). Seules les cartes IGN sont préchargées. MapTiler : Free = non commercial ; Flex 30 $/mois pour 25 000 sessions puis 2,50 $ / 1 000 ; hors ligne en masse = contrat Custom à négocier.
+
+- **v0.9.75** : fond **OpenFreeMap** (`ofm`, style vectoriel « liberty » via MapLibre GL + maplibre-gl-leaflet, déjà chargés pour Terminal) : monde entier, gratuit, sans clé, usage commercial autorisé. `defaultBasemap()` : IGN en Belgique, OpenFreeMap ailleurs ; `applyCountry` bascule hors Belgique sur MapTiler Outdoor si clé, sinon OpenFreeMap. Rendu réel non testable ici (unpkg et OpenFreeMap injoignables) : à vérifier par Tim. Pas d'ombrage du relief ni de courbes de niveau dans ce style.
 
 ## 11. Basculer sur un autre compte
 

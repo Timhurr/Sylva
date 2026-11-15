@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.74";
+  var VERSION = "0.9.75";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -248,7 +248,12 @@
     ign_be: { nom: "IGN Belgique", sub: "Topo, sentiers, courbes de niveau",
       url: "https://cartoweb.wmts.ngi.be/1.0.0/topo/default/3857/{z}/{y}/{x}.png", maxNative: 17,
       attr: '&copy; <a href="https://www.ngi.be">IGN Belgique</a> (CartoWeb)' },
+    // Monde entier, gratuit, sans clé, usage commercial autorisé (carte vectorielle MapLibre)
+    ofm: { nom: "OpenFreeMap", sub: "Monde entier · sans clé · routes, chemins, lieux", gl: "https://tiles.openfreemap.org/styles/liberty",
+      attr: '<a href="https://openfreemap.org" target="_blank">OpenFreeMap</a> &copy; <a href="https://www.openmaptiles.org/" target="_blank">OpenMapTiles</a> ' + OSM_ATTR }
   };
+  // Fond par défaut : IGN en Belgique (topo détaillée), OpenFreeMap ailleurs
+  function defaultBasemap() { return (load("sylva_country", "BE") || "BE") === "BE" ? "ign_be" : "ofm"; }
   function mtKey() { return load("sylva_mtkey", "") || ""; }
   function addMapTiler() {
     var k = mtKey();
@@ -263,9 +268,20 @@
   var baseLayer = null;
 
   function setBasemap(id) {
-    var b = BASEMAPS[id] || BASEMAPS.ign_be;
-    if (!BASEMAPS[id]) id = "ign_be";
-    if (baseLayer) map.removeLayer(baseLayer);
+    if (!BASEMAPS[id]) id = defaultBasemap();
+    var b = BASEMAPS[id];
+    if (baseLayer) { map.removeLayer(baseLayer); baseLayer = null; }
+    save("sylva_basemap", id);
+    $all("#basemapList [data-basemap]").forEach(function (x) { x.classList.toggle("on", x.dataset.basemap === id); });
+    $("#map").classList.toggle("map-sat", !!b.sat);
+    if (b.gl) {
+      loadGL().then(function () {
+        if (load("sylva_basemap", "") !== id || baseLayer) return;
+        baseLayer = L.maplibreGL({ style: b.gl, attribution: b.attr });
+        if (!$("#map").classList.contains("term-vec")) baseLayer.addTo(map);
+      }).catch(function () { toast("Carte OpenFreeMap indisponible hors ligne la première fois : ouvre-la une fois avec du réseau"); });
+      return;
+    }
     var opt = { maxZoom: 19, maxNativeZoom: b.maxNative, attribution: b.attr, keepBuffer: 3 };
     if (b.sub2) opt.subdomains = b.sub2;
     if (b.cors) opt.crossOrigin = true; // MapTiler : envoie l'en-tête Origin pour la restriction de domaine
@@ -273,9 +289,6 @@
     baseLayer = L.tileLayer(b.url, opt);
     if (b.cors && baseLayer.on) { var errN = 0; baseLayer.on("tileerror", function () { if (++errN === 3) toast("MapTiler refuse la clé : vérifie-la dans Réglages, et le domaine autorisé dans MapTiler"); }); }
     if (!$("#map").classList.contains("term-vec")) { baseLayer.addTo(map); baseLayer.bringToBack(); }
-    $("#map").classList.toggle("map-sat", !!b.sat);
-    save("sylva_basemap", id);
-    $all("#basemapList [data-basemap]").forEach(function (x) { x.classList.toggle("on", x.dataset.basemap === id); });
   }
 
   var basemapsWired = false;
@@ -286,12 +299,12 @@
       var b = BASEMAPS[k];
       return '<button type="button" class="basemap-item" data-basemap="' + k + '"><b>' + b.nom + "</b><span>" + b.sub + "</span></button>";
     }).join("");
-    var cur = load("sylva_basemap", "ign_be");
+    var cur = load("sylva_basemap", defaultBasemap());
     $all("#basemapList [data-basemap]").forEach(function (x) { x.classList.toggle("on", x.dataset.basemap === cur); });
   }
   function initBasemaps() {
     renderBasemapList();
-    if (basemapsWired) { var cur = load("sylva_basemap", "ign_be"); if (!BASEMAPS[cur]) setBasemap("ign_be"); return; }
+    if (basemapsWired) { var cur = load("sylva_basemap", defaultBasemap()); if (!BASEMAPS[cur]) setBasemap(defaultBasemap()); return; }
     basemapsWired = true;
     var list = $("#basemapList");
     if (list) list.addEventListener("click", function (e) {
@@ -300,7 +313,7 @@
     });
     var fab = $("#btnBasemap");
     if (fab) fab.addEventListener("click", function () { var p = $("#basemapPanel"); $("#spotsPanel").hidden = true; p.hidden = !p.hidden; });
-    setBasemap(load("sylva_basemap", "ign_be"));
+    setBasemap(load("sylva_basemap", defaultBasemap()));
     var sl = $("#skinList");
     if (sl) {
       sl.innerHTML = Object.keys(SKINS).map(function (k) {
@@ -1381,7 +1394,7 @@
     // Prêt 72 h : numéros et alertes officielles
     var pd = getPret(); pd.pays = (window.SYLVA_PAYS72 || {})[c] ? c : "XX"; savePret(pd);
     // Carte : le fond IGN ne couvre que la Belgique
-    if (c !== "BE" && load("sylva_basemap", "ign_be") === "ign_be" && load("sylva_mtkey", "")) { save("sylva_basemap", "mt_outdoor"); if (map) { initBasemaps(); setBasemap("mt_outdoor"); } }
+    if (c !== "BE" && load("sylva_basemap", "ign_be") === "ign_be") { var nb = load("sylva_mtkey", "") ? "mt_outdoor" : "ofm"; save("sylva_basemap", nb); if (map) { initBasemaps(); setBasemap(nb); } }
     renderPretCard(); if ($("#view-pret").classList.contains("active")) renderPret();
     if (!silent) toast("Pays : " + ((window.SYLVA_PAYS72 || {})[c] || { nom: "autre pays" }).nom);
   }
