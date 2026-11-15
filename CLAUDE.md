@@ -223,6 +223,11 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 
 - **v0.9.69** : le bandeau « Bivouac le plus proche » part de l'endroit regardé (centre de la carte ; la position GPS seulement si la carte est centrée sur toi à moins de 1,5 km, `mapRefPoint`) et se met à jour quand la carte bouge. Une zone pas encore chargée se charge seule quand la carte s'arrête dessus (zoom ≥ 11, en ligne ; `loadOsm(force, at)`). Test : `tools/tests/cardtest.js`.
 
+### 2026-11-15 · retour du premier test terrain (Engreux, 13-14 novembre)
+- Tim a campé près d'Engreux (pas Nisramont), sous tarp. Recette « ragoût de bœuf » : réussie. Télémètre : apprécié. Il a ignoré le conseil de pente (niveau et relief) et a glissé un peu dans la nuit.
+- Problèmes : guidage GPS « pas trop ça » (détails à demander) ; parkings chargés seulement une fois sur place.
+- **v0.9.70** : `preloadTripZone()` garde services, parkings, bivouacs et eau autour du lieu de la sortie dès qu'il est enregistré (et au démarrage, en ligne), sans ouvrir la carte.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.

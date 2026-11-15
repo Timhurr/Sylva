@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.69";
+  var VERSION = "0.9.70";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -633,6 +633,16 @@
       })
       .catch(function () { if (force) toast("Services : serveurs OpenStreetMap saturés, réessaie dans une minute"); });
   }
+  // Zone de la prochaine sortie : services, parkings, bivouacs et eau gardés à l'avance, sans ouvrir la carte
+  function preloadTripZone() {
+    var t = getTrip(); if (t.lat == null || !navigator.onLine) return;
+    var c = [t.lat, t.lon], q = [];
+    if (!zoneFresh("sylva_poi", c, 5)) q.push(overpass(poiQuery(c[0].toFixed(5), c[1].toFixed(5))).then(function (d) { zonePut("sylva_poi", c, d.elements || []); if (map && map.hasLayer(layers.services)) renderPoi(zoneEls("sylva_poi")); }));
+    if (!zoneFresh("sylva_osm", c, 8)) q.push(overpass(osmQuery(c[0].toFixed(5), c[1].toFixed(5))).then(function (d) { zonePut("sylva_osm", c, d.elements || []); if (map) { renderOsm(zoneEls("sylva_osm")); } }));
+    Promise.all(q).catch(function () {});
+  }
+  setTimeout(preloadTripZone, 5000);
+
   function renderPoi(els) {
     if (!map) return;
     layers.services.clearLayers();
@@ -2259,7 +2269,8 @@
     var t = { lieu: $("#tripLieu").value.trim(), date: $("#tripDate").value };
     if (tripPick) { t.lat = tripPick.lat; t.lon = tripPick.lon; t.pointLabel = tripPick.label; t.spot = tripPick.spot || ""; }
     save("sylva_trip", t);
-    closeModal($("#modalTrip")); renderTrip(); loadBivMeteo(); tripChasse(); renderAccueil(); toast("Sortie enregistrée");
+    closeModal($("#modalTrip")); renderTrip(); loadBivMeteo(); tripChasse(); renderAccueil(); preloadTripZone();
+    toast(t.lat != null ? "Sortie enregistrée · services et parkings du lieu gardés pour le hors ligne" : "Sortie enregistrée");
   });
 
   // ---------- Historique des bivouacs ----------

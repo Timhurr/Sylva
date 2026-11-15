@@ -45,6 +45,10 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   await pg.$eval('#btnReloadOsm', e => e.click()); await pg.waitForTimeout(1500);
   const z = JSON.parse(await pg.evaluate(() => localStorage.getItem('sylva_osm')));
   ok('zones kept', Array.isArray(z.zones) && z.zones.length === 2, JSON.stringify(z).slice(0,160));
+  await pg.evaluate(() => { localStorage.setItem('sylva_trip', JSON.stringify({ lieu: 'Engreux', date: '2026-12-01', lat: 50.13, lon: 5.76 })); localStorage.removeItem('sylva_poi'); });
+  await pg.reload({ waitUntil: 'domcontentloaded' }).catch(()=>{}); await pg.waitForTimeout(7000);
+  const zp = JSON.parse(await pg.evaluate(() => localStorage.getItem('sylva_poi') || '{"zones":[]}'));
+  ok('trip zone preloaded', zp.zones.some(z => Math.abs(z.c[0] - 50.13) < 0.001), JSON.stringify(zp).slice(0,120));
   console.log(errs.join('\n') || 'no errors');
   await b.close(); srv.close();
 })();
