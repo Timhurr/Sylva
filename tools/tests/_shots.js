@@ -39,7 +39,7 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   for (const v of ['apprendre', 'bivouac', 'carte']) { await pg.evaluate((v) => [...document.querySelectorAll('[data-view]')].find(x => x.dataset.view === v).click(), v); await pg.waitForTimeout(600); await shot(v); }
   await pg.evaluate(() => [...document.querySelectorAll('[data-view]')].find(x => x.dataset.view === 'accueil').click()); await pg.waitForTimeout(300);
   await pg.evaluate(() => document.querySelector('#pretCard').click()); await pg.waitForTimeout(300); await shot('pret');
-  await pg.evaluate(() => document.querySelector('#btnSos').click()); await pg.waitForTimeout(300); await shot('sos');
+  await pg.evaluate(() => document.querySelector('#crSignal').click()); await pg.waitForTimeout(300); await shot('sos');
   await pg.evaluate(() => document.querySelectorAll('.modal').forEach(m => m.hidden = true));
   await pg.evaluate(() => { [...document.querySelectorAll('[data-view]')].find(x => x.dataset.view === 'apprendre').click(); });
   await pg.waitForTimeout(300); await pg.evaluate(() => document.querySelector('[data-learn-fiches="Feu"]').click()); await pg.waitForTimeout(400);

@@ -292,6 +292,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 
 - **v0.9.93** : Pl@ntNet retiré (vue scan, clé dans Réglages, test). Le bouton central ouvre le **mode crise** (`view-crise`, `renderCrise`, `CRISE_SIT`). Nouvel écran **Identifier** (`view-identifier`, `ID_Q`, `renderIdentifier`, données `identifier.js`) ; résultats triés danger d'abord, toujours renvoyer vers la fiche. Tests fulltest mis à jour.
 
+- **v0.9.94** : bouton SOS flottant (`#btnSos`) retiré : le mode crise du bouton central le remplace (« Signaler ma présence » ouvre `modalSos`). Marges réservées au SOS supprimées (`.page-head`, `.panel-head`, `.map-search`).
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.

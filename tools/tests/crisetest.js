@@ -47,7 +47,7 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   await pg.click('[data-ptab=crises]'); const nc = (await pg.$$('#pretBody [data-tech]')).length; ok('13 crises', nc === 13, String(nc));
   // Blessé
   await ev(() => document.querySelector('[data-goto=accueil]').click());
-  await ev(() => document.querySelector('#btnSos, [data-sos], .sos-btn') && document.querySelector('#btnSos, [data-sos], .sos-btn').click());
+  await ev(() => document.querySelector('#crSignal').click());
   await pg.waitForTimeout(200);
   await ev(() => document.querySelector('#btnBlesse').click()); await pg.waitForTimeout(200);
   ok('blesse open', await pg.isVisible('#modalBlesse'));

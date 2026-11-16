@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.93";
+  var VERSION = "0.9.94";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -1240,7 +1240,6 @@
       "<br>Précision : ± " + Math.round(me[2]) + " m";
     $("#btnSmsPos").href = "sms:&body=" + encodeURIComponent(sosText());
   }
-  $("#btnSos").addEventListener("click", function () { updateSosCoords(); openModal("#modalSos"); });
   $("#btnCopyPos").addEventListener("click", function () {
     var t = sosText(); if (t) copyText(t); else toast("Position pas encore disponible");
   });

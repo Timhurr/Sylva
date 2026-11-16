@@ -149,7 +149,7 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   ok('Changement de région', await pg.evaluate(() => document.querySelector('#regionPays').textContent === 'France'));
   await pg.click('#btnRegion'); await pg.click('[data-pays="BE"]'); await pg.click('#btnRegionOk');
   // SOS
-  await pg.click('#btnSos'); await pg.waitForTimeout(200);
+  await pg.click('.tab[data-view="crise"]'); await pg.click('#crSignal'); await pg.waitForTimeout(200);
   ok('SOS : fenêtre et appel 112', await pg.isVisible('#modalSos') && await pg.evaluate(() => !!document.querySelector('#modalSos a[href="tel:112"]')));
   await pg.click('#modalSos [data-close]');
   // reglages + nuit
