@@ -2,6 +2,66 @@
 
 Générées par l'API, pas encore dans l'appli.
 
+### Chapitre : tenir 72 heures (`chap_crises.png`)
+
+![](chap_crises.png)
+
+### Être prêt pour 72 heures (`crise_72h.png`)
+
+![](crise_72h.png)
+
+### Accident nucléaire ou chimique : se mettre à l'abri (`crise_abri.png`)
+
+![](crise_abri.png)
+
+### Calfeutrer une pièce (`crise_calfeutrer.png`)
+
+![](crise_calfeutrer.png)
+
+### Canicule (`crise_canicule.png`)
+
+![](crise_canicule.png)
+
+### Couper le gaz, l'eau et l'électricité (`crise_couper.png`)
+
+![](crise_couper.png)
+
+### L'eau cachée dans ton logement (`crise_eau_logement.png`)
+
+![](crise_eau_logement.png)
+
+### Évacuer : partir vite et bien (`crise_evacuer.png`)
+
+![](crise_evacuer.png)
+
+### Inondation (`crise_inondation.png`)
+
+![](crise_inondation.png)
+
+### Trouver le nord avec le soleil et l'heure (`crise_nord_soleil.png`)
+
+![](crise_nord_soleil.png)
+
+### Panne d'électricité générale (`crise_panne.png`)
+
+![](crise_panne.png)
+
+### Radio : s'informer et communiquer sans réseau (`crise_radio.png`)
+
+![](crise_radio.png)
+
+### Sans réseau ni paiement par carte (`crise_sansreseau.png`)
+
+![](crise_sansreseau.png)
+
+### Tempête et vents violents (`crise_tempete.png`)
+
+![](crise_tempete.png)
+
+### Troc, rationnement et discrétion (`crise_troc.png`)
+
+![](crise_troc.png)
+
 ### Aconit napel (`esp_aconit.png`)
 
 ![](esp_aconit.png)
@@ -557,3 +617,7 @@ Générées par l'API, pas encore dans l'appli.
 ### Vive (poisson venimeux) (`esp_vive.png`)
 
 ![](esp_vive.png)
+
+### Réanimation cardio-pulmonaire (`ps_rcp.png`)
+
+![](ps_rcp.png)
