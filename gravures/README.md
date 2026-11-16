@@ -38,6 +38,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](crise_inondation.png)
 
+### Une lampe à huile de cuisine (`crise_lampe_huile.png`)
+
+![](crise_lampe_huile.png)
+
 ### Trouver le nord avec le soleil et l'heure (`crise_nord_soleil.png`)
 
 ![](crise_nord_soleil.png)
@@ -53,6 +57,10 @@ Générées par l'API, pas encore dans l'appli.
 ### Sans réseau ni paiement par carte (`crise_sansreseau.png`)
 
 ![](crise_sansreseau.png)
+
+### Un stock qui dure des années (`crise_stock_long.png`)
+
+![](crise_stock_long.png)
 
 ### Tempête et vents violents (`crise_tempete.png`)
 
