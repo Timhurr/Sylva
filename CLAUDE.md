@@ -282,6 +282,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 
 - **v0.9.82 à v0.9.87** : les 139 espèces ont leur gravure (générées par l'API, chacune vérifiée ; refaites : if, œnanthe, oseille, cortinaire). Claude lance lui-même le workflow : `gh api -X POST repos/Timhurr/Sylva/actions/workflows/gravures.yml/dispatches -f ref=main -f 'inputs[groupe]=…'` (ou `inputs[ids]`), puis récupère `origin/gravures`. Tim n'a qu'à garder du crédit OpenAI.
 
+- **v0.9.88 à v0.9.90** : gravures crises et RCP ; fiches « Un stock qui dure des années » (USDA, université d'Utah) et « Une lampe à huile de cuisine » (`crise_plus.js`). Écartés après relecture (à ne pas ajouter) : chauffage à la bougie de graisse (puissance fausse, risque CO), viande séchée à l'air sans cuisson, œufs à la chaux, frigo en pots, salaisons maison. Livre *Le Médecin des pauvres* (Beauvillard, 1911, Gallica) : texte du domaine public mais scans BnF payants en usage commercial, et remèdes souvent dangereux ; rien repris pour l'instant.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.
