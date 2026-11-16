@@ -14,6 +14,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](crise_abri.png)
 
+### Les animaux de compagnie en crise (`crise_animaux.png`)
+
+![](crise_animaux.png)
+
 ### Calfeutrer une pièce (`crise_calfeutrer.png`)
 
 ![](crise_calfeutrer.png)
@@ -30,9 +34,21 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](crise_eau_logement.png)
 
+### Panne longue : électricité et congélateur (`crise_electricite.png`)
+
+![](crise_electricite.png)
+
 ### Évacuer : partir vite et bien (`crise_evacuer.png`)
 
 ![](crise_evacuer.png)
+
+### Fièvre et petits maux sans médecin (`crise_fievre.png`)
+
+![](crise_fievre.png)
+
+### Enfants, personnes âgées et dépendantes (`crise_fragiles.png`)
+
+![](crise_fragiles.png)
 
 ### Inondation (`crise_inondation.png`)
 
@@ -41,6 +57,10 @@ Générées par l'API, pas encore dans l'appli.
 ### Une lampe à huile de cuisine (`crise_lampe_huile.png`)
 
 ![](crise_lampe_huile.png)
+
+### Garder le moral quand ça dure (`crise_moral.png`)
+
+![](crise_moral.png)
 
 ### Trouver le nord avec le soleil et l'heure (`crise_nord_soleil.png`)
 
@@ -54,6 +74,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](crise_radio.png)
 
+### Diarrhée et déshydratation : la solution maison (`crise_rehydratation.png`)
+
+![](crise_rehydratation.png)
+
 ### Sans réseau ni paiement par carte (`crise_sansreseau.png`)
 
 ![](crise_sansreseau.png)
@@ -65,6 +89,14 @@ Générées par l'API, pas encore dans l'appli.
 ### Tempête et vents violents (`crise_tempete.png`)
 
 ![](crise_tempete.png)
+
+### Toilettes et hygiène sans eau courante (`crise_toilettes.png`)
+
+![](crise_toilettes.png)
+
+### Traitements quotidiens : ne pas tomber à court (`crise_traitements.png`)
+
+![](crise_traitements.png)
 
 ### Troc, rationnement et discrétion (`crise_troc.png`)
 
