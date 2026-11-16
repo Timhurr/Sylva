@@ -134,7 +134,7 @@ html[data-theme="nuit"] .resume-card.dark{color:var(--text);border:1px solid var
 .cat-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .cat-tile{height:92px;padding:14px;border-radius:22px;border:0;text-align:left;display:flex;flex-direction:column;justify-content:space-between;color:var(--text)}
 .cat-tile svg{width:24px;height:24px}
-.cat-tile span{display:flex;justify-content:space-between;align-items:baseline;width:100%}
+.cat-tile span:not(.med){display:flex;justify-content:space-between;align-items:baseline;width:100%}
 .cat-tile b{font-size:15px}
 .cat-tile i{font-style:normal;font-size:12px;font-weight:800}
 .t-plante{background:var(--ok-bg)} .t-plante svg,.t-plante i{color:var(--ok)}
@@ -610,7 +610,7 @@ body.navigating .map-fabs{bottom:calc(var(--bottom) + 100px)}
 .train-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .train-card{border:0;border-radius:20px;background:var(--surface);box-shadow:var(--shadow);padding:14px;text-align:left;display:flex;flex-direction:column;gap:4px;color:var(--text)}
 .train-card b{font-size:15px}
-.train-card span:not(.tc-ico){font-size:12px;color:var(--muted)}
+.train-card span:not(.tc-ico):not(.med){font-size:12px;color:var(--muted)}
 .tc-ico{font-size:24px}
 .quiz-lv{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:#fff;font-weight:800;flex:none}
 .quiz-lv1{background:#5E8C5A}.quiz-lv2{background:#B07A2A}.quiz-lv3{background:#7A3B2A}
@@ -630,7 +630,7 @@ body.navigating .map-fabs{bottom:calc(var(--bottom) + 100px)}
 .badge-tile{border-radius:16px;background:var(--surface);padding:12px;display:flex;flex-direction:column;gap:2px;opacity:.45;filter:grayscale(1);border:1px solid var(--line)}
 .badge-tile.on{opacity:1;filter:none;border-color:#E9A23B;box-shadow:var(--shadow)}
 .badge-tile b{font-size:14px}
-.badge-tile span:not(.bt-ico){font-size:12px;color:var(--muted)}
+.badge-tile span:not(.bt-ico):not(.med){font-size:12px;color:var(--muted)}
 .bt-ico{font-size:26px}
 /* Alertes de saison */
 .season-alert{display:flex;flex-direction:column;gap:3px;width:100%;text-align:left;border:0;border-radius:18px;padding:12px 14px;margin-bottom:8px;font:inherit;color:var(--text);background:var(--surface);border-left:5px solid #2F7FA3}
@@ -967,3 +967,32 @@ html[data-theme="jour"] .map-chips .chip{background:rgba(247,244,236,.9)!importa
 html[data-theme="jour"] .map-chips .chip.on{color:#8F4A0F!important;border-color:rgba(182,95,20,.6)!important}
 html[data-theme="nuit"] .fab{background:rgba(20,26,22,.82);color:#E7DCC6;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,232,196,.09),0 8px 20px rgba(0,0,0,.4)}
 html[data-theme="nuit"] .map-search-box{background:rgba(20,26,22,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)}
+
+/* ===== Icônes Sylva (sprite tools/icons.py) : trait 1,7, médaillons éclairés ===== */
+svg.ic{width:22px;height:22px;stroke-width:1.7;--icf:.38}
+.ic-in{width:1.15em;height:1.15em;vertical-align:-.2em;stroke-width:1.9}
+.btn .ic{width:19px;height:19px;margin-right:2px}
+.tab .ic{width:24px;height:24px;stroke-width:1.6;--icf:0}
+.tab.active .ic{--icf:.35;filter:drop-shadow(0 0 6px var(--glow,rgba(240,168,72,.45)))}
+.scan-fab .ic{width:28px;height:28px;stroke-width:1.8;--icf:.25}
+.c-violet{color:var(--violet)} .c-muted{color:var(--muted)}
+.med{display:inline-grid;place-items:center;flex:none;width:44px;height:44px;border-radius:15px;
+  background:radial-gradient(circle at 35% 25%,color-mix(in srgb,currentColor 30%,transparent),color-mix(in srgb,currentColor 7%,transparent) 72%);
+  box-shadow:inset 0 1px 0 rgba(255,236,205,.16),0 0 18px color-mix(in srgb,currentColor 20%,transparent)}
+.med .ic{width:25px;height:25px;color:color-mix(in srgb,currentColor 58%,#FFF3DE);--icf:.5;
+  filter:drop-shadow(0 0 3px color-mix(in srgb,currentColor 75%,transparent))}
+html[data-theme="jour"] .med{background:radial-gradient(circle at 35% 25%,color-mix(in srgb,currentColor 20%,#fff),color-mix(in srgb,currentColor 9%,transparent) 75%);box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 2px 8px color-mix(in srgb,currentColor 14%,transparent)}
+html[data-theme="jour"] .med .ic{color:color-mix(in srgb,currentColor 85%,#000);filter:none;--icf:.3}
+.skill .med{width:46px;height:46px;margin-bottom:2px}
+.urgent .med{width:38px;height:38px;border-radius:13px;color:var(--danger)}
+.urgent .med .ic{width:22px;height:22px;color:color-mix(in srgb,var(--danger) 55%,#FFF0E8)}
+html[data-theme="jour"] .urgent .med .ic{color:var(--danger)}
+.cat-tile .med{width:42px;height:42px}
+.t-plante .med{color:var(--ok)} .t-toxique .med{color:var(--danger)} .t-champignon .med{color:var(--earth)}
+.t-poisson .med{color:var(--water)} .t-saison .med{color:var(--amber)} .t-animal .med{color:var(--violet)}
+.train-card .med{width:42px;height:42px;margin-bottom:4px}
+.badge-tile .med{width:40px;height:40px;margin-bottom:4px}
+.pin span .ic{width:16px;height:16px;stroke-width:2;color:#fff;--icf:.3}
+.risk-pin .ic{width:20px;height:20px;stroke-width:1.6;--icf:.9}
+.drill-streak .ic,.pret-card small .ic{color:var(--accent)}
+.nav-voice .ic{width:22px;height:22px}

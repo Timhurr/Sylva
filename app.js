@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.78";
+  var VERSION = "0.9.79";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -10,6 +10,8 @@
   // ---------- Utilitaires ----------
   function $(sel) { return document.querySelector(sel); }
   function $all(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
+  function ic(n, cls) { return '<svg class="ic' + (cls ? " " + cls : "") + '" aria-hidden="true"><use href="#i-' + n + '"/></svg>'; }
+  function med(n, c) { return '<span class="med ' + (c || "c-amber") + '">' + ic(n) + "</span>"; }
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
@@ -190,7 +192,7 @@
     layers.risques = L.layerGroup();
     (window.SYLVA_RISQUES || []).forEach(function (r) {
       L.circle([r.lat, r.lon], { radius: r.r * 1000, color: "#C08A1E", weight: 1.5, dashArray: "6 6", fillColor: "#F2B33D", fillOpacity: 0.08, interactive: false }).addTo(layers.risques);
-      L.marker([r.lat, r.lon], { icon: L.divIcon({ className: "", iconSize: [28, 28], iconAnchor: [14, 14], html: '<span class="risk-pin">☢</span>' }) })
+      L.marker([r.lat, r.lon], { icon: L.divIcon({ className: "", iconSize: [28, 28], iconAnchor: [14, 14], html: '<span class="risk-pin">' + ic("radiation") + '</span>' }) })
         .bindPopup(function () { return riskPopup(r); }).addTo(layers.risques);
     });
     if (load("sylva_layer_risques", false)) layers.risques.addTo(map);
@@ -265,7 +267,7 @@
           el.textContent = "Vent actuel (indicatif) : souffle vers le " + DIR16[Math.round(to / 22.5) % 16] + " à " + Math.round(j.current.wind_speed_10m) + " km/h.";
         }).catch(function () {});
     }, 50);
-    return '<div class="poi-pop"><b>☢ ' + esc(r.nom) + "</b><br><small>" + esc(r.type) + (d ? " · à " + d + " de toi" : "") + "</small>" +
+    return '<div class="poi-pop"><b>' + ic("radiation", "ic-in") + ' ' + esc(r.nom) + "</b><br><small>" + esc(r.type) + (d ? " · à " + d + " de toi" : "") + "</small>" +
       '<p style="margin:6px 0">Cercle : environ ' + r.r + " km, ordre de grandeur de la zone de planification d'urgence. Seul le plan officiel fait foi.</p>" +
       '<p class="tiny" id="' + id + '" style="margin:0 0 6px"></p>' +
       '<p style="margin:0 0 6px"><b>En cas d\'alerte : entre dans un bâtiment, ferme tout, écoute la radio.</b> N\'évacue que sur ordre des autorités. Dehors, éloigne-toi en travers du vent.</p>' +
@@ -642,15 +644,15 @@
   }
   // ---------- Services autour (OpenStreetMap) : magasins, pharmacie, carburant… ----------
   var POI = [
-    ["alim", "Alimentation", "#7FB069", "🛒", function (t) { return /^(supermarket|convenience|bakery|butcher|greengrocer|farm|deli|general)$/.test(t.shop); }],
-    ["sante", "Santé", "#E0584A", "+", function (t) { return /^(pharmacy|doctors|hospital|clinic|dentist)$/.test(t.amenity); }],
-    ["carbu", "Carburant", "#5B7FC7", "⛽", function (t) { return t.amenity === "fuel"; }],
-    ["resto", "Restaurant / café", "#D9822B", "🍴", function (t) { return /^(restaurant|cafe|bar|pub|fast_food)$/.test(t.amenity); }],
-    ["outdoor", "Matériel / bricolage", "#8A6D4B", "🔧", function (t) { return /^(outdoor|sports|hardware|doityourself)$/.test(t.shop); }],
+    ["alim", "Alimentation", "#7FB069", ic("panier"), function (t) { return /^(supermarket|convenience|bakery|butcher|greengrocer|farm|deli|general)$/.test(t.shop); }],
+    ["sante", "Santé", "#E0584A", ic("sante"), function (t) { return /^(pharmacy|doctors|hospital|clinic|dentist)$/.test(t.amenity); }],
+    ["carbu", "Carburant", "#5B7FC7", ic("carburant"), function (t) { return t.amenity === "fuel"; }],
+    ["resto", "Restaurant / café", "#D9822B", ic("resto"), function (t) { return /^(restaurant|cafe|bar|pub|fast_food)$/.test(t.amenity); }],
+    ["outdoor", "Matériel / bricolage", "#8A6D4B", ic("outil"), function (t) { return /^(outdoor|sports|hardware|doityourself)$/.test(t.shop); }],
     ["argent", "Distributeur", "#4E8F7A", "€", function (t) { return t.amenity === "atm" || t.amenity === "bank"; }],
-    ["transport", "Gare", "#6B6B9A", "🚆", function (t) { return t.railway === "station" || t.public_transport === "station"; }],
+    ["transport", "Gare", "#6B6B9A", ic("train"), function (t) { return t.railway === "station" || t.public_transport === "station"; }],
     ["wc", "Toilettes", "#7C8A80", "WC", function (t) { return t.amenity === "toilets"; }],
-    ["police", "Police", "#33497A", "👮", function (t) { return t.amenity === "police"; }],
+    ["police", "Police", "#33497A", ic("police"), function (t) { return t.amenity === "police"; }],
     ["parking", "Parking", "#2F6FB5", "P", function (t) { return t.amenity === "parking" && !/^(private|no|customers|permit|delivery)$/.test(t.access || ""); }]
   ];
   var PARK_FR = { surface: "en plein air", underground: "souterrain", "multi-storey": "à étages", street_side: "le long de la route", lane: "le long de la route", rooftop: "sur le toit" };
@@ -1951,7 +1953,7 @@
       var label = d.time[i] === today ? "Aujourd'hui" : date.toLocaleDateString("fr-BE", { weekday: "long", day: d.time[0] === today ? undefined : "numeric" });
       return '<div class="day"><span class="d">' + esc(label) + '</span><span class="w">' + esc(WMO[d.weather_code[i]] || "—") + "</span>" +
         '<span class="tt">' + Math.round(d.temperature_2m_max[i]) + "° <small>/ " + Math.round(d.temperature_2m_min[i]) + "°</small></span>" +
-        '<span class="x">💧 ' + (d.precipitation_sum[i] || 0).toFixed(0) + " mm · " + (d.precipitation_probability_max[i] == null ? "–" : d.precipitation_probability_max[i]) + "%</span>" +
+        '<span class="x">' + ic("eau", "ic-in") + ' ' + (d.precipitation_sum[i] || 0).toFixed(0) + " mm · " + (d.precipitation_probability_max[i] == null ? "–" : d.precipitation_probability_max[i]) + "%</span>" +
         '<span class="x">Rafales ' + Math.round(d.wind_gusts_10m_max[i] || 0) + "</span></div>";
     }).join("") + "</div>";
     var alerts = [];
@@ -2284,7 +2286,7 @@
   var tripPick = null, tripFound = [];
   function showTripPoint() {
     $("#tripPoint").innerHTML = tripPick
-      ? "📍 " + esc(tripPick.label || "Point choisi") + ' <span class="muted">(' + tripPick.lat.toFixed(4) + ", " + tripPick.lon.toFixed(4) + ')</span> <button type="button" class="link-btn" id="btnTripClear">effacer</button>'
+      ? ic("pin", "ic-in") + " " + esc(tripPick.label || "Point choisi") + ' <span class="muted">(' + tripPick.lat.toFixed(4) + ", " + tripPick.lon.toFixed(4) + ')</span> <button type="button" class="link-btn" id="btnTripClear">effacer</button>'
       : '<span class="muted">Sans point précis, la météo du bivouac suit ta position ou la carte.</span>';
   }
   $("#btnTrip").addEventListener("click", function () {
@@ -2833,12 +2835,12 @@
     if (!map || !window.L) return;
     var c = load("sylva_car", null);
     if (carMarker) { map.removeLayer(carMarker); carMarker = null; }
-    if (c) carMarker = L.marker([c.lat, c.lon], { icon: pinIcon("#33497A", "🚗"), zIndexOffset: 900 }).bindPopup("<b>Ma voiture</b><br><span style=\"font-size:12px;opacity:.75\">Garée le " + esc(new Date(c.t).toLocaleString("fr-BE", { weekday: "short", hour: "2-digit", minute: "2-digit" })) + "</span>").addTo(map);
+    if (c) carMarker = L.marker([c.lat, c.lon], { icon: pinIcon("#33497A", ic("voiture")), zIndexOffset: 900 }).bindPopup("<b>Ma voiture</b><br><span style=\"font-size:12px;opacity:.75\">Garée le " + esc(new Date(c.t).toLocaleString("fr-BE", { weekday: "short", hour: "2-digit", minute: "2-digit" })) + "</span>").addTo(map);
   }
   function renderCar() {
     var c = load("sylva_car", null);
     $("#btnCarGo").hidden = !c;
-    $("#btnCarSet").textContent = c ? "Déplacer ma voiture ici" : "🚗 Ma voiture est garée ici";
+    $("#btnCarSet").innerHTML = ic("voiture") + (c ? "Déplacer ma voiture ici" : "Ma voiture est garée ici");
     $("#carInfo").textContent = c ? "Voiture marquée le " + new Date(c.t).toLocaleString("fr-BE", { weekday: "short", hour: "2-digit", minute: "2-digit" }) + (me ? " · à " + fmtKm(distKm([me[0], me[1]], [c.lat, c.lon])) : "") : "Marque l'endroit où tu te gares en arrivant : le retour marche même sans réseau.";
   }
   $("#btnCarSet").addEventListener("click", function () {
@@ -2876,7 +2878,7 @@
     if (!voiceOn || !window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
     try { var u = new SpeechSynthesisUtterance(txt); u.lang = "fr-FR"; u.rate = 1; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
   }
-  function renderVoiceBtn() { var b = $("#navVoice"); if (b) { b.textContent = voiceOn ? "🔊" : "🔇"; b.setAttribute("aria-label", voiceOn ? "Couper la voix" : "Activer la voix"); } }
+  function renderVoiceBtn() { var b = $("#navVoice"); if (b) { b.innerHTML = ic(voiceOn ? "son" : "muet"); b.setAttribute("aria-label", voiceOn ? "Couper la voix" : "Activer la voix"); } }
   $("#navVoice").addEventListener("click", function () { voiceOn = !voiceOn; save("sylva_voice", voiceOn); renderVoiceBtn(); if (voiceOn) say("Guidage vocal activé"); else if (window.speechSynthesis) speechSynthesis.cancel(); });
   renderVoiceBtn();
 
@@ -2917,7 +2919,7 @@
       ? "3 coups de sifflet, une pause, en boucle : le signal de détresse. Volume à fond, mode silencieux coupé (bouton sur le côté de l'iPhone)."
       : "SOS en morse (· · · — — — · · ·). Luminosité de l'écran au maximum, écran tourné vers les secours.";
     $("#sigColor").hidden = kind === "sifflet";
-    $("#sigSound").textContent = sig.sound ? "🔊 Son activé" : "🔇 Son coupé";
+    $("#sigSound").innerHTML = ic(sig.sound ? "son" : "muet", "ic-in") + (sig.sound ? " Son activé" : " Son coupé");
     try { if (navigator.wakeLock) navigator.wakeLock.request("screen").then(function (w) { if (sig) sig.wake = w; else w.release(); }).catch(function () {}); } catch (e) {}
     var seq = kind === "sifflet" ? [[1, 1000], [0, 500], [1, 1000], [0, 500], [1, 1000], [0, 5000]] : SOS_SEQ;
     (function step() {
@@ -2936,7 +2938,7 @@
     if (!sig) return; sig.color = sig.color === "blanc" ? "rouge" : "blanc"; save("sylva_sigcolor", sig.color);
     $("#sigOverlay").className = "sig-overlay sig-" + sig.color;
   });
-  $("#sigSound").addEventListener("click", function () { if (!sig) return; sig.sound = !sig.sound; if (sig.sound) beep(30); $("#sigSound").textContent = sig.sound ? "🔊 Son activé" : "🔇 Son coupé"; });
+  $("#sigSound").addEventListener("click", function () { if (!sig) return; sig.sound = !sig.sound; if (sig.sound) beep(30); $("#sigSound").innerHTML = ic(sig.sound ? "son" : "muet", "ic-in") + (sig.sound ? " Son activé" : " Son coupé"); });
   document.addEventListener("visibilitychange", function () {
     if (sig && document.visibilityState === "visible" && navigator.wakeLock) navigator.wakeLock.request("screen").then(function (w) { if (sig) sig.wake = w; }).catch(function () {});
   });
@@ -2984,7 +2986,7 @@
   function renderEau() {
     $("#eauBox").innerHTML = '<div class="alert alert-danger"><strong>Une eau claire peut rendre malade</strong><span>Cet outil mesure seulement la clarté, jamais les microbes. Toute eau trouvée dehors se traite (ébullition 1 minute, filtre ou pastilles).</span></div>' +
       '<p class="muted">Remplis une bouteille transparente. Pose-la devant un fond blanc avec un trait noir (une ligne au stylo sur un papier, ou le texte d\'un emballage), à la lumière du jour, et prends la photo de face, la bouteille au centre.</p>' +
-      '<label class="btn btn-primary" style="width:100%"><input type="file" accept="image/*" capture="environment" id="eauPhoto" hidden>📷 Photographier l\'eau</label><div id="eauRes"></div>';
+      '<label class="btn btn-primary" style="width:100%"><input type="file" accept="image/*" capture="environment" id="eauPhoto" hidden>' + ic("photo", "ic-in") + ' Photographier l\'eau</label><div id="eauRes"></div>';
   }
   $("#eauBox").addEventListener("change", function (e) {
     if (e.target.id !== "eauPhoto") return;
@@ -3035,7 +3037,7 @@
   function hmMin(m) { return Math.floor(m / 60) + " h " + String(m % 60).padStart(2, "0"); }
   function renderCiel() {
     $("#cielBox").innerHTML = '<p class="muted">Allonge-toi ou tiens le téléphone à plat, écran vers le sol, caméra vers le ciel, là où tu veux dormir. Prends la photo bien à la verticale.</p>' +
-      '<label class="btn btn-primary" style="width:100%"><input type="file" accept="image/*" capture="environment" id="cielPhoto" hidden>📷 Photographier le ciel</label><div id="cielRes"></div>';
+      '<label class="btn btn-primary" style="width:100%"><input type="file" accept="image/*" capture="environment" id="cielPhoto" hidden>' + ic("photo", "ic-in") + ' Photographier le ciel</label><div id="cielRes"></div>';
   }
   $("#cielBox").addEventListener("change", function (e) {
     if (e.target.id !== "cielPhoto") return;
@@ -3403,7 +3405,7 @@
     // Une fois par mois : exercice en famille
     var fam = load("sylva_famdrill", 0);
     if (Date.now() - fam > 30 * 864e5 && new Date().getDay() === 6) dr = ["Exercice en famille (10 min) : chacun dit où est le kit, le point de rendez-vous, et comment couper le gaz. Puis testez la radio et la lampe.", "crise_72h", true];
-    el.innerHTML = '<div class="drill-top"><span class="eyebrow">Exercice du jour · 2 min</span>' + (st.streak ? '<span class="drill-streak">🔥 ' + st.streak + " jour" + (st.streak > 1 ? "s" : "") + "</span>" : "") + "</div>" +
+    el.innerHTML = '<div class="drill-top"><span class="eyebrow">Exercice du jour · 2 min</span>' + (st.streak ? '<span class="drill-streak">' + ic("feu", "ic-in") + ' ' + st.streak + " jour" + (st.streak > 1 ? "s" : "") + "</span>" : "") + "</div>" +
       '<p class="drill-q' + (done ? " done" : "") + '">' + esc(dr[0]) + "</p>" +
       '<div class="row" style="gap:8px">' + (done ? '<span class="tiny muted">Fait aujourd\'hui. À demain !</span>' : '<button type="button" class="btn btn-primary" data-drill-done>C\'est fait</button>') +
       (dr[1] ? '<button type="button" class="btn" data-tech="' + dr[1] + '">La fiche</button>' : "") + "</div>";
@@ -3534,7 +3536,7 @@
     el.innerHTML = '<span class="pret-ring" style="--p:' + st.pct + '"><b>' + st.pct + "%</b></span><span class=\"pret-txt\"><b>" +
       (fresh ? "Prépare ton foyer pour une crise" : (autonomie(d).min != null ? "Autonomie : " + fmtJ(autonomie(d).min) + " · " : "") + (st.pct >= 100 ? "kit complet" : "kit " + st.done + "/" + st.tot)) + "</b><small>" +
       (fresh ? "Panne, inondation, tempête : l'UE demande à chaque foyer de tenir 72 h seul." :
-        st.expired ? "⚠ " + st.expired + " article" + (st.expired > 1 ? "s" : "") + " périmé" + (st.expired > 1 ? "s" : "") + " dans ton stock" :
+        st.expired ? ic("alerte", "ic-in") + " " + st.expired + " article" + (st.expired > 1 ? "s" : "") + " périmé" + (st.expired > 1 ? "s" : "") + " dans ton stock" :
         st.watch.length ? st.watch.length + " article" + (st.watch.length > 1 ? "s" : "") + " à renouveler ce mois-ci" :
         !st.plan ? "Plan familial à compléter" : "Stock à jour, plan familial prêt") + "</small></span>";
     el.classList.toggle("alert", !!st.expired);
@@ -3882,35 +3884,35 @@
       notes: hs.reduce(function (a, x) { return a + (x.entries || []).length; }, 0) + getJournal().entries.length };
   }
   var BADGES = [
-    ["spot1", "🗺️", "Premier repère", "Placer un spot sur la carte", function (s) { return s.spots >= 1; }],
-    ["spot10", "📍", "Cartographe", "Placer 10 spots", function (s) { return s.spots >= 10; }],
-    ["biv1", "⛺", "Première nuit", "Terminer un bivouac", function (s) { return s.biv >= 1; }],
-    ["biv5", "🏕️", "Vétéran", "Terminer 5 bivouacs", function (s) { return s.biv >= 5; }],
-    ["froid", "❄️", "Nuit sous zéro", "Terminer un bivouac où il a gelé", function (s) { return s.froid; }],
-    ["km10", "🥾", "Marcheur", "Enregistrer 10 km de trajet", function (s) { return s.km >= 10; }],
-    ["km50", "🧭", "Explorateur", "Enregistrer 50 km de trajet", function (s) { return s.km >= 50; }],
-    ["notes", "📓", "Carnet de bord", "Écrire 10 notes de journal", function (s) { return s.notes >= 10; }],
-    ["read25", "📖", "Studieux", "Lire 25 fiches", function (s) { return s.read >= 25; }],
-    ["read100", "📚", "Encyclopédie", "Lire 100 fiches", function (s) { return s.read >= 100; }],
-    ["knots", "🪢", "Matelot", "Étudier 10 fiches de nœuds", function (s) { return s.knots >= 10; }],
-    ["chef", "🍲", "Chef du feu", "Prévoir 5 recettes du feu", function (s) { return s.recettes >= 5; }],
-    ["qz1", "🥉", "Novice confirmé", "80 % au quiz Novice", function (s) { return (s.q.novice || 0) >= 80; }],
-    ["qz2", "🥈", "Apprenti confirmé", "80 % au quiz Apprenti", function (s) { return (s.q.apprenti || 0) >= 80; }],
-    ["qz3", "🥇", "Maître trappeur", "80 % au quiz Maître trappeur", function (s) { return (s.q.maitre || 0) >= 80; }],
-    ["defis4", "🔥", "Débrouillard", "Réussir 4 défis de terrain", function (s) { return s.defis >= 4; }],
-    ["defis8", "🏆", "Survivant", "Réussir les 8 défis de terrain", function (s) { return s.defis >= 8; }]
+    ["spot1", "carte", "Premier repère", "Placer un spot sur la carte", function (s) { return s.spots >= 1; }],
+    ["spot10", "pin", "Cartographe", "Placer 10 spots", function (s) { return s.spots >= 10; }],
+    ["biv1", "tente", "Première nuit", "Terminer un bivouac", function (s) { return s.biv >= 1; }],
+    ["biv5", "feu", "Vétéran", "Terminer 5 bivouacs", function (s) { return s.biv >= 5; }],
+    ["froid", "froid", "Nuit sous zéro", "Terminer un bivouac où il a gelé", function (s) { return s.froid; }],
+    ["km10", "estime", "Marcheur", "Enregistrer 10 km de trajet", function (s) { return s.km >= 10; }],
+    ["km50", "orientation", "Explorateur", "Enregistrer 50 km de trajet", function (s) { return s.km >= 50; }],
+    ["notes", "carnet", "Carnet de bord", "Écrire 10 notes de journal", function (s) { return s.notes >= 10; }],
+    ["read25", "apprendre", "Studieux", "Lire 25 fiches", function (s) { return s.read >= 25; }],
+    ["read100", "livres", "Encyclopédie", "Lire 100 fiches", function (s) { return s.read >= 100; }],
+    ["knots", "noeuds", "Matelot", "Étudier 10 fiches de nœuds", function (s) { return s.knots >= 10; }],
+    ["chef", "recettes", "Chef du feu", "Prévoir 5 recettes du feu", function (s) { return s.recettes >= 5; }],
+    ["qz1", "medaille", "Novice confirmé", "80 % au quiz Novice", function (s) { return (s.q.novice || 0) >= 80; }],
+    ["qz2", "medaille", "Apprenti confirmé", "80 % au quiz Apprenti", function (s) { return (s.q.apprenti || 0) >= 80; }],
+    ["qz3", "medaille", "Maître trappeur", "80 % au quiz Maître trappeur", function (s) { return (s.q.maitre || 0) >= 80; }],
+    ["defis4", "feu", "Débrouillard", "Réussir 4 défis de terrain", function (s) { return s.defis >= 4; }],
+    ["defis8", "trophee", "Survivant", "Réussir les 8 défis de terrain", function (s) { return s.defis >= 8; }]
   ];
   function checkBadges() {
     var s = badgeStats(), seen = load("sylva_badges", []), fresh = [];
     BADGES.forEach(function (b) { if (b[4](s) && seen.indexOf(b[0]) === -1) { seen.push(b[0]); fresh.push(b); } });
-    if (fresh.length) { save("sylva_badges", seen); toast(fresh[0][1] + " Badge débloqué : " + fresh[0][2] + (fresh.length > 1 ? " (+" + (fresh.length - 1) + ")" : "")); }
+    if (fresh.length) { save("sylva_badges", seen); toast("Badge débloqué : " + fresh[0][2] + (fresh.length > 1 ? " (+" + (fresh.length - 1) + ")" : "")); }
     if ($("#panelBadges") && !$("#panelBadges").hidden) renderBadges();
   }
   function renderBadges() {
     var s = badgeStats(), d = load("sylva_defis", {}), n = 0;
     var h = '<div class="badge-grid">' + BADGES.map(function (b) {
       var on = b[4](s); if (on) n++;
-      return '<div class="badge-tile' + (on ? " on" : "") + '"><span class="bt-ico">' + b[1] + "</span><b>" + esc(b[2]) + "</b><span>" + esc(b[3]) + "</span></div>";
+      return '<div class="badge-tile' + (on ? " on" : "") + '">' + med(b[1], b[0].slice(0, 2) === "qz" ? ["", "c-earth", "c-muted", "c-amber"][+b[0].slice(2)] : "c-amber") + "<b>" + esc(b[2]) + "</b><span>" + esc(b[3]) + "</span></div>";
     }).join("") + "</div>";
     h = '<p class="muted">' + n + " badge" + (n > 1 ? "s" : "") + " sur " + BADGES.length + " · " + s.read + " fiches lues · " + s.km.toFixed(1).replace(".", ",") + " km enregistrés</p>" + h;
     h += '<div class="sec-head"><h2>Défis de terrain</h2><span class="muted small">à cocher toi-même</span></div><div class="card">' + DEFIS.map(function (x) {

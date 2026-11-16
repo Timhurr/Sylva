@@ -271,6 +271,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 
 - **v0.9.78** : identité visuelle **Feu de camp** (choisie par Tim parmi 3 maquettes) : nuit chaude `#0E1310`, lumière des braises `--accent:#F0A848` / `--glow`, cartes en verre fumé, hero avec la gravure `chap_campement` et lueur du feu, bouton scan et boutons principaux en braise. Polices locales `fonts/` (Fraunces pour les titres et chiffres, Instrument Sans pour le texte, sous-ensembles woff, licence OFL) ; Manrope retirée. Thème nuit par défaut (`themePref`), jour retravaillé dans le même esprit. Bug : `function hm(m)` du ciel écrasait `hm(iso)` (« Coucher du soleil NaN ») → renommée `hmMin`.
 
+- **v0.9.79** : **icônes refaites** (choix de Tim : tente sous la lune + médaillon). Icône d'appli : tente sous la lune (`icons/`, plus `icon-maskable-512.png`). Jeu d'icônes maison dans `tools/icons.py` (≈ 70 tracés, trait 1,7, forme pleine en « ombre de braise ») : `python3 tools/icons.py` réécrit le sprite entre `<!--ICONS-->` et `<!--/ICONS-->` dans `index.html`. Dans le code : `ic("feu")` (icône seule) et `med("feu", "c-amber")` (médaillon éclairé). Emojis remplacés (outils, badges, services de la carte, SOS, voiture, son). Sur iPhone, la nouvelle icône d'accueil n'apparaît qu'en supprimant puis réinstallant l'appli.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.
