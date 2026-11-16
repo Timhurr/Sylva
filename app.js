@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.77";
+  var VERSION = "0.9.78";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -70,7 +70,7 @@
   $all("[data-goto]").forEach(function (b) { b.addEventListener("click", function () { showView(b.getAttribute("data-goto")); }); });
 
   // ---------- Thème jour / nuit ----------
-  var themePref = load("sylva_theme", "auto");
+  var themePref = load("sylva_theme", "nuit");
   function isNight() {
     var now = new Date(), m = load("sylva_meteo", null);
     if (m && m.data && m.data.daily && m.data.daily.time) {
@@ -87,7 +87,7 @@
     if (load("sylva_eco", false)) { document.documentElement.setAttribute("data-theme", "nuit"); return; }
     var night = themePref === "nuit" || (themePref === "auto" && isNight());
     document.documentElement.setAttribute("data-theme", night ? "nuit" : "jour");
-    var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute("content", night ? "#0C110E" : "#F5F3EE");
+    var meta = document.querySelector('meta[name="theme-color"]'); if (meta) meta.setAttribute("content", night ? "#0E1310" : "#E8E4DA");
     $all("#themeChips .chip").forEach(function (c) { c.classList.toggle("on", c.getAttribute("data-theme-opt") === themePref); });
   }
   applyTheme();
@@ -2427,6 +2427,7 @@
     $("#heroTemp").textContent = Math.round(temp) + "°";
     $("#heroSky").textContent = (WMO[code] || "—") + " · nuit à " + Math.round(nmin) + " °C";
     $("#heroSun").hidden = !(d.sunset && d.sunset[0] && d.sunrise);
+    if (!$("#heroSun").hidden && isNaN(new Date(d.sunset[0]).getTime())) $("#heroSun").hidden = true;
     if (!$("#heroSun").hidden) $("#heroSun").textContent = night ? "Lever du soleil " + hm(d.sunrise[d.sunrise.length > 1 && new Date() > new Date(d.sunset[0]) ? 1 : 0]) : "Coucher du soleil " + hm(d.sunset[0]);
     var al = [], rain = Math.max(d.precipitation_sum[0] || 0, d.precipitation_sum[1] || 0), gust = Math.max(d.wind_gusts_10m_max[0] || 0, d.wind_gusts_10m_max[1] || 0);
     if (nmin <= 0) al.push(["", "Gel cette nuit", "Duvet confort sous 0 °C, bonnet pour dormir, gourde dans le duvet."]);
@@ -3031,7 +3032,7 @@
     }
     return { up: up, good: good, maxA: maxA, rise: rise, set: set };
   }
-  function hm(m) { return Math.floor(m / 60) + " h " + String(m % 60).padStart(2, "0"); }
+  function hmMin(m) { return Math.floor(m / 60) + " h " + String(m % 60).padStart(2, "0"); }
   function renderCiel() {
     $("#cielBox").innerHTML = '<p class="muted">Allonge-toi ou tiens le téléphone à plat, écran vers le sol, caméra vers le ciel, là où tu veux dormir. Prends la photo bien à la verticale.</p>' +
       '<label class="btn btn-primary" style="width:100%"><input type="file" accept="image/*" capture="environment" id="cielPhoto" hidden>📷 Photographier le ciel</label><div id="cielRes"></div>';
@@ -3057,9 +3058,9 @@
       var msg = pct < 20 ? "Couvert fermé : nuit plus douce et moins de rosée sous les arbres, mais le bois et tes affaires sècheront mal, et un panneau solaire ne servira à rien."
         : pct < 55 ? "Ouverture moyenne : un bon compromis. Un peu de soleil pour sécher, et les arbres limitent la rosée et le froid de la nuit."
         : "Ciel très ouvert : bon pour sécher et charger au solaire, mais plus de rosée, de givre et de froid la nuit (le sol perd sa chaleur vers le ciel). Prévois une bâche bien tendue.";
-      $("#cielRes").innerHTML = '<div class="eau-thumb"></div><div class="rv-score"><div><span>Ciel visible</span><b>' + pct + ' %</b></div><div><span>Soleil utile (au-dessus de 15°)</span><b>' + hm(real) + "</b></div></div>" +
+      $("#cielRes").innerHTML = '<div class="eau-thumb"></div><div class="rv-score"><div><span>Ciel visible</span><b>' + pct + ' %</b></div><div><span>Soleil utile (au-dessus de 15°)</span><b>' + hmMin(real) + "</b></div></div>" +
         '<div class="alert alert-' + cls + '"><span>' + msg + "</span></div>" +
-        '<p class="small">Le ' + esc(new Date(day + "T12:00:00").toLocaleDateString("fr-BE", { weekday: "long", day: "numeric", month: "long" })) + " : soleil levé environ " + hm(sd.up) + ", au plus haut à " + Math.round(sd.maxA) + "° au-dessus de l'horizon" +
+        '<p class="small">Le ' + esc(new Date(day + "T12:00:00").toLocaleDateString("fr-BE", { weekday: "long", day: "numeric", month: "long" })) + " : soleil levé environ " + hmMin(sd.up) + ", au plus haut à " + Math.round(sd.maxA) + "° au-dessus de l'horizon" +
         (sd.maxA < 25 ? " (soleil bas : les arbres au sud cachent l'essentiel)" : "") + ".</p>" +
         '<div class="alert alert-warn"><strong>Regarde aussi au-dessus de toi</strong><span>Pas de branche morte, ni d\'arbre mort ou penché au-dessus de l\'abri : c\'est l\'un des premiers dangers en forêt, surtout avec du vent.</span></div>' +
         '<p class="tiny muted">Estimation : les nuages blancs et les reflets faussent un peu le calcul. En bleu, ce que Sylva a compté comme ciel.</p>';

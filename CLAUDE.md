@@ -269,6 +269,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 
 - **v0.9.77** : outil **Revenir sans GPS** (navigation à l'estime : pas détectés par l'accéléromètre, cap par la boussole, longueur de pas réglable, flèche et cap du retour ; `est`, `sylva_estime` ; écran allumé obligatoire sur iPhone). **Exercice en famille** proposé une fois par mois, le samedi, dans l'exercice du jour (`sylva_famdrill`). À vérifier par Tim : comptage des pas en marchant, flèche du retour.
 
+- **v0.9.78** : identité visuelle **Feu de camp** (choisie par Tim parmi 3 maquettes) : nuit chaude `#0E1310`, lumière des braises `--accent:#F0A848` / `--glow`, cartes en verre fumé, hero avec la gravure `chap_campement` et lueur du feu, bouton scan et boutons principaux en braise. Polices locales `fonts/` (Fraunces pour les titres et chiffres, Instrument Sans pour le texte, sous-ensembles woff, licence OFL) ; Manrope retirée. Thème nuit par défaut (`themePref`), jour retravaillé dans le même esprit. Bug : `function hm(m)` du ciel écrasait `hm(iso)` (« Coucher du soleil NaN ») → renommée `hmMin`.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.
