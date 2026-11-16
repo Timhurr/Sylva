@@ -28,6 +28,7 @@ on:
           - "Couvertures des chapitres"
           - "Pêche"
           - "Astuces de terrain"
+          - "Fabriquer"
           - "Recettes du feu"
           - "Toutes"
       ids:
