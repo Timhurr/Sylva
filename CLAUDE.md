@@ -38,7 +38,7 @@ Pas de build : les fichiers sont servis tels quels. **L'ordre de chargement comp
 ```
 leaflet (unpkg) → data.js → especes_plus.js → especes_champignons.js → especes_regions.js → techniques_plus.js
 → illus.js → images.js → guide.js → secours_isole.js → noeuds_plus.js → classiques.js → abris_plus.js
-→ poissons.js → astuces.js → cuisine_jeux.js → rvalue.js → materiel.js → vendor/qrcode.js → pret72.js → crise_plus.js → risques.js → app.js
+→ poissons.js → astuces.js → cuisine_jeux.js → rvalue.js → materiel.js → vendor/qrcode.js → pret72.js → crise_plus.js → fabriquer.js → risques.js → app.js
 ```
 
 | Fichier | Rôle |
@@ -50,6 +50,7 @@ leaflet (unpkg) → data.js → especes_plus.js → especes_champignons.js → e
 | `data.js` | Base : `SYLVA_ESPECES`, `SYLVA_TECHNIQUES`, `SYLVA_CATEGORIES`. |
 | `especes_*.js` | Espèces supplémentaires (plantes, champignons, régions). |
 | `techniques_plus.js`, `classiques.js`, `abris_plus.js`, `noeuds_plus.js`, `secours_isole.js`, `poissons.js`, `astuces.js`, `cuisine_jeux.js`, `rvalue.js` | Fiches, chapitres et compléments ajoutés par thème. Chaque fichier pousse dans les tableaux globaux et relie ses fiches aux chapitres. |
+| `fabriquer.js` | Catégorie « Fabriquer » : charbon, colle de résine, eau de cendres, savon, saponaire, bougie de suif. |
 | `pret72.js`, `crise_plus.js` | Prêt 72 h (kit, pays) et fiches de crise (catégorie « Crises », chapitre `crises`). |
 | `risques.js` | Sites nucléaires (`SYLVA_RISQUES`, positions approximatives) et liens officiels Seveso par pays. |
 | `vendor/qrcode.js` | Générateur de QR (MIT, Kazuhiko Arase), pour partager sans réseau. |
@@ -283,6 +284,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 - **v0.9.82 à v0.9.87** : les 139 espèces ont leur gravure (générées par l'API, chacune vérifiée ; refaites : if, œnanthe, oseille, cortinaire). Claude lance lui-même le workflow : `gh api -X POST repos/Timhurr/Sylva/actions/workflows/gravures.yml/dispatches -f ref=main -f 'inputs[groupe]=…'` (ou `inputs[ids]`), puis récupère `origin/gravures`. Tim n'a qu'à garder du crédit OpenAI.
 
 - **v0.9.88 à v0.9.90** : gravures crises et RCP ; fiches « Un stock qui dure des années » (USDA, université d'Utah) et « Une lampe à huile de cuisine » (`crise_plus.js`). Écartés après relecture (à ne pas ajouter) : chauffage à la bougie de graisse (puissance fausse, risque CO), viande séchée à l'air sans cuisson, œufs à la chaux, frigo en pots, salaisons maison. Livre *Le Médecin des pauvres* (Beauvillard, 1911, Gallica) : texte du domaine public mais scans BnF payants en usage commercial, et remèdes souvent dangereux ; rien repris pour l'instant.
+
+- **v0.9.91** : catégorie **Fabriquer** (`fabriquer.js`, raccourci Savoir-faire, fiches aussi dans le chapitre « couteau ») : charbon de bois (le charbon « dentifrice » est déconseillé, le charbon maison n'est pas du charbon activé médical), colle de résine, eau de cendres, savon à la cendre (caustique), saponaire, bougie de suif. Gravures générées et vérifiées.
 
 ## 11. Basculer sur un autre compte
 
