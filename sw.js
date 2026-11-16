@@ -6,7 +6,7 @@ var PHOTOS = "sylva-photos";
 var MAX_TILES = 4000;
 
 var LOCAL = [
-  "./", "index.html", "styles.css", "app.js", "data.js", "especes_plus.js", "especes_champignons.js", "especes_regions.js", "techniques_plus.js", "illus.js", "images.js", "guide.js", "secours_isole.js", "noeuds_plus.js", "classiques.js", "abris_plus.js", "poissons.js", "astuces.js", "cuisine_jeux.js", "rvalue.js", "materiel.js", "vendor/qrcode.js", "fonts/fraunces.woff", "fonts/instrument-sans.woff", "pret72.js", "crise_plus.js", "fabriquer.js", "risques.js", "manifest.webmanifest",
+  "./", "index.html", "styles.css", "app.js", "data.js", "especes_plus.js", "especes_champignons.js", "especes_regions.js", "techniques_plus.js", "illus.js", "images.js", "guide.js", "secours_isole.js", "noeuds_plus.js", "classiques.js", "abris_plus.js", "poissons.js", "astuces.js", "cuisine_jeux.js", "rvalue.js", "materiel.js", "vendor/qrcode.js", "fonts/fraunces.woff", "fonts/instrument-sans.woff", "pret72.js", "crise_plus.js", "crise_vie.js", "fabriquer.js", "risques.js", "manifest.webmanifest",
   "icons/icon-180.png", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png"
 ];
 var CDN = [
