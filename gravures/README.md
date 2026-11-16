@@ -22,6 +22,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_argousier.png)
 
+### Armillaire couleur de miel (`esp_armillaire.png`)
+
+![](esp_armillaire.png)
+
 ### Arum tacheté (`esp_arum.png`)
 
 ![](esp_arum.png)
@@ -46,9 +50,21 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_berce.png)
 
+### Bolet bai (`esp_boletbai.png`)
+
+![](esp_boletbai.png)
+
 ### Bryone dioïque (`esp_bryone.png`)
 
 ![](esp_bryone.png)
+
+### Cèpe de Bordeaux (`esp_cepe.png`)
+
+![](esp_cepe.png)
+
+### Chanterelle en tube (`esp_chanterelletube.png`)
+
+![](esp_chanterelletube.png)
 
 ### Châtaignier (`esp_chataignier.png`)
 
@@ -62,9 +78,29 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_cigue.png)
 
+### Clitocybe blanchi (`esp_clitoblanc.png`)
+
+![](esp_clitoblanc.png)
+
 ### Colchique d'automne (`esp_colchique.png`)
 
 ![](esp_colchique.png)
+
+### Collybie à pied velouté (`esp_collybie.png`)
+
+![](esp_collybie.png)
+
+### Coprin chevelu (`esp_coprin.png`)
+
+![](esp_coprin.png)
+
+### Cortinaire couleur de rocou (`esp_cortinaire.png`)
+
+![](esp_cortinaire.png)
+
+### Coulemelle (`esp_coulemelle.png`)
+
+![](esp_coulemelle.png)
 
 ### Cresson de fontaine (`esp_cresson.png`)
 
@@ -86,9 +122,25 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_eglantier.png)
 
+### Russule émétique (`esp_emetique.png`)
+
+![](esp_emetique.png)
+
+### Entolome livide (`esp_entolome.png`)
+
+![](esp_entolome.png)
+
 ### Épilobe en épi (`esp_epilobe.png`)
 
 ![](esp_epilobe.png)
+
+### Tricholome équestre (`esp_equestre.png`)
+
+![](esp_equestre.png)
+
+### Faux mousseron (marasme) (`esp_fauxmousseron.png`)
+
+![](esp_fauxmousseron.png)
 
 ### Figuier de Barbarie (`esp_figuebarbarie.png`)
 
@@ -106,9 +158,21 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_fusain.png)
 
+### Galère marginée (`esp_galere.png`)
+
+![](esp_galere.png)
+
+### Girolle (`esp_girolle.png`)
+
+![](esp_girolle.png)
+
 ### Gland (chêne) (`esp_gland.png`)
 
 ![](esp_gland.png)
+
+### Gyromitre (`esp_gyromitre.png`)
+
+![](esp_gyromitre.png)
 
 ### Faîne (hêtre) (`esp_hetre.png`)
 
@@ -118,6 +182,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_houx.png)
 
+### Hypholome en touffe (`esp_hypholome.png`)
+
+![](esp_hypholome.png)
+
 ### If (`esp_if.png`)
 
 ![](esp_if.png)
@@ -126,6 +194,14 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_iris.png)
 
+### Lactaire délicieux (`esp_lactaire.png`)
+
+![](esp_lactaire.png)
+
+### Langue de bœuf (`esp_languedeboeuf.png`)
+
+![](esp_languedeboeuf.png)
+
 ### Laurier-cerise (`esp_laurier.png`)
 
 ![](esp_laurier.png)
@@ -133,6 +209,10 @@ Générées par l'API, pas encore dans l'appli.
 ### Laurier-rose (`esp_laurierrose.png`)
 
 ![](esp_laurierrose.png)
+
+### Lépiote brun-incarnat (`esp_lepiote.png`)
+
+![](esp_lepiote.png)
 
 ### Lierre terrestre (`esp_lierreterrestre.png`)
 
@@ -150,6 +230,14 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_merisier.png)
 
+### Morille (`esp_morille.png`)
+
+![](esp_morille.png)
+
+### Mousseron de la Saint-Georges (`esp_mousseron.png`)
+
+![](esp_mousseron.png)
+
 ### Muguet (`esp_muguet.png`)
 
 ![](esp_muguet.png)
@@ -162,6 +250,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_myrtille.png)
 
+### Coprin noir d'encre (`esp_noirdencre.png`)
+
+![](esp_noirdencre.png)
+
 ### Noisetier (`esp_noisetier.png`)
 
 ![](esp_noisetier.png)
@@ -170,6 +262,14 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_oenanthe.png)
 
+### Omphalote de l'olivier (`esp_omphalote.png`)
+
+![](esp_omphalote.png)
+
+### Oreille de Judas (`esp_oreillejudas.png`)
+
+![](esp_oreillejudas.png)
+
 ### Ortie dioïque (`esp_ortie.png`)
 
 ![](esp_ortie.png)
@@ -177,6 +277,26 @@ Générées par l'API, pas encore dans l'appli.
 ### Oseille sauvage (`esp_oseille.png`)
 
 ![](esp_oseille.png)
+
+### Amanite panthère (`esp_panthere.png`)
+
+![](esp_panthere.png)
+
+### Paxille enroulé (`esp_paxille.png`)
+
+![](esp_paxille.png)
+
+### Amanite phalloïde (`esp_phalloide.png`)
+
+![](esp_phalloide.png)
+
+### Pied bleu (`esp_piedbleu.png`)
+
+![](esp_piedbleu.png)
+
+### Pied-de-mouton (`esp_piedmouton.png`)
+
+![](esp_piedmouton.png)
 
 ### Pin sylvestre (`esp_pin.png`)
 
@@ -194,13 +314,29 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_plantain.png)
 
+### Pleurote en huître (`esp_pleurote.png`)
+
+![](esp_pleurote.png)
+
+### Polypore soufré (`esp_polypore.png`)
+
+![](esp_polypore.png)
+
 ### Pommier sauvage (`esp_pomme.png`)
 
 ![](esp_pomme.png)
 
+### Amanite printanière (`esp_printaniere.png`)
+
+![](esp_printaniere.png)
+
 ### Prunellier (`esp_prunellier.png`)
 
 ![](esp_prunellier.png)
+
+### Psilocybe lancéolé (`esp_psilocybe.png`)
+
+![](esp_psilocybe.png)
 
 ### Ricin (`esp_ricin.png`)
 
@@ -210,9 +346,25 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_romarin.png)
 
+### Rosé des prés (`esp_rosedespres.png`)
+
+![](esp_rosedespres.png)
+
+### Amanite rougissante (`esp_rougissante.png`)
+
+![](esp_rougissante.png)
+
+### Russule charbonnière (`esp_russulecharbon.png`)
+
+![](esp_russulecharbon.png)
+
 ### Salicorne (`esp_salicorne.png`)
 
 ![](esp_salicorne.png)
+
+### Bolet Satan (`esp_satan.png`)
+
+![](esp_satan.png)
 
 ### Sorbier des oiseleurs (`esp_sorbier.png`)
 
@@ -226,10 +378,30 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_thym.png)
 
+### Tricholome tigré (`esp_tigre.png`)
+
+![](esp_tigre.png)
+
 ### Tilleul (`esp_tilleul.png`)
 
 ![](esp_tilleul.png)
 
+### Trompette de la mort (`esp_trompette.png`)
+
+![](esp_trompette.png)
+
+### Amanite tue-mouches (`esp_tuemouches.png`)
+
+![](esp_tuemouches.png)
+
 ### Vératre blanc (`esp_veratre.png`)
 
 ![](esp_veratre.png)
+
+### Vesse-de-loup géante (`esp_vesse.png`)
+
+![](esp_vesse.png)
+
+### Amanite vireuse (`esp_vireuse.png`)
+
+![](esp_vireuse.png)
