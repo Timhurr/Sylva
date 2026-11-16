@@ -70,7 +70,7 @@ jobs:
           node-version: 20
       - name: Générer
         env:
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY || secrets.OPENIA_API_KEY }}
           GROUPE: ${{ inputs.groupe }}
           IDS: ${{ inputs.ids }}
           LIMITE: ${{ inputs.limite }}
