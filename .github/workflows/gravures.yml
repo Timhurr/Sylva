@@ -80,6 +80,7 @@ jobs:
       - name: Enregistrer sur la branche gravures
         if: always()
         run: |
+          [ -d gravures ] || { echo "Aucune image produite."; exit 0; }
           git add gravures
           git diff --cached --quiet || git commit -m "Gravures générées : ${{ inputs.ids || inputs.groupe }}"
           git push origin gravures
