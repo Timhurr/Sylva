@@ -280,6 +280,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 
 - Prompts des espèces : description botanique précise en anglais pour chacune des 139 espèces dans `tools/esp_desc.py` (quoi dessiner, critères, erreurs à éviter), injectée dans l'atelier par `python3 tools/esp_inject.py` (`ESP_DESC`). Corriger une description là, puis réinjecter. Lot 1 : if et œnanthe refusés (feuilles fausses), digitale, muguet, douce-amère intégrés.
 
+- **v0.9.82 à v0.9.87** : les 139 espèces ont leur gravure (générées par l'API, chacune vérifiée ; refaites : if, œnanthe, oseille, cortinaire). Claude lance lui-même le workflow : `gh api -X POST repos/Timhurr/Sylva/actions/workflows/gravures.yml/dispatches -f ref=main -f 'inputs[groupe]=…'` (ou `inputs[ids]`), puis récupère `origin/gravures`. Tim n'a qu'à garder du crédit OpenAI.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.
