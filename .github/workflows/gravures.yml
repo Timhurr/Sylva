@@ -47,7 +47,6 @@ on:
         default: "gpt-image-2"
 permissions:
   contents: write
-concurrency: gravures
 jobs:
   generer:
     runs-on: ubuntu-latest
@@ -83,4 +82,4 @@ jobs:
           [ -d gravures ] || { echo "Aucune image produite."; exit 0; }
           git add gravures
           git diff --cached --quiet || git commit -m "Gravures générées : ${{ inputs.ids || inputs.groupe }}"
-          git push origin gravures
+          for i in 1 2 3 4 5; do git push origin gravures && break; git pull --rebase origin gravures || { git rebase --abort; git pull --no-rebase -X ours origin gravures; }; sleep 5; done
