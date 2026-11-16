@@ -265,7 +265,9 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 - Carte : couche **Risques** (centrales et sites nucléaires BE, NL, FR, CH, cercle ~20 km indicatif, vent actuel indicatif Open-Meteo dans la bulle, consignes « se mettre à l'abri », liens Seveso officiels). Pas de panache calculé (voir feuille de route).
 - **QR codes** sans réseau : plan familial (Prêt 72 h > Plan) et position (SOS). **Exercice du jour** de 2 minutes sur Aujourd'hui avec série de jours (`sylva_drill`).
 - Prompts des 7 nouvelles gravures dans l'atelier. Tests : `tools/tests/crisetest.js`.
-- Reste de la phase 1 : navigation à l'estime (pas + cap), sites Seveso en données (aujourd'hui : liens officiels), exercice familial mensuel.
+- Reste de la phase 1 : sites Seveso en données (aujourd'hui : liens officiels).
+
+- **v0.9.77** : outil **Revenir sans GPS** (navigation à l'estime : pas détectés par l'accéléromètre, cap par la boussole, longueur de pas réglable, flèche et cap du retour ; `est`, `sylva_estime` ; écran allumé obligatoire sur iPhone). **Exercice en famille** proposé une fois par mois, le samedi, dans l'exercice du jour (`sylva_famdrill`). À vérifier par Tim : comptage des pas en marchant, flèche du retour.
 
 ## 11. Basculer sur un autre compte
 

@@ -70,6 +70,18 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   ok('radio 10 km (1,5 m + 1,5 m)', (await pg.textContent('#rdOut')).includes('10'), await pg.textContent('#rdOut'));
   await ev(() => document.querySelector('[data-learn-x="morse"]').click()); await pg.waitForTimeout(200);
   ok('morse ui', !!(await pg.$('#msStart')));
+  // Estime : 20 pas vers l'est
+  await ev(() => document.querySelector('[data-learn-x="estime"]').click()); await pg.waitForTimeout(200);
+  await ev(() => document.querySelector('#estGo').click()); await pg.waitForTimeout(100);
+  await ev(async () => {
+    window.dispatchEvent(new DeviceOrientationEvent('deviceorientationabsolute', { alpha: 270, beta: 0, gamma: 0, absolute: true }));
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+    for (let i = 0; i < 20; i++) {
+      window.dispatchEvent(new DeviceMotionEvent('devicemotion', { accelerationIncludingGravity: { x: 0, y: 0, z: 13 } })); await sleep(40);
+      for (let j = 0; j < 8; j++) { window.dispatchEvent(new DeviceMotionEvent('devicemotion', { accelerationIncludingGravity: { x: 0, y: 0, z: 9.6 } })); await sleep(40); }
+    }
+  });
+  const et = await pg.textContent('#estBox'); ok('estime 20 pas, retour ouest', et.includes('20 pas') && et.includes('ouest') && et.includes('15 m'), et.slice(200, 330));
   // Risques
   await ev(() => { [...document.querySelectorAll('[data-view]')].find(x=>x.dataset.view==='carte').click(); });
   await pg.waitForTimeout(200);

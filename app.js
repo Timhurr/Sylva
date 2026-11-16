@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.76";
+  var VERSION = "0.9.77";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -2494,7 +2494,7 @@
     $("#panelPouls").hidden = which !== "pouls";
     $("#panelNiveau").hidden = which !== "niveau";
     $("#panelRv").hidden = which !== "rvalue";
-    $("#panelNord").hidden = which !== "nord"; $("#panelRadio").hidden = which !== "radio"; $("#panelMorse").hidden = which !== "morse";
+    $("#panelNord").hidden = which !== "nord"; $("#panelEstime").hidden = which !== "estime"; $("#panelRadio").hidden = which !== "radio"; $("#panelMorse").hidden = which !== "morse";
     if (which !== "morse") morseStop();
     $("#panelEau").hidden = which !== "eau";
     $("#panelCiel").hidden = which !== "ciel";
@@ -3198,6 +3198,72 @@
   }
   $("#nordBox").addEventListener("click", function (e) { var b = e.target.closest("[data-tech]"); if (b) openTechnique(b.dataset.tech); });
 
+
+  // =====================================================================
+  // ---------- Revenir sans GPS : navigation à l'estime (pas + cap de la boussole) ----------
+  // =====================================================================
+  var est = null; // { on, x, y (m, est/nord), steps, head, lastPeak, acc[] }
+  function estSave() { if (est) save("sylva_estime", { x: est.x, y: est.y, steps: est.steps, len: est.len }); }
+  function renderEstime() {
+    var st = load("sylva_estime", { x: 0, y: 0, steps: 0, len: 0.75 });
+    if (!est) est = { on: false, x: st.x, y: st.y, steps: st.steps, len: st.len || 0.75, head: null, lastPeak: 0, smooth: 9.8, prevUp: false };
+    $("#estBox").innerHTML = '<div class="card"><p style="margin:0 0 10px">Au départ (voiture, camp), touche « Partir ». Garde le téléphone en main, à plat devant toi, écran allumé : Sylva compte tes pas et suit ta direction. Pour revenir, suis la flèche.</p>' +
+      '<div class="est-arrow" id="estArrow"><svg viewBox="-60 -60 120 120" width="180" height="180" aria-hidden="true"><circle r="56" class="nd-ring"/><polygon id="estPoly" points="0,-48 14,10 0,0 -14,10" class="est-poly"/></svg></div>' +
+      '<div class="auto-big" id="estDist" style="text-align:center">—</div><p class="nord-txt" id="estTxt" style="text-align:center">Pas encore parti</p>' +
+      '<p class="tiny muted" id="estInfo" style="text-align:center"></p>' +
+      '<div class="row" style="gap:8px;flex-wrap:wrap"><button type="button" class="btn btn-primary" id="estGo">' + (est.on ? "En cours…" : "Partir d'ici") + '</button><button type="button" class="btn" id="estStop">Pause</button><button type="button" class="btn" id="estReset">Remettre à zéro</button></div>' +
+      '<label class="field" style="margin-top:12px"><span class="field-label">Longueur d\'un pas (m)</span><input type="text" inputmode="decimal" id="estLen" value="' + String(est.len).replace(".", ",") + '"></label>' +
+      '<p class="tiny muted" style="margin:0">Mesure-la : compte tes pas sur 50 m, puis 50 ÷ nombre de pas. En moyenne 0,7 à 0,8 m sur le plat, moins en montée.</p></div>' +
+      '<div class="card"><p class="tiny muted" style="margin:0">Repère approximatif : l\'erreur grandit avec la distance (souvent 5 à 10 %). L\'écran doit rester allumé : l\'iPhone coupe les capteurs quand il se verrouille. Si tu as du réseau ou du GPS, préfère « Retour à la voiture ». Fiche : « Revenir sur ses pas à la boussole ».</p></div>';
+    estDraw();
+  }
+  function estDraw() {
+    if (!est || !$("#estDist")) return;
+    var d = Math.sqrt(est.x * est.x + est.y * est.y), back = (Math.atan2(-est.x, -est.y) * 180 / Math.PI + 360) % 360;
+    $("#estDist").textContent = est.steps ? (d >= 1000 ? (d / 1000).toFixed(2).replace(".", ",") + " km" : Math.round(d) + " m") : "—";
+    $("#estTxt").textContent = !est.steps ? (est.on ? "Marche, Sylva compte tes pas" : "Pas encore parti") : "Retour : cap " + Math.round(back) + "° (" + DIR16[Math.round(back / 22.5) % 16] + ")";
+    $("#estInfo").textContent = est.steps + " pas · " + Math.round(est.steps * est.len) + " m marchés" + (est.head != null ? " · tu regardes vers " + Math.round(est.head) + "°" : est.on ? " · boussole indisponible" : "");
+    var rot = est.head != null ? back - est.head : back;
+    var poly = $("#estPoly"); if (poly) poly.setAttribute("transform", "rotate(" + rot.toFixed(0) + ")");
+  }
+  function estOrient(e) {
+    if (!est) return;
+    var h = e.webkitCompassHeading != null ? e.webkitCompassHeading : (e.absolute && e.alpha != null ? 360 - e.alpha : null);
+    if (h != null) { est.head = h; estDraw(); }
+  }
+  function estMotion(e) {
+    if (!est || !est.on) return;
+    var a = e.accelerationIncludingGravity; if (!a || a.x == null) return;
+    var m = Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z), now = Date.now();
+    est.smooth = est.smooth * 0.9 + m * 0.1;
+    var up = m > est.smooth + 1.2;
+    // un pas = un pic d'accélération, au moins 300 ms après le précédent
+    if (up && !est.prevUp && now - est.lastPeak > 300) {
+      est.lastPeak = now; est.steps++;
+      var hd = (est.head != null ? est.head : 0) * Math.PI / 180;
+      est.x += Math.sin(hd) * est.len; est.y += Math.cos(hd) * est.len;
+      if (est.steps % 10 === 0) estSave();
+      estDraw();
+    }
+    est.prevUp = up;
+  }
+  function estStart() {
+    function go() { est.on = true; window.addEventListener("devicemotion", estMotion); window.addEventListener("deviceorientationabsolute", estOrient); window.addEventListener("deviceorientation", estOrient); $("#estGo").textContent = "En cours…"; estDraw(); }
+    var asks = [];
+    if (window.DeviceMotionEvent && typeof DeviceMotionEvent.requestPermission === "function") asks.push(DeviceMotionEvent.requestPermission());
+    if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === "function") asks.push(DeviceOrientationEvent.requestPermission());
+    Promise.all(asks).then(go).catch(function () { toast("Autorise les capteurs de mouvement pour compter les pas"); });
+  }
+  function estPause() { if (!est) return; est.on = false; window.removeEventListener("devicemotion", estMotion); estSave(); var b = $("#estGo"); if (b) b.textContent = "Reprendre"; }
+  $("#estBox").addEventListener("click", function (e) {
+    if (e.target.id === "estGo") { if (!est.steps && !est.on) { est.x = 0; est.y = 0; } estStart(); }
+    else if (e.target.id === "estStop") estPause();
+    else if (e.target.id === "estReset") { est.x = 0; est.y = 0; est.steps = 0; estSave(); estDraw(); toast("Point de départ : ici"); }
+  });
+  $("#estBox").addEventListener("change", function (e) {
+    if (e.target.id !== "estLen") return;
+    var v = parseFloat(e.target.value.replace(",", ".")); if (v > 0.3 && v < 1.5) { est.len = v; estSave(); estDraw(); } else toast("Entre 0,3 et 1,5 m");
+  });
   // =====================================================================
   // ---------- Portée radio (horizon radio) ----------
   // =====================================================================
@@ -3333,6 +3399,9 @@
     var el = $("#drillCard"); if (!el) return;
     var st = load("sylva_drill", { done: {}, streak: 0, last: "" }), k = todayKey();
     var day = Math.floor(Date.now() / 864e5), dr = DRILLS[day % DRILLS.length], done = !!st.done[k];
+    // Une fois par mois : exercice en famille
+    var fam = load("sylva_famdrill", 0);
+    if (Date.now() - fam > 30 * 864e5 && new Date().getDay() === 6) dr = ["Exercice en famille (10 min) : chacun dit où est le kit, le point de rendez-vous, et comment couper le gaz. Puis testez la radio et la lampe.", "crise_72h", true];
     el.innerHTML = '<div class="drill-top"><span class="eyebrow">Exercice du jour · 2 min</span>' + (st.streak ? '<span class="drill-streak">🔥 ' + st.streak + " jour" + (st.streak > 1 ? "s" : "") + "</span>" : "") + "</div>" +
       '<p class="drill-q' + (done ? " done" : "") + '">' + esc(dr[0]) + "</p>" +
       '<div class="row" style="gap:8px">' + (done ? '<span class="tiny muted">Fait aujourd\'hui. À demain !</span>' : '<button type="button" class="btn btn-primary" data-drill-done>C\'est fait</button>') +
@@ -3345,6 +3414,7 @@
       var yk = y.getFullYear() + "-" + (y.getMonth() + 1) + "-" + y.getDate();
       st.streak = st.last === yk ? st.streak + 1 : 1; st.last = k; st.done[k] = 1;
       var keys = Object.keys(st.done); if (keys.length > 60) delete st.done[keys[0]];
+      if (new Date().getDay() === 6 && Date.now() - load("sylva_famdrill", 0) > 30 * 864e5) save("sylva_famdrill", Date.now());
       save("sylva_drill", st); renderDrill(); toast("Bien joué !"); return;
     }
     if ((b = e.target.closest("[data-tech]"))) openTechnique(b.dataset.tech);
@@ -3887,7 +3957,7 @@
     var w = b.getAttribute("data-learn-x");
     if (b.closest("#view-accueil")) showView("apprendre");
     learnShow(w);
-    if (w === "quiz") renderQuizHome(); else if (w === "badges") renderBadges(); else if (w === "pouls") renderPouls(); else if (w === "niveau") renderNiveau(); else if (w === "rvalue") renderRv(); else if (w === "eau") renderEau(); else if (w === "ciel") renderCiel(); else if (w === "tele") renderTele(); else if (w === "nord") renderNord(); else if (w === "radio") renderRadio(); else if (w === "morse") renderMorse();
+    if (w === "quiz") renderQuizHome(); else if (w === "badges") renderBadges(); else if (w === "pouls") renderPouls(); else if (w === "niveau") renderNiveau(); else if (w === "rvalue") renderRv(); else if (w === "eau") renderEau(); else if (w === "ciel") renderCiel(); else if (w === "tele") renderTele(); else if (w === "nord") renderNord(); else if (w === "estime") renderEstime(); else if (w === "radio") renderRadio(); else if (w === "morse") renderMorse();
   });
 
   // =====================================================================

@@ -888,3 +888,7 @@ body.measuring #btnAddSpot{display:none}
 .auto-in input{width:100%;box-sizing:border-box;min-width:0}
 .nord-card .nord-dial{width:220px!important;height:220px!important}
 .nord-dial text{stroke:none}
+
+.est-arrow{display:flex;justify-content:center;margin:6px 0}
+.est-arrow svg{width:180px!important;height:180px!important}
+.est-poly{fill:var(--accent)}
