@@ -278,6 +278,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 
 - **Génération automatique des gravures** : workflow GitHub « Générer des gravures » (`.github/workflows/gravures.yml`, lancé à la main par Tim dans l'onglet Actions) → `tools/gen_images.js` lit les prompts de l'atelier, appelle l'API OpenAI (`images/edits`, modèle `gpt-image-2` par défaut, image de style `img/ps_pls.webp`) avec le secret `OPENAI_API_KEY`, et pousse les PNG dans `gravures/` sur la **branche `gravures`** (jamais sur `main`). Vérifier chaque image (exactitude botanique pour les espèces), puis l'intégrer avec `tools/add_images.py` sur `main`. Coût ≈ 4 à 6 centimes par image en qualité medium.
 
+- Prompts des espèces : description botanique précise en anglais pour chacune des 139 espèces dans `tools/esp_desc.py` (quoi dessiner, critères, erreurs à éviter), injectée dans l'atelier par `python3 tools/esp_inject.py` (`ESP_DESC`). Corriger une description là, puis réinjecter. Lot 1 : if et œnanthe refusés (feuilles fausses), digitale, muguet, douce-amère intégrés.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.
