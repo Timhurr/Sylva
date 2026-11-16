@@ -173,6 +173,18 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 - Licences des services listés au §8 avant tout usage commercial.
 - Conditions d'utilisation et avertissement médical.
 
+### Feuille de route « Crise & résilience » (validée avec Tim le 16/11/2026)
+Phase 1, faisable dans la PWA actuelle :
+1. Tableau d'autonomie (eau, nourriture, énergie en jours, depuis le stock Prêt 72 h et le foyer).
+2. Rester chez soi (bug-in) : eau cachée dans le logement (ballon d'eau chaude après coupure, réservoir de la chasse d'eau à traiter ; **jamais l'eau des radiateurs**, chargée d'additifs), couper gaz, eau, électricité, calfeutrer une pièce.
+3. Premiers secours en arbre de décision (hémorragie massive, garrot avec minuteur de l'heure de pose, voies aériennes, respiration, choc, hypothermie) : gros caractères, **relecture obligatoire par un professionnel avant la sortie publique**, renvoi vers une formation.
+4. Radio : guide des canaux (PMR446, CB), écoute des radios publiques, calcul de portée théorique (horizon radio d ≈ 3,57 × (√h1 + √h2) km). Rappels : aucun canal PMR n'est surveillé par les secours ; la VHF marine canal 16 demande une licence sauf détresse ; les grandes ondes RTBF et France Inter n'émettent plus.
+5. Sites à risque : centrales nucléaires et sites Seveso sur la carte, zones de planification d'urgence officielles, vent prévu affiché à titre indicatif. **Pas de cône de dispersion calculé ni d'itinéraire d'évacuation généré** : la consigne officielle est de se mettre à l'abri et d'évacuer seulement sur ordre ; un faux panache pourrait faire sortir les gens au mauvais moment. Conseil générique gardé : dehors, s'éloigner en travers du vent.
+6. Troc et rationnement : valeurs d'échange, rationner sans danger (repères officiels d'apport énergétique), discrétion à la maison.
+7. Communiquer et s'orienter sans réseau : échange par QR, morse lu par la caméra, nord par le soleil et les étoiles, navigation à l'estime.
+8. Rétention : exercices de 2 minutes, exercice familial mensuel.
+Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notifications locales de péremption (tous les 6 mois), packs pays hors ligne (Protomaps), Wikipédia hors ligne (licence CC BY-SA, usage commercial permis avec attribution ; WikiHow est non commercial, donc exclu).
+
 ## 10. Journal de développement
 
 À mettre à jour **à la fin de chaque session de travail** (le plus récent en haut, quelques lignes) : ce qui a été fait, ce qui est en cours, ce que Tim doit vérifier sur son iPhone. C'est ce qui permet à une autre session de reprendre au milieu d'un chantier.
