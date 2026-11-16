@@ -34,6 +34,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_asperge.png)
 
+### Vipère aspic (`esp_aspic.png`)
+
+![](esp_aspic.png)
+
 ### Aubépine (cenelle) (`esp_aubepine.png`)
 
 ![](esp_aubepine.png)
@@ -50,6 +54,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_berce.png)
 
+### Blaireau (`esp_blaireau.png`)
+
+![](esp_blaireau.png)
+
 ### Bolet bai (`esp_boletbai.png`)
 
 ![](esp_boletbai.png)
@@ -58,9 +66,21 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_bryone.png)
 
+### Castor d'Europe (`esp_castor.png`)
+
+![](esp_castor.png)
+
 ### Cèpe de Bordeaux (`esp_cepe.png`)
 
 ![](esp_cepe.png)
+
+### Cerf élaphe (`esp_cerf.png`)
+
+![](esp_cerf.png)
+
+### Chamois (`esp_chamois.png`)
+
+![](esp_chamois.png)
 
 ### Chanterelle en tube (`esp_chanterelletube.png`)
 
@@ -73,6 +93,10 @@ Générées par l'API, pas encore dans l'appli.
 ### Chénopode blanc (`esp_chenopode.png`)
 
 ![](esp_chenopode.png)
+
+### Chevreuil (`esp_chevreuil.png`)
+
+![](esp_chevreuil.png)
 
 ### Grande ciguë (`esp_cigue.png`)
 
@@ -154,6 +178,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_framboise.png)
 
+### Guêpes et frelons (`esp_frelon.png`)
+
+![](esp_frelon.png)
+
 ### Fusain d'Europe (`esp_fusain.png`)
 
 ![](esp_fusain.png)
@@ -218,6 +246,14 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_lierreterrestre.png)
 
+### Loup gris (`esp_loup.png`)
+
+![](esp_loup.png)
+
+### Marmotte (`esp_marmotte.png`)
+
+![](esp_marmotte.png)
+
 ### Massette (`esp_massette.png`)
 
 ![](esp_massette.png)
@@ -225,6 +261,10 @@ Générées par l'API, pas encore dans l'appli.
 ### Mauve sylvestre (`esp_mauve.png`)
 
 ![](esp_mauve.png)
+
+### Méduses (`esp_meduse.png`)
+
+![](esp_meduse.png)
 
 ### Merisier (cerisier sauvage) (`esp_merisier.png`)
 
@@ -282,6 +322,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_panthere.png)
 
+### Chiens de protection (patous) (`esp_patou.png`)
+
+![](esp_patou.png)
+
 ### Paxille enroulé (`esp_paxille.png`)
 
 ![](esp_paxille.png)
@@ -330,6 +374,14 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_printaniere.png)
 
+### Chenille processionnaire du chêne (`esp_processionnaire.png`)
+
+![](esp_processionnaire.png)
+
+### Chenille processionnaire du pin (`esp_processionpin.png`)
+
+![](esp_processionpin.png)
+
 ### Prunellier (`esp_prunellier.png`)
 
 ![](esp_prunellier.png)
@@ -337,6 +389,10 @@ Générées par l'API, pas encore dans l'appli.
 ### Psilocybe lancéolé (`esp_psilocybe.png`)
 
 ![](esp_psilocybe.png)
+
+### Renard roux (`esp_renard.png`)
+
+![](esp_renard.png)
 
 ### Ricin (`esp_ricin.png`)
 
@@ -358,9 +414,17 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_russulecharbon.png)
 
+### Salamandre tachetée (`esp_salamandre.png`)
+
+![](esp_salamandre.png)
+
 ### Salicorne (`esp_salicorne.png`)
 
 ![](esp_salicorne.png)
+
+### Sanglier (`esp_sanglier.png`)
+
+![](esp_sanglier.png)
 
 ### Bolet Satan (`esp_satan.png`)
 
@@ -386,6 +450,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_tilleul.png)
 
+### Tique (`esp_tique.png`)
+
+![](esp_tique.png)
+
 ### Trompette de la mort (`esp_trompette.png`)
 
 ![](esp_trompette.png)
@@ -402,6 +470,14 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_vesse.png)
 
+### Vipère péliade (`esp_vipere.png`)
+
+![](esp_vipere.png)
+
 ### Amanite vireuse (`esp_vireuse.png`)
 
 ![](esp_vireuse.png)
+
+### Vive (poisson venimeux) (`esp_vive.png`)
+
+![](esp_vive.png)
