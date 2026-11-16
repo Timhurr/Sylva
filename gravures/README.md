@@ -14,6 +14,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_airelle.png)
 
+### Anguille européenne (`esp_anguille.png`)
+
+![](esp_anguille.png)
+
 ### Arbousier (`esp_arbousier.png`)
 
 ![](esp_arbousier.png)
@@ -42,6 +46,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_aubepine.png)
 
+### Barbeau (`esp_barbeau.png`)
+
+![](esp_barbeau.png)
+
 ### Bardane (`esp_bardane.png`)
 
 ![](esp_bardane.png)
@@ -62,9 +70,17 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_boletbai.png)
 
+### Brochet (`esp_brochet.png`)
+
+![](esp_brochet.png)
+
 ### Bryone dioïque (`esp_bryone.png`)
 
 ![](esp_bryone.png)
+
+### Carpe (`esp_carpe.png`)
+
+![](esp_carpe.png)
 
 ### Castor d'Europe (`esp_castor.png`)
 
@@ -77,6 +93,10 @@ Générées par l'API, pas encore dans l'appli.
 ### Cerf élaphe (`esp_cerf.png`)
 
 ![](esp_cerf.png)
+
+### Chabot (`esp_chabot.png`)
+
+![](esp_chabot.png)
 
 ### Chamois (`esp_chamois.png`)
 
@@ -93,6 +113,10 @@ Générées par l'API, pas encore dans l'appli.
 ### Chénopode blanc (`esp_chenopode.png`)
 
 ![](esp_chenopode.png)
+
+### Chevesne (`esp_chevesne.png`)
+
+![](esp_chevesne.png)
 
 ### Chevreuil (`esp_chevreuil.png`)
 
@@ -142,6 +166,14 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_douceamere.png)
 
+### Écrevisse à pattes rouges (`esp_ecrevisse_rouge.png`)
+
+![](esp_ecrevisse_rouge.png)
+
+### Écrevisse signal (`esp_ecrevisse_signal.png`)
+
+![](esp_ecrevisse_signal.png)
+
 ### Églantier (cynorrhodon) (`esp_eglantier.png`)
 
 ![](esp_eglantier.png)
@@ -190,6 +222,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_galere.png)
 
+### Gardon (`esp_gardon.png`)
+
+![](esp_gardon.png)
+
 ### Girolle (`esp_girolle.png`)
 
 ![](esp_girolle.png)
@@ -197,6 +233,10 @@ Générées par l'API, pas encore dans l'appli.
 ### Gland (chêne) (`esp_gland.png`)
 
 ![](esp_gland.png)
+
+### Grande vive (`esp_grandevive.png`)
+
+![](esp_grandevive.png)
 
 ### Gyromitre (`esp_gyromitre.png`)
 
@@ -302,6 +342,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_oenanthe.png)
 
+### Ombre commun (`esp_ombre.png`)
+
+![](esp_ombre.png)
+
 ### Omphalote de l'olivier (`esp_omphalote.png`)
 
 ![](esp_omphalote.png)
@@ -329,6 +373,10 @@ Générées par l'API, pas encore dans l'appli.
 ### Paxille enroulé (`esp_paxille.png`)
 
 ![](esp_paxille.png)
+
+### Perche (`esp_perche.png`)
+
+![](esp_perche.png)
 
 ### Amanite phalloïde (`esp_phalloide.png`)
 
@@ -362,6 +410,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_pleurote.png)
 
+### Poisson-chat (`esp_poissonchat.png`)
+
+![](esp_poissonchat.png)
+
 ### Polypore soufré (`esp_polypore.png`)
 
 ![](esp_polypore.png)
@@ -389,6 +441,10 @@ Générées par l'API, pas encore dans l'appli.
 ### Psilocybe lancéolé (`esp_psilocybe.png`)
 
 ![](esp_psilocybe.png)
+
+### Rascasse (`esp_rascasse.png`)
+
+![](esp_rascasse.png)
 
 ### Renard roux (`esp_renard.png`)
 
@@ -422,6 +478,10 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_salicorne.png)
 
+### Sandre (`esp_sandre.png`)
+
+![](esp_sandre.png)
+
 ### Sanglier (`esp_sanglier.png`)
 
 ![](esp_sanglier.png)
@@ -429,6 +489,14 @@ Générées par l'API, pas encore dans l'appli.
 ### Bolet Satan (`esp_satan.png`)
 
 ![](esp_satan.png)
+
+### Saumon atlantique (`esp_saumon.png`)
+
+![](esp_saumon.png)
+
+### Silure glane (`esp_silure.png`)
+
+![](esp_silure.png)
 
 ### Sorbier des oiseleurs (`esp_sorbier.png`)
 
@@ -458,9 +526,17 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_trompette.png)
 
+### Truite fario (`esp_truite.png`)
+
+![](esp_truite.png)
+
 ### Amanite tue-mouches (`esp_tuemouches.png`)
 
 ![](esp_tuemouches.png)
+
+### Vairon (`esp_vairon.png`)
+
+![](esp_vairon.png)
 
 ### Vératre blanc (`esp_veratre.png`)
 
