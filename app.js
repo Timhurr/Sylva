@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.79";
+  var VERSION = "0.9.80";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -1449,10 +1449,8 @@
     var lastCat = null;
     list.forEach(function (s) {
       if ((curCat === "tout" || curCat === "saison") && s.cat !== lastCat) { html += '<div class="section-title">' + esc(CAT_PLURAL[s.cat]) + "</div>"; lastCat = s.cat; }
-      var ph = photoOf(s.latin);
       html += '<button class="item" data-esp="' + esc(s.id) + '">' +
-        (ph ? '<span class="item-ico item-photo"><img src="' + esc(ph.src) + '" alt="" loading="lazy"></span>'
-            : '<span class="item-ico ico-' + esc(s.cat) + '">' + esc(s.nom.charAt(0)) + "</span>") +
+        '<span class="item-ico item-photo">' + espVisual(s) + "</span>" +
         '<span class="item-main"><span class="item-name">' + esc(s.nom) + '</span><span class="item-sub">' + esc(s.saison) + "</span></span>" +
         '<span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + "</span></button>";
     });
@@ -1473,6 +1471,20 @@
     var b = e.target.closest("[data-esp]"); if (b) openEspece(b.getAttribute("data-esp"));
   });
 
+  // Visuel d'une espèce : sa gravure (img/esp_<id>.webp), sinon un médaillon de la catégorie. Les vraies photos sont dans la fiche.
+  var CAT_IC = { plante: "plante", toxique: "alerte", champignon: "champignon", animal: "faune", poisson: "poisson" };
+  var CAT_C = { plante: "c-forest", toxique: "c-danger", champignon: "c-earth", animal: "c-violet", poisson: "c-water" };
+  function espSrc(s) { return s && (IMGS || {})["esp_" + s.id] || null; }
+  function espVisual(s) {
+    var src = espSrc(s);
+    return src ? '<img src="' + src + '" alt="" loading="lazy">' : '<span class="esp-ph ' + (CAT_C[s.cat] || "c-forest") + '">' + ic(CAT_IC[s.cat] || "plante") + "</span>";
+  }
+  function sosieVisual(nom, latin, niveau) {
+    var sp = latin && LATIN_INDEX[norm(latinMain(latin))];
+    if (sp && espSrc(sp)) return '<img src="' + espSrc(sp) + '" alt="' + esc(nom) + '" loading="lazy">';
+    var c = niveau === "danger" ? "c-danger" : niveau === "ok" ? "c-forest" : "c-earth";
+    return '<span class="esp-ph ' + c + '">' + ic(sp ? (CAT_IC[sp.cat] || "plante") : niveau === "danger" ? "alerte" : "plante") + "</span>";
+  }
   function heroHtml(p, alt) {
     return '<figure class="photo"><img src="' + esc(p.src) + '" alt="' + esc(alt) + '"><figcaption>' + photoCredit(p) + "</figcaption></figure>";
   }
@@ -1504,17 +1516,15 @@
              : '<span class="ph-letter" aria-hidden="true">' + esc(s.nom.charAt(0)) + "</span>";
   }
   function cmpHtml(nom, latin, niveau, txt, tag, self) {
-    var p = latin && photoOf(latin);
-    return '<div class="cmp ' + (self ? "self" : esc(niveau || "caution")) + '"><span class="cmp-img">' +
-      (p ? '<img src="' + esc(p.src) + '" alt="' + esc(nom) + '" loading="lazy">' : esc(nom.charAt(0))) + "</span>" +
+    return '<div class="cmp ' + (self ? "self" : esc(niveau || "caution")) + '"><span class="cmp-img">' + sosieVisual(nom, latin, niveau) + "</span>" +
       '<span class="tag">' + esc(tag) + "</span><b>" + esc(nom) + "</b>" + esc(txt) + "</div>";
   }
   var SOSIE_TAG = { danger: "Dangereux", caution: "Prudence", ok: "Sans danger" };
 
   function openEspece(id) {
     var s = ESPECES.filter(function (x) { return x.id === id; })[0]; if (!s) return;
-    var ph = photoOf(s.latin);
-    var h = '<figure class="fiche-hero" id="heroSlot">' + ficheHeroHtml(ph, s) + "</figure>" +
+    var src = espSrc(s);
+    var h = '<figure class="fiche-hero' + (src ? "" : " hero-ph") + '">' + (src ? '<img src="' + src + '" alt="' + esc(s.nom) + '">' : espVisual(s)) + "</figure>" +
       '<div class="fiche-card"><h1 id="sheetTitle">' + esc(s.nom) + '</h1><div class="latin">' + esc(s.latin) + " · " + esc(CAT_LABEL[s.cat]) + "</div>" +
       verdictHtml(s) +
       '<div class="facts"><span class="fact"><span>Saison</span><b>' + esc(s.saison) + '</b></span><span class="fact"><span>Catégorie</span><b>' + esc(CAT_LABEL[s.cat]) + "</b></span></div>" +
@@ -1524,28 +1534,29 @@
       h += "<h3>Reconnaître</h3><ul>" + s.identification.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
     }
     if (s.sosies && s.sosies.length) {
-      var credits = [];
       h += "<h3>" + (s.niveau === "danger" ? "Ne pas la confondre avec" : "Elle ou son sosie ?") + '</h3><div class="compare">' +
         (s.niveau !== "danger" ? cmpHtml(s.nom, s.latin, s.niveau, (s.identification && s.identification[0]) || s.resume, "La bonne", true) : "") +
         s.sosies.map(function (x) {
-          var p = x.latin && photoOf(x.latin);
-          if (p) credits.push(esc(x.nom.split(" (")[0]) + " — " + photoCredit(p));
           return cmpHtml(x.nom, x.latin, x.niveau, x.diff, SOSIE_TAG[x.niveau] || "Sosie", false);
         }).join("") + "</div>";
-      if (credits.length) h += '<p class="tiny muted credits">' + credits.join("<br>") + "</p>";
     }
     if (s.usages && s.usages.length) {
       h += "<h3>" + (s.cat === "animal" ? "Conseils" : s.cat === "poisson" ? "Pêche et cuisine" : s.niveau === "danger" ? "Consignes" : "Usages") + "</h3><ul>" +
         s.usages.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ul>";
     }
+    var reals = [[s.nom, s.latin]].concat((s.sosies || []).filter(function (x) { return x.latin; }).map(function (x) { return [x.nom.split(" (")[0], x.latin]; }));
+    h += '<h3>En photo</h3><p class="tiny muted">La gravure aide à retenir ; pour identifier, compare aussi avec de vraies photos.</p><div class="real-photos" id="realPhotos">' +
+      reals.map(function (r, i) { return '<figure class="real-ph" data-rp="' + i + '"><span class="rp-img">' + (photoOf(r[1]) ? '<img src="' + esc(photoOf(r[1]).src) + '" alt="' + esc(r[0]) + '" loading="lazy">' : "") + "</span><figcaption><b>" + esc(r[0]) + "</b>" + (photoOf(r[1]) ? "<span>" + photoCredit(photoOf(r[1])) + "</span>" : "<span>" + (navigator.onLine ? "Chargement…" : "Photo disponible en ligne") + "</span>") + "</figcaption></figure>"; }).join("") + "</div>";
     h += '<p class="disclaimer">Contenu éducatif. Ne consommez jamais une plante ou un champignon sans certitude absolue de son identité. La photo montre l\'espèce en général : comparez toujours plusieurs critères.</p></div>';
     openSheet(CAT_LABEL[s.cat], h, { hero: true });
-    if (!ph && navigator.onLine) {
-      fetchPhoto(s.latin).then(function (p) {
-        var slot = document.getElementById("heroSlot");
-        if (p && slot && !$("#sheet").hidden) slot.innerHTML = ficheHeroHtml(p, s);
+    if (navigator.onLine) reals.forEach(function (r, i) {
+      if (photoOf(r[1])) return;
+      fetchPhoto(r[1]).then(function (p) {
+        var f = document.querySelector('#realPhotos [data-rp="' + i + '"]'); if (!f) return;
+        if (p) f.innerHTML = '<span class="rp-img"><img src="' + esc(p.src) + '" alt="' + esc(r[0]) + '"></span><figcaption><b>' + esc(r[0]) + "</b><span>" + photoCredit(p) + "</span></figcaption>";
+        else f.querySelector("figcaption span").textContent = "Pas de photo libre trouvée";
       }).catch(function () {});
-    }
+    });
   }
 
   // ---------- Techniques ----------
@@ -1882,7 +1893,7 @@
     if (umbel) head += '<div class="alert alert-danger"><strong>Ombellifère détectée</strong><span>Cette famille compte des plantes mortelles (ciguës, œnanthe). Ne jamais consommer sans expert.</span></div>';
     if (results[0].score < 0.5) head += '<div class="alert alert-warn"><strong>Identification incertaine</strong><span>Score faible : reprenez une photo plus nette, d\'un autre organe.</span></div>';
     var r0 = results[0], sp0 = r0.species || {}, lat0 = sp0.scientificNameWithoutAuthor || "", loc0 = LATIN_INDEX[norm(lat0)];
-    var p0 = loc0 && photoOf(loc0.latin);
+    var p0 = loc0 && espSrc(loc0) ? { src: espSrc(loc0) } : null;
     var top = '<div class="res-top"><div class="rt-head"><span class="rt-img">' + (p0 ? '<img src="' + esc(p0.src) + '" alt="">' : $("#scanImg").src ? '<img src="' + esc($("#scanImg").src) + '" alt="">' : "") + "</span>" +
       '<span><span class="rt-k">CORRESPONDANCE ' + Math.round((r0.score || 0) * 100) + ' %</span><span class="rt-n">' + esc(loc0 ? loc0.nom : ((sp0.commonNames && sp0.commonNames[0]) || lat0)) + "</span><i>" + esc(lat0) + "</i></span></div>" +
       (loc0 ? verdictHtml(loc0) + '<button class="btn btn-primary" data-esp="' + esc(loc0.id) + '">Voir la fiche complète</button>'
@@ -2473,11 +2484,9 @@
       '<span class="bar"><span style="width:' + st.pct + '%"></span></span></span>';
     var mois = now.getMonth() + 1;
     var sais = ESPECES.filter(function (s) { return inRegion(s) && s.mois && s.mois.indexOf(mois) !== -1 && s.cat !== "animal" && s.cat !== "poisson"; });
-    sais.sort(function (a, b) { return (photoOf(b.latin) ? 1 : 0) - (photoOf(a.latin) ? 1 : 0); });
+    sais.sort(function (a, b) { return (espSrc(b) ? 1 : 0) - (espSrc(a) ? 1 : 0); });
     $("#homeSeason").innerHTML = sais.slice(0, 12).map(function (s) {
-      var p = photoOf(s.latin);
-      return '<button class="season-card" type="button" data-esp="' + esc(s.id) + '"><span class="season-img">' +
-        (p ? '<img src="' + esc(p.src) + '" alt="" loading="lazy">' : esc(s.nom.charAt(0))) +
+      return '<button class="season-card" type="button" data-esp="' + esc(s.id) + '"><span class="season-img">' + espVisual(s) +
         '<span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + "</span></span><b>" + esc(s.nom) + "</b></button>";
     }).join("") || '<p class="muted">Rien de particulier ce mois-ci.</p>';
     renderLearnGuide();
@@ -2533,9 +2542,8 @@
   });
   $("#btnAllSeason").addEventListener("click", function () { setCat("saison"); learnShow("especes"); showView("apprendre"); });
   function itemEsp(s) {
-    var ph = photoOf(s.latin);
     return '<button class="item" data-esp="' + esc(s.id) + '">' +
-      (ph ? '<span class="item-ico item-photo"><img src="' + esc(ph.src) + '" alt="" loading="lazy"></span>' : '<span class="item-ico ico-' + esc(s.cat) + '">' + esc(s.nom.charAt(0)) + "</span>") +
+      '<span class="item-ico item-photo">' + espVisual(s) + "</span>" +
       '<span class="item-main"><span class="item-name">' + esc(s.nom) + '</span><span class="item-sub">' + esc(CAT_LABEL[s.cat]) + "</span></span>" +
       '<span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + "</span></button>";
   }

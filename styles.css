@@ -996,3 +996,20 @@ html[data-theme="jour"] .urgent .med .ic{color:var(--danger)}
 .risk-pin .ic{width:20px;height:20px;stroke-width:1.6;--icf:.9}
 .drill-streak .ic,.pret-card small .ic{color:var(--accent)}
 .nav-voice .ic{width:22px;height:22px}
+
+/* ===== Espèces : gravure, sinon médaillon ; vraies photos en bas de fiche ===== */
+.esp-ph{width:100%;height:100%;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 40%,color-mix(in srgb,currentColor 22%,transparent),color-mix(in srgb,currentColor 5%,transparent) 70%),var(--surface2)}
+.esp-ph .ic{width:46%;height:46%;max-width:56px;max-height:56px;stroke-width:1.4;color:color-mix(in srgb,currentColor 60%,#FFF3DE);--icf:.45;filter:drop-shadow(0 0 4px color-mix(in srgb,currentColor 70%,transparent))}
+html[data-theme="jour"] .esp-ph .ic{color:color-mix(in srgb,currentColor 85%,#000);filter:none;--icf:.25}
+.item-ico .esp-ph .ic{width:28px;height:28px}
+.season-img .esp-ph{position:absolute;inset:0}
+.fiche-hero.hero-ph .esp-ph{position:absolute;inset:0}
+.fiche-hero.hero-ph .esp-ph .ic{width:96px;height:96px;max-width:none;max-height:none;stroke-width:1.1}
+.real-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:8px 0 14px}
+.real-ph{margin:0;border-radius:14px;overflow:hidden;background:var(--surface2);border:1px solid var(--line)}
+.rp-img{display:block;aspect-ratio:4/3;background:var(--surface2)}
+.rp-img img{width:100%;height:100%;object-fit:cover;display:block}
+.real-ph figcaption{padding:7px 9px;display:flex;flex-direction:column;gap:2px;font-size:12px}
+.real-ph figcaption span{font-size:10px;color:var(--muted);line-height:1.3}
+.real-ph figcaption a{color:var(--muted)}
