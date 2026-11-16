@@ -626,6 +626,30 @@ Générées par l'API, pas encore dans l'appli.
 
 ![](esp_vive.png)
 
+### Bougie de suif ou de graisse (`fab_bougie.png`)
+
+![](fab_bougie.png)
+
+### Eau de cendres : laver sans savon (`fab_cendres.png`)
+
+![](fab_cendres.png)
+
+### Fabriquer du charbon de bois (`fab_charbon.png`)
+
+![](fab_charbon.png)
+
+### Colle de résine (poix de pin) (`fab_colle.png`)
+
+![](fab_colle.png)
+
+### Se laver avec une plante : la saponaire (`fab_saponaire.png`)
+
+![](fab_saponaire.png)
+
+### Savon à la cendre et à la graisse (`fab_savon.png`)
+
+![](fab_savon.png)
+
 ### Réanimation cardio-pulmonaire (`ps_rcp.png`)
 
 ![](ps_rcp.png)
