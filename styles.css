@@ -1049,3 +1049,10 @@ html[data-theme="nuit"] .id-cta{border:1px solid var(--line)}
 .id-q .chips{display:flex;flex-wrap:wrap;gap:6px}
 .id-count{margin:6px 0 8px;font-weight:700;color:var(--muted);font-size:14px}
 #idResults{margin-bottom:12px}
+
+/* Étapes : « Étape suivante » en braise, comme les boutons principaux */
+.step-nav .btn.btn-next,html[data-theme="nuit"] .step-nav .btn.btn-next{background:linear-gradient(180deg,#F5B35A,#DB862C);color:#1A1209;font-weight:800;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 22px var(--glow,rgba(240,168,72,.4))}
+html[data-theme="jour"] .step-nav .btn.btn-next{background:linear-gradient(180deg,#C8701E,#A9560F);color:#FFF8EC;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 8px 20px rgba(169,86,15,.28)}
+.step-nav .btn.btn-next:not(.is-last)::after{content:" ›";font-size:1.15em}
+.step-nav .btn[data-step="-1"]{font-weight:700}
+.step-nav .btn:disabled{opacity:.35;box-shadow:none}

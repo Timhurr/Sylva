@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.94";
+  var VERSION = "0.9.95";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -1665,7 +1665,7 @@
     Array.prototype.forEach.call(box.querySelectorAll(".step"), function (el, i) { el.classList.toggle("on", i === cur); });
     Array.prototype.forEach.call(box.querySelectorAll(".step-bar span"), function (el, i) { el.classList.toggle("on", i <= cur); });
     box.querySelector('[data-step="-1"]').disabled = cur === 0;
-    box.querySelector('[data-step="1"]').textContent = cur === n - 1 ? "Terminé ✓" : "Étape suivante";
+    var nb = box.querySelector('[data-step="1"]'); nb.textContent = cur === n - 1 ? "Terminé ✓" : "Étape suivante"; nb.classList.toggle("is-last", cur === n - 1);
     var sb = $("#sheetBody"), top = box.offsetTop - 90; if (sb.scrollTop > top) sb.scrollTo({ top: top, behavior: "smooth" });
   }
   $("#listTechniques").addEventListener("click", function (e) {
