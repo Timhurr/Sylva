@@ -828,3 +828,63 @@ body.measuring #btnAddSpot{display:none}
 .pret-form .row{display:flex;gap:8px}
 .pret-crise{display:flex;flex-direction:column;gap:3px;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--text);padding:12px 0;font:inherit}
 .pret-crise b{font-size:15px}.pret-crise small{font-size:12.5px;color:var(--muted)}
+
+/* Autonomie */
+.auto-big{font-size:34px;font-weight:800;color:var(--accent);margin:2px 0 8px}
+.auto-big.low{color:#C0453A}
+.auto-bars{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.auto-row{display:grid;grid-template-columns:92px 1fr 52px;align-items:center;gap:8px;font-size:13px}
+.auto-row b{text-align:right}
+.auto-in{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.auto-in label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--muted)}
+.auto-in input{height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface);color:var(--text);font:inherit;font-size:16px;padding:0 10px}
+.auto-in small{font-size:11px}
+
+/* Blessé : étape par étape */
+.blesse-btn{background:#7A1F17!important;color:#fff!important;margin-top:10px}
+.blesse-box{max-height:92vh;overflow-y:auto}
+.blesse-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.bl-q{font-size:22px;font-weight:800;line-height:1.3;margin:10px 0 16px}
+.bl-yn{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bl-ans{margin-bottom:10px;width:100%}
+.bl-t{font-size:20px;font-weight:800;margin:8px 0 6px;color:var(--accent)}
+.bl-t.urgent{color:#C0453A}
+.bl-a{padding-left:22px;margin:0 0 14px}
+.bl-a li{font-size:18px;line-height:1.4;margin-bottom:10px}
+#blBody .btn{margin-bottom:10px;width:100%}
+.bl-nav{display:flex;justify-content:space-between;margin-top:6px}
+.garrot-banner{background:#7A1F17;color:#fff;border-radius:14px;padding:10px 12px;font-weight:700;margin:8px 0}
+.garrot-banner .link-btn{color:#fff;text-decoration:underline;margin-left:8px}
+
+/* Trouver le nord, radio, morse */
+.nord-card{text-align:center}
+.nord-dial{width:220px;max-width:70vw;margin:0 auto;display:block}
+.nd-ring{fill:none;stroke:var(--line);stroke-width:3}
+.nd-l{font:700 16px system-ui;fill:var(--muted);text-anchor:middle}
+.nd-n{fill:#C0453A;font-size:22px}
+.nd-sun{fill:#F2B33D;stroke:#B7791F;stroke-width:2}
+.nd-you{stroke:var(--text);stroke-width:4;stroke-linecap:round}
+.nd-you-h{fill:var(--text)}
+.nord-txt{font-size:19px;margin:8px 0 6px}
+.morse-cam{position:relative;border-radius:16px;overflow:hidden;background:#000;aspect-ratio:4/3}
+.morse-cam video{width:100%;height:100%;object-fit:cover}
+.morse-aim{position:absolute;left:50%;top:50%;width:18%;height:24%;transform:translate(-50%,-50%);border:2px solid #fff;border-radius:10px;box-shadow:0 0 0 2000px rgba(0,0,0,.25)}
+#msLed{position:absolute;right:10px;top:10px;width:18px;height:18px;border-radius:50%;background:#333;border:2px solid #fff}
+#msLed.on{background:#F2B33D;box-shadow:0 0 12px #F2B33D}
+.morse-code{font:700 22px/1.2 ui-monospace,monospace;letter-spacing:3px;min-height:28px;margin-top:10px;word-break:break-all}
+.morse-txt{font-size:30px;font-weight:800;letter-spacing:2px;color:var(--accent);min-height:38px}
+
+.risk-pin{display:grid;place-items:center;width:28px;height:28px;border-radius:50%;background:#F2B33D;color:#3A2A05;font-size:17px;font-weight:900;border:2px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35)}
+
+.qr-img{background:#fff;border-radius:16px;padding:10px;margin:8px auto;max-width:300px}
+.qr-img svg{width:100%;height:auto;display:block}
+.drill-card{background:var(--surface);border-radius:22px;padding:14px 16px;box-shadow:var(--shadow);margin:10px 0 6px}
+.drill-top{display:flex;justify-content:space-between;align-items:center}
+.drill-streak{font-size:13px;font-weight:700}
+.drill-q{font-size:16px;font-weight:600;line-height:1.4;margin:6px 0 10px}
+.drill-q.done{opacity:.6}
+.auto-in{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+.auto-in label{min-width:0}
+.auto-in input{width:100%;box-sizing:border-box;min-width:0}
+.nord-card .nord-dial{width:220px!important;height:220px!important}
+.nord-dial text{stroke:none}

@@ -38,7 +38,7 @@ Pas de build : les fichiers sont servis tels quels. **L'ordre de chargement comp
 ```
 leaflet (unpkg) → data.js → especes_plus.js → especes_champignons.js → especes_regions.js → techniques_plus.js
 → illus.js → images.js → guide.js → secours_isole.js → noeuds_plus.js → classiques.js → abris_plus.js
-→ poissons.js → astuces.js → cuisine_jeux.js → rvalue.js → app.js
+→ poissons.js → astuces.js → cuisine_jeux.js → rvalue.js → materiel.js → vendor/qrcode.js → pret72.js → crise_plus.js → risques.js → app.js
 ```
 
 | Fichier | Rôle |
@@ -50,6 +50,9 @@ leaflet (unpkg) → data.js → especes_plus.js → especes_champignons.js → e
 | `data.js` | Base : `SYLVA_ESPECES`, `SYLVA_TECHNIQUES`, `SYLVA_CATEGORIES`. |
 | `especes_*.js` | Espèces supplémentaires (plantes, champignons, régions). |
 | `techniques_plus.js`, `classiques.js`, `abris_plus.js`, `noeuds_plus.js`, `secours_isole.js`, `poissons.js`, `astuces.js`, `cuisine_jeux.js`, `rvalue.js` | Fiches, chapitres et compléments ajoutés par thème. Chaque fichier pousse dans les tableaux globaux et relie ses fiches aux chapitres. |
+| `pret72.js`, `crise_plus.js` | Prêt 72 h (kit, pays) et fiches de crise (catégorie « Crises », chapitre `crises`). |
+| `risques.js` | Sites nucléaires (`SYLVA_RISQUES`, positions approximatives) et liens officiels Seveso par pays. |
+| `vendor/qrcode.js` | Générateur de QR (MIT, Kazuhiko Arase), pour partager sans réseau. |
 | `guide.js` | `SYLVA_GUIDE` : les chapitres du guide. |
 | `illus.js` | Illustrations SVG de secours (`SYLVA_ILLUS`), utilisées quand une fiche n'a pas de gravure. |
 | `images.js` | `SYLVA_IMAGES` : liste des fichiers `img/*.webp`. **Généré** par `tools/add_images.py`. |
@@ -253,6 +256,16 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 - **v0.9.74** : « Préparer la sortie » ne télécharge plus les tuiles MapTiler (conditions MapTiler Cloud art. 6.3 : téléchargement en masse interdit sans accord écrit ; seul le cache personnel des tuiles affichées est permis, art. 5.7). Seules les cartes IGN sont préchargées. MapTiler : Free = non commercial ; Flex 30 $/mois pour 25 000 sessions puis 2,50 $ / 1 000 ; hors ligne en masse = contrat Custom à négocier.
 
 - **v0.9.75** : fond **OpenFreeMap** (`ofm`, style vectoriel « liberty » via MapLibre GL + maplibre-gl-leaflet, déjà chargés pour Terminal) : monde entier, gratuit, sans clé, usage commercial autorisé. `defaultBasemap()` : IGN en Belgique, OpenFreeMap ailleurs ; `applyCountry` bascule hors Belgique sur MapTiler Outdoor si clé, sinon OpenFreeMap. Rendu réel non testable ici (unpkg et OpenFreeMap injoignables) : à vérifier par Tim. Pas d'ombrage du relief ni de courbes de niveau dans ce style.
+
+### 2026-11-16 · v0.9.76 : phase 1 « Crise & résilience »
+- **Tableau d'autonomie** (Prêt 72 h > Kit, et carte Aujourd'hui) : réserves `d.res` (eau L, repas, charges de batterie, cartouches) → jours par ressource et minimum (`autonomie`, `fmtJ`). Articles de saison dans le kit (hiver / été).
+- **Blessé : étape par étape** (bouton rouge dans la fenêtre SOS, `modalBlesse`, arbre `BL`) : danger, hémorragie (garrot ou compression), conscience, respiration (PLS ou réanimation), respiration difficile, choc, tête et colonne, froid. **Minuteur de garrot** (`sylva_garrot`), visible dans SOS et l'arbre. **À faire relire par un professionnel avant la sortie publique.**
+- Nouvelles fiches (`crise_plus.js`) : eau cachée du logement (jamais les radiateurs), couper gaz/eau/électricité, calfeutrer une pièce, troc et rationnement, radio, trouver le nord avec le soleil, **réanimation cardio-pulmonaire `ps_rcp`** (manquait).
+- Outils de terrain : **Trouver le nord** (`sunAzAlt`, cadran, sans GPS : position GPS, sinon lieu de sortie, sinon centre du pays), **Portée radio** (horizon radio 4,12 × (√h1 + √h2) km), **Lire le morse** (caméra, luminosité au centre, seuil adaptatif, expérimental).
+- Carte : couche **Risques** (centrales et sites nucléaires BE, NL, FR, CH, cercle ~20 km indicatif, vent actuel indicatif Open-Meteo dans la bulle, consignes « se mettre à l'abri », liens Seveso officiels). Pas de panache calculé (voir feuille de route).
+- **QR codes** sans réseau : plan familial (Prêt 72 h > Plan) et position (SOS). **Exercice du jour** de 2 minutes sur Aujourd'hui avec série de jours (`sylva_drill`).
+- Prompts des 7 nouvelles gravures dans l'atelier. Tests : `tools/tests/crisetest.js`.
+- Reste de la phase 1 : navigation à l'estime (pas + cap), sites Seveso en données (aujourd'hui : liens officiels), exercice familial mensuel.
 
 ## 11. Basculer sur un autre compte
 

@@ -55,7 +55,7 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   ok('plan saved', JSON.parse(await pg.evaluate(() => localStorage.getItem('sylva_pret'))).plan.rdv1 === "Devant l'école");
   await pg.click('[data-ptab=pays]'); await pg.selectOption('#pretPays', 'BE'); ok('pays BE', (await pg.textContent('#pretBody')).includes('BE-Alert'));
   await pg.selectOption('#pretPays', 'FR'); ok('pays FR', (await pg.textContent('#pretBody')).includes('FR-Alert'));
-  await pg.click('[data-ptab=crises]'); const n = (await pg.$$('#pretBody [data-tech]')).length; ok('8 crises', n === 8, String(n));
+  await pg.click('[data-ptab=crises]'); const n = (await pg.$$('#pretBody [data-tech]')).length; ok('crises', n >= 13, String(n));
   await pg.click('[data-tech=crise_panne]'); await pg.waitForTimeout(300);
   ok('fiche opens', (await pg.textContent('body')).includes('monoxyde de carbone'));
   await pg.evaluate(() => { document.querySelectorAll('.modal').forEach(m => m.hidden = true); const sh = document.querySelector('#sheet'); if (sh) sh.hidden = true; document.querySelector('[data-goto=accueil]').click(); });

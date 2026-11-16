@@ -34,6 +34,8 @@
     { id: "enfants", grp: "maison", nom: "Jeux, livres, doudou", cond: function (f) { return f.en > 0 || f.bb > 0; }, info: "Occuper et rassurer les enfants compte autant que le reste." },
     { id: "animaux", grp: "maison", nom: "Pour les animaux", qte: function (f) { return "3 jours de nourriture et d'eau pour " + f.an; }, cond: function (f) { return f.an > 0; }, info: "Avec laisse, caisse de transport, carnet de vaccination." },
     { id: "appareils", grp: "maison", nom: "Énergie de secours pour les appareils médicaux", cond: function (f) { return f.mob; }, info: "Batteries de rechange, plan avec ton prestataire si l'électricité est coupée longtemps, lunettes ou aides de rechange." },
+    { id: "hiver", grp: "maison", nom: "Pour l'hiver : vêtements chauds et bonnets", qte: function (f) { return "une tenue chaude par personne"; }, cond: function () { var m = new Date().getMonth(); return m >= 9 || m <= 2; }, info: "Si le chauffage s'arrête, on perd la chaleur en quelques heures : couches de laine, bonnet, chaussettes épaisses." },
+    { id: "ete", grp: "maison", nom: "Pour l'été : de quoi se rafraîchir", cond: function () { var m = new Date().getMonth(); return m >= 5 && m <= 7; }, info: "Brumisateur, ventilateur à piles, chapeau, crème solaire. Prévois plus d'eau en cas de canicule." },
     { id: "iode", grp: "maison", nom: "Comprimés d'iode (si ton pays en distribue)", info: "À prendre uniquement quand les autorités le demandent. Voir la fiche « Accident nucléaire ou chimique »." },
     // ===== Sac d'évacuation : si tu dois partir vite =====
     { id: "s_papiers", grp: "sac", nom: "Papiers, copies et argent liquide", info: "Pièces d'identité, cartes, copies des documents, cash." },

@@ -56,6 +56,7 @@
 
       <div class="sec-head"><h2>Prêt pour 72 heures ?</h2><button class="link-btn" type="button" data-goto="pret">Ouvrir</button></div>
       <button class="pret-card" id="pretCard" type="button" data-goto="pret"></button>
+      <div class="drill-card" id="drillCard"></div>
 
       <div class="sec-head"><h2>Ton prochain bivouac</h2><button class="link-btn" type="button" data-goto="bivouac">Voir</button></div>
       <button class="trip-card" id="tripCard" type="button"></button>
@@ -101,6 +102,7 @@
       <button class="chip on" data-layer="spots">Mes spots</button>
       <button class="chip on" data-layer="services">Services</button>
       <button class="chip on" data-layer="chasse">Chasse</button>
+      <button class="chip" data-layer="risques">Risques</button>
     </div>
     <div class="basemap-panel" id="basemapPanel" hidden>
       <div class="basemap-title">Fond de carte</div>
@@ -267,6 +269,9 @@
           <button type="button" class="train-card" data-learn-x="rvalue"><span class="tc-ico">🛏️</span><b>Valeur R</b><span>Ton matelas suffit-il pour la nuit ?</span></button>
           <button type="button" class="train-card" data-learn-x="eau"><span class="tc-ico">💧</span><b>Clarté de l'eau</b><span>Faut-il la préfiltrer ?</span></button>
           <button type="button" class="train-card" data-learn-x="ciel"><span class="tc-ico">🌤️</span><b>Ciel et soleil</b><span>Ouverture des arbres, soleil utile</span></button>
+          <button type="button" class="train-card" data-learn-x="nord"><span class="tc-ico">🧭</span><b>Trouver le nord</b><span>Avec le soleil et l'heure, sans GPS</span></button>
+          <button type="button" class="train-card" data-learn-x="radio"><span class="tc-ico">📻</span><b>Portée radio</b><span>Jusqu'où porte ton talkie-walkie</span></button>
+          <button type="button" class="train-card" data-learn-x="morse"><span class="tc-ico">💡</span><b>Lire le morse</b><span>Décode une lampe avec la caméra</span></button>
           <button type="button" class="train-card" data-learn-x="tele"><span class="tc-ico">📏</span><b>Télémètre</b><span>Distance ou hauteur par visée</span></button>
         </div>
 
@@ -300,6 +305,18 @@
     <div class="pad page" id="panelTele" hidden>
       <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Télémètre</h1></div>
       <div id="teleBox"></div>
+    </div>
+    <div class="pad page" id="panelNord" hidden>
+      <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Trouver le nord</h1></div>
+      <div id="nordBox"></div>
+    </div>
+    <div class="pad page" id="panelRadio" hidden>
+      <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Portée radio</h1></div>
+      <div id="radioBox"></div>
+    </div>
+    <div class="pad page" id="panelMorse" hidden>
+      <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Lire le morse</h1></div>
+      <div id="morseBox"></div>
     </div>
     <div class="pad page" id="panelRv" hidden>
       <div class="panel-head"><button class="round-btn" type="button" data-learn="home" aria-label="Retour"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><h1>Valeur R</h1></div>
@@ -439,10 +456,13 @@
       <a class="btn" id="btnSmsPos" href="#">Envoyer par SMS</a>
     </div>
     <p class="tiny muted">Donnez ces coordonnées au secouriste. Si l'appel ne passe pas, montez sur une hauteur pour chercher du réseau.</p>
+    <button type="button" class="btn btn-big blesse-btn" id="btnBlesse">🩸 Quelqu'un est blessé : que faire ?</button>
+    <div class="garrot-banner" id="sosGarrot" hidden></div>
     <div class="sos-tools">
       <button type="button" class="btn" id="btnSigLight">🔦 Signal lumineux SOS</button>
       <button type="button" class="btn" id="btnSigWhistle">📣 Sifflet de détresse</button>
       <button type="button" class="btn" id="btnIce">🩺 Mes infos d'urgence</button>
+      <button type="button" class="btn" id="btnQrPos">🔳 QR de ma position</button>
     </div>
     <button class="btn btn-ghost" data-close>Fermer</button>
   </div>
@@ -467,6 +487,24 @@
     <p class="tiny muted">Vérifie les valeurs sur l'étiquette : elles changent selon la taille et l'année du modèle.</p>
     <div class="row"><button type="button" class="btn btn-danger" id="btnGearDel" hidden>Supprimer</button><button type="button" class="btn btn-ghost" data-close>Annuler</button><button type="submit" class="btn btn-primary">Enregistrer</button></div>
   </form>
+</div>
+
+<div class="modal" id="modalBlesse" hidden role="dialog" aria-modal="true" aria-labelledby="blTitle">
+  <div class="modal-box blesse-box">
+    <div class="blesse-head"><h2 id="blTitle">Blessé : étape par étape</h2><button type="button" class="icon-mini" data-close aria-label="Fermer">✕</button></div>
+    <div class="garrot-banner" id="blGarrot" hidden></div>
+    <div id="blBody"></div>
+    <p class="tiny muted" style="margin:12px 0 0">Repères de premiers secours pour le grand public, inspirés des recommandations européennes (ERC) et de la méthode MARCHE. Ne remplace pas une formation : apprends ces gestes avec la Croix-Rouge ou la protection civile. Appelle le 112 dès que possible.</p>
+  </div>
+</div>
+
+<div class="modal" id="modalQr" hidden role="dialog" aria-modal="true" aria-labelledby="qrTitle">
+  <div class="modal-box" style="text-align:center">
+    <h2 id="qrTitle">QR code</h2>
+    <div id="qrImg" class="qr-img"></div>
+    <p class="small" id="qrNote"></p>
+    <button type="button" class="btn" data-close>Fermer</button>
+  </div>
 </div>
 
 <div class="modal" id="modalIce" hidden role="dialog" aria-modal="true" aria-labelledby="iceTitle">
@@ -697,7 +735,10 @@
 <script src="cuisine_jeux.js"></script>
 <script src="rvalue.js"></script>
 <script src="materiel.js"></script>
+<script src="vendor/qrcode.js"></script>
 <script src="pret72.js"></script>
+<script src="crise_plus.js"></script>
+<script src="risques.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

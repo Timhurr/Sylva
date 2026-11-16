@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.75";
+  var VERSION = "0.9.76";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -186,6 +186,15 @@
     layers.services = L.layerGroup();
     if (load("sylva_layer_services", true)) layers.services.addTo(map);
     var sc = document.querySelector('.map-chips [data-layer="services"]'); if (sc) sc.classList.toggle("on", map.hasLayer(layers.services));
+    // Sites à risque (nucléaire) : couche statique, hors ligne
+    layers.risques = L.layerGroup();
+    (window.SYLVA_RISQUES || []).forEach(function (r) {
+      L.circle([r.lat, r.lon], { radius: r.r * 1000, color: "#C08A1E", weight: 1.5, dashArray: "6 6", fillColor: "#F2B33D", fillOpacity: 0.08, interactive: false }).addTo(layers.risques);
+      L.marker([r.lat, r.lon], { icon: L.divIcon({ className: "", iconSize: [28, 28], iconAnchor: [14, 14], html: '<span class="risk-pin">☢</span>' }) })
+        .bindPopup(function () { return riskPopup(r); }).addTo(layers.risques);
+    });
+    if (load("sylva_layer_risques", false)) layers.risques.addTo(map);
+    var rc = document.querySelector('.map-chips [data-layer="risques"]'); if (rc) rc.classList.toggle("on", map.hasLayer(layers.risques));
 
     $all(".map-chips .chip").forEach(function (c) {
       c.addEventListener("click", function () {
@@ -195,6 +204,7 @@
         if (lg) { if (on) map.addLayer(lg); else map.removeLayer(lg); }
         if (c.dataset.layer === "services") { save("sylva_layer_services", on); if (on) loadPoi(false); }
         if (c.dataset.layer === "chasse") { save("sylva_layer_chasse", on); if (on) loadChasse(false); }
+        if (c.dataset.layer === "risques") save("sylva_layer_risques", on);
       });
     });
 
@@ -241,6 +251,27 @@
     if (zoneGet("sylva_osm").length) renderOsm(zoneEls("sylva_osm"));
     loadOsm(false);
   }
+
+  // Fiche d'un site à risque : distance, vent prévu (indicatif), consignes officielles
+  function riskPopup(r) {
+    var d = me ? fmtKm(distKm([me[0], me[1]], [r.lat, r.lon])) : null, sv = (window.SYLVA_SEVESO || {})[r.pays];
+    var id = "rw" + Math.round(r.lat * 1000) + "_" + Math.round(r.lon * 1000);
+    setTimeout(function () {
+      if (!navigator.onLine) return;
+      fetch("https://api.open-meteo.com/v1/forecast?latitude=" + r.lat + "&longitude=" + r.lon + "&current=wind_speed_10m,wind_direction_10m&timezone=auto")
+        .then(function (x) { return x.json(); }).then(function (j) {
+          var el = document.getElementById(id); if (!el || !j.current) return;
+          var to = (j.current.wind_direction_10m + 180) % 360;
+          el.textContent = "Vent actuel (indicatif) : souffle vers le " + DIR16[Math.round(to / 22.5) % 16] + " à " + Math.round(j.current.wind_speed_10m) + " km/h.";
+        }).catch(function () {});
+    }, 50);
+    return '<div class="poi-pop"><b>☢ ' + esc(r.nom) + "</b><br><small>" + esc(r.type) + (d ? " · à " + d + " de toi" : "") + "</small>" +
+      '<p style="margin:6px 0">Cercle : environ ' + r.r + " km, ordre de grandeur de la zone de planification d'urgence. Seul le plan officiel fait foi.</p>" +
+      '<p class="tiny" id="' + id + '" style="margin:0 0 6px"></p>' +
+      '<p style="margin:0 0 6px"><b>En cas d\'alerte : entre dans un bâtiment, ferme tout, écoute la radio.</b> N\'évacue que sur ordre des autorités. Dehors, éloigne-toi en travers du vent.</p>' +
+      '<button type="button" class="btn" data-tech-pop="crise_abri">Que faire ?</button>' + (sv ? ' <a class="btn" target="_blank" rel="noopener" href="' + sv[1] + '">' + esc(sv[0]) + "</a>" : "") + "</div>";
+  }
+  document.addEventListener("click", function (e) { var b = e.target.closest("[data-tech-pop]"); if (b) openTechnique(b.dataset.techPop); });
 
   // ---------- Fonds de carte ----------
   var OSM_ATTR = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
@@ -2426,7 +2457,7 @@
   $("#learnGuide").addEventListener("click", openNextChap);
   $("#homeGuide").addEventListener("click", openNextChap);
   function renderAccueil() {
-    renderPretCard();
+    renderPretCard(); renderDrill();
     var now = new Date(), h = now.getHours();
     var j = now.toLocaleDateString("fr-BE", { weekday: "long", day: "numeric", month: "long" });
     $("#todayDate").textContent = j.charAt(0).toUpperCase() + j.slice(1);
@@ -2463,6 +2494,8 @@
     $("#panelPouls").hidden = which !== "pouls";
     $("#panelNiveau").hidden = which !== "niveau";
     $("#panelRv").hidden = which !== "rvalue";
+    $("#panelNord").hidden = which !== "nord"; $("#panelRadio").hidden = which !== "radio"; $("#panelMorse").hidden = which !== "morse";
+    if (which !== "morse") morseStop();
     $("#panelEau").hidden = which !== "eau";
     $("#panelCiel").hidden = which !== "ciel";
     $("#panelTele").hidden = which !== "tele";
@@ -3123,6 +3156,265 @@
     if (v === "" || v === "-") inp.focus();
   });
 
+
+
+  // =====================================================================
+  // ---------- Trouver le nord avec le soleil (sans GPS ni boussole) ----------
+  // =====================================================================
+  function sunAzAlt(date, lat, lon) {
+    var rad = Math.PI / 180, d = date / 864e5 - 10957.5;
+    var g = (357.529 + 0.98560028 * d) * rad, q = 280.459 + 0.98564736 * d;
+    var L = (q + 1.915 * Math.sin(g) + 0.020 * Math.sin(2 * g)) * rad, e = (23.439 - 0.00000036 * d) * rad;
+    var ra = Math.atan2(Math.cos(e) * Math.sin(L), Math.cos(L)), dec = Math.asin(Math.sin(e) * Math.sin(L));
+    var gmst = (18.697374558 + 24.06570982441908 * d) % 24, ha = ((gmst * 15 + lon) * rad) - ra, la = lat * rad;
+    var alt = Math.asin(Math.sin(la) * Math.sin(dec) + Math.cos(la) * Math.cos(dec) * Math.cos(ha));
+    var az = Math.atan2(-Math.sin(ha), Math.tan(dec) * Math.cos(la) - Math.sin(la) * Math.cos(ha));
+    return { az: (az / rad + 360) % 360, alt: alt / rad };
+  }
+  var DIR16 = ["nord", "nord-nord-est", "nord-est", "est-nord-est", "est", "est-sud-est", "sud-est", "sud-sud-est", "sud", "sud-sud-ouest", "sud-ouest", "ouest-sud-ouest", "ouest", "ouest-nord-ouest", "nord-ouest", "nord-nord-ouest"];
+  var CENTRES = { BE: [50.5, 4.6], FR: [46.6, 2.4], LU: [49.7, 6.1], NL: [52.2, 5.3], DE: [51.1, 10.4], CH: [46.8, 8.2] };
+  var nordTimer = 0;
+  function renderNord() {
+    clearTimeout(nordTimer);
+    var t = getTrip(), src, pos;
+    if (me) { pos = [me[0], me[1]]; src = "ta dernière position GPS"; }
+    else if (t.lat != null) { pos = [t.lat, t.lon]; src = "le lieu de ta sortie"; }
+    else { pos = CENTRES[getCountry()] || [50, 5]; src = "le centre de ton pays (précision moindre)"; }
+    var now = new Date(), s = sunAzAlt(now.getTime(), pos[0], pos[1]), az = Math.round(s.az), h = "";
+    if (s.alt < -1) {
+      h = '<div class="card"><div class="auto-big">Soleil couché</div><p>La nuit, cherche l\'étoile polaire : elle indique le nord à moins d\'un degré près.</p><button type="button" class="btn" data-tech="polaire">Trouver le nord la nuit</button></div>';
+    } else {
+      var rel = (360 - az) % 360, side = rel < 8 || rel > 352 ? "juste devant toi (le soleil est presque au nord)" : Math.abs(rel - 180) < 8 ? "juste derrière toi" : rel < 180 ? Math.round(rel) + "° sur ta droite" : Math.round(360 - rel) + "° sur ta gauche";
+      h = '<div class="card nord-card"><svg viewBox="-110 -110 220 220" width="220" height="220" class="nord-dial" aria-hidden="true"><circle r="100" class="nd-ring"/>' +
+        ["N", "E", "S", "O"].map(function (l, i) { var a = (i * 90 - az) * Math.PI / 180; return '<text x="' + (Math.sin(a) * 82).toFixed(1) + '" y="' + (-Math.cos(a) * 82 + 6).toFixed(1) + '" class="nd-l' + (i ? "" : " nd-n") + '">' + l + "</text>"; }).join("") +
+        '<circle cx="0" cy="-60" r="13" class="nd-sun"/><line x1="0" y1="40" x2="0" y2="-40" class="nd-you"/><polygon points="0,-48 -7,-34 7,-34" class="nd-you-h"/></svg>' +
+        '<p class="nord-txt">Fais face au soleil : <b>le nord est ' + side + "</b>.</p>" +
+        '<p class="tiny muted">Soleil au ' + DIR16[Math.round(az / 22.5) % 16] + " (" + az + "°), à " + Math.round(s.alt) + "° de hauteur, à " + now.toLocaleTimeString("fr-BE", { hour: "2-digit", minute: "2-digit" }) + ". Calculé pour " + src + " et l'heure du téléphone.</p>" +
+        (s.alt > 60 ? '<p class="tiny" style="color:#B7791F">Soleil très haut : la direction est moins précise. Recommence dans une heure ou utilise le bâton et l\'ombre.</p>' : "") + "</div>";
+    }
+    h += '<div class="card"><p style="margin:0 0 8px">Ne regarde jamais le soleil en face : repère sa direction à ton ombre (le soleil est à l\'opposé). Vérifie avec une autre méthode quand tu peux.</p><button type="button" class="btn" data-tech="baton">Méthode du bâton et de l\'ombre</button> <button type="button" class="btn" data-tech="crise_nord_soleil">La fiche</button></div>';
+    $("#nordBox").innerHTML = h;
+    if (!$("#panelNord").hidden) nordTimer = setTimeout(renderNord, 60000);
+  }
+  $("#nordBox").addEventListener("click", function (e) { var b = e.target.closest("[data-tech]"); if (b) openTechnique(b.dataset.tech); });
+
+  // =====================================================================
+  // ---------- Portée radio (horizon radio) ----------
+  // =====================================================================
+  function renderRadio() {
+    var r = load("sylva_radio", { h1: "1.5", h2: "1.5" });
+    $("#radioBox").innerHTML = '<div class="card"><div class="rv-k">Hauteur des antennes au-dessus du terrain alentour</div>' +
+      '<div class="auto-in"><label><span>Toi (m)</span><input type="text" inputmode="decimal" id="rdH1" value="' + esc(r.h1) + '"></label><label><span>L\'autre (m)</span><input type="text" inputmode="decimal" id="rdH2" value="' + esc(r.h2) + '"></label></div>' +
+      '<div class="chips" style="margin:10px 0 0;flex-wrap:wrap">' + [["1.5", "Debout"], ["10", "Étage, arbre"], ["50", "Colline"], ["200", "Sommet"]].map(function (x) { return '<button type="button" class="chip" data-rdh="' + x[0] + '">' + x[1] + " " + x[0].replace(".", ",") + " m</button>"; }).join("") + "</div>" +
+      '<div id="rdOut"></div></div>' +
+      '<div class="card"><p style="margin:0 0 8px">C\'est la limite de la ligne droite à cause de la rondeur de la Terre. La portée réelle d\'un talkie-walkie PMR446 (0,5 W) est souvent bien plus courte : quelques centaines de mètres en ville ou en forêt dense, 1 à 3 km en campagne. Monte en hauteur pour gagner beaucoup.</p><button type="button" class="btn" data-tech="crise_radio">Fiche radio : canaux et règles</button></div>';
+    radioCalc();
+  }
+  function radioCalc() {
+    function n(v) { v = parseFloat(String(v).replace(",", ".")); return isNaN(v) || v < 0 ? 0 : v; }
+    var h1 = n($("#rdH1").value), h2 = n($("#rdH2").value), d = 4.12 * (Math.sqrt(h1) + Math.sqrt(h2));
+    save("sylva_radio", { h1: $("#rdH1").value, h2: $("#rdH2").value });
+    $("#rdOut").innerHTML = '<div class="auto-big">' + (d >= 10 ? Math.round(d) : d.toFixed(1).replace(".", ",")) + ' km</div><p class="tiny muted" style="margin:0">Horizon radio maximal entre les deux antennes, sans obstacle (relief, bâtiments, arbres).</p>';
+  }
+  $("#radioBox").addEventListener("input", function (e) { if (e.target.id === "rdH1" || e.target.id === "rdH2") radioCalc(); });
+  $("#radioBox").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-rdh]"); if (b) { $("#rdH1").value = b.dataset.rdh.replace(".", ","); radioCalc(); return; }
+    b = e.target.closest("[data-tech]"); if (b) openTechnique(b.dataset.tech);
+  });
+
+  // =====================================================================
+  // ---------- Lire le morse avec la caméra (lampe au loin) ----------
+  // =====================================================================
+  var MORSE = { ".-": "A", "-...": "B", "-.-.": "C", "-..": "D", ".": "E", "..-.": "F", "--.": "G", "....": "H", "..": "I", ".---": "J", "-.-": "K", ".-..": "L", "--": "M", "-.": "N", "---": "O", ".--.": "P", "--.-": "Q", ".-.": "R", "...": "S", "-": "T", "..-": "U", "...-": "V", ".--": "W", "-..-": "X", "-.--": "Y", "--..": "Z",
+    "-----": "0", ".----": "1", "..---": "2", "...--": "3", "....-": "4", ".....": "5", "-....": "6", "--...": "7", "---..": "8", "----.": "9" };
+  var ms = null;
+  function morseStop() { if (!ms) return; cancelAnimationFrame(ms.raf); if (ms.stream) ms.stream.getTracks().forEach(function (t) { t.stop(); }); ms = null; }
+  function renderMorse() {
+    morseStop();
+    $("#morseBox").innerHTML = '<div class="card"><p style="margin:0 0 10px">Vise la lampe qui clignote au centre du cadre et garde le téléphone immobile (appuie-le contre un arbre). Sylva mesure la lumière et traduit les signaux longs et courts.</p>' +
+      '<div class="morse-cam"><video id="msVid" playsinline muted></video><i class="morse-aim"></i><span id="msLed"></span></div>' +
+      '<div class="morse-code" id="msCode"></div><div class="morse-txt" id="msTxt">—</div>' +
+      '<div class="row" style="gap:8px;margin-top:10px"><button type="button" class="btn btn-primary" id="msStart">Démarrer la caméra</button><button type="button" class="btn" id="msClear">Effacer</button></div></div>' +
+      '<div class="card"><p class="tiny muted" style="margin:0">Expérimental : marche mieux de nuit, avec une lumière nette et un rythme régulier. « ...---... » = SOS. Pour émettre toi-même : bouton SOS > Signal lumineux.</p></div>';
+  }
+  function morseDecode(st) {
+    // durées en ms des allumages (on) et extinctions (off) ; unité = durée typique d'un point
+    var ons = st.ev.filter(function (e) { return e.on; }).map(function (e) { return e.d; }).sort(function (a, b) { return a - b; });
+    if (!ons.length) return;
+    var unit = ons[Math.floor(ons.length * 0.25)] || ons[0], code = "", txt = "", sym = "";
+    st.ev.forEach(function (e) {
+      if (e.on) sym += e.d < unit * 2 ? "." : "-";
+      else if (e.d >= unit * 5) { if (sym) txt += MORSE[sym] || "?"; sym = ""; txt += " "; }
+      else if (e.d >= unit * 2.2) { if (sym) txt += MORSE[sym] || "?"; sym = ""; }
+    });
+    var live = sym ? " " + sym : "";
+    $("#msCode").textContent = st.ev.filter(function (e) { return e.on; }).map(function (e) { return e.d < unit * 2 ? "·" : "−"; }).join("").slice(-40);
+    $("#msTxt").textContent = (txt + (sym ? (MORSE[sym] || "…") : "")).trim() || "—";
+  }
+  $("#morseBox").addEventListener("click", function (e) {
+    if (e.target.id === "msClear" && ms) { ms.ev = []; $("#msCode").textContent = ""; $("#msTxt").textContent = "—"; return; }
+    if (e.target.id !== "msStart") return;
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast("Caméra indisponible sur cet appareil"); return; }
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" }, audio: false }).then(function (stream) {
+      var v = $("#msVid"); v.srcObject = stream; v.play();
+      var cv = document.createElement("canvas"); cv.width = 32; cv.height = 32; var cx = cv.getContext("2d", { willReadFrequently: true });
+      ms = { stream: stream, ev: [], hist: [], state: false, since: performance.now(), raf: 0 };
+      $("#msStart").textContent = "Caméra active";
+      (function loop() {
+        if (!ms) return;
+        if (v.videoWidth) {
+          var sw = v.videoWidth * 0.12, sh = v.videoHeight * 0.12;
+          cx.drawImage(v, (v.videoWidth - sw) / 2, (v.videoHeight - sh) / 2, sw, sh, 0, 0, 32, 32);
+          var px = cx.getImageData(0, 0, 32, 32).data, sum = 0;
+          for (var i = 0; i < px.length; i += 4) sum += px[i] * 0.3 + px[i + 1] * 0.59 + px[i + 2] * 0.11;
+          var lum = sum / (px.length / 4), now = performance.now();
+          ms.hist.push([now, lum]); while (ms.hist.length && now - ms.hist[0][0] > 4000) ms.hist.shift();
+          var mn = 255, mx = 0; ms.hist.forEach(function (x) { if (x[1] < mn) mn = x[1]; if (x[1] > mx) mx = x[1]; });
+          if (mx - mn > 25) {
+            var on = lum > mn + (mx - mn) * (ms.state ? 0.4 : 0.6);
+            if (on !== ms.state) { var d = now - ms.since; if (d > 40) { ms.ev.push({ on: ms.state, d: d }); if (ms.ev.length > 300) ms.ev.shift(); morseDecode(ms); } ms.state = on; ms.since = now; }
+          }
+          var led = $("#msLed"); if (led) led.className = ms.state ? "on" : "";
+        }
+        ms.raf = requestAnimationFrame(loop);
+      })();
+    }).catch(function () { toast("Autorise la caméra pour lire le morse"); });
+  });
+
+  // ---------- QR codes (sans réseau) ----------
+  function planText(d) {
+    var p = d.plan;
+    return "Plan d'urgence du foyer (Sylva)\n" + (p.contacts.length ? "\nContacts :\n" + p.contacts.map(function (c) { return "- " + c.nom + " : " + c.tel; }).join("\n") + "\n" : "") +
+      (p.rdv1 ? "\nRendez-vous près de la maison : " + p.rdv1 : "") + (p.rdv2 ? "\nRendez-vous hors du quartier : " + p.rdv2 : "") +
+      (p.abri ? "\nAbri / centre d'accueil : " + p.abri : "") + (p.ecole ? "\nEnfants : " + p.ecole : "") + (p.medecin ? "\nMédecin, traitements : " + p.medecin : "") +
+      (p.notes ? "\nConsignes : " + p.notes : "") + "\n\nUrgences : 112. Écoute la radio et suis les consignes des autorités.";
+  }
+  function showQr(text, title, note) {
+    if (!window.qrcode) { toast("QR indisponible"); return; }
+    var bytes = unescape(encodeURIComponent(text)).length, cut = false;
+    while (bytes > 1200) { text = text.slice(0, Math.floor(text.length * 0.9)); bytes = unescape(encodeURIComponent(text)).length; cut = true; }
+    var qr = qrcode(0, "M"); qr.addData(text); qr.make();
+    $("#qrTitle").textContent = title;
+    $("#qrImg").innerHTML = qr.createSvgTag({ cellSize: 6, margin: 3, scalable: true });
+    $("#qrNote").textContent = note + (cut ? " (Texte raccourci : trop long pour un seul QR.)" : "");
+    openModal("#modalQr");
+  }
+  $("#btnQrPos").addEventListener("click", function () {
+    if (!me) { toast("Position GPS pas encore trouvée"); return; }
+    var la = me[0].toFixed(5), lo = me[1].toFixed(5);
+    showQr("geo:" + la + "," + lo + "?q=" + la + "," + lo, "Ma position", "Scanne avec un autre téléphone : il ouvre ma position dans son application de cartes. Coordonnées : " + la + ", " + lo + ".");
+  });
+
+  // ---------- Exercice du jour (2 minutes) ----------
+  var DRILLS = [
+    ["Trouve la vanne de gaz de ton logement et vérifie que tu sais la fermer.", "crise_couper"],
+    ["Trouve le tableau électrique et l'interrupteur général. Ta lampe de poche est-elle à côté ?", "crise_couper"],
+    ["Trouve la vanne d'arrivée d'eau principale.", "crise_couper"],
+    ["Apprends par cœur le numéro d'un proche. Sans téléphone, c'est le seul que tu auras.", null],
+    ["Vérifie la date de péremption d'un article de ton stock (eau, conserve, piles).", null],
+    ["Allume ta radio à piles et trouve la radio publique. Note sa fréquence sur ton plan.", "crise_radio"],
+    ["Recharge tes batteries externes.", null],
+    ["Fixe avec ton foyer un point de rendez-vous hors du quartier, et écris-le dans le plan.", null],
+    ["Mets un peu d'argent liquide en petites coupures avec ton kit.", "crise_sansreseau"],
+    ["Relis les gestes en cas d'hémorragie : où poser un garrot ?", "ps_garrot"],
+    ["Relis la position latérale de sécurité et fais-la mentalement, étape par étape.", "ps_pls"],
+    ["Relis la réanimation : rythme et profondeur des compressions.", "ps_rcp"],
+    ["Repère la pièce de ta maison la plus adaptée pour te calfeutrer.", "crise_calfeutrer"],
+    ["Où est l'eau cachée dans ton logement ? Repère ton ballon d'eau chaude et son robinet de vidange.", "crise_eau_logement"],
+    ["Inscris-toi au système d'alerte de ton pays si ce n'est pas fait.", null],
+    ["Fais l'exercice : trouve le nord avec le soleil dans Outils de terrain.", "crise_nord_soleil"],
+    ["Prépare un sac d'évacuation pour une personne : est-il prêt à prendre en 2 minutes ?", "crise_evacuer"],
+    ["Note le nom d'un voisin fragile ou isolé dont tu prendrais des nouvelles en crise.", null],
+    ["Vérifie ta trousse de premiers secours : il manque quelque chose ?", null],
+    ["Teste ta lampe de poche et ses piles de rechange.", null]
+  ];
+  function todayKey() { var d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
+  function renderDrill() {
+    var el = $("#drillCard"); if (!el) return;
+    var st = load("sylva_drill", { done: {}, streak: 0, last: "" }), k = todayKey();
+    var day = Math.floor(Date.now() / 864e5), dr = DRILLS[day % DRILLS.length], done = !!st.done[k];
+    el.innerHTML = '<div class="drill-top"><span class="eyebrow">Exercice du jour · 2 min</span>' + (st.streak ? '<span class="drill-streak">🔥 ' + st.streak + " jour" + (st.streak > 1 ? "s" : "") + "</span>" : "") + "</div>" +
+      '<p class="drill-q' + (done ? " done" : "") + '">' + esc(dr[0]) + "</p>" +
+      '<div class="row" style="gap:8px">' + (done ? '<span class="tiny muted">Fait aujourd\'hui. À demain !</span>' : '<button type="button" class="btn btn-primary" data-drill-done>C\'est fait</button>') +
+      (dr[1] ? '<button type="button" class="btn" data-tech="' + dr[1] + '">La fiche</button>' : "") + "</div>";
+  }
+  $("#drillCard").addEventListener("click", function (e) {
+    var b;
+    if (e.target.closest("[data-drill-done]")) {
+      var st = load("sylva_drill", { done: {}, streak: 0, last: "" }), k = todayKey(), y = new Date(Date.now() - 864e5);
+      var yk = y.getFullYear() + "-" + (y.getMonth() + 1) + "-" + y.getDate();
+      st.streak = st.last === yk ? st.streak + 1 : 1; st.last = k; st.done[k] = 1;
+      var keys = Object.keys(st.done); if (keys.length > 60) delete st.done[keys[0]];
+      save("sylva_drill", st); renderDrill(); toast("Bien joué !"); return;
+    }
+    if ((b = e.target.closest("[data-tech]"))) openTechnique(b.dataset.tech);
+  });
+  // =====================================================================
+  // ---------- Blessé : arbre de décision (MARCHE simplifié) et minuteur de garrot ----------
+  // =====================================================================
+  var BL = {
+    start: { q: "Y a-t-il un danger autour (circulation, feu, chute, courant, eau) ?", oui: "danger", non: "hemo" },
+    danger: { a: ["Ne t'approche pas tant que ce n'est pas sûr pour toi.", "Supprime ou balise le danger seulement si tu peux le faire sans risque.", "Appelle le 112."], suite: "hemo" },
+    hemo: { q: "Saignement abondant : le sang coule en flot, gicle, ou imbibe vite les vêtements ?", oui: "hemo_ou", non: "conscience" },
+    hemo_ou: { q: "Où saigne-t-il ?", choix: [["Bras ou jambe", "garrot"], ["Cou, aisselle, aine, ventre ou dos", "compresser"]] },
+    garrot: { titre: "Garrot", a: ["Appuie très fort directement sur la plaie pendant que tu prépares le garrot (ou fais appuyer quelqu'un).", "Pose le garrot 5 à 7 cm au-dessus de la plaie, jamais sur une articulation. À défaut : bande large d'au moins 4 cm (ceinture, foulard) avec un bâton pour tourner.", "Serre jusqu'à ce que le saignement s'arrête, puis bloque le bâton.", "Note l'heure de pose : touche le bouton ci-dessous.", "Ne le desserre jamais toi-même. Laisse-le visible et dis-le aux secours."], garrot: true, fiche: "ps_garrot", suite: "conscience" },
+    compresser: { titre: "Compression", a: ["Appuie de toutes tes forces directement sur la plaie avec un tissu propre (ou ta main, gantée si possible).", "Plaie profonde au cou, à l'aisselle ou à l'aine : bourre-la de tissu en l'enfonçant, puis appuie au moins 3 minutes sans relâcher.", "Garde la pression jusqu'aux secours, ou fais un pansement compressif bien serré (jamais serré autour du cou)."], fiche: "ps_saignement", suite: "conscience" },
+    conscience: { q: "Parle-lui fort et touche ses épaules : réagit-elle ?", oui: "respi_gene", non: "respire" },
+    respire: { q: "Bascule doucement sa tête en arrière, menton soulevé. Respire-t-elle normalement (regarde 10 secondes) ?", oui: "pls", non: "rcp" },
+    rcp: { titre: "Réanimation", urgent: true, a: ["Appelle le 112 (haut-parleur) et fais chercher un défibrillateur.", "Mains au centre de la poitrine, bras tendus : enfonce de 5 à 6 cm, 100 à 120 fois par minute.", "Formé : 30 compressions puis 2 insufflations. Sinon, compressions seules sans t'arrêter.", "Défibrillateur : allume-le et suis sa voix.", "Continue jusqu'aux secours ou jusqu'à ce qu'elle respire normalement."], fiche: "ps_rcp", fin: true },
+    pls: { titre: "Position latérale de sécurité", a: ["Mets-la sur le côté en position latérale de sécurité, bouche vers le sol.", "Appelle le 112.", "Couvre-la et isole-la du sol.", "Vérifie sa respiration chaque minute. Si elle s'arrête : réanimation."], fiche: "ps_pls", suite: "froid" },
+    respi_gene: { q: "Respire-t-elle avec difficulté, ou a-t-elle une plaie à la poitrine ?", oui: "thorax", non: "choc" },
+    thorax: { titre: "Respiration", a: ["Installe-la assise ou demi-assise, dans la position où elle respire le mieux.", "Plaie à la poitrine : ne la bouche pas hermétiquement, couvre-la d'un pansement non serré. Si la respiration s'aggrave, retire le pansement.", "Desserre ses vêtements, rassure-la, appelle le 112."], suite: "choc" },
+    choc: { q: "Est-elle pâle, froide, moite, assoiffée, agitée ou somnolente ?", oui: "choc_a", non: "tete" },
+    choc_a: { titre: "État de choc", a: ["Allonge-la à plat. Surélève ses jambes d'environ 30 cm seulement si elle n'a pas de blessure aux jambes, au bassin ou au dos.", "Couvre-la et isole-la du sol.", "Ne lui donne ni à boire ni à manger.", "Surveille sa respiration et sa conscience toutes les quelques minutes."], fiche: "ps_choc", suite: "tete" },
+    tete: { q: "A-t-elle chuté ou reçu un choc à la tête, au cou ou au dos ?", oui: "tete_a", non: "froid" },
+    tete_a: { titre: "Tête et colonne", a: ["Ne la bouge pas sauf danger : maintiens sa tête dans l'axe du corps, mains de chaque côté.", "Surveille : somnolence, vomissements, confusion, pupilles différentes, liquide au nez ou aux oreilles = urgence, 112.", "Si elle vomit ou perd connaissance en respirant : position latérale de sécurité en gardant la tête dans l'axe."], suite: "froid" },
+    froid: { titre: "Protéger du froid", a: ["Isole-la du sol (sac, matelas, branches), couvre-la (couverture de survie, vêtements secs), protège sa tête.", "Remplace les vêtements mouillés si tu peux.", "Rassure-la et reste avec elle."], suite: "fin" },
+    fin: { titre: "Et maintenant", a: ["Continue de surveiller la respiration, la conscience et les saignements.", "Note ce qui s'est passé et les heures (chute, garrot, réveil…) pour les secours.", "Pas de secours possibles ? Fiche « Laisser une victime pour chercher les secours »."], fiche: "ps_laisser", fin: true }
+  };
+  var blPath = [];
+  function garrotTxt() {
+    var g = load("sylva_garrot", null); if (!g) return "";
+    var m = Math.floor((Date.now() - g.t) / 60000);
+    return "⏱ Garrot posé à " + new Date(g.t).toLocaleTimeString("fr-BE", { hour: "2-digit", minute: "2-digit" }) + " · il y a " + (m >= 60 ? Math.floor(m / 60) + " h " + String(m % 60).padStart(2, "0") : m + " min") +
+      ' <button type="button" class="link-btn" data-gclear>Effacer</button>';
+  }
+  function renderGarrot() {
+    var t = garrotTxt();
+    ["#sosGarrot", "#blGarrot"].forEach(function (id) { var el = $(id); if (el) { el.hidden = !t; el.innerHTML = t; } });
+  }
+  setInterval(function () { if (load("sylva_garrot", null)) renderGarrot(); }, 30000);
+  function renderBlesse() {
+    var id = blPath[blPath.length - 1] || "start", n = BL[id], h = "";
+    if (n.q) {
+      h += '<p class="bl-q">' + esc(n.q) + "</p>";
+      if (n.choix) h += n.choix.map(function (c) { return '<button type="button" class="btn btn-big bl-ans" data-blgo="' + c[1] + '">' + esc(c[0]) + "</button>"; }).join("");
+      else h += '<div class="bl-yn"><button type="button" class="btn btn-big btn-danger" data-blgo="' + n.oui + '">Oui</button><button type="button" class="btn btn-big" data-blgo="' + n.non + '">Non</button></div>';
+    } else {
+      h += '<p class="bl-t' + (n.urgent ? " urgent" : "") + '">' + esc(n.titre) + '</p><ol class="bl-a">' + n.a.map(function (x) { return "<li>" + esc(x) + "</li>"; }).join("") + "</ol>";
+      if (n.garrot) h += '<button type="button" class="btn btn-big btn-danger" data-gstart>⏱ Garrot posé : noter l\'heure</button>';
+      if (n.fiche && TECHS.some(function (t) { return t.id === n.fiche; })) h += '<button type="button" class="btn" data-tech="' + n.fiche + '">Voir la fiche détaillée</button>';
+      if (!n.fin) h += '<button type="button" class="btn btn-primary btn-big" data-blgo="' + n.suite + '">Étape suivante →</button>';
+      else h += '<a class="btn btn-danger btn-big" href="tel:112">Appeler le 112</a>';
+    }
+    if (blPath.length > 1) h += '<div class="bl-nav"><button type="button" class="link-btn" data-blback>← Retour</button><button type="button" class="link-btn" data-blreset>Recommencer</button></div>';
+    $("#blBody").innerHTML = h; renderGarrot();
+  }
+  function openBlesse() { blPath = ["start"]; renderBlesse(); closeModal($("#modalSos")); openModal("#modalBlesse"); }
+  $("#btnBlesse").addEventListener("click", openBlesse);
+  $("#modalBlesse").addEventListener("click", function (e) {
+    var b;
+    if ((b = e.target.closest("[data-blgo]"))) { blPath.push(b.dataset.blgo); renderBlesse(); $("#modalBlesse .modal-box").scrollTop = 0; return; }
+    if (e.target.closest("[data-blback]")) { blPath.pop(); renderBlesse(); return; }
+    if (e.target.closest("[data-blreset]")) { blPath = ["start"]; renderBlesse(); return; }
+    if (e.target.closest("[data-gstart]")) { save("sylva_garrot", { t: Date.now() }); renderGarrot(); toast("Heure du garrot notée"); return; }
+    if ((b = e.target.closest("[data-tech]"))) { closeModal($("#modalBlesse")); openTechnique(b.dataset.tech); }
+  });
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest("[data-gclear]")) return;
+    if (confirm("Effacer l'heure du garrot ? Fais-le seulement quand les secours ont pris le relais.")) { try { localStorage.removeItem("sylva_garrot"); } catch (er) {} renderGarrot(); }
+  });
+  renderGarrot();
   // =====================================================================
   // ---------- Prêt 72 h : foyer, kit calculé, stock, plan familial, pays, crises ----------
   // =====================================================================
@@ -3132,6 +3424,7 @@
     var d = load("sylva_pret", null) || {};
     d.foyer = d.foyer || { ad: 1, en: 0, bb: 0, an: 0, med: false, mob: false };
     d.have = d.have || {}; d.stock = Array.isArray(d.stock) ? d.stock : [];
+    d.res = d.res || { eau: "", repas: "", charges: "", gaz: "" };
     d.plan = d.plan || { contacts: [], rdv1: "", rdv2: "", abri: "", ecole: "", medecin: "", notes: "" };
     if (!d.pays) { var l = (navigator.language || "").toUpperCase(); d.pays = /-(BE|FR|LU|NL|CH)$/.test(l) ? l.slice(-2) : "BE"; }
     return d;
@@ -3145,6 +3438,18 @@
     if (days <= 30) return { cls: "warn", txt: days === 0 ? "périme aujourd'hui" : "périme dans " + days + " j", d: days };
     return { cls: "ok", txt: "jusqu'au " + new Date(s.date + "T00:00:00").toLocaleDateString("fr-BE"), d: days };
   }
+  // Autonomie : combien de jours tient le foyer avec ses réserves (eau 3 L/pers/j, 3 repas/pers/j, 1 charge de téléphone par adulte et par jour)
+  function autonomie(d) {
+    var f = d.foyer, p = (f.ad || 0) + (f.en || 0) + (f.bb || 0), r = d.res, out = [];
+    function n(v) { v = parseFloat(String(v).replace(",", ".")); return isNaN(v) ? null : v; }
+    if (n(r.eau) != null) out.push({ k: "Eau", j: n(r.eau) / (3 * p), u: "L" });
+    if (n(r.repas) != null) out.push({ k: "Nourriture", j: n(r.repas) / (3 * p), u: "repas" });
+    if (n(r.charges) != null) out.push({ k: "Téléphones", j: n(r.charges) / Math.max(1, f.ad || 1), u: "charges" });
+    if (n(r.gaz) != null) out.push({ k: "Cuisson", j: n(r.gaz) * 1.5 / Math.max(1, Math.ceil(p / 2)), u: "cartouches" });
+    var min = out.length ? Math.min.apply(null, out.map(function (x) { return x.j; })) : null;
+    return { list: out, min: min };
+  }
+  function fmtJ(j) { if (j == null) return "—"; if (j < 1) return Math.round(j * 24) + " h"; return (j >= 10 ? Math.round(j) : Math.round(j * 10) / 10).toString().replace(".", ",") + " j"; }
   function pretStats(d) {
     var it = kitItems(d.foyer), done = it.filter(function (k) { return d.have[k.id]; }).length;
     var watch = d.stock.filter(function (s) { var st = stockState(s); return st.cls === "warn" || st.cls === "danger"; });
@@ -3156,7 +3461,7 @@
     var el = $("#pretCard"); if (!el) return;
     var d = getPret(), st = pretStats(d), fresh = !Object.keys(d.have).length && !d.stock.length;
     el.innerHTML = '<span class="pret-ring" style="--p:' + st.pct + '"><b>' + st.pct + "%</b></span><span class=\"pret-txt\"><b>" +
-      (fresh ? "Prépare ton foyer pour une crise" : st.pct >= 100 ? "Kit complet" : "Kit : " + st.done + " sur " + st.tot) + "</b><small>" +
+      (fresh ? "Prépare ton foyer pour une crise" : (autonomie(d).min != null ? "Autonomie : " + fmtJ(autonomie(d).min) + " · " : "") + (st.pct >= 100 ? "kit complet" : "kit " + st.done + "/" + st.tot)) + "</b><small>" +
       (fresh ? "Panne, inondation, tempête : l'UE demande à chaque foyer de tenir 72 h seul." :
         st.expired ? "⚠ " + st.expired + " article" + (st.expired > 1 ? "s" : "") + " périmé" + (st.expired > 1 ? "s" : "") + " dans ton stock" :
         st.watch.length ? st.watch.length + " article" + (st.watch.length > 1 ? "s" : "") + " à renouveler ce mois-ci" :
@@ -3173,6 +3478,11 @@
     $all("#pretTabs [data-ptab]").forEach(function (b) { b.classList.toggle("on", b.dataset.ptab === pretTab); });
     var h = "";
     if (pretTab === "kit") {
+      var au = autonomie(d), resF = [["eau", "Eau en réserve", "litres"], ["repas", "Repas en réserve", "repas d'une personne"], ["charges", "Batteries externes", "charges de téléphone"], ["gaz", "Cartouches de gaz", "cartouches"]];
+      h += '<div class="card"><div class="rv-k">Mon autonomie</div><div class="auto-big' + (au.min != null && au.min < 3 ? " low" : "") + '">' + (au.min == null ? "Indique tes réserves" : fmtJ(au.min)) + "</div>" +
+        (au.list.length ? '<div class="auto-bars">' + au.list.map(function (x) { var pc = Math.min(100, x.j / 3 * 100); return '<div class="auto-row"><span>' + x.k + '</span><div class="pret-bar"><i style="width:' + pc + "%;" + (x.j < 3 ? "background:#C0453A" : "") + '"></i></div><b>' + fmtJ(x.j) + "</b></div>"; }).join("") + "</div>" : "") +
+        '<div class="auto-in">' + resF.map(function (r) { return '<label><span>' + r[1] + '</span><input type="text" inputmode="decimal" data-res="' + r[0] + '" value="' + esc(d.res[r[0]] || "") + '" placeholder="0"><small>' + r[2] + "</small></label>"; }).join("") + "</div>" +
+        '<p class="tiny muted" style="margin:8px 0 0">Objectif : au moins 3 jours partout. Calcul : 3 L d\'eau et 3 repas par personne et par jour, une charge de téléphone par adulte et par jour, une cartouche de gaz pour environ 1,5 jour de cuisine pour deux.</p></div>';
       h += '<div class="card"><div class="rv-k">Mon foyer</div>' + stepper("ad", "Adultes", f.ad) + stepper("en", "Enfants", f.en) + stepper("bb", "Bébés", f.bb) + stepper("an", "Animaux", f.an) +
         '<label class="pret-tog"><input type="checkbox" data-ftog="med"' + (f.med ? " checked" : "") + '> Quelqu\'un suit un traitement</label>' +
         '<label class="pret-tog"><input type="checkbox" data-ftog="mob"' + (f.mob ? " checked" : "") + '> Mobilité réduite ou appareil médical</label></div>';
@@ -3204,7 +3514,7 @@
       [["rdv1", "Point de rendez-vous près de chez toi", "Ex. : devant l'école, chez un voisin"], ["rdv2", "Point de rendez-vous hors du quartier", "Si le quartier est évacué : chez un proche, une salle communale…"], ["abri", "Abri ou centre d'accueil le plus proche", "Demande à ta commune"], ["ecole", "Écoles et crèches : qui va chercher les enfants ?", "Nom de l'école, qui y va, plan B"], ["medecin", "Médecin, pharmacie, traitements", ""], ["notes", "Autres consignes du foyer", "Couper le gaz : vanne au garage…"]].forEach(function (x) {
         h += '<label class="field"><span class="field-label">' + x[1] + '</span><textarea rows="2" data-pfield="' + x[0] + '" placeholder="' + esc(x[2]) + '">' + esc(p[x[0]] || "") + "</textarea></label>";
       });
-      h += '<button type="button" class="btn btn-primary" id="btnPlanShare">Partager le plan au foyer</button><p class="tiny muted" style="margin:8px 2px 0">Imprime-le ou recopie-le aussi sur papier : il doit servir sans téléphone.</p>';
+      h += '<button type="button" class="btn btn-primary" id="btnPlanShare">Partager le plan au foyer</button> <button type="button" class="btn" id="btnPlanQr">QR code (sans réseau)</button><p class="tiny muted" style="margin:8px 2px 0">Imprime-le ou recopie-le aussi sur papier : il doit servir sans téléphone.</p>';
     } else if (pretTab === "pays") {
       var py = PAYS72[d.pays] || PAYS72.XX;
       h += '<label class="field"><span class="field-label">Mon pays</span><select id="pretPays">' + Object.keys(PAYS72).map(function (k) { return '<option value="' + k + '"' + (k === d.pays ? " selected" : "") + ">" + esc(PAYS72[k].nom) + "</option>"; }).join("") + "</select></label>" +
@@ -3224,6 +3534,7 @@
     if ((b = e.target.closest("[data-stdel]"))) { d.stock = d.stock.filter(function (s) { return s.id !== b.dataset.stdel; }); savePret(d); renderPret(); return; }
     if ((b = e.target.closest("[data-pcdel]"))) { d.plan.contacts.splice(+b.dataset.pcdel, 1); savePret(d); renderPret(); return; }
     if ((b = e.target.closest("[data-tech]"))) { openTechnique(b.dataset.tech); return; }
+    if (e.target.id === "btnPlanQr") { showQr(planText(d), "Plan familial", "Scanne avec l'appareil photo d'un autre téléphone : le plan s'affiche en texte, sans réseau. Chacun peut ensuite le garder dans ses notes."); return; }
     if (e.target.id === "btnPlanShare") {
       var p = d.plan, txt = "Plan d'urgence du foyer (Sylva)\n" +
         (p.contacts.length ? "\nContacts :\n" + p.contacts.map(function (c) { return "- " + c.nom + " : " + c.tel; }).join("\n") + "\n" : "") +
@@ -3238,6 +3549,7 @@
     var d = getPret(), el = e.target;
     if (el.dataset.have) { if (el.checked) d.have[el.dataset.have] = 1; else delete d.have[el.dataset.have]; savePret(d); renderPret(); return; }
     if (el.dataset.ftog) { d.foyer[el.dataset.ftog] = el.checked; savePret(d); renderPret(); return; }
+    if (el.dataset.res) { d.res[el.dataset.res] = el.value.trim(); savePret(d); renderPret(); renderPretCard(); return; }
     if (el.dataset.stdate) { d.stock.forEach(function (s) { if (s.id === el.dataset.stdate) s.date = el.value; }); savePret(d); renderPret(); return; }
     if (el.dataset.pfield) { d.plan[el.dataset.pfield] = el.value.trim(); savePret(d); toast("Plan enregistré"); return; }
     if (el.id === "pretPays") { applyCountry(el.value); }
@@ -3575,7 +3887,7 @@
     var w = b.getAttribute("data-learn-x");
     if (b.closest("#view-accueil")) showView("apprendre");
     learnShow(w);
-    if (w === "quiz") renderQuizHome(); else if (w === "badges") renderBadges(); else if (w === "pouls") renderPouls(); else if (w === "niveau") renderNiveau(); else if (w === "rvalue") renderRv(); else if (w === "eau") renderEau(); else if (w === "ciel") renderCiel(); else if (w === "tele") renderTele();
+    if (w === "quiz") renderQuizHome(); else if (w === "badges") renderBadges(); else if (w === "pouls") renderPouls(); else if (w === "niveau") renderNiveau(); else if (w === "rvalue") renderRv(); else if (w === "eau") renderEau(); else if (w === "ciel") renderCiel(); else if (w === "tele") renderTele(); else if (w === "nord") renderNord(); else if (w === "radio") renderRadio(); else if (w === "morse") renderMorse();
   });
 
   // =====================================================================
