@@ -108,8 +108,44 @@
     ],
     attention: ["Une formation de quelques heures (Croix-Rouge, protection civile) change tout : sur le terrain, on n'apprend pas ces gestes dans une appli."] });
 
+  // ===== Stock longue durée et lumière sans courant (v0.9.90) =====
+  add({ id: "crise_stock_long", cat: "Crises", titre: "Un stock qui dure des années", illus: "kit",
+    intro: "Certains aliments secs se gardent des années, parfois des dizaines d'années, s'ils restent au frais, au sec, à l'abri de la lumière et bien fermés. C'est la base d'une réserve qu'on n'a pas à renouveler sans cesse.",
+    etapes: [
+      "Se gardent quasi indéfiniment, bien fermés et au sec : sel, sucre blanc, miel (il peut cristalliser : c'est normal, réchauffe-le doucement), vinaigre blanc et vinaigre de cidre.",
+      "Jusqu'à 30 ans, mais seulement en emballage longue durée (seau ou sachet étanche avec absorbeur d'oxygène) : riz blanc, flocons d'avoine, blé et maïs en grains entiers.",
+      "Plusieurs années bien fermés : pâtes sèches, lentilles, haricots et pois secs (plus ils vieillissent, plus ils sont longs à cuire), fécule de maïs, bicarbonate, café soluble, lait écrémé en poudre (la qualité baisse avec le temps), légumes déshydratés.",
+      "Moins longtemps : huiles et graisses (elles rancissent : renouvelle-les tous les 1 à 2 ans), épices entières (2 à 4 ans pour garder leur goût), riz complet et farine complète (quelques mois : leur matière grasse rancit).",
+      "Les quatre règles : au frais, au sec, à l'obscurité, bien fermé. Un paquet ouvert ou un emballage du commerce dure beaucoup moins que les durées ci-dessus.",
+      "Note la date d'achat sur chaque paquet, place les plus anciens devant et mange-les en premier : la réserve se renouvelle toute seule. Les dates se suivent dans Prêt 72 h > Stock."
+    ],
+    attention: [
+      "Pas de miel pour un bébé de moins d'un an (risque de botulisme infantile).",
+      "Jette tout ce qui sent le rance, a pris l'humidité, moisi, ou abrite des insectes.",
+      "Prévois aussi l'eau et le moyen de cuire : riz, pâtes et légumineuses en demandent beaucoup."
+    ],
+    source: "Rédigé pour Sylva d'après les recommandations de l'USDA (département de l'Agriculture des États-Unis) et de l'extension de l'université d'État de l'Utah sur le stockage alimentaire de longue durée." });
+
+  add({ id: "crise_lampe_huile", cat: "Crises", titre: "Une lampe à huile de cuisine", illus: "feu_preparation",
+    intro: "Pendant une panne de courant, un bocal, une mèche en coton et de l'huile de cuisine donnent une lumière stable plusieurs heures. L'huile végétale brûle mal sans mèche : elle ne s'enflamme pas facilement, ce qui rend cette lampe plus sûre qu'une lampe à pétrole improvisée.",
+    etapes: [
+      "Prends un bocal en verre épais (type conserve) avec un couvercle métallique.",
+      "Perce un trou de 6 à 10 mm au centre du couvercle. Idéalement, fixe dessus un porte-mèche ou une grosse rondelle pour tenir la mèche droite.",
+      "Utilise une mèche en coton pur (corde ou ficelle de coton, jamais synthétique : le synthétique fond). Passe-la dans le trou ; elle doit tremper jusqu'au fond.",
+      "Remplis le bocal aux deux tiers d'huile de cuisine (tournesol, colza, olive…), visse le couvercle.",
+      "Laisse la mèche s'imbiber quelques minutes, puis allume. Elle doit dépasser d'environ 1 cm : plus longue, la flamme fume ; plus courte, elle s'éteint.",
+      "Une mèche fine dure plus longtemps, une mèche épaisse éclaire plus fort. Recoupe le bout charbonneux de temps en temps."
+    ],
+    attention: [
+      "Ne la laisse jamais allumée sans surveillance, ni en dormant.",
+      "Pose-la sur une surface stable qui ne craint pas la chaleur, loin des rideaux, du linge et des enfants.",
+      "Aère la pièce : toute flamme consomme de l'oxygène et produit un peu de suie.",
+      "Pour l'éteindre, étouffe la flamme avec un couvercle. Ne verse jamais d'eau sur de l'huile qui brûle.",
+      "Le couvercle et le haut du bocal chauffent : laisse refroidir avant de toucher ou de remplir."
+    ] });
+
   // Relier au chapitre des crises
   var G = window.SYLVA_GUIDE || [];
   var ch = G.filter(function (c) { return c.id === "crises"; })[0];
-  if (ch) ["crise_eau_logement", "crise_couper", "crise_calfeutrer", "crise_troc", "crise_radio"].forEach(function (id) { if (ch.fiches.indexOf(id) === -1) ch.fiches.push(id); });
+  if (ch) ["crise_eau_logement", "crise_couper", "crise_calfeutrer", "crise_troc", "crise_radio", "crise_stock_long", "crise_lampe_huile"].forEach(function (id) { if (ch.fiches.indexOf(id) === -1) ch.fiches.push(id); });
 })();
