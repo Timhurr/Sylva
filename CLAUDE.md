@@ -276,6 +276,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 
 - **v0.9.80** : espèces au style des gravures. Partout (listes, de saison, scan, comparaison des sosies), une espèce montre sa gravure `img/esp_<id>.webp`, sinon un médaillon de sa catégorie : plus de mélange photos / lettres. Les vraies photos Wikimedia restent dans la fiche, section « En photo » (l'espèce et ses sosies, crédits), car une gravure seule ne suffit pas pour identifier sans danger. Atelier : 139 prompts « Espèces » (toxiques et comestibles prioritaires), chaque gravure à comparer à une vraie photo avant intégration.
 
+- **Génération automatique des gravures** : workflow GitHub « Générer des gravures » (`.github/workflows/gravures.yml`, lancé à la main par Tim dans l'onglet Actions) → `tools/gen_images.js` lit les prompts de l'atelier, appelle l'API OpenAI (`images/edits`, modèle `gpt-image-2` par défaut, image de style `img/ps_pls.webp`) avec le secret `OPENAI_API_KEY`, et pousse les PNG dans `gravures/` sur la **branche `gravures`** (jamais sur `main`). Vérifier chaque image (exactitude botanique pour les espèces), puis l'intégrer avec `tools/add_images.py` sur `main`. Coût ≈ 4 à 6 centimes par image en qualité medium.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.

@@ -1,0 +1,85 @@
+name: Générer des gravures
+on:
+  workflow_dispatch:
+    inputs:
+      groupe:
+        description: "Groupe de l'atelier à générer (images pas encore faites)"
+        type: choice
+        default: "Espèces : plantes toxiques"
+        options:
+          - "Prioritaires"
+          - "Espèces : plantes toxiques"
+          - "Espèces : plantes comestibles"
+          - "Espèces : champignons"
+          - "Espèces : animaux"
+          - "Espèces : poissons"
+          - "Crises"
+          - "Orientation"
+          - "Premiers secours"
+          - "Eau"
+          - "Feu"
+          - "Abri"
+          - "Secours"
+          - "Déplacement"
+          - "Éthique"
+          - "Nourriture"
+          - "Priorités"
+          - "Équipement"
+          - "Couvertures des chapitres"
+          - "Pêche"
+          - "Astuces de terrain"
+          - "Recettes du feu"
+          - "Toutes"
+      ids:
+        description: "Ou seulement ces images (noms séparés par des virgules, ex. esp_ortie,esp_if) : refait même si elles existent"
+        required: false
+        default: ""
+      limite:
+        description: "Nombre maximum d'images (≈ 4 à 6 centimes chacune en qualité medium)"
+        default: "20"
+      qualite:
+        description: "Qualité"
+        type: choice
+        default: medium
+        options: [low, medium, high]
+      modele:
+        description: "Modèle OpenAI"
+        default: "gpt-image-2"
+permissions:
+  contents: write
+concurrency: gravures
+jobs:
+  generer:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Branche gravures
+        run: |
+          git config user.name "sylva-gravures"
+          git config user.email "actions@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin gravures >/dev/null; then
+            git fetch origin gravures && git checkout gravures && git merge --no-edit origin/main || true
+          else
+            git checkout -b gravures
+          fi
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Générer
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GROUPE: ${{ inputs.groupe }}
+          IDS: ${{ inputs.ids }}
+          LIMITE: ${{ inputs.limite }}
+          QUALITE: ${{ inputs.qualite }}
+          MODELE: ${{ inputs.modele }}
+        run: node tools/gen_images.js --groupe "$GROUPE" --ids "$IDS" --limite "$LIMITE" --qualite "$QUALITE" --modele "$MODELE"
+      - name: Enregistrer sur la branche gravures
+        if: always()
+        run: |
+          git add gravures
+          git diff --cached --quiet || git commit -m "Gravures générées : ${{ inputs.ids || inputs.groupe }}"
+          git push origin gravures
