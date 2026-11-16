@@ -26,7 +26,8 @@ Ce fichier est lu automatiquement par Claude Code à l'ouverture du dépôt. Il 
 ### Ce que fait l'appli (onglets)
 - **Aujourd'hui :** prochaine sortie, météo locale, alertes météo et alertes de saison (« En ce moment »), espèces de saison, bouton **SOS** (112, coordonnées GPS, SMS).
 - **Carte :** Leaflet. Fonds IGN Belgique, plus MapTiler Outdoor et Satellite si une clé MapTiler est enregistrée. Styles (Naturel, Terminal vert rétro en vectoriel OpenFreeMap, Parchemin, Nuit rouge). Couches aires de bivouac et points d'eau (OSM/Overpass), Services (magasins, santé…), **Chasse** (SPW Wallonie), Mes spots. Toucher la carte pour placer un point ou « Y aller ». Guidage GPS intégré (à pied, vélo, voiture ; OSRM en ligne, flèche-boussole hors ligne). Trajet du journal en rouge.
-- **Scan (bouton central) :** identification de plantes par photo via Pl@ntNet (clé de l'utilisateur, gardée sur le téléphone).
+- **En crise (bouton central) :** appeler le 112, blessé étape par étape, signaler sa présence, « Où je suis » (coordonnées, SMS, QR), « Que faire maintenant ? » (situations → fiches). Fonctionne sans réseau.
+- **Identifier** (Apprendre > Reconnaître) : clé hors ligne par questions (plantes : port, feuilles, couleur ; champignons : dessous, couleur, anneau, volve, support). Caractères dans `identifier.js` (`SYLVA_TRAITS`). Pl@ntNet a été retiré (v0.9.93) : pas hors ligne, licence commerciale, clé à créer, risque d'erreur.
 - **Apprendre :** fiches (Savoir-faire, 15 catégories), espèces (plantes, champignons, animaux, poissons), Guide de survie (17 chapitres). **Outils de terrain :** Prendre le pouls (minuteur et caméra expérimentale), Niveau et relief (pente, cuvette ou crête), Valeur R (isolation du sol). **S'entraîner :** Quiz (3 niveaux), Défis et badges.
 - **Bivouac :** prochaine sortie (lieu par recherche, spot ou position, avec sa météo et sa vérification de chasse), « Au programme » (recettes et fiches ajoutées, qui remplissent le sac), **Journal de bord** (trajet GPS, notes, photos), Sac à dos (checklist modifiable avec photos), Anciens bivouacs (note sur 5, commentaire, journal), Carnet de spots.
 - Thème jour, nuit ou automatique. Mode « Seul, sans secours » ou « Secours joignables » sur les fiches de premiers secours.
@@ -38,7 +39,7 @@ Pas de build : les fichiers sont servis tels quels. **L'ordre de chargement comp
 ```
 leaflet (unpkg) → data.js → especes_plus.js → especes_champignons.js → especes_regions.js → techniques_plus.js
 → illus.js → images.js → guide.js → secours_isole.js → noeuds_plus.js → classiques.js → abris_plus.js
-→ poissons.js → astuces.js → cuisine_jeux.js → rvalue.js → materiel.js → vendor/qrcode.js → pret72.js → crise_plus.js → crise_vie.js → fabriquer.js → risques.js → app.js
+→ poissons.js → astuces.js → cuisine_jeux.js → rvalue.js → materiel.js → vendor/qrcode.js → pret72.js → crise_plus.js → crise_vie.js → fabriquer.js → identifier.js → risques.js → app.js
 ```
 
 | Fichier | Rôle |
@@ -82,7 +83,7 @@ Catégories actuelles : Priorités, Crises, Eau, Équipement, Feu, Abri, Nœuds,
 ### Utilitaires de `app.js`
 `$`, `$all`, `esc` (échappement HTML, à utiliser **partout**), `norm` (minuscules sans accents), `uid`, `load(clé, défaut)` / `save(clé, valeur)` (localStorage JSON, protégés par try/catch), `toast`, `openModal` / `closeModal`, `showView`, `learnShow`, `openTechnique(id)`, `openEspece(id)`, `idbDo` (IndexedDB pour les photos), `resizeImage`, `spotPhotoUrl`, `distKm`, `fmtKm`, `refPoint`, `getTrip`, `getPlan`, `getChecklist`, `getSpots`, `getHist`, `TECHS`, `ESPECES`, `IMGS`, `me` (position `[lat, lon, précision]` ou `null`), `map`, `layers`.
 
-Toutes les données utilisateur sont **sur le téléphone**, clés `sylva_*` dans localStorage (par exemple `sylva_trip`, `sylva_spots`, `sylva_checklist`, `sylva_plan`, `sylva_hist`, `sylva_journal`, `sylva_key` pour Pl@ntNet, `sylva_mtkey` pour MapTiler) et photos dans IndexedDB. Il n'y a **aucun serveur à nous**.
+Toutes les données utilisateur sont **sur le téléphone**, clés `sylva_*` dans localStorage (par exemple `sylva_trip`, `sylva_spots`, `sylva_checklist`, `sylva_plan`, `sylva_hist`, `sylva_journal`, `sylva_mtkey` pour MapTiler) et photos dans IndexedDB. Il n'y a **aucun serveur à nous**.
 
 ## 4. Images et atelier
 
@@ -154,7 +155,6 @@ Toutes les données utilisateur sont **sur le téléphone**, clés `sylva_*` dan
 | Nominatim | Recherche de lieu | 1 requête par seconde maximum. |
 | Open-Meteo | Météo, altitude (relief) | Gratuit pour un usage non commercial : licence payante à prévoir. |
 | OSRM (routing.openstreetmap.de, FOSSGIS) | Itinéraires à pied, vélo, voiture | Serveur de démonstration : prévoir un service payant pour une version commerciale. |
-| Pl@ntNet | Identification des plantes | Clé de l'utilisateur ; licence commerciale à négocier avant la vente. |
 | SPW Wallonie `APP_DNFEXT/CHASSE_DATEFERM` (couche 1, territoires) | Chasses annoncées et fermetures de chemins | Wallonie seulement. Le format exact des dates n'a pas pu être vérifié depuis l'environnement de test : `parseDates` accepte `JJ/MM/AAAA` et `AAAA-MM-JJ`. Carte officielle : https://portalarcgis.spw.wallonie.be/portail/apps/experiencebuilder/experience/?id=ef94a8903433442f8082f3cdf5c7d3bd |
 
 Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap, Plan IGN France et le satellite Esri : ne pas les remettre sans qu'il le demande. L'idée d'utiliser Google Maps ou Google Places a été écartée : clé payante, conditions incompatibles avec le hors ligne.
@@ -289,6 +289,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 - **v0.9.91** : catégorie **Fabriquer** (`fabriquer.js`, raccourci Savoir-faire, fiches aussi dans le chapitre « couteau ») : charbon de bois (le charbon « dentifrice » est déconseillé, le charbon maison n'est pas du charbon activé médical), colle de résine, eau de cendres, savon à la cendre (caustique), saponaire, bougie de suif. Gravures générées et vérifiées.
 
 - **v0.9.92** : `crise_vie.js`, 8 fiches Crises (toilettes et hygiène, réhydratation OMS, fièvre, traitements quotidiens, personnes fragiles, animaux, moral avec 107 / 3114, panne longue : groupe électrogène et congélateur USDA). **À faire relire par un professionnel de santé** : réhydratation, fièvre, traitements, moral. Crédit OpenAI presque épuisé.
+
+- **v0.9.93** : Pl@ntNet retiré (vue scan, clé dans Réglages, test). Le bouton central ouvre le **mode crise** (`view-crise`, `renderCrise`, `CRISE_SIT`). Nouvel écran **Identifier** (`view-identifier`, `ID_Q`, `renderIdentifier`, données `identifier.js`) ; résultats triés danger d'abord, toujours renvoyer vers la fiche. Tests fulltest mis à jour.
 
 ## 11. Basculer sur un autre compte
 

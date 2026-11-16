@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.92";
+  var VERSION = "0.9.93";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -67,6 +67,8 @@
     if (name === "bivouac") renderBivouac();
     if (name === "accueil") renderAccueil();
     if (name === "pret") renderPret();
+    if (name === "crise") renderCrise();
+    if (name === "identifier") renderIdentifier();
     var v = $("#view-" + name); if (v) v.scrollTop = 0;
   }
   $all("[data-goto]").forEach(function (b) { b.addEventListener("click", function () { showView(b.getAttribute("data-goto")); }); });
@@ -133,6 +135,7 @@
   var meMarker = null, meCircle = null, firstFix = true;
   function onPos(p) {
     me = [p.coords.latitude, p.coords.longitude, p.coords.accuracy];
+    if ($("#view-crise").classList.contains("active")) renderCrisePos();
     if (map && window.L) {
       var ll = [me[0], me[1]];
       if (!meMarker) {
@@ -1245,11 +1248,11 @@
 
   // ---------- Réglages ----------
   $("#btnSettings").addEventListener("click", function () {
-    $("#apiKey").value = load("sylva_key", "") || ""; $("#mtKey").value = load("sylva_mtkey", "") || "";
+    $("#mtKey").value = load("sylva_mtkey", "") || "";
     $("#setCountry").value = getCountry(); $("#setLang").value = "fr"; openModal("#modalSettings");
   });
   $("#formSettings").addEventListener("submit", function (e) {
-    e.preventDefault(); save("sylva_key", $("#apiKey").value.trim());
+    e.preventDefault();
     var mk = $("#mtKey").value.replace(/\s+/g, ""), oldMk = load("sylva_mtkey", "");
     save("sylva_mtkey", mk);
     if (mk !== oldMk && map) { initBasemaps(); if (mk) toast("Cartes MapTiler ajoutées au menu des cartes"); }
@@ -1271,7 +1274,7 @@
       '<li>Carte, aires de bivouac, points d\'eau et recherche : © contributeurs <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> (ODbL).</li>' +
       '<li>Photos : Wikimedia Commons, licences libres, auteur indiqué sous chaque photo.</li>' +
       '<li>Météo : <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0).</li>' +
-      "<li>Identification des plantes : Pl@ntNet (CIRAD, INRAE, INRIA, IRD).</li></ul>" +
+      "</ul>" +
       '<p class="disclaimer">Sylva est un outil éducatif. Il ne remplace ni un guide de terrain, ni un mycologue, ni une formation aux premiers secours. En cas d\'urgence : 112.</p>');
   });
   $("#btnExportSpots").addEventListener("click", function () {
@@ -1793,23 +1796,13 @@
     }
   });
 
-  // ---------- Scanner ----------
-  var organ = "auto";
-  $all("#organChips .chip").forEach(function (c) {
-    c.addEventListener("click", function () {
-      organ = c.dataset.organ;
-      $all("#organChips .chip").forEach(function (x) { x.classList.toggle("on", x === c); });
-    });
-  });
-
+  // ---------- Index latin des espèces ----------
   var LATIN_INDEX = {};
   ESPECES.forEach(function (s) {
     var parts = s.latin.split("/").map(function (p) { return p.trim(); });
     var genus = parts[0].split(" ")[0];
     parts.forEach(function (p, i) { LATIN_INDEX[norm(i === 0 ? p : genus + " " + p)] = s; });
   });
-
-  function setScanStatus(html) { var st = $("#scanStatus"); st.innerHTML = html; st.hidden = !html; }
 
   function resizeImage(file, maxSize) {
     return new Promise(function (resolve, reject) {
@@ -1826,83 +1819,6 @@
     });
   }
 
-  $("#photoInput").addEventListener("change", onPhoto);
-  $("#galleryInput").addEventListener("change", onPhoto);
-  function onPhoto(e) {
-    var file = e.target.files && e.target.files[0];
-    e.target.value = "";
-    if (!file) return;
-    $("#scanResults").innerHTML = "";
-    var prevUrl = URL.createObjectURL(file);
-    $("#scanImg").src = prevUrl; $("#scanPreview").hidden = false;
-    var key = load("sylva_key", "");
-    if (!key) {
-      setScanStatus('Ajoutez d\'abord votre clé Pl@ntNet dans les <a href="#" id="lnkSettings">réglages</a>.');
-      var l = $("#lnkSettings"); if (l) l.addEventListener("click", function (ev) { ev.preventDefault(); $("#btnSettings").click(); });
-      return;
-    }
-    if (!navigator.onLine) { setScanStatus("Pas de réseau : l'identification n'est pas possible ici. Consultez les fiches de l'onglet Espèces."); return; }
-    setScanStatus("Identification en cours…");
-    resizeImage(file).then(function (blob) {
-      var fd = new FormData();
-      fd.append("images", blob, "photo.jpg");
-      fd.append("organs", organ);
-      return fetch("https://my-api.plantnet.org/v2/identify/all?api-key=" + encodeURIComponent(key) +
-        "&lang=fr&nb-results=5&include-related-images=false", { method: "POST", body: fd });
-    }).then(function (r) {
-      if (r.ok) return r.json();
-      return r.text().catch(function () { return ""; }).then(function (body) {
-        var detail = "";
-        try { var j = JSON.parse(body); detail = j.message || j.error || body; } catch (e) { detail = body; }
-        detail = String(detail || "").slice(0, 200);
-        var base;
-        if (r.status === 404) base = "Aucune plante reconnue. Rapprochez-vous d'une feuille, d'une fleur ou d'un fruit, bien net et bien éclairé.";
-        else if (r.status === 401 || r.status === 403) base = "Clé API refusée. Vérifiez-la dans les réglages, et que le domaine timhurr.github.io est autorisé dans votre compte Pl@ntNet.";
-        else if (r.status === 429) base = "Quota du jour atteint (500 identifications).";
-        else base = "Le service d'identification a répondu une erreur. Réessayez.";
-        throw { msg: base + " [Code " + r.status + (detail ? " : " + detail : "") + "] [Clé : " + key.slice(0, 4) + "…" + key.slice(-3) + ", " + key.length + " caractères]" };
-      });
-    }).then(function (data) {
-      setScanStatus("");
-      renderScanResults(data.results || []);
-    }).catch(function (err) {
-      setScanStatus(esc(err && err.msg ? err.msg : "Connexion au service impossible. Vérifiez le réseau, et que l'adresse du site est autorisée dans votre compte Pl@ntNet."));
-    });
-  }
-
-  function renderScanResults(results) {
-    if (!results.length) { $("#scanResults").innerHTML = '<p class="muted">Aucun résultat.</p>'; return; }
-    var dangerHit = null, umbel = false, html = "";
-    results.forEach(function (r, i) {
-      var sp = r.species || {};
-      var latin = sp.scientificNameWithoutAuthor || "";
-      var fam = sp.family && sp.family.scientificNameWithoutAuthor;
-      if (fam === "Apiaceae") umbel = true;
-      var local = LATIN_INDEX[norm(latin)];
-      if (local && local.niveau === "danger" && !dangerHit) dangerHit = local;
-      if (i === 0) return;
-      var common = (sp.commonNames && sp.commonNames[0]) || latin;
-      var pct = Math.round((r.score || 0) * 100);
-      html += '<div class="result"><span class="score' + (local && local.niveau === "danger" ? " dz" : "") + '">' + pct + " %</span>" +
-        '<span class="names"><span>' + esc(common) + "</span><i>" + esc(latin) + "</i>" +
-        (local ? '<button class="link" data-esp="' + esc(local.id) + '">Voir la fiche et les sosies</button>' : "") + "</span>" +
-        (local ? '<span class="badge ' + lvClass(local.niveau) + '">' + esc(local.statut) + "</span>" : "") + "</div>";
-    });
-    var head = "";
-    if (dangerHit) head += '<div class="alert alert-danger"><strong>Espèce toxique possible : ' + esc(dangerHit.nom) + "</strong><span>Ne touchez pas à la bouche, ne consommez rien.</span></div>";
-    if (umbel) head += '<div class="alert alert-danger"><strong>Ombellifère détectée</strong><span>Cette famille compte des plantes mortelles (ciguës, œnanthe). Ne jamais consommer sans expert.</span></div>';
-    if (results[0].score < 0.5) head += '<div class="alert alert-warn"><strong>Identification incertaine</strong><span>Score faible : reprenez une photo plus nette, d\'un autre organe.</span></div>';
-    var r0 = results[0], sp0 = r0.species || {}, lat0 = sp0.scientificNameWithoutAuthor || "", loc0 = LATIN_INDEX[norm(lat0)];
-    var p0 = loc0 && espSrc(loc0) ? { src: espSrc(loc0) } : null;
-    var top = '<div class="res-top"><div class="rt-head"><span class="rt-img">' + (p0 ? '<img src="' + esc(p0.src) + '" alt="">' : $("#scanImg").src ? '<img src="' + esc($("#scanImg").src) + '" alt="">' : "") + "</span>" +
-      '<span><span class="rt-k">CORRESPONDANCE ' + Math.round((r0.score || 0) * 100) + ' %</span><span class="rt-n">' + esc(loc0 ? loc0.nom : ((sp0.commonNames && sp0.commonNames[0]) || lat0)) + "</span><i>" + esc(lat0) + "</i></span></div>" +
-      (loc0 ? verdictHtml(loc0) + '<button class="btn btn-primary" data-esp="' + esc(loc0.id) + '">Voir la fiche complète</button>'
-            : '<div class="verdict"><span class="v-ico" aria-hidden="true">?</span><span><b>Pas de fiche Sylva</b><span>Espèce inconnue de l\'appli : ne la consomme pas.</span></span></div>') + "</div>";
-    $("#scanResults").innerHTML = head + top + (html ? '<div class="section-title">Autres possibilités</div><div class="list">' + html + "</div>" : "");
-  }
-  $("#scanResults").addEventListener("click", function (e) {
-    var b = e.target.closest("[data-esp]"); if (b) openEspece(b.getAttribute("data-esp"));
-  });
 
   // ---------- Photos des spots (IndexedDB, restent sur le téléphone) ----------
   var idbP = null, spotUrls = {};
@@ -4256,6 +4172,89 @@
   startGeo();
   setTimeout(function () { drawTrack(); drawCar(); checkBadges(); }, 1500);
   applyEco();
+
+  // ---------- Mode crise (bouton central) ----------
+  var CRISE_SIT = [
+    ["Coupure de courant", "crise_panne"], ["Panne qui dure", "crise_electricite"], ["Inondation", "crise_inondation"],
+    ["Tempête", "crise_tempete"], ["Canicule", "crise_canicule"], ["Se mettre à l'abri (alerte, nucléaire, chimique)", "crise_abri"],
+    ["On me dit d'évacuer", "crise_evacuer"], ["Plus de réseau ni d'internet", "crise_sansreseau"], ["Plus d'eau au robinet", "crise_eau_logement"],
+    ["J'ai froid, hypothermie", "froid"], ["Malade : fièvre, diarrhée", "crise_rehydratation"], ["Je panique, je n'en peux plus", "crise_moral"]
+  ];
+  function renderCrise() {
+    $("#crList").innerHTML = CRISE_SIT.filter(function (x) { return TECHS.some(function (t) { return t.id === x[1]; }); }).map(function (x) {
+      return '<button type="button" class="crise-item" data-open-tech="' + esc(x[1]) + '"><span>' + esc(x[0]) + '</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>';
+    }).join("");
+    renderCrisePos();
+  }
+  function renderCrisePos() {
+    var el = $("#crCoords"); if (!el) return;
+    if (!me) { el.innerHTML = "Recherche de la position… Sors à découvert si ça dure."; return; }
+    el.innerHTML = "<b>" + me[0].toFixed(5) + ", " + me[1].toFixed(5) + "</b><small>Précision ± " + Math.round(me[2]) + " m</small>";
+    $("#crSms").href = "sms:&body=" + encodeURIComponent(sosText());
+  }
+  $("#crList").addEventListener("click", function (e) { var b = e.target.closest("[data-open-tech]"); if (b) openTechnique(b.getAttribute("data-open-tech")); });
+  $("#crBlesse").addEventListener("click", function () { openBlesse(); });
+  $("#crSignal").addEventListener("click", function () { updateSosCoords(); openModal("#modalSos"); });
+  $("#crCopy").addEventListener("click", function () { var t = sosText(); if (t) copyText(t); else toast("Position pas encore disponible"); });
+  $("#crSms").addEventListener("click", function (e) { if (!me) { e.preventDefault(); toast("Position pas encore disponible"); } });
+  $("#crQr").addEventListener("click", function () { $("#btnQrPos").click(); });
+  $("#crIce").addEventListener("click", function () { $("#btnIce").click(); });
+
+  // ---------- Identifier (clé hors ligne) ----------
+  var TRAITS = window.SYLVA_TRAITS || {};
+  var ID_Q = {
+    plante: [
+      ["p", "Quelle allure a-t-elle ?", [["arbre", "Un arbre"], ["arbuste", "Un arbuste, un buisson"], ["herbe", "Une herbe, une plante basse"], ["liane", "Elle grimpe ou rampe"], ["eau", "Les pieds dans l'eau"]]],
+      ["f", "Ses feuilles ?", [["simple", "Une seule pièce"], ["composee", "Découpées ou en folioles"], ["aiguille", "Des aiguilles"], ["rosette", "En rosette au ras du sol"], ["ruban", "Longues, en ruban"], ["aucune", "Pas de vraies feuilles"]]],
+      ["c", "Quelle couleur vois-tu (fleur ou fruit) ?", [["rouge", "Rouge"], ["noir", "Noir ou bleu foncé"], ["orange", "Jaune ou orange"], ["blanc", "Blanc ou crème"], ["rose", "Rose, violet ou bleu"], ["vert", "Vert"], ["brun", "Brun"]]]
+    ],
+    champignon: [
+      ["d", "Sous le chapeau ?", [["lames", "Des lames"], ["pores", "Une éponge (pores)"], ["plis", "Des plis épais"], ["aiguillons", "Des aiguillons"], ["autre", "Rien de tout ça (boule, oreille, alvéoles…)"]]],
+      ["c", "Couleur du chapeau ?", [["blanc", "Blanc"], ["brun", "Brun ou beige"], ["jaune", "Jaune"], ["orange", "Orange"], ["rouge", "Rouge"], ["vert", "Vert ou olive"], ["gris", "Gris ou noir"], ["violet", "Violet ou lilas"]]],
+      ["a", "Un anneau sur le pied ?", [["o", "Oui"], ["n", "Non"]]],
+      ["v", "Un sac ou un bulbe à la base (dégage le pied) ?", [["o", "Oui"], ["n", "Non"]]],
+      ["s", "Il pousse sur ?", [["sol", "Le sol"], ["bois", "Du bois, une souche"]]]
+    ]
+  };
+  var idKind = "plante", idAns = {};
+  function idSpecies() {
+    return ESPECES.filter(function (s) { return TRAITS[s.id] && (idKind === "plante" ? (s.cat === "plante" || s.cat === "toxique") : s.cat === "champignon"); });
+  }
+  function idMatch(t, k, v) { var x = t[k]; return Array.isArray(x) ? x.indexOf(v) !== -1 : x === v; }
+  function renderIdentifier() {
+    var qs = ID_Q[idKind];
+    $("#idQuestions").innerHTML = qs.map(function (q) {
+      return '<div class="id-q"><b>' + esc(q[1]) + '</b><div class="chips">' + q[2].map(function (o) {
+        return '<button type="button" class="chip' + (idAns[q[0]] === o[0] ? " on" : "") + '" data-q="' + q[0] + '" data-v="' + o[0] + '">' + esc(o[1]) + "</button>";
+      }).join("") + "</div></div>";
+    }).join("") + (Object.keys(idAns).length ? '<button type="button" class="link-btn" id="idReset">Recommencer</button>' : "");
+    var keys = Object.keys(idAns), list = idSpecies();
+    if (!keys.length) { $("#idCount").textContent = list.length + " espèces possibles : réponds à une question pour commencer."; $("#idResults").innerHTML = ""; return; }
+    var scored = list.map(function (s) { var n = 0; keys.forEach(function (k) { if (idMatch(TRAITS[s.id], k, idAns[k])) n++; }); return [s, n]; });
+    var full = scored.filter(function (x) { return x[1] === keys.length; }).map(function (x) { return x[0]; });
+    var near = full.length ? [] : scored.filter(function (x) { return x[1] === keys.length - 1 && keys.length > 1; }).map(function (x) { return x[0]; });
+    var res = full.length ? full : near;
+    res.sort(function (a, b) { return (b.niveau === "danger") - (a.niveau === "danger"); });
+    $("#idCount").textContent = full.length ? full.length + " espèce" + (full.length > 1 ? "s" : "") + " correspond" + (full.length > 1 ? "ent" : "") + " à tes réponses"
+      : near.length ? "Aucune espèce ne correspond à tout. Les plus proches (une réponse différente) :" : "Aucune espèce de Sylva ne correspond. Ce n'est peut-être pas une espèce de l'appli : ne la consomme pas.";
+    $("#idResults").innerHTML = res.map(function (s) {
+      return '<button class="item" data-esp="' + esc(s.id) + '"><span class="item-ico item-photo">' + espVisual(s) + '</span><span class="item-main"><span class="item-name">' + esc(s.nom) +
+        '</span><span class="item-sub">' + esc(s.latin) + '</span></span><span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + "</span></button>";
+    }).join("");
+  }
+  $("#idKind").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-kind]"); if (!b) return;
+    idKind = b.dataset.kind; idAns = {};
+    $all("#idKind .chip").forEach(function (x) { x.classList.toggle("on", x === b); });
+    renderIdentifier();
+  });
+  $("#idQuestions").addEventListener("click", function (e) {
+    if (e.target.id === "idReset") { idAns = {}; renderIdentifier(); return; }
+    var b = e.target.closest("[data-q]"); if (!b) return;
+    var q = b.dataset.q; if (idAns[q] === b.dataset.v) delete idAns[q]; else idAns[q] = b.dataset.v;
+    renderIdentifier();
+  });
+  $("#idResults").addEventListener("click", function (e) { var b = e.target.closest("[data-esp]"); if (b) openEspece(b.getAttribute("data-esp")); });
 
   if ("serviceWorker" in navigator) {
     var hadController = !!navigator.serviceWorker.controller, reloaded = false;

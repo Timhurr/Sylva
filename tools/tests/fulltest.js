@@ -125,14 +125,17 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   const spotModal = await pg.isVisible('#modalSpot');
   if (spotModal) { await pg.fill('#spotNote', 'test'); await pg.click('#formSpot button[type="submit"]'); }
   ok('Carte : ajouter un spot', spotModal);
-  // scan
-  await pg.click('.tab[data-view="scan"]'); await pg.waitForTimeout(200);
-  const png = fs.readFileSync(path.join(root, 'icons/icon-192.png'));
-  await pg.setInputFiles('#galleryInput', { name: 'p.png', mimeType: 'image/png', buffer: png });
-  await pg.waitForTimeout(2500);
-  const scan = await pg.evaluate(() => ({ top: (document.querySelector('.res-top') || {}).textContent || '', st: document.querySelector('#scanStatus').textContent }));
-  ok('Scanner : résultat (Pl@ntNet simulé)', /Ortie/.test(scan.top), scan.top.slice(0, 60) || scan.st.slice(0, 80));
-  await pg.screenshot({ path: path.join(__dirname, 'shots/ft-scan.png') });
+  // mode crise et identifier
+  await pg.click('.tab[data-view="crise"]'); await pg.waitForTimeout(300);
+  const cr = await pg.evaluate(() => document.querySelectorAll('#crList .crise-item').length);
+  ok('Mode crise : situations', cr >= 8, cr + ' situations');
+  await pg.evaluate(() => document.querySelector('[data-goto="identifier"]').click()); await pg.waitForTimeout(200);
+  await pg.click('#idQuestions [data-q="p"][data-v="arbuste"]'); await pg.click('#idQuestions [data-q="c"][data-v="noir"]'); await pg.waitForTimeout(150);
+  const idr = await pg.evaluate(() => [...document.querySelectorAll('#idResults .item-name')].map(x => x.textContent));
+  ok('Identifier : arbuste à fruits noirs', idr.includes('Sureau noir') && idr.includes('Prunellier'), idr.join(', '));
+  await pg.click('#idKind [data-kind="champignon"]'); await pg.click('#idQuestions [data-q="v"][data-v="o"]'); await pg.waitForTimeout(150);
+  const idc = await pg.evaluate(() => [...document.querySelectorAll('#idResults .item-name')].map(x => x.textContent));
+  ok('Identifier : champignons à volve', idc.some(n => /phallo/i.test(n)), idc.length + ' résultats');
   // apprendre
   await pg.click('.tab[data-view="apprendre"]'); await pg.waitForTimeout(200);
   await pg.fill('#searchAll', 'chaise'); await pg.waitForTimeout(200);
