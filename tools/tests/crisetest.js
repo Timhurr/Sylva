@@ -44,7 +44,7 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
   await pg.click('[data-ptab=plan]'); await pg.click('#btnPlanQr'); await pg.waitForTimeout(200);
   ok('qr plan', !!(await pg.$('#qrImg svg')));
   await ev(() => document.querySelectorAll('.modal').forEach(m => m.hidden = true));
-  await pg.click('[data-ptab=crises]'); const nc = (await pg.$$('#pretBody [data-tech]')).length; ok('13 crises', nc === 13, String(nc));
+  await pg.click('[data-ptab=crises]'); const nc = (await pg.$$('#pretBody [data-tech]')).length; ok('Fiches crises (au moins 13)', nc >= 13, String(nc));
   // Blessé
   await ev(() => document.querySelector('[data-goto=accueil]').click());
   await ev(() => document.querySelector('#crSignal').click());

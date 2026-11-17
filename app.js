@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.95";
+  var VERSION = "0.9.96";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -212,6 +212,7 @@
         if (c.dataset.layer === "risques") save("sylva_layer_risques", on);
       });
     });
+    (window.SYLVA_MAP_HOOKS || []).forEach(function (f) { try { f(map, layers); } catch (er) {} });
 
     map.on("popupopen", function (e) {
       var img = e.popup.getElement().querySelector("[data-spot-photo]");
@@ -823,7 +824,8 @@
         '<br><span style="color:#A9B3A6;font-size:12px">' + esc(new Date(s.date).toLocaleString("fr-BE")) + "</span>" +
         '<div class="spot-actions"><button data-gps-spot="' + esc(s.id) + '" class="sa-gps">GPS</button>' +
         '<button data-edit-spot="' + esc(s.id) + '">Modifier</button>' +
-        '<button data-del-spot="' + esc(s.id) + '" class="sa-del">Supprimer</button></div>';
+        '<button data-del-spot="' + esc(s.id) + '" class="sa-del">Supprimer</button></div>' +
+        (window.SylvaCloud && window.SylvaCloud.enabled ? '<button data-share-spot="' + esc(s.id) + '" class="sa-share">Partager à la communauté</button>' : "");
       var mk = L.marker([s.lat, s.lon], { icon: pinIcon(ty[0], ty[1]) }).bindPopup(html, { minWidth: 240 });
       spotMarkers[s.id] = mk; layers.spots.addLayer(mk);
     });
@@ -1523,6 +1525,12 @@
   }
   var SOSIE_TAG = { danger: "Dangereux", caution: "Prudence", ok: "Sans danger" };
 
+  function reportBtn(kind, id, title) {
+    return window.SylvaCloud && window.SylvaCloud.enabled ? '<button type="button" class="report-btn" data-report="' + kind + '" data-report-id="' + esc(id) + '" data-report-title="' + esc(title) + '">' + ic("alerte", "ic-in") + " Signaler une erreur</button>" : "";
+  }
+  $("#sheetBody").addEventListener("click", function (e) {
+    var b = e.target.closest("[data-report]"); if (b && window.SylvaCloud) window.SylvaCloud.openReport(b.dataset.report, b.dataset.reportId, b.dataset.reportTitle);
+  });
   function openEspece(id) {
     var s = ESPECES.filter(function (x) { return x.id === id; })[0]; if (!s) return;
     var src = espSrc(s);
@@ -1549,7 +1557,7 @@
     var reals = [[s.nom, s.latin]].concat((s.sosies || []).filter(function (x) { return x.latin; }).map(function (x) { return [x.nom.split(" (")[0], x.latin]; }));
     h += '<h3>En photo</h3><p class="tiny muted">La gravure aide à retenir ; pour identifier, compare aussi avec de vraies photos.</p><div class="real-photos" id="realPhotos">' +
       reals.map(function (r, i) { return '<figure class="real-ph" data-rp="' + i + '"><span class="rp-img">' + (photoOf(r[1]) ? '<img src="' + esc(photoOf(r[1]).src) + '" alt="' + esc(r[0]) + '" loading="lazy">' : "") + "</span><figcaption><b>" + esc(r[0]) + "</b>" + (photoOf(r[1]) ? "<span>" + photoCredit(photoOf(r[1])) + "</span>" : "<span>" + (navigator.onLine ? "Chargement…" : "Photo disponible en ligne") + "</span>") + "</figcaption></figure>"; }).join("") + "</div>";
-    h += '<p class="disclaimer">Contenu éducatif. Ne consommez jamais une plante ou un champignon sans certitude absolue de son identité. La photo montre l\'espèce en général : comparez toujours plusieurs critères.</p></div>';
+    h += '<p class="disclaimer">Contenu éducatif. Ne consommez jamais une plante ou un champignon sans certitude absolue de son identité. La photo montre l\'espèce en général : comparez toujours plusieurs critères.</p>' + reportBtn("espece", s.id, s.nom) + "</div>";
     openSheet(CAT_LABEL[s.cat], h, { hero: true });
     if (navigator.onLine) reals.forEach(function (r, i) {
       if (photoOf(r[1])) return;
@@ -1649,6 +1657,7 @@
     } else h += stepsHtml(main, t.isole ? "isole" : "", false, t.id);
     (t.attentionIsole || []).forEach(function (a) { h += '<div class="alert alert-warn"><span>' + esc(a) + "</span></div>"; });
     (t.attention || []).forEach(function (a) { h += '<div class="alert alert-warn"><span>' + esc(a) + "</span></div>"; });
+    h += reportBtn("fiche", t.id, t.titre);
     if (t.source) h += '<p class="disclaimer">Source : ' + esc(t.source) + (t.cat === "Premiers secours" ? ". Contenu éducatif : il ne remplace pas une formation aux premiers secours." : ".") + "</p>";
     openSheet(t.cat, h);
     if (t.wiki && !tp && !stepPics && navigator.onLine) {
@@ -4254,6 +4263,11 @@
     renderIdentifier();
   });
   $("#idResults").addEventListener("click", function (e) { var b = e.target.closest("[data-esp]"); if (b) openEspece(b.getAttribute("data-esp")); });
+
+  // ---------- Passerelle pour cloud.js (comptes, communauté) ----------
+  window.SYLVA_APP = { $: $, $all: $all, esc: esc, ic: ic, toast: toast, load: load, save: save, openModal: openModal, closeModal: closeModal,
+    pinIcon: pinIcon, getSpots: getSpots, renderSpots: renderSpots, spotPhotoUrl: spotPhotoUrl, getCountry: getCountry, distKm: distKm, fmtKm: fmtKm, uid: uid,
+    version: VERSION, getMap: function () { return map; }, getLayers: function () { return layers; }, getMe: function () { return me; } };
 
   if ("serviceWorker" in navigator) {
     var hadController = !!navigator.serviceWorker.controller, reloaded = false;

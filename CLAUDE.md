@@ -52,6 +52,8 @@ leaflet (unpkg) → data.js → especes_plus.js → especes_champignons.js → e
 | `especes_*.js` | Espèces supplémentaires (plantes, champignons, régions). |
 | `techniques_plus.js`, `classiques.js`, `abris_plus.js`, `noeuds_plus.js`, `secours_isole.js`, `poissons.js`, `astuces.js`, `cuisine_jeux.js`, `rvalue.js` | Fiches, chapitres et compléments ajoutés par thème. Chaque fichier pousse dans les tableaux globaux et relie ses fiches aux chapitres. |
 | `crise_vie.js` | Fiches Crises « vivre une crise qui dure » : hygiène, réhydratation, fièvre, traitements, personnes fragiles, animaux, moral, électricité. |
+| `config.js`, `cloud.js` | Serveur Supabase (vide = appli sans compte). Compte par code e-mail, synchronisation (`SYNC_KEYS`, jamais `sylva_ice`, garrot, clés, caches), signalements, idées, carte communautaire. Chargés avant `app.js` ; passerelle `window.SYLVA_APP`, crochets `SYLVA_MAP_HOOKS`. |
+| `supabase/schema.sql`, `moderation.html`, `docs/SUPABASE.md` | Tables et règles RLS (testées sur un Postgres local), page de modération pour Tim, guide de mise en route. |
 | `fabriquer.js` | Catégorie « Fabriquer » : charbon, colle de résine, eau de cendres, savon, saponaire, bougie de suif. |
 | `pret72.js`, `crise_plus.js` | Prêt 72 h (kit, pays) et fiches de crise (catégorie « Crises », chapitre `crises`). |
 | `risques.js` | Sites nucléaires (`SYLVA_RISQUES`, positions approximatives) et liens officiels Seveso par pays. |
@@ -301,6 +303,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 - **v0.9.93** : Pl@ntNet retiré (vue scan, clé dans Réglages, test). Le bouton central ouvre le **mode crise** (`view-crise`, `renderCrise`, `CRISE_SIT`). Nouvel écran **Identifier** (`view-identifier`, `ID_Q`, `renderIdentifier`, données `identifier.js`) ; résultats triés danger d'abord, toujours renvoyer vers la fiche. Tests fulltest mis à jour.
 
 - **v0.9.94** : bouton SOS flottant (`#btnSos`) retiré : le mode crise du bouton central le remplace (« Signaler ma présence » ouvre `modalSos`). Marges réservées au SOS supprimées (`.page-head`, `.panel-head`, `.map-search`).
+
+- **v0.9.96** : comptes et communauté prêts, **inactifs tant que `config.js` est vide**. Connexion par code à 6 chiffres (pas de lien : sur iPhone il s'ouvrirait dans Safari et pas dans l'appli installée). Synchro « le plus récent gagne » par clé. Signaler une erreur (fiches, espèces, spots, avis ; sans compte), Idées avec votes, couche « Communauté » (statut légal obligatoire : aire officielle, terrain privé avec accord, camping, zone tolérée ; filtre téléphone/e-mail/liens/insultes ; 3 premiers spots relus puis membre de confiance ; photos toujours relues ; spot masqué après 3 signalements), `moderation.html`. Brouillons `docs/confidentialite.html` et `docs/conditions.html` à faire valider par un juriste. Test : `tools/tests/cloudtest.js` (Supabase simulé). **En attente de Tim** : créer le projet Supabase (voir `docs/SUPABASE.md`) et donner l'URL + clé anon.
 
 ## 11. Basculer sur un autre compte
 

@@ -103,6 +103,7 @@
       <button class="chip on" data-layer="services">Services</button>
       <button class="chip on" data-layer="chasse">Chasse</button>
       <button class="chip" data-layer="risques">Risques</button>
+      <button class="chip" data-layer="communaute" hidden>Communauté</button>
     </div>
     <div class="basemap-panel" id="basemapPanel" hidden>
       <div class="basemap-title">Fond de carte</div>
@@ -575,9 +576,86 @@
   </form>
 </div>
 
+<div class="modal" id="modalReport" hidden role="dialog" aria-modal="true" aria-labelledby="repH">
+  <form class="modal-box" id="formReport">
+    <h2 id="repH">Signaler une erreur</h2>
+    <p class="tiny muted">Sur : <b id="repTitle"></b></p>
+    <input type="hidden" id="repKind"><input type="hidden" id="repTarget">
+    <label class="field"><span class="field-label">Type</span><select id="repMotif">
+      <option value="securite">Conseil dangereux ou faux</option><option value="identification">Erreur d'identification (plante, champignon…)</option>
+      <option value="image">Image fausse ou trompeuse</option><option value="contenu">Contenu inapproprié</option><option value="illegal">Lieu illégal ou privé</option>
+      <option value="faute">Faute ou imprécision</option><option value="autre">Autre</option></select></label>
+    <label class="field"><span class="field-label">Explique en quelques mots</span><textarea id="repMsg" rows="4" maxlength="1000" placeholder="Ce qui est faux, et si possible ta source"></textarea></label>
+    <p class="tiny muted">Pas besoin de compte. Ne mets pas d'informations personnelles.</p>
+    <div class="row"><button type="button" class="btn btn-ghost" data-close>Annuler</button><button type="submit" class="btn btn-primary">Envoyer</button></div>
+  </form>
+</div>
+
+<div class="modal" id="modalIdeas" hidden role="dialog" aria-modal="true" aria-labelledby="ideasH">
+  <div class="modal-box">
+    <h2 id="ideasH">Idées et retours</h2>
+    <p class="tiny muted">Vote pour les idées qui t'intéressent : les plus demandées passent en premier.</p>
+    <div id="ideasList" class="ideas"></div>
+    <form id="formIdea">
+      <div class="field-label">Proposer une idée</div>
+      <input type="text" id="ideaTitle" maxlength="90" placeholder="En une phrase">
+      <textarea id="ideaDetail" rows="3" maxlength="600" placeholder="Détails (facultatif)"></textarea>
+      <div class="row"><button type="button" class="btn btn-ghost" data-close>Fermer</button><button type="submit" class="btn btn-primary">Proposer</button></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal" id="modalCommu" hidden role="dialog" aria-modal="true" aria-label="Spot de la communauté">
+  <div class="modal-box"><div id="comBody"></div><button class="btn btn-ghost" data-close>Fermer</button></div>
+</div>
+
+<div class="modal" id="modalReview" hidden role="dialog" aria-modal="true" aria-labelledby="revH">
+  <form class="modal-box" id="formReview">
+    <h2 id="revH">Mon avis</h2>
+    <div class="row" style="gap:8px">
+      <label class="field" style="flex:1"><span class="field-label">Note</span><select id="revNote"><option value="5">★★★★★</option><option value="4">★★★★</option><option value="3">★★★</option><option value="2">★★</option><option value="1">★</option></select></label>
+      <label class="field" style="flex:1"><span class="field-label">Date</span><input type="date" id="revDate"></label>
+    </div>
+    <div class="row" style="gap:8px">
+      <label class="field" style="flex:1"><span class="field-label">Calme</span><select id="revCalme"><option value="">–</option><option value="5">Très calme</option><option value="3">Moyen</option><option value="1">Bruyant</option></select></label>
+      <label class="field" style="flex:1"><span class="field-label">Propreté</span><select id="revProp"><option value="">–</option><option value="5">Propre</option><option value="3">Moyen</option><option value="1">Sale</option></select></label>
+    </div>
+    <label class="check-row"><input type="checkbox" id="revOk" checked> Le spot existe toujours et correspond à la description</label>
+    <label class="field"><span class="field-label">Commentaire (facultatif)</span><textarea id="revTxt" rows="3" maxlength="280"></textarea></label>
+    <div class="row"><button type="button" class="btn btn-ghost" data-close>Annuler</button><button type="submit" class="btn btn-primary">Publier</button></div>
+  </form>
+</div>
+
+<div class="modal" id="modalShare" hidden role="dialog" aria-modal="true" aria-labelledby="shH">
+  <form class="modal-box" id="formShare">
+    <h2 id="shH">Partager ce spot</h2>
+    <label class="field"><span class="field-label">Titre</span><input type="text" id="shTitre" maxlength="60" placeholder="Ex. Aire de bivouac du bois de…"></label>
+    <label class="field"><span class="field-label">Ce lieu est…</span><select id="shStatut"><option value="">Choisis le statut</option>
+      <option value="aire_officielle">Une aire de bivouac officielle</option><option value="terrain_prive_accord">Un terrain privé, avec l'accord du propriétaire</option>
+      <option value="camping">Un camping</option><option value="zone_toleree">Une zone où le bivouac est autorisé ou toléré</option></select></label>
+    <div class="alert alert-warn" id="shRule"></div>
+    <label class="field"><span class="field-label">Description (facultatif)</span><textarea id="shDesc" rows="3" maxlength="500" placeholder="Accès, sol, ombre, conseils…"></textarea></label>
+    <div class="share-feats">
+      <label class="check-row"><input type="checkbox" id="shEau"> Eau à proximité</label>
+      <label class="check-row"><input type="checkbox" id="shAbri"> Abri</label>
+      <label class="check-row"><input type="checkbox" id="shFeu"> Feu autorisé</label>
+      <label class="check-row"><input type="checkbox" id="shVoit"> Accès voiture</label>
+    </div>
+    <label class="check-row" id="shPhotoRow"><input type="checkbox" id="shPhoto"> Joindre ma photo (sans personne reconnaissable)</label>
+    <label class="check-row"><input type="checkbox" id="shCgu"> Je confirme que dormir ici est autorisé, que je respecte les lois locales et les <a href="docs/conditions.html" target="_blank" rel="noopener">règles de partage</a>.</label>
+    <p class="tiny muted">Tes premiers partages sont vérifiés avant d'être visibles. Seuls ton pseudo et ce formulaire sont publics, jamais ta position en direct.</p>
+    <div class="row"><button type="button" class="btn btn-ghost" data-close>Annuler</button><button type="submit" class="btn btn-primary">Partager</button></div>
+  </form>
+</div>
+
 <div class="modal" id="modalSettings" hidden role="dialog" aria-modal="true" aria-labelledby="setTitle">
   <form class="modal-box" id="formSettings">
     <h2 id="setTitle">Réglages</h2>
+    <div id="accountSection" hidden>
+      <div class="field-label">Mon compte</div>
+      <div id="accountBox"></div>
+    </div>
+    <p class="tiny muted" id="accountSoon">Comptes, sauvegarde en ligne et communauté : bientôt.</p>
     <div class="row" style="gap:10px">
       <label class="field" style="flex:1"><span class="field-label">Pays</span><select id="setCountry"><option value="BE">Belgique</option><option value="FR">France</option><option value="LU">Luxembourg</option><option value="NL">Pays-Bas</option><option value="DE">Allemagne</option><option value="CH">Suisse</option><option value="XX">Autre pays</option></select></label>
       <label class="field" style="flex:1"><span class="field-label">Langue</span><select id="setLang"><option value="fr">Français</option><option value="en" disabled>English (bientôt)</option><option value="nl" disabled>Nederlands (bientôt)</option><option value="de" disabled>Deutsch (bientôt)</option><option value="es" disabled>Español (bientôt)</option></select></label>
@@ -603,7 +681,9 @@
     <div class="field-label">À propos</div>
     <div class="row">
       <button type="button" class="btn" id="btnSources">Sources et crédits</button>
+      <button type="button" class="btn" id="btnIdeas" hidden>Idées et retours</button>
     </div>
+    <p class="tiny"><a href="docs/confidentialite.html" target="_blank" rel="noopener">Confidentialité</a> · <a href="docs/conditions.html" target="_blank" rel="noopener">Conditions d'utilisation</a></p>
     <div class="field-label">Mes spots</div>
     <div class="row">
       <button type="button" class="btn" id="btnExportSpots">Copier mes spots</button>
@@ -735,6 +815,8 @@
 <script src="fabriquer.js"></script>
 <script src="identifier.js"></script>
 <script src="risques.js"></script>
+<script src="config.js"></script>
+<script src="cloud.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
