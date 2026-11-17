@@ -181,13 +181,8 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 - Licences des services listés au §8 avant tout usage commercial.
 - Conditions d'utilisation et avertissement médical.
 
-### Modèle d'accès validé avec Tim (16/11/2026)
-Règle : **ce qui peut sauver une vie reste gratuit et sans compte.**
-- **Sans compte (gratuit)** : mode crise (112, blessé, signal, position), fiches Crises, premiers secours, plantes toxiques, Prêt 72 h complet, carte en ligne, météo, alertes, quelques fiches de base par catégorie.
-- **Compte gratuit** : en plus, sauvegarde et synchronisation entre appareils.
-- **Sylva+ (≈ 3,99 €/mois ou 24,99 €/an, essai 7 jours)** : toute la bibliothèque (fiches, guide, espèces, recettes, Fabriquer), cartes hors ligne et « Préparer la sortie », tous les outils de terrain, Identifier, quiz et défis complets, matériel, journal et spots illimités.
-- **Famille (≈ 39,99 €/an, 5 personnes)** : foyer partagé (kit, plan, stock).
-- Compte prévu : facultatif, Supabase région Francfort, lien magique par e-mail puis Google et Apple, données sensibles chiffrées sur le téléphone, appli 100 % utilisable sans compte ni réseau. Paiement via Apple / Google dans l'appli native (pas besoin de compte pour payer).
+### Accès gratuit / compte / abonnement
+Règle : **ce qui peut sauver une vie reste gratuit et sans compte** (mode crise, premiers secours, plantes toxiques, Prêt 72 h, carte en ligne, météo, alertes). Le compte gratuit ajoute la sauvegarde. La version payante (abonnement ou achat à vie) débloque le reste. Les prix et l'analyse de marché ne sont **pas** dans ce dépôt public : ils sont dans le projet claude.ai « Perso » de Tim (`claude/sylva-modele-economique.md`).
 
 ### Feuille de route « Crise & résilience » (validée avec Tim le 16/11/2026)
 Phase 1, faisable dans la PWA actuelle :
