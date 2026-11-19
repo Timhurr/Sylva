@@ -37,7 +37,7 @@ Ce fichier est lu automatiquement par Claude Code à l'ouverture du dépôt. Il 
 Pas de build : les fichiers sont servis tels quels. **L'ordre de chargement compte** (voir `index.html`, fin du fichier) :
 
 ```
-leaflet (unpkg) → data.js → especes_plus.js → especes_champignons.js → especes_regions.js → techniques_plus.js
+vendor/leaflet → data.js → especes_plus.js → especes_champignons.js → especes_regions.js → techniques_plus.js
 → illus.js → images.js → guide.js → secours_isole.js → noeuds_plus.js → classiques.js → abris_plus.js
 → poissons.js → astuces.js → cuisine_jeux.js → rvalue.js → materiel.js → vendor/qrcode.js → pret72.js → crise_plus.js → crise_vie.js → fabriquer.js → identifier.js → risques.js → app.js
 ```
@@ -152,7 +152,7 @@ Toutes les données utilisateur sont **sur le téléphone**, clés `sylva_*` dan
 |---|---|---|
 | IGN Belgique CartoWeb | Fond de carte par défaut | Données ouvertes, usage commercial possible. Zoom natif 17. |
 | MapTiler (Outdoor, Satellite) | Fonds de carte avec la clé de l'utilisateur | Clé restreinte au domaine `bivaska.eu` (et `?` pour les requêtes sans origine). Formule gratuite = usage personnel ; pour la version payante : formule Flex (30 $/mois, 25 000 sessions, puis 2,50 $ / 1 000) et clé intégrée à l'appli. **Téléchargement en masse interdit** (art. 6.3) : pas de préchargement MapTiler, packs hors ligne seulement avec un contrat Custom. |
-| OpenFreeMap + MapLibre GL (unpkg) | Fond mondial « OpenFreeMap » (style liberty) et style vectoriel « Terminal » | Gratuit, usage commercial autorisé. |
+| OpenFreeMap + MapLibre GL (`vendor/maplibre/`) | Fond mondial « OpenFreeMap » (style liberty) et style vectoriel « Terminal » | Gratuit, usage commercial autorisé. |
 | Overpass (OpenStreetMap) | Bivouacs, points d'eau, services | Usage léger ; données ODbL à attribuer. Serveurs essayés dans l'ordre : overpass-api.de, overpass.private.coffee, overpass.kumi.systems. |
 | Nominatim | Recherche de lieu | 1 requête par seconde maximum. |
 | Open-Meteo | Météo, altitude (relief) | Gratuit pour un usage non commercial : licence payante à prévoir. |
@@ -304,6 +304,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 - **Nom de l'appli : Bivaska** (19/11/2026, choisi par Tim : mot inventé à partir de bivouac / bivak / biwak, protégeable comme marque). « Sylva » est abandonné (trop proche de la marque de boussoles Silva). Seuls les textes visibles ont changé : le dépôt, l'URL GitHub Pages, les variables `SYLVA_*`, `SylvaCloud` et les clés `sylva_*` du téléphone gardent l'ancien nom exprès (changer les clés effacerait les données des utilisateurs). Domaines : `bivaska.eu` (+ `bivaka.eu`, faute de frappe, à rediriger).
 
 - **v0.9.98 / v0.9.99** : comptes **activés** (projet Supabase `zzlewwrakyowuilgqpoj`, région Frankfurt, clé `sb_publishable_…` dans `config.js` ; `cloud.js` n'envoie plus la clé en `Authorization` si ce n'est pas un JWT). E-mails par Brevo SMTP depuis `noreply@bivaska.eu` (domaine authentifié DKIM + DMARC). Pièges rencontrés : Brevo bloque par défaut le SMTP depuis des IP inconnues (Sécurité → IP autorisées → désactivé pour les clés SMTP) ; le modèle « Confirm signup » doit aussi contenir `{{ .Token }}` sinon un lien est envoyé. Connexion testée par Tim sur iPhone : OK.
+
+- **v0.9.100 : audit de sécurité.** Domaine `bivaska.eu` (fichier `CNAME`). Bibliothèques de carte hébergées dans `vendor/` (Leaflet 1.9.4, MapLibre 4.7.1, maplibre-gl-leaflet 0.1.1 : plus de CDN unpkg) et police VT323 locale (plus de Google Fonts, qui transmettait l'IP des utilisateurs). Politique de sécurité du contenu (CSP) en `<meta>` dans `index.html` et `moderation.html` (script de modération déplacé dans `moderation.js`, refus d'être affichée dans un cadre). `safeUrl()` pour les liens venus d'OSM. `supabase/securite.sql` (à lancer après `schema.sql`) : champs sensibles des profils cachés (`rpc/my_profile`), pseudos uniques et noms réservés, spot masqué seulement après 3 membres connectés différents, limites de débit et quotas, avis masqués protégés, chemin des photos contrôlé, 3 Mo et images seulement, suppression de compte réparée. Testé sur un Postgres local.
 
 ## 11. Basculer sur un autre compte
 

@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.99";
+  var VERSION = "0.9.100";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -12,6 +12,8 @@
   function $all(sel) { return Array.prototype.slice.call(document.querySelectorAll(sel)); }
   function ic(n, cls) { return '<svg class="ic' + (cls ? " " + cls : "") + '" aria-hidden="true"><use href="#i-' + n + '"/></svg>'; }
   function med(n, c) { return '<span class="med ' + (c || "c-amber") + '">' + ic(n) + "</span>"; }
+  // Lien externe sûr : seulement http(s), sinon « # » (bloque les liens javascript: venus d'OpenStreetMap ou d'ailleurs)
+  function safeUrl(u) { u = String(u || "").trim(); return /^https?:\/\//i.test(u) ? u : "#"; }
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
@@ -392,10 +394,10 @@
   function loadGL() {
     if (glPromise) return glPromise;
     glPromise = new Promise(function (res, rej) {
-      var css = document.createElement("link"); css.rel = "stylesheet"; css.href = "https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css"; document.head.appendChild(css);
+      var css = document.createElement("link"); css.rel = "stylesheet"; css.href = "vendor/maplibre/maplibre-gl.css"; document.head.appendChild(css);
       function js(src, next) { var sc = document.createElement("script"); sc.src = src; sc.onload = next; sc.onerror = function () { glPromise = null; rej(); }; document.head.appendChild(sc); }
-      js("https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js", function () {
-        js("https://unpkg.com/@maplibre/maplibre-gl-leaflet@0.1.1/leaflet-maplibre-gl.js", function () { L.maplibreGL ? res() : rej(); });
+      js("vendor/maplibre/maplibre-gl.js", function () {
+        js("vendor/maplibre/leaflet-maplibre-gl.js", function () { L.maplibreGL ? res() : rej(); });
       });
     });
     return glPromise;
@@ -721,7 +723,7 @@
       var d = me ? '<br><span style="color:#A9B3A6">À ' + fmtKm(distKm([me[0], me[1]], [lat, lon])) + " de toi</span>" : "";
       var web = t.website || t["contact:website"];
       var html = "<b>" + esc(name) + '</b><br><span style="color:#A9B3A6">' + esc(typ) + "</span>" + d +
-        (lines.length ? "<br><br>" + lines.join("<br>") : "") + (web ? '<br><a href="' + esc(web) + '" target="_blank" rel="noopener">Site web</a>' : "") +
+        (lines.length ? "<br><br>" + lines.join("<br>") : "") + (web ? '<br><a href="' + esc(safeUrl(web)) + '" target="_blank" rel="noopener">Site web</a>' : "") +
         '<div class="spot-actions"><button class="sa-gps" data-go-lat="' + lat + '" data-go-lon="' + lon + '" data-go-name="' + esc(name) + '">Y aller</button></div>' +
         '<span style="font-size:11px;color:#A9B3A6">Infos OpenStreetMap : horaires à vérifier.</span>';
       layers.services.addLayer(L.marker([lat, lon], { icon: pinIcon(k[2], k[3]) }).bindPopup(html, { minWidth: 220 }));
@@ -768,7 +770,7 @@
       html = "<b>" + esc(t.name || (isBiv ? "Aire de bivouac" : "Camping")) + "</b><br>" +
         '<span style="color:' + (isBiv ? "#8CCB7E" : "#A9B3A6") + '">' + (isBiv ? "Aire de bivouac" : "Camping (souvent fermé en hiver)") + "</span>" + d +
         (lines.length ? "<br><br>" + lines.join("<br>") : "") +
-        (t.website ? '<br><a href="' + esc(t.website) + '" target="_blank" rel="noopener">Site web</a>' : "") +
+        (t.website ? '<br><a href="' + esc(safeUrl(t.website)) + '" target="_blank" rel="noopener">Site web</a>' : "") +
         '<br><br><a href="https://maps.apple.com/?daddr=' + p.lat + "," + p.lon + '&dirflg=w" target="_blank" rel="noopener">Itinéraire à pied</a>';
       marker = L.marker([p.lat, p.lon], { icon: pinIcon(isBiv ? "#8CCB7E" : "#7C8A80", isBiv ? "B" : "C") }).bindPopup(html);
       p.marker = marker;
@@ -1335,7 +1337,7 @@
   function photoCredit(p) {
     var link = p.commons ? "https://commons.wikimedia.org/wiki/File:" + encodeURIComponent(p.file) : p.page;
     return "Photo : " + esc(p.artist || "auteur sur Wikimedia") + (p.license ? " · " + esc(p.license) : "") +
-      ' · <a href="' + esc(link) + '" target="_blank" rel="noopener">source</a>';
+      ' · <a href="' + esc(safeUrl(link)) + '" target="_blank" rel="noopener">source</a>';
   }
   function allLatins() {
     var out = [];
@@ -3616,7 +3618,7 @@
   function gearFormFill(x) {
     $("#gCat").value = x.cat || "autre"; $("#gNom").value = x.nom || ""; $("#gPoids").value = x.poids || "";
     $("#gR").value = x.r != null && x.r !== "" ? String(x.r).replace(".", ",") : ""; $("#gComf").value = x.comf != null ? x.comf : ""; $("#gLim").value = x.lim != null ? x.lim : "";
-    $("#gSrc").innerHTML = x.src ? 'Valeurs : <a href="' + esc(x.src) + '" target="_blank" rel="noopener">source</a>' + (x.note ? " · " + esc(x.note) : "") : "";
+    $("#gSrc").innerHTML = x.src ? 'Valeurs : <a href="' + esc(safeUrl(x.src)) + '" target="_blank" rel="noopener">source</a>' + (x.note ? " · " + esc(x.note) : "") : "";
     gearFields();
   }
   function gearFields() {

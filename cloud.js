@@ -52,7 +52,21 @@
     return http("POST", "/auth/v1/verify", { type: "email", email: email, token: code }, { anon: true }).then(function (j) { setSess(fromToken(j)); return j; });
   };
   C.logout = function () { var p = getSess() ? http("POST", "/auth/v1/logout", {}).catch(function () {}) : Promise.resolve(); return p.then(function () { setSess(null); }); };
-  C.deleteAccount = function () { return api("POST", "rpc/delete_my_account", {}).then(function () { setSess(null); }); };
+  // Supprime d'abord mes photos par l'API de stockage (Supabase interdit l'effacement direct en SQL), puis le compte
+  C.deleteAccount = function () {
+    var u = C.user(), ss = getSess();
+    var photos = !u ? Promise.resolve() : fresh().then(function (s2) {
+      var h = { apikey: KEY, Authorization: "Bearer " + ((s2 || ss).access_token), "Content-Type": "application/json" };
+      return fetch(URL_ + "/storage/v1/object/list/spot-photos", { method: "POST", headers: h, body: JSON.stringify({ prefix: u.id, limit: 1000 }) })
+        .then(function (r) { return r.ok ? r.json() : []; })
+        .then(function (list) {
+          var names = (list || []).map(function (o) { return u.id + "/" + o.name; });
+          if (!names.length) return;
+          return fetch(URL_ + "/storage/v1/object/spot-photos", { method: "DELETE", headers: h, body: JSON.stringify({ prefixes: names }) });
+        });
+    }).catch(function () {});
+    return photos.then(function () { return api("POST", "rpc/delete_my_account", {}); }).then(function () { setSess(null); });
+  };
   C.api = api;
 
   // Filtre des textes publics : pas de téléphone, e-mail, lien ni insulte courante
@@ -167,14 +181,18 @@
   function ensureProfile() {
     var u = C.user(); if (!u) return Promise.resolve(null);
     if (profile && profile.id === u.id) return Promise.resolve(profile);
-    return api("GET", "profiles?select=id,pseudo,trusted,is_admin,banned&id=eq." + u.id).then(function (r) { profile = (r && r[0]) || { id: u.id }; return profile; }).catch(function () { return null; });
+    // rpc/my_profile (securite.sql) ; ancienne lecture directe en secours tant que le SQL n'est pas passé
+    return api("POST", "rpc/my_profile", {}).catch(function () { return api("GET", "profiles?select=id,pseudo,trusted,is_admin,banned&id=eq." + u.id); })
+      .then(function (r) { profile = (r && r[0]) || { id: u.id }; return profile; }).catch(function () { return null; });
   }
   function askPseudo() {
     return ensureProfile().then(function (p) {
       if (p && p.pseudo) return p;
       var ps = (window.prompt("Choisis un pseudo public (2 à 30 caractères, pas ton nom complet) :") || "").trim();
       if (ps.length < 2 || ps.length > 30 || textOk(ps) !== true) { toast("Pseudo refusé"); throw new Error("pseudo"); }
-      return api("PATCH", "profiles?id=eq." + p.id, { pseudo: ps }, { prefer: "return=minimal" }).then(function () { p.pseudo = ps; return p; });
+      if (!p) throw new Error("profil");
+      return api("PATCH", "profiles?id=eq." + p.id, { pseudo: ps }, { prefer: "return=minimal" }).then(function () { p.pseudo = ps; return p; })
+        .catch(function (er) { toast(/duplicate|unique/i.test(er.message) ? "Ce pseudo est déjà pris" : "Pseudo refusé (lettres, chiffres, espaces ; pas de nom réservé)"); throw er; });
     });
   }
   function needLogin(msg) {
@@ -304,7 +322,7 @@
         '<button type="button" class="link-btn danger-link" id="comReport">Signaler ce spot</button>';
       $("#comBody").innerHTML = h;
       (r[3] || []).forEach(function (p) {
-        fresh().then(function () { return http("POST", "/storage/v1/object/sign/spot-photos/" + p.path, { expiresIn: 3600 }); }).then(function (j) {
+        fresh().then(function () { return http("POST", "/storage/v1/object/sign/spot-photos/" + p.path.split("/").map(encodeURIComponent).join("/"), { expiresIn: 3600 }); }).then(function (j) {
           if (j && j.signedURL) { var im = document.createElement("img"); im.src = URL_ + "/storage/v1" + j.signedURL; im.alt = "Photo du spot"; im.loading = "lazy"; $("#comPhotos").appendChild(im); }
         }).catch(function () {});
       });

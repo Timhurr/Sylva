@@ -11,6 +11,9 @@ Tout le code est prêt : comptes, sauvegarde, signalements, idées, carte commun
 1. Menu de gauche **SQL Editor** → **New query**.
 2. Colle tout le contenu de `supabase/schema.sql` (dans le dépôt) → **Run**. Il doit afficher « Success ».
 
+### 2 bis. Renforcer la sécurité (obligatoire)
+Même chose avec `supabase/securite.sql` : **New query**, colle tout, **Run**. Il cache les champs sensibles des profils, limite les abus (signalements, spams, quotas), contrôle les photos (3 Mo, images seulement) et répare la suppression de compte. Peut être relancé sans risque.
+
 ## 3. Régler la connexion par code
 1. **Authentication → Sign In / Providers → Email** : laisse « Enable Email provider » activé ; « Confirm email » activé.
 2. **Authentication → Emails → Magic Link** : remplace le texte du modèle par :

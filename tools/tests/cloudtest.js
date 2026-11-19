@@ -17,7 +17,7 @@ const res = []; const ok = (n, c, d) => { res.push(c); console.log((c ? 'OK   ' 
   const pg = await ctx.newPage(); pg.on('pageerror', e => errs.push(e.message));
   const db = { user_data: [{ k: 'sylva_trip', v: { lieu: 'Depuis le serveur' }, updated_at: new Date(Date.now() + 60000).toISOString() }], reports: [], ideas: [], posted: [] };
   await pg.route(/unpkg|open-meteo|overpass|openstreetmap|fonts\.|wiki/, r => r.abort());
-  await pg.route(/unpkg\.com.*\.js/, r => r.fulfill({ contentType: 'text/javascript', body: stub }));
+  await pg.route(/unpkg\.com.*\.js|\/vendor\/(leaflet|maplibre)\/.*\.js/, r => r.fulfill({ contentType: 'text/javascript', body: stub }));
   await pg.route(SB + '/**', async (route) => {
     const u = new URL(route.request().url()), m = route.request().method(), body = route.request().postData();
     const J = (o, s) => route.fulfill({ status: s || 200, contentType: 'application/json', body: JSON.stringify(o) });
@@ -29,6 +29,7 @@ const res = []; const ok = (n, c, d) => { res.push(c); console.log((c ? 'OK   ' 
     if (u.pathname === '/rest/v1/idea_scores') return J([{ id: 'i1', titre: 'Mode hors ligne complet', detail: '', status: 'open', votes: 4 }]);
     if (u.pathname === '/rest/v1/idea_votes') return J([]);
     if (u.pathname === '/rest/v1/profiles') return J([{ id: 'u1', pseudo: 'Tim' }]);
+    if (u.pathname === '/rest/v1/rpc/my_profile') return J([{ id: 'u1', pseudo: 'Tim', trusted: false, is_admin: false, banned: false }]);
     if (u.pathname === '/rest/v1/community_spots' && m === 'GET' && u.search.includes('id=eq.')) return J([{ id: 's1', lat: 50.06, lon: 5.68, titre: 'Aire du Hérou', statut: 'aire_officielle', country: 'BE', eau: true, description: 'Calme', profiles: { pseudo: 'Ana' } }]);
     if (u.pathname === '/rest/v1/community_spots' && m === 'GET') return J([{ id: 's1', lat: 50.06, lon: 5.68, titre: 'Aire du Hérou', statut: 'aire_officielle', country: 'BE' }]);
     if (u.pathname === '/rest/v1/community_spots' && m === 'POST') { db.shared = JSON.parse(body); return J([{ id: 's2', status: 'pending' }], 201); }

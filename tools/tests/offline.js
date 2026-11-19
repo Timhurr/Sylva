@@ -12,8 +12,8 @@ const stub = `(function(){function mk(){var f=function(){return p};var p=new Pro
 (async () => {
   const b = await chromium.launch();
   const ctx = await b.newContext({ ...devices['iPhone 13'] });
-  await ctx.route(/unpkg\.com.*\.js/, r => r.fulfill({ body: stub, contentType: 'text/javascript', headers: {'access-control-allow-origin':'*'} }));
-  await ctx.route(/unpkg\.com/, r => r.fulfill({ body: '', contentType: 'text/css', headers: {'access-control-allow-origin':'*'} }));
+  await ctx.route(/unpkg\.com.*\.js|\/vendor\/(leaflet|maplibre)\/.*\.js/, r => r.fulfill({ body: stub, contentType: 'text/javascript', headers: {'access-control-allow-origin':'*'} }));
+  await ctx.route(/unpkg\.com|\/vendor\/(leaflet|maplibre)\/.*\.css/, r => r.fulfill({ body: '', contentType: 'text/css', headers: {'access-control-allow-origin':'*'} }));
   await ctx.route(/(fonts\.|openstreetmap|overpass|open-meteo|wikipedia|wikimedia|nominatim)/, r => r.abort());
   const pg = await ctx.newPage(); const errs = [];
   pg.on('pageerror', e => errs.push(e.message));

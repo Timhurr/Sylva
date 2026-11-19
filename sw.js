@@ -1,20 +1,16 @@
 /* Bivaska – service worker : appli et fiches hors-ligne, tuiles de carte vues gardées en cache */
-var VERSION = "sylva-v0.9.99";
+var VERSION = "sylva-v0.9.100";
 var SHELL = VERSION + "-shell";
 var TILES = "sylva-tiles";
 var PHOTOS = "sylva-photos";
 var MAX_TILES = 4000;
 
 var LOCAL = [
-  "./", "index.html", "styles.css", "config.js", "cloud.js", "app.js", "data.js", "especes_plus.js", "especes_champignons.js", "especes_regions.js", "techniques_plus.js", "illus.js", "images.js", "guide.js", "secours_isole.js", "noeuds_plus.js", "classiques.js", "abris_plus.js", "poissons.js", "astuces.js", "cuisine_jeux.js", "rvalue.js", "materiel.js", "vendor/qrcode.js", "fonts/fraunces.woff", "fonts/instrument-sans.woff", "pret72.js", "crise_plus.js", "crise_vie.js", "fabriquer.js", "identifier.js", "risques.js", "manifest.webmanifest",
+  "./", "index.html", "styles.css", "config.js", "cloud.js", "app.js", "data.js", "especes_plus.js", "especes_champignons.js", "especes_regions.js", "techniques_plus.js", "illus.js", "images.js", "guide.js", "secours_isole.js", "noeuds_plus.js", "classiques.js", "abris_plus.js", "poissons.js", "astuces.js", "cuisine_jeux.js", "rvalue.js", "materiel.js", "vendor/qrcode.js", "vendor/leaflet/leaflet.js", "vendor/leaflet/leaflet.css", "vendor/leaflet/images/marker-icon.png", "vendor/leaflet/images/marker-shadow.png", "vendor/leaflet/images/layers.png", "fonts/fraunces.woff", "fonts/instrument-sans.woff", "fonts/vt323.woff", "pret72.js", "crise_plus.js", "crise_vie.js", "fabriquer.js", "identifier.js", "risques.js", "manifest.webmanifest",
   "icons/icon-180.png", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png"
 ];
-var CDN = [
-  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css",
-  "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js",
-  "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
-  "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png"
-];
+// Bibliothèques de carte hébergées avec l'appli (plus de CDN : rien d'extérieur ne peut injecter de code)
+var CDN = [];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(SHELL).then(function (c) {
@@ -92,8 +88,8 @@ self.addEventListener("fetch", function (e) {
     return;
   }
 
-  // Illustrations de l'appli : cache d'abord, gardées d'une version à l'autre
-  if (url.origin === self.location.origin && url.pathname.indexOf("/img/") !== -1) {
+  // Illustrations de l'appli et MapLibre (gros, figé) : cache d'abord, gardés d'une version à l'autre
+  if (url.origin === self.location.origin && (url.pathname.indexOf("/img/") !== -1 || url.pathname.indexOf("/vendor/maplibre/") !== -1)) {
     e.respondWith(caches.open(PHOTOS).then(function (c) {
       return c.match(req).then(function (hit) {
         return hit || fetch(req).then(function (res) { if (res && res.ok) c.put(req, res.clone()); return res; });

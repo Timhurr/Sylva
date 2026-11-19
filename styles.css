@@ -1,6 +1,7 @@
 /* Sylva — identité « Feu de camp » : nuit chaude, lumière des braises (thème nuit) et lumière du jour (thème jour).
    Polices locales (fonctionnent hors ligne) : Fraunces (titres, chiffres) et Instrument Sans (texte), licence OFL. */
 @font-face{font-family:"Fraunces";src:url(fonts/fraunces.woff) format("woff");font-weight:100 900;font-display:swap}
+@font-face{font-family:"VT323";src:url(fonts/vt323.woff) format("woff");font-display:swap}
 @font-face{font-family:"Instrument Sans";src:url(fonts/instrument-sans.woff) format("woff");font-weight:400 700;font-stretch:75% 100%;font-display:swap}
 :root{
   --bg:#E8E4DA; --surface:#F7F4EC; --surface2:#E0DBCF; --line:#D3CCBC;
