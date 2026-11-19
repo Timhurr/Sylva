@@ -303,6 +303,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 
 - **Nom de l'appli : Bivaska** (19/11/2026, choisi par Tim : mot inventé à partir de bivouac / bivak / biwak, protégeable comme marque). « Sylva » est abandonné (trop proche de la marque de boussoles Silva). Seuls les textes visibles ont changé : le dépôt, l'URL GitHub Pages, les variables `SYLVA_*`, `SylvaCloud` et les clés `sylva_*` du téléphone gardent l'ancien nom exprès (changer les clés effacerait les données des utilisateurs). Domaines : `bivaska.eu` (+ `bivaka.eu`, faute de frappe, à rediriger).
 
+- **v0.9.98 / v0.9.99** : comptes **activés** (projet Supabase `zzlewwrakyowuilgqpoj`, région Frankfurt, clé `sb_publishable_…` dans `config.js` ; `cloud.js` n'envoie plus la clé en `Authorization` si ce n'est pas un JWT). E-mails par Brevo SMTP depuis `noreply@bivaska.eu` (domaine authentifié DKIM + DMARC). Pièges rencontrés : Brevo bloque par défaut le SMTP depuis des IP inconnues (Sécurité → IP autorisées → désactivé pour les clés SMTP) ; le modèle « Confirm signup » doit aussi contenir `{{ .Token }}` sinon un lien est envoyé. Connexion testée par Tim sur iPhone : OK.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.
