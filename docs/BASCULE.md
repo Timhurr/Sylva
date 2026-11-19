@@ -11,7 +11,7 @@
 
    > Tu reprends le projet Bivaska. Lis CLAUDE.md en entier, puis la section « Journal de développement », et le fichier privé joint. Lance node tools/tests/fulltest.js pour vérifier que tout passe. Dis-moi ensuite en trois lignes où on en est et ce que tu proposes en premier.
 
-5. **Vérifier une publication** : demander un petit changement, par exemple le numéro de version, et contrôler qu'il apparaît sur https://timhurr.github.io/Sylva/ (Réglages, en bas).
+5. **Vérifier une publication** : demander un petit changement, par exemple le numéro de version, et contrôler qu'il apparaît sur https://bivaska.eu/ (Réglages, en bas).
 
 ## Ce qui ne bascule pas (à refaire si besoin)
 

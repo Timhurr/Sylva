@@ -19,7 +19,7 @@ Ce fichier est lu automatiquement par Claude Code à l'ouverture du dépôt. Il 
 
 **Bivaska** est une application web progressive (PWA) de bivouac et de survie, en JavaScript pur, sans framework ni étape de build.
 
-- En ligne : https://timhurr.github.io/Sylva/ (GitHub Pages, branche `main`, racine du dépôt).
+- En ligne : https://bivaska.eu/ (GitHub Pages, branche `main`, racine du dépôt ; domaine réglé par le fichier `CNAME`, l'ancienne adresse timhurr.github.io/Sylva redirige).
 - Dépôt : `Timhurr/Sylva`, compte GitHub **personnel** de Tim.
 - **Objectif central :** aider quelqu'un qui est **seul, sans secours joignables**, en Belgique (Ardenne) et en Europe de l'Ouest. Tout doit marcher **hors ligne**.
 
@@ -151,7 +151,7 @@ Toutes les données utilisateur sont **sur le téléphone**, clés `sylva_*` dan
 | Service | Usage | Remarque |
 |---|---|---|
 | IGN Belgique CartoWeb | Fond de carte par défaut | Données ouvertes, usage commercial possible. Zoom natif 17. |
-| MapTiler (Outdoor, Satellite) | Fonds de carte avec la clé de l'utilisateur | Clé restreinte au domaine `timhurr.github.io` (et `?` pour les requêtes sans origine). Formule gratuite = usage personnel ; pour la version payante : formule Flex (30 $/mois, 25 000 sessions, puis 2,50 $ / 1 000) et clé intégrée à l'appli. **Téléchargement en masse interdit** (art. 6.3) : pas de préchargement MapTiler, packs hors ligne seulement avec un contrat Custom. |
+| MapTiler (Outdoor, Satellite) | Fonds de carte avec la clé de l'utilisateur | Clé restreinte au domaine `bivaska.eu` (et `?` pour les requêtes sans origine). Formule gratuite = usage personnel ; pour la version payante : formule Flex (30 $/mois, 25 000 sessions, puis 2,50 $ / 1 000) et clé intégrée à l'appli. **Téléchargement en masse interdit** (art. 6.3) : pas de préchargement MapTiler, packs hors ligne seulement avec un contrat Custom. |
 | OpenFreeMap + MapLibre GL (unpkg) | Fond mondial « OpenFreeMap » (style liberty) et style vectoriel « Terminal » | Gratuit, usage commercial autorisé. |
 | Overpass (OpenStreetMap) | Bivouacs, points d'eau, services | Usage léger ; données ODbL à attribuer. Serveurs essayés dans l'ordre : overpass-api.de, overpass.private.coffee, overpass.kumi.systems. |
 | Nominatim | Recherche de lieu | 1 requête par seconde maximum. |

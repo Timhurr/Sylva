@@ -21,7 +21,7 @@ Tout le code est prêt : comptes, sauvegarde, signalements, idées, carte commun
    ```
    (Un code plutôt qu'un lien : sur iPhone, un lien s'ouvrirait dans Safari et pas dans l'appli installée.)
 3. Fais pareil pour le modèle **Confirm signup** (même texte).
-4. **Authentication → URL Configuration** : *Site URL* = `https://timhurr.github.io/Sylva/`.
+4. **Authentication → URL Configuration** : *Site URL* = `https://bivaska.eu/`.
 5. Pour la sortie publique : **Authentication → Emails → SMTP Settings**, branche un vrai service d'e-mail (Brevo, Resend…). Le service intégré de Supabase est limité à quelques e-mails par heure, suffisant pour tester.
 
 ## 4. Donner les clés à Claude
@@ -39,7 +39,7 @@ Ces deux-là sont faites pour être publiques (la sécurité vient des règles d
    update public.profiles set is_admin = true, trusted = true
    where id = (select id from auth.users where email = 'ton@adresse.be');
    ```
-3. La modération se fait sur https://timhurr.github.io/Sylva/moderation.html (même connexion par code).
+3. La modération se fait sur https://bivaska.eu/moderation.html (même connexion par code).
 
 ## Comment marche la modération
 - Les **3 premiers spots** d'un membre arrivent dans la file « Spots » : tu publies ou refuses. Au 3e spot validé, il devient membre de confiance et publie directement.
