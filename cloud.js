@@ -24,7 +24,9 @@
     opt = opt || {};
     var h = { apikey: KEY, "Content-Type": "application/json" };
     var tok = opt.anon ? null : (getSess() || {}).access_token;
-    h.Authorization = "Bearer " + (tok || KEY);
+    // Nouvelles clés « sb_publishable_… » : ce ne sont pas des JWT, elles vont seulement dans apikey.
+    if (tok) h.Authorization = "Bearer " + tok;
+    else if (/^eyJ/.test(KEY)) h.Authorization = "Bearer " + KEY;
     if (opt.prefer) h.Prefer = opt.prefer;
     if (opt.headers) Object.keys(opt.headers).forEach(function (k) { h[k] = opt.headers[k]; });
     return fetch(URL_ + path, { method: method, headers: h, body: body == null ? undefined : (opt.raw ? body : JSON.stringify(body)) }).then(function (r) {
