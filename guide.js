@@ -1,4 +1,4 @@
-// Sylva – Guide de survie complet (contenu original rédigé pour Sylva).
+// Bivaska – Guide de survie complet (contenu original rédigé pour Bivaska).
 // Références : manuels de l'armée américaine FM 21-76 / FM 3-05.70 et FM 4-25.11 (domaine public),
 // Centre Antipoisons belge, consignes de premiers secours grand public, réglementations nationales.
 // Format d'une section : { titre, p: [paragraphes], liste: [puces], etapes: [étapes numérotées],
@@ -63,7 +63,7 @@ window.SYLVA_GUIDE = [];
                 "Repérer les points d'eau, les sorties de secours (routes, villages) et les zones sans réseau.",
                 "Consulter la météo de la veille et du jour même, et l'heure du coucher du soleil (onglet Bivouac).",
                 "Prévoir large : on avance moins vite qu'on ne pense avec un sac chargé, en forêt ou de nuit.",
-                "Garder la carte en cache dans Sylva et emporter une carte papier."] },
+                "Garder la carte en cache dans Bivaska et emporter une carte papier."] },
       { titre: "Le kit de survie de poche",
         p: ["Un petit étui étanche qui ne quitte jamais la poche ou la ceinture, même pour une courte balade. S'il est dans le sac et que le sac est perdu, il ne sert à rien."],
         liste: ["Briquet + pierre à feu (ferrocérium) + quelques allume-feu",
@@ -265,7 +265,7 @@ window.SYLVA_GUIDE = [];
                 "Les fonds de vallée, la végétation plus verte et dense, les vols d'insectes et d'oiseaux le matin et le soir indiquent souvent de l'eau.",
                 "L'eau de pluie, récoltée avec une bâche : la source improvisée la plus généreuse.",
                 "La rosée du matin, récoltée avec un tissu : un appoint très limité.",
-                "Les points d'eau potable référencés : affichés sur la carte de Sylva (couche « Eau potable »)."],
+                "Les points d'eau potable référencés : affichés sur la carte de Bivaska (couche « Eau potable »)."],
         encadre: { type: "danger", titre: "Attention", texte: "Éviter l'eau stagnante, l'eau près des champs cultivés (pesticides), des routes ou des sites industriels, et l'eau de mer (qui aggrave la déshydratation)." } },
       { titre: "Rendre l'eau potable",
         p: ["Même la plus claire des eaux sauvages peut contenir des bactéries, des virus ou des parasites (comme Giardia) qui provoquent des diarrhées graves, et qui aggravent alors la déshydratation."],
@@ -295,7 +295,7 @@ window.SYLVA_GUIDE = [];
             "La vraie règle de survie est donc d'emporter ses vivres : des aliments denses en énergie (fruits secs, noix, chocolat, fromage dur, pâtes, flocons d'avoine), et une réserve de secours qui n'est jamais entamée."] },
       { titre: "La règle d'or de la cueillette",
         etapes: ["Ne manger que ce qu'on identifie avec une certitude absolue, en vérifiant plusieurs critères (feuilles, tige, fleur, odeur, milieu), jamais un seul.",
-                 "Connaître les sosies dangereux de chaque espèce : c'est l'objet de chaque fiche de Sylva.",
+                 "Connaître les sosies dangereux de chaque espèce : c'est l'objet de chaque fiche de Bivaska.",
                  "Ne jamais se fier à une seule photo ni à une appli d'identification.",
                  "Éviter tout le groupe des ombellifères (fleurs en ombrelle) : plusieurs sont mortelles et se ressemblent toutes.",
                  "Commencer par une petite quantité d'une espèce nouvelle pour soi, même comestible (allergies, intolérances).",
@@ -380,13 +380,13 @@ window.SYLVA_GUIDE = [];
                 "La visée décalée : viser volontairement d'un côté de la cible pour savoir de quel côté tourner en arrivant.",
                 "La limite d'arrêt : un élément au-delà du but qui signale qu'on est allé trop loin."] },
       { titre: "Le GPS : atouts et limites",
-        liste: ["La position GPS du téléphone fonctionne sans réseau : seule la carte doit avoir été chargée avant (dans Sylva, en parcourant la zone).",
+        liste: ["La position GPS du téléphone fonctionne sans réseau : seule la carte doit avoir été chargée avant (dans Bivaska, en parcourant la zone).",
                 "La précision baisse sous un couvert forestier dense, au fond des gorges et près des falaises : on peut être décalé de plusieurs dizaines de mètres.",
                 "Le froid et le GPS vident vite la batterie : garder le téléphone au chaud, en mode avion, et emporter une batterie externe.",
                 "Le GPS dit où l'on est, pas par où passer : une carte, une boussole et l'habitude de lire le terrain restent indispensables."] },
       { titre: "Quand on est perdu",
         etapes: ["S'arrêter (méthode STOP) : continuer à marcher au hasard aggrave presque toujours la situation.",
-                 "Regarder la position GPS dans Sylva : elle fonctionne sans réseau, et la carte reste visible si la zone a été affichée avant.",
+                 "Regarder la position GPS dans Bivaska : elle fonctionne sans réseau, et la carte reste visible si la zone a été affichée avant.",
                  "Revenir au dernier endroit connu avec certitude, si c'est possible et proche.",
                  "Sinon, chercher une ligne de repère : un chemin, une rivière à suivre vers l'aval, une ligne électrique, une crête.",
                  "Si la nuit approche, s'arrêter, faire un abri et se signaler : on repartira de jour."],
@@ -534,7 +534,7 @@ window.SYLVA_GUIDE = [];
                 "Tire-tique, pince à épiler, petits ciseaux",
                 "Antidouleur, médicaments personnels",
                 "Couverture de survie, gants jetables",
-                "Les numéros d'urgence (dans Sylva : bouton SOS et fiche Intoxication)"] }
+                "Les numéros d'urgence (dans Bivaska : bouton SOS et fiche Intoxication)"] }
     ],
     fiches: ["ps_ampoule", "ps_tique", "traces"], especes: ["tique", "processionnaire", "berce"]
   });
@@ -547,7 +547,7 @@ window.SYLVA_GUIDE = [];
       { titre: "Appeler",
         etapes: ["Composer le 112 : il fonctionne dans toute l'Europe, et passe par n'importe quel réseau mobile disponible.",
                  "Dire qui on est, ce qui se passe, combien de personnes sont concernées et leur état.",
-                 "Donner sa position GPS (bouton SOS de Sylva : coordonnées à lire ou à copier).",
+                 "Donner sa position GPS (bouton SOS de Bivaska : coordonnées à lire ou à copier).",
                  "Ne pas raccrocher le premier, et garder le téléphone allumé ensuite."],
         encadre: { type: "astuce", titre: "Astuce", texte: "Si l'appel ne passe pas, un SMS passe parfois là où la voix échoue. Monter sur une hauteur améliore aussi le réseau." } },
       { titre: "Économiser la batterie",
@@ -576,7 +576,7 @@ window.SYLVA_GUIDE = [];
       { titre: "Les grands principes",
         p: ["Dans tous ces pays, la règle de base est la même : on ne peut pas camper n'importe où. Le bivouac (une seule nuit, du soir au matin, sans installation) est parfois toléré là où le camping est interdit. Les réserves naturelles, parcs nationaux et terrains privés ont toujours leurs propres règles. Ces informations sont un résumé : vérifie toujours les règles locales avant de partir."] },
       { titre: "Belgique",
-        liste: ["Wallonie : camper en forêt est interdit, sauf dans les aires de bivouac délimitées (affichées sur la carte de Sylva quand elles sont référencées) ou sur un terrain privé avec l'accord du propriétaire.",
+        liste: ["Wallonie : camper en forêt est interdit, sauf dans les aires de bivouac délimitées (affichées sur la carte de Bivaska quand elles sont référencées) ou sur un terrain privé avec l'accord du propriétaire.",
                 "Flandre : uniquement dans les zones de bivouac prévues.",
                 "Feu : interdit en forêt, sauf aux emplacements prévus.",
                 "Cueillette : en général tolérée en petite quantité pour sa consommation personnelle, sauf interdiction locale ; interdite dans les réserves naturelles ; accord du propriétaire sur terrain privé."] },

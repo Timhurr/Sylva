@@ -1,4 +1,4 @@
-// Sylva – pays, milieux et espèces de montagne, Méditerranée et littoral.
+// Bivaska – pays, milieux et espèces de montagne, Méditerranée et littoral.
 (function () {
   // ---------- Pays et milieux ----------
   window.SYLVA_MILIEUX = {

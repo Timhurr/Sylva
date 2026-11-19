@@ -1,11 +1,11 @@
-/* Sylva – premiers secours en situation isolée (secours injoignables).
-   Rédigé pour Sylva à partir de faits issus du manuel FM 4-25.11 et du chapitre médical du FM 21-76 / FM 3-05.70
+/* Bivaska – premiers secours en situation isolée (secours injoignables).
+   Rédigé pour Bivaska à partir de faits issus du manuel FM 4-25.11 et du chapitre médical du FM 21-76 / FM 3-05.70
    (armée américaine, domaine public), recoupés avec les recommandations de premiers secours en milieu isolé
    (Wilderness Medical Society, ERC). Aucun texte protégé n'est repris. */
 (function () {
   "use strict";
   var T = window.SYLVA_TECHNIQUES || [];
-  var SRC = "Rédigé pour Sylva : manuels FM 4-25.11 et FM 21-76 (domaine public), recoupés avec les recommandations de secourisme en milieu isolé (WMS, ERC)";
+  var SRC = "Rédigé pour Bivaska : manuels FM 4-25.11 et FM 21-76 (domaine public), recoupés avec les recommandations de secourisme en milieu isolé (WMS, ERC)";
   function get(id) { return T.filter(function (t) { return t.id === id; })[0]; }
 
   var ISOLE = {

@@ -1,4 +1,4 @@
-/* Sylva – sites nucléaires en service près des pays couverts (v0.9.76). Positions approximatives (± 1 km), d'après les données publiques des exploitants.
+/* Bivaska – sites nucléaires en service près des pays couverts (v0.9.76). Positions approximatives (± 1 km), d'après les données publiques des exploitants.
    La zone de 20 km est un ordre de grandeur des zones de planification d'urgence (Belgique, France) : seuls les plans officiels font foi. */
 window.SYLVA_RISQUES = [
   { nom: "Doel", pays: "BE", type: "Centrale nucléaire", lat: 51.3256, lon: 4.2594, r: 20 },

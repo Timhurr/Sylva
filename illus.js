@@ -1,4 +1,4 @@
-// Sylva – illustrations originales des techniques (SVG, utilisables hors-ligne).
+// Bivaska – illustrations originales des techniques (SVG, utilisables hors-ligne).
 (function () {
   var C = {
     sol: "#3A4A3F", sol2: "#2C3D33", bois: "#B98A5A", boisF: "#8A6440", feuille: "#6F8F4E", feuille2: "#8CCB7E",

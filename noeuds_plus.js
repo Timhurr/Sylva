@@ -1,10 +1,10 @@
-/* Sylva – nœuds supplémentaires (v0.9.3).
-   Étapes rédigées pour Sylva à partir des méthodes de nouage usuelles (savoir commun, non protégé).
+/* Bivaska – nœuds supplémentaires (v0.9.3).
+   Étapes rédigées pour Bivaska à partir des méthodes de nouage usuelles (savoir commun, non protégé).
    Aucun texte ni aucune image d'ouvrage protégé n'est repris. Photos : Wikimedia Commons via Wikipédia. */
 (function () {
   "use strict";
   var T = window.SYLVA_TECHNIQUES || [];
-  var SRC = "Méthodes de nouage usuelles, rédigées pour Sylva";
+  var SRC = "Méthodes de nouage usuelles, rédigées pour Bivaska";
   var K = [
     { id: "simple", titre: "Nœud simple", wiki: "Overhand knot",
       intro: "Le nœud de base, à la source de presque tous les autres. Sert d'arrêt rapide au bout d'une corde ou d'un fil.",

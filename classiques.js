@@ -1,4 +1,4 @@
-/* Sylva – savoir-faire des classiques du bushcraft (v0.9.14).
+/* Bivaska – savoir-faire des classiques du bushcraft (v0.9.14).
    Techniques tirées de trois ouvrages du domaine public, réécrites et adaptées à l'Europe d'aujourd'hui :
    G. W. Sears « Nessmuk », Woodcraft (1884) ; H. Kephart, The Book of Camping and Woodcraft (1906) ;
    D. C. Beard, The Book of Camp-Lore and Woodcraft (1920). Pratiques interdites ou dépassées retirées. */
@@ -7,7 +7,7 @@
   var T = window.SYLVA_TECHNIQUES || [];
   var C = window.SYLVA_CATEGORIES || [];
   if (C.indexOf("Équipement") === -1) C.splice(C.indexOf("Feu"), 0, "Équipement");
-  var SRC = "Inspiré de Nessmuk (1884), Kephart (1906) et Beard (1920), ouvrages du domaine public, réécrit et adapté pour Sylva";
+  var SRC = "Inspiré de Nessmuk (1884), Kephart (1906) et Beard (1920), ouvrages du domaine public, réécrit et adapté pour Bivaska";
   var LOI_BOIS = "En Europe, on ne coupe pas d'arbres ni de branches vivantes sans l'accord du propriétaire : utilise du bois mort tombé au sol.";
 
   var F = [

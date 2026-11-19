@@ -1,4 +1,4 @@
-// Sylva – champignons courants d'Europe de l'Ouest : les plus cueillis et les plus dangereux.
+// Bivaska – champignons courants d'Europe de l'Ouest : les plus cueillis et les plus dangereux.
 // Liste des espèces dangereuses alignée sur la brochure « Champignons » du Centre Antipoisons belge.
 (function () {
   function C(id, nom, latin, niveau, statut, saison, mois, zones, resume, identification, sosies, usages) {

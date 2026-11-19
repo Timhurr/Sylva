@@ -1,4 +1,4 @@
-# CLAUDE.md : passation du projet Sylva
+# CLAUDE.md : passation du projet Bivaska
 
 Ce fichier est lu automatiquement par Claude Code à l'ouverture du dépôt. Il contient tout ce qu'il faut pour reprendre le travail exactement là où il s'est arrêté, comme si c'était la même session. Lis-le en entier avant de toucher au code.
 
@@ -17,7 +17,7 @@ Ce fichier est lu automatiquement par Claude Code à l'ouverture du dépôt. Il 
 
 ## 2. Le projet
 
-**Sylva** est une application web progressive (PWA) de bivouac et de survie, en JavaScript pur, sans framework ni étape de build.
+**Bivaska** est une application web progressive (PWA) de bivouac et de survie, en JavaScript pur, sans framework ni étape de build.
 
 - En ligne : https://timhurr.github.io/Sylva/ (GitHub Pages, branche `main`, racine du dépôt).
 - Dépôt : `Timhurr/Sylva`, compte GitHub **personnel** de Tim.
@@ -105,7 +105,7 @@ Toutes les données utilisateur sont **sur le téléphone**, clés `sylva_*` dan
 ## 5. Ajouter du contenu
 
 - **Fiches ou recettes :** dans un fichier de thème existant (ou un nouveau fichier, à ajouter **à la fois** dans `index.html` avant `app.js` et dans la liste `LOCAL` de `sw.js`). Pousse dans `SYLVA_TECHNIQUES` en évitant les doublons d'`id`, puis relie aux chapitres (`fiches` d'un chapitre de `SYLVA_GUIDE`).
-- **Recettes du feu** (`cuisine_jeux.js`) : inspirées de jeux vidéo, le jeu est cité avec la mention « Non officiel : Sylva n'est affiliée à aucun éditeur… ». Les textes sont réécrits, rien n'est copié. Chaque recette a un niveau 1 Novice, 2 Apprenti ou 3 Maître trappeur (tableau `NIV`).
+- **Recettes du feu** (`cuisine_jeux.js`) : inspirées de jeux vidéo, le jeu est cité avec la mention « Non officiel : Bivaska n'est affiliée à aucun éditeur… ». Les textes sont réécrits, rien n'est copié. Chaque recette a un niveau 1 Novice, 2 Apprenti ou 3 Maître trappeur (tableau `NIV`).
 - **Relis toujours la sécurité** de ce que Tim envoie et corrige-la en le lui disant. Points déjà rencontrés :
   - champignons : du commerce uniquement ;
   - volaille et porc cuits à cœur ;
@@ -142,7 +142,7 @@ Toutes les données utilisateur sont **sur le téléphone**, clés `sylva_*` dan
   - pas d'imitation de visuels de jeux : ni logos, ni personnages, ni interfaces. Par exemple, pas de Pip-Boy : à la place, le style original « Terminal ».
   - pas de photo de personnalité publique.
 - **Sécurité médicale :** l'appli aide quelqu'un de seul, mais ne remplace pas les secours. Pas de diagnostic présenté comme sûr. Les mesures (pouls par caméra, relief) sont marquées « repère » ou « expérimental ». Toujours garder la voie vers le 112.
-- **Pas d'IA qui invente des réponses** sur les urgences : un module « Demande à Sylva » a été fait puis retiré à la demande de Tim. Ne pas proposer de modèle de langage local pour les conseils médicaux.
+- **Pas d'IA qui invente des réponses** sur les urgences : un module « Demande à Bivaska » a été fait puis retiré à la demande de Tim. Ne pas proposer de modèle de langage local pour les conseils médicaux.
 - **Hors ligne d'abord :** toute nouvelle fonction doit avoir un comportement sans réseau (cache, message clair).
 - **Accessibilité et iPhone :** zones tactiles larges, `aria-label` sur les boutons-icônes, pas de `alert()` bloquant hors confirmation, `inputmode="decimal"` en `type="text"` pour les nombres à virgule.
 
@@ -177,7 +177,7 @@ Les fonds retirés à la demande de Tim sont OpenStreetMap standard, OpenTopoMap
 - Étapes illustrées des nœuds restants (voir « Nœuds : phase 2 » dans l'atelier), à partir des photos de Tim.
 - Encadrés « Conseil de terrain » dans les fiches, d'après les retours du test.
 
-**Avant de vendre Sylva :**
+**Avant de vendre Bivaska :**
 - Licences des services listés au §8 avant tout usage commercial.
 - Conditions d'utilisation et avertissement médical.
 
@@ -215,7 +215,7 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 - À vérifier par Tim sur iPhone : envoi du SMS (format `sms:` iOS), voix en français pendant le guidage, durée et poids de « Préparer la sortie ».
 
 ### 2026-11-10 · v0.9.53
-- Fait : calculateur de valeur R et fiche « Isolation du sol » (avec sa gravure) ; retrait de « Demande à Sylva » ; fonds de carte réduits à IGN Belgique, MapTiler Outdoor et MapTiler Satellite ; passation (ce fichier, `tools/`, `docs/BASCULE.md`, copie de l'atelier).
+- Fait : calculateur de valeur R et fiche « Isolation du sol » (avec sa gravure) ; retrait de « Demande à Bivaska » ; fonds de carte réduits à IGN Belgique, MapTiler Outdoor et MapTiler Satellite ; passation (ce fichier, `tools/`, `docs/BASCULE.md`, copie de l'atelier).
 - En cours : rien.
 - À vérifier par Tim sur iPhone : alerte chasse sur son lieu de bivouac (couleur et dates cohérentes avec la carte officielle SPW), niveau à bulle, pouls par caméra, guidage GPS en marchant, journal de bord pendant une sortie.
 
@@ -301,6 +301,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 
 - **v0.9.96** : comptes et communauté prêts, **inactifs tant que `config.js` est vide**. Connexion par code à 6 chiffres (pas de lien : sur iPhone il s'ouvrirait dans Safari et pas dans l'appli installée). Synchro « le plus récent gagne » par clé. Signaler une erreur (fiches, espèces, spots, avis ; sans compte), Idées avec votes, couche « Communauté » (statut légal obligatoire : aire officielle, terrain privé avec accord, camping, zone tolérée ; filtre téléphone/e-mail/liens/insultes ; 3 premiers spots relus puis membre de confiance ; photos toujours relues ; spot masqué après 3 signalements), `moderation.html`. Brouillons `docs/confidentialite.html` et `docs/conditions.html` à faire valider par un juriste. Test : `tools/tests/cloudtest.js` (Supabase simulé). **En attente de Tim** : créer le projet Supabase (voir `docs/SUPABASE.md`) et donner l'URL + clé anon.
 
+- **Nom de l'appli : Bivaska** (19/11/2026, choisi par Tim : mot inventé à partir de bivouac / bivak / biwak, protégeable comme marque). « Sylva » est abandonné (trop proche de la marque de boussoles Silva). Seuls les textes visibles ont changé : le dépôt, l'URL GitHub Pages, les variables `SYLVA_*`, `SylvaCloud` et les clés `sylva_*` du téléphone gardent l'ancien nom exprès (changer les clés effacerait les données des utilisateurs). Domaines : `bivaska.eu` (+ `bivaka.eu`, faute de frappe, à rediriger).
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.
@@ -309,6 +311,6 @@ Voir `docs/BASCULE.md`.
 
 Message d'amorce que Tim peut envoyer à une nouvelle session Claude Code reliée à ce dépôt :
 
-> Tu reprends le projet Sylva. Lis `CLAUDE.md` en entier (surtout le journal de développement), lance `node tools/tests/fulltest.js` pour vérifier que tout passe, puis dis-moi en trois lignes où on en est et ce que tu proposes en premier.
+> Tu reprends le projet Bivaska. Lis `CLAUDE.md` en entier (surtout le journal de développement), lance `node tools/tests/fulltest.js` pour vérifier que tout passe, puis dis-moi en trois lignes où on en est et ce que tu proposes en premier.
 
 Ensuite, travaille comme décrit au §1 : en français, en tutoyant, réponses courtes, et toujours vérifier la publication.

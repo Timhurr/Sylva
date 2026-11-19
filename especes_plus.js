@@ -1,5 +1,5 @@
-// Sylva – extension de la base d'espèces (Belgique, toutes saisons).
-// Contenu rédigé pour Sylva. Références : Centre Antipoisons belge (champignons),
+// Bivaska – extension de la base d'espèces (Belgique, toutes saisons).
+// Contenu rédigé pour Bivaska. Références : Centre Antipoisons belge (champignons),
 // Province de Liège (vipère), Service public de Wallonie (loup), connaissances botaniques usuelles.
 (function () {
   var TOUTE = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];

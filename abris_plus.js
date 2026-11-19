@@ -1,10 +1,10 @@
-/* Sylva – campement et abris approfondis (v0.9.19).
-   Rédigé pour Sylva : savoir-faire usuel du bivouac à la bâche et au hamac, chapitre « Shelters »
+/* Bivaska – campement et abris approfondis (v0.9.19).
+   Rédigé pour Bivaska : savoir-faire usuel du bivouac à la bâche et au hamac, chapitre « Shelters »
    des manuels FM 21-76 / FM 3-05.70 (domaine public), réécrit et adapté à l'Europe. Bois mort uniquement. */
 (function () {
   "use strict";
   var T = window.SYLVA_TECHNIQUES || [];
-  var SRC = "Savoir-faire usuel du bivouac et manuels FM 21-76 / FM 3-05.70 (domaine public), rédigé pour Sylva";
+  var SRC = "Savoir-faire usuel du bivouac et manuels FM 21-76 / FM 3-05.70 (domaine public), rédigé pour Bivaska";
   var BOIS = "Uniquement du bois mort tombé au sol : en Europe, couper des branches vivantes est interdit sans l'accord du propriétaire.";
 
   var F = [

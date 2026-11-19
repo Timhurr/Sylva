@@ -1,11 +1,11 @@
-/* Sylva – astuces de terrain (v0.9.22) : montages de bâche, sac à dos, filtre à mèche, nasse et ligne à ressort,
-   écharpe, empreintes d'Europe, heure avant le coucher du soleil. Rédigé pour Sylva (savoir usuel), sans reprise d'images ni de textes tiers. */
+/* Bivaska – astuces de terrain (v0.9.22) : montages de bâche, sac à dos, filtre à mèche, nasse et ligne à ressort,
+   écharpe, empreintes d'Europe, heure avant le coucher du soleil. Rédigé pour Bivaska (savoir usuel), sans reprise d'images ni de textes tiers. */
 (function () {
   "use strict";
   var T = window.SYLVA_TECHNIQUES || [];
   var C = window.SYLVA_CATEGORIES || [];
   if (C.indexOf("Faune et traces") === -1) C.splice(C.indexOf("Éthique"), 0, "Faune et traces");
-  var SRC = "Savoir-faire usuel du bivouac et de la survie, rédigé pour Sylva";
+  var SRC = "Savoir-faire usuel du bivouac et de la survie, rédigé pour Bivaska";
   var LOI_PECHE = "Méthode interdite aux pêcheurs amateurs en Wallonie, en France et dans la plupart des pays d'Europe. À réserver à une vraie situation de détresse.";
 
   var F = [

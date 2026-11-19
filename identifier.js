@@ -1,4 +1,4 @@
-/* Sylva – Clé d'identification hors ligne (v0.9.93) : caractères simples de chaque plante et champignon.
+/* Bivaska – Clé d'identification hors ligne (v0.9.93) : caractères simples de chaque plante et champignon.
    Plantes : p = port (arbre, arbuste, herbe, liane, eau), c = couleurs visibles (fleurs ou fruits),
    f = feuilles (simple, composee, aiguille, rosette, ruban, aucune).
    Champignons : d = dessous (lames, pores, plis, aiguillons, autre), c = couleurs du chapeau,

@@ -1,4 +1,4 @@
-/* Sylva – catalogue de matériel courant (v0.9.57). Valeurs publiées par les fabricants ou relevées par des tests, avec leur source.
+/* Bivaska – catalogue de matériel courant (v0.9.57). Valeurs publiées par les fabricants ou relevées par des tests, avec leur source.
    r = valeur R (ASTM F3340 sauf mention), comf/lim = températures confort et limite du sac (ISO 23537), poids en grammes (taille regular, ou taille indiquée). */
 window.SYLVA_GEAR_CAT = [
   // Matelas

@@ -1,11 +1,11 @@
-/* Sylva – Vivre une crise qui dure (v0.9.92) : hygiène, santé de base sans médecin, traitements, personnes fragiles,
-   animaux, moral, électricité et congélateur. Rédigé pour Sylva d'après l'OMS (réhydratation orale), l'USDA (congélateur),
+/* Bivaska – Vivre une crise qui dure (v0.9.92) : hygiène, santé de base sans médecin, traitements, personnes fragiles,
+   animaux, moral, électricité et congélateur. Rédigé pour Bivaska d'après l'OMS (réhydratation orale), l'USDA (congélateur),
    les CDC (groupes électrogènes et monoxyde de carbone) et les guides officiels de préparation (UE, Belgique, Croix-Rouge).
    Ces fiches ne remplacent pas un médecin : dès qu'un signe d'alerte apparaît, appelle le 112. */
 (function () {
   "use strict";
   var T = window.SYLVA_TECHNIQUES || [];
-  var SRC = "Rédigé pour Sylva d'après les recommandations officielles (OMS, Croix-Rouge, protection civile, USDA, CDC). En cas de doute sur la santé de quelqu'un, appelle le 112.";
+  var SRC = "Rédigé pour Bivaska d'après les recommandations officielles (OMS, Croix-Rouge, protection civile, USDA, CDC). En cas de doute sur la santé de quelqu'un, appelle le 112.";
   function add(f) { if (!T.some(function (t) { return t.id === f.id; })) { f.cat = "Crises"; f.source = f.source || SRC; T.push(f); } }
 
   add({ id: "crise_toilettes", titre: "Toilettes et hygiène sans eau courante", illus: "kit", priorite: true,
@@ -115,7 +115,7 @@
       "Informe-toi aux sources officielles deux ou trois fois par jour, puis coupe. Les rumeurs et le flot d'images d'horreur épuisent.",
       "Reste en lien : parle avec tes proches et tes voisins, propose ton aide. Aider les autres est l'un des meilleurs remèdes contre l'impuissance.",
       "Évite l'alcool et les somnifères pris sans avis médical : ils aggravent l'anxiété et le sommeil.",
-      "Seul longtemps : parle à voix haute, écris un journal (le journal de bord de Sylva sert aussi à ça), fixe-toi de petits objectifs."
+      "Seul longtemps : parle à voix haute, écris un journal (le journal de bord de Bivaska sert aussi à ça), fixe-toi de petits objectifs."
     ],
     alerte: [
       "Idées de mourir ou de se faire du mal.",
@@ -140,7 +140,7 @@
       "Jamais de barbecue, de brasero ou de chauffage d'appoint à combustion dans une pièce fermée, une tente ou un garage.",
       "En cas de doute sur un aliment, jette-le : une intoxication alimentaire en pleine crise est un vrai danger."
     ],
-    source: "Rédigé pour Sylva d'après les recommandations de l'USDA (sécurité des aliments en cas de coupure de courant) et des CDC (groupes électrogènes et monoxyde de carbone)." });
+    source: "Rédigé pour Bivaska d'après les recommandations de l'USDA (sécurité des aliments en cas de coupure de courant) et des CDC (groupes électrogènes et monoxyde de carbone)." });
 
   var G = window.SYLVA_GUIDE || [];
   var ch = G.filter(function (c) { return c.id === "crises"; })[0];

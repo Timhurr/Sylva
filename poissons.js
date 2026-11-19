@@ -1,5 +1,5 @@
-/* Sylva – poissons et vie aquatique (v0.9.21).
-   Rédigé pour Sylva à partir des règles publiques de la pêche en Wallonie (SPW, Maison wallonne de la Pêche),
+/* Bivaska – poissons et vie aquatique (v0.9.21).
+   Rédigé pour Bivaska à partir des règles publiques de la pêche en Wallonie (SPW, Maison wallonne de la Pêche),
    des avis de l'INBO sur les polluants dans les poissons d'eau douce, et de connaissances naturalistes usuelles.
    Les règles (périodes, tailles, quotas) changent : toujours vérifier le règlement en vigueur. */
 (function () {
@@ -138,7 +138,7 @@
   // ================= FICHES =================
   var C = window.SYLVA_CATEGORIES || [];
   if (C.indexOf("Pêche") === -1) C.splice(C.indexOf("Nourriture") + 1, 0, "Pêche");
-  var SRC = "Règles de pêche publiques de Wallonie (SPW, Maison wallonne de la Pêche), avis de l'INBO sur les polluants des poissons d'eau douce, savoir naturaliste usuel ; rédigé pour Sylva";
+  var SRC = "Règles de pêche publiques de Wallonie (SPW, Maison wallonne de la Pêche), avis de l'INBO sur les polluants des poissons d'eau douce, savoir naturaliste usuel ; rédigé pour Bivaska";
   var F = [
     { id: "peche_regles", cat: "Pêche", titre: "Pêcher : ce que dit la loi", illus: "camp",
       intro: "Pêcher sans permis dans une rivière publique est une infraction. Avant de lancer une ligne, quelques vérifications s'imposent.",

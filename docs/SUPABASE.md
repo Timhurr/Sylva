@@ -1,4 +1,4 @@
-# Brancher Sylva sur Supabase
+# Brancher Bivaska sur Supabase
 
 Tout le code est prêt : comptes, sauvegarde, signalements, idées, carte communautaire et modération. Tant que `config.js` est vide, l'appli fonctionne exactement comme avant, sans compte.
 
@@ -15,7 +15,7 @@ Tout le code est prêt : comptes, sauvegarde, signalements, idées, carte commun
 1. **Authentication → Sign In / Providers → Email** : laisse « Enable Email provider » activé ; « Confirm email » activé.
 2. **Authentication → Emails → Magic Link** : remplace le texte du modèle par :
    ```
-   <h2>Ton code Sylva</h2>
+   <h2>Ton code Bivaska</h2>
    <p>Entre ce code dans l'appli : <b style="font-size:24px">{{ .Token }}</b></p>
    <p>Il expire dans une heure. Si tu n'as rien demandé, ignore ce message.</p>
    ```

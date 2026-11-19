@@ -1,4 +1,4 @@
-/* Sylva – compte, sauvegarde, signalements, idées et carte communautaire (v0.9.96).
+/* Bivaska – compte, sauvegarde, signalements, idées et carte communautaire (v0.9.96).
    Client Supabase minimal sans dépendance (fetch). L'appli reste 100 % utilisable sans compte ni réseau.
    - Connexion par code reçu par e-mail (marche aussi dans l'appli installée sur l'écran d'accueil de l'iPhone).
    - Synchronisation : clés listées dans SYNC_KEYS, la plus récente gagne. Les infos médicales (sylva_ice),
@@ -127,7 +127,7 @@
         ? '<p class="tiny muted">Code envoyé à <b>' + esc(pendingEmail) + "</b>. Regarde aussi les courriers indésirables.</p>" +
           '<div class="row"><input type="text" id="accCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Code à 6 chiffres" style="flex:1"><button type="button" class="btn btn-primary" id="accVerify">Valider</button></div>' +
           '<button type="button" class="link-btn" id="accBack">Changer d\'adresse</button>'
-        : '<p class="tiny muted">Facultatif : sauvegarde tes spots, ton journal, ton kit et tes progrès, et retrouve-les sur un autre téléphone. Sylva marche aussi sans compte.</p>' +
+        : '<p class="tiny muted">Facultatif : sauvegarde tes spots, ton journal, ton kit et tes progrès, et retrouve-les sur un autre téléphone. Bivaska marche aussi sans compte.</p>' +
           '<div class="row"><input type="email" id="accEmail" autocomplete="email" placeholder="ton@adresse.be" style="flex:1"><button type="button" class="btn btn-primary" id="accSend">Recevoir un code</button></div>';
       return;
     }

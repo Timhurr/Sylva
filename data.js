@@ -1,4 +1,4 @@
-// Sylva – contenu V1 : Ardennes belges (vallée de l'Ourthe), novembre.
+// Bivaska – contenu V1 : Ardennes belges (vallée de l'Ourthe), novembre.
 // Ce contenu est éducatif. Il ne remplace ni un guide de terrain ni un expert.
 
 window.SYLVA_ZONE = {
@@ -662,7 +662,7 @@ window.SYLVA_TECHNIQUES = [
 
 // ---------- NŒUDS ----------
 // Photos : article Wikipédia (anglais) du nœud, image sous licence libre.
-var SRC_NOEUDS = "Méthodes de nouage usuelles, rédigées pour Sylva ; " + SRC_FM;
+var SRC_NOEUDS = "Méthodes de nouage usuelles, rédigées pour Bivaska ; " + SRC_FM;
 [
   {
     id: "chaise", titre: "Nœud de chaise", wiki: "Bowline",

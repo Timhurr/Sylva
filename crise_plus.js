@@ -1,10 +1,10 @@
-/* Sylva – Crise et résilience, suite (v0.9.76) : rester chez soi, troc et rationnement, radio, s'orienter sans GPS, réanimation.
-   Rédigé pour Sylva d'après les recommandations officielles (Union européenne, Centre de crise belge, protection civile,
+/* Bivaska – Crise et résilience, suite (v0.9.76) : rester chez soi, troc et rationnement, radio, s'orienter sans GPS, réanimation.
+   Rédigé pour Bivaska d'après les recommandations officielles (Union européenne, Centre de crise belge, protection civile,
    Conseil européen de réanimation ERC 2021, FEMA pour l'eau du logement et le rationnement). En cas de crise, les consignes des autorités passent avant. */
 (function () {
   "use strict";
   var T = window.SYLVA_TECHNIQUES || [];
-  var SRC = "Rédigé pour Sylva d'après les recommandations des services de protection civile et de crise (UE, Belgique, France, FEMA). En cas de crise, suis les consignes des autorités.";
+  var SRC = "Rédigé pour Bivaska d'après les recommandations des services de protection civile et de crise (UE, Belgique, France, FEMA). En cas de crise, suis les consignes des autorités.";
   function add(f) { if (!T.some(function (t) { return t.id === f.id; })) { f.source = f.source || SRC; T.push(f); } }
 
   // ===== Rester chez soi =====
@@ -81,9 +81,9 @@
 
   // ===== S'orienter sans GPS =====
   add({ id: "crise_nord_soleil", cat: "Orientation", titre: "Trouver le nord avec le soleil et l'heure", illus: "boussole",
-    intro: "Sans boussole ni GPS, le soleil donne le nord à quelques degrés près, à condition de connaître l'heure. L'outil « Trouver le nord » de Sylva fait le calcul pour toi, même sans réseau.",
+    intro: "Sans boussole ni GPS, le soleil donne le nord à quelques degrés près, à condition de connaître l'heure. L'outil « Trouver le nord » de Bivaska fait le calcul pour toi, même sans réseau.",
     etapes: [
-      "Ouvre Apprendre > Outils de terrain > Trouver le nord : Sylva calcule où se trouve le soleil maintenant, pour ta région et l'heure du téléphone.",
+      "Ouvre Apprendre > Outils de terrain > Trouver le nord : Bivaska calcule où se trouve le soleil maintenant, pour ta région et l'heure du téléphone.",
       "Tourne-toi face au soleil : l'outil t'indique de combien tourner pour faire face au nord.",
       "Sans téléphone, en Belgique et en France : le soleil est plein sud entre 12 h 30 et 13 h 30 en hiver, entre 13 h 30 et 14 h 30 en été (plus tard quand on va vers l'ouest). À ce moment, ton ombre pointe vers le nord.",
       "Le soleil se lève à l'est et se couche à l'ouest seulement aux équinoxes : en hiver, il se lève au sud-est ; en été, au nord-est.",
@@ -124,7 +124,7 @@
       "Jette tout ce qui sent le rance, a pris l'humidité, moisi, ou abrite des insectes.",
       "Prévois aussi l'eau et le moyen de cuire : riz, pâtes et légumineuses en demandent beaucoup."
     ],
-    source: "Rédigé pour Sylva d'après les recommandations de l'USDA (département de l'Agriculture des États-Unis) et de l'extension de l'université d'État de l'Utah sur le stockage alimentaire de longue durée." });
+    source: "Rédigé pour Bivaska d'après les recommandations de l'USDA (département de l'Agriculture des États-Unis) et de l'extension de l'université d'État de l'Utah sur le stockage alimentaire de longue durée." });
 
   add({ id: "crise_lampe_huile", cat: "Crises", titre: "Une lampe à huile de cuisine", illus: "feu_preparation",
     intro: "Pendant une panne de courant, un bocal, une mèche en coton et de l'huile de cuisine donnent une lumière stable plusieurs heures. L'huile végétale brûle mal sans mèche : elle ne s'enflamme pas facilement, ce qui rend cette lampe plus sûre qu'une lampe à pétrole improvisée.",

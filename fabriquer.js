@@ -1,12 +1,12 @@
-/* Sylva – Fabriquer soi-même (v0.9.91) : charbon de bois, colle de résine, eau de cendres, savon, saponaire, bougie de suif.
-   Rédigé pour Sylva à partir de savoir-faire traditionnels, avec les mises en garde actuelles (soude caustique, charbon « dentifrice »,
+/* Bivaska – Fabriquer soi-même (v0.9.91) : charbon de bois, colle de résine, eau de cendres, savon, saponaire, bougie de suif.
+   Rédigé pour Bivaska à partir de savoir-faire traditionnels, avec les mises en garde actuelles (soude caustique, charbon « dentifrice »,
    charbon médical). Rien n'est copié d'un livre. */
 (function () {
   "use strict";
   var T = window.SYLVA_TECHNIQUES || [];
   var C = window.SYLVA_CATEGORIES || [];
   if (C.indexOf("Fabriquer") === -1) C.splice(C.indexOf("Éthique"), 0, "Fabriquer");
-  var SRC = "Rédigé pour Sylva d'après des savoir-faire traditionnels, vérifiés avec les connaissances actuelles de sécurité.";
+  var SRC = "Rédigé pour Bivaska d'après des savoir-faire traditionnels, vérifiés avec les connaissances actuelles de sécurité.";
   function add(f) { if (!T.some(function (t) { return t.id === f.id; })) { f.cat = "Fabriquer"; f.source = f.source || SRC; T.push(f); } }
 
   add({ id: "fab_charbon", titre: "Fabriquer du charbon de bois", illus: "feu_preparation",

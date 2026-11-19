@@ -1,8 +1,8 @@
-/* Sylva – V1 (test terrain) */
+/* Bivaska – V1 (test terrain) */
 (function () {
   "use strict";
 
-  var VERSION = "0.9.96";
+  var VERSION = "0.9.97";
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -47,7 +47,7 @@
     document.body.removeChild(ta);
   }
 
-  $("#appVersion").textContent = "Sylva v" + VERSION + " · test terrain";
+  $("#appVersion").textContent = "Bivaska v" + VERSION + " · test terrain";
 
   // ---------- Réseau ----------
   function updateNet() { $("#netBadge").hidden = navigator.onLine; }
@@ -913,7 +913,7 @@
     startNav({ lat: s.lat, lon: s.lon, label: s.note ? s.note.slice(0, 40) : ty[2] });
   }
 
-  // ---------- Guidage GPS dans Sylva ----------
+  // ---------- Guidage GPS dans Bivaska ----------
   // Avec réseau : itinéraire à pied sur les chemins (OSRM, profil piéton, serveurs FOSSGIS / OpenStreetMap).
   // Sans réseau : flèche-boussole, distance et cap en ligne droite. Fonctionne avec l'écran allumé.
   var nav = null; // { t, route, steps, line, straight, lastRoute, arrived, wake }
@@ -1233,7 +1233,7 @@
   // ---------- SOS ----------
   function sosText() {
     if (!me) return null;
-    return "SOS Sylva - ma position : " + me[0].toFixed(5) + ", " + me[1].toFixed(5) +
+    return "SOS Bivaska - ma position : " + me[0].toFixed(5) + ", " + me[1].toFixed(5) +
       " (precision " + Math.round(me[2]) + " m) https://maps.apple.com/?ll=" + me[0].toFixed(5) + "," + me[1].toFixed(5);
   }
   function updateSosCoords() {
@@ -1264,7 +1264,7 @@
   $("#btnSources").addEventListener("click", function () {
     closeModal($("#modalSettings"));
     openSheet("À propos", '<h1 id="sheetTitle">Sources et crédits</h1>' +
-      "<p>Tous les textes de Sylva sont rédigés pour l'appli, et les schémas des techniques sont dessinés pour elle. Aucun passage de livre protégé n'est reproduit.</p>" +
+      "<p>Tous les textes de Bivaska sont rédigés pour l'appli, et les schémas des techniques sont dessinés pour elle. Aucun passage de livre protégé n'est reproduit.</p>" +
       "<h3>Contenu</h3><ul>" +
       "<li>Techniques de survie : manuels de l'armée américaine FM 21-76 / FM 3-05.70 (domaine public).</li>" +
       "<li>Premiers secours : consignes grand public (Croix-Rouge, ULB), recoupées avec le manuel FM 4-25.11.</li>" +
@@ -1276,7 +1276,7 @@
       '<li>Photos : Wikimedia Commons, licences libres, auteur indiqué sous chaque photo.</li>' +
       '<li>Météo : <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo.com</a> (CC BY 4.0).</li>' +
       "</ul>" +
-      '<p class="disclaimer">Sylva est un outil éducatif. Il ne remplace ni un guide de terrain, ni un mycologue, ni une formation aux premiers secours. En cas d\'urgence : 112.</p>');
+      '<p class="disclaimer">Bivaska est un outil éducatif. Il ne remplace ni un guide de terrain, ni un mycologue, ni une formation aux premiers secours. En cas d\'urgence : 112.</p>');
   });
   $("#btnExportSpots").addEventListener("click", function () {
     var s = getSpots(); if (!s.length) { toast("Aucun spot enregistré"); return; }
@@ -1764,7 +1764,7 @@
     }
     var next = GUIDE[idx + 1];
     h += '<div class="g-nav">' + (next ? '<button class="btn btn-primary btn-big" data-chap="' + esc(next.id) + '">Chapitre suivant : ' + esc(next.titre) + " →</button>" : "") + "</div>" +
-      '<p class="disclaimer">Guide rédigé pour Sylva à partir des manuels de survie de l\'armée américaine (domaine public), des consignes de premiers secours grand public et des réglementations nationales. Il ne remplace pas une formation.</p>';
+      '<p class="disclaimer">Guide rédigé pour Bivaska à partir des manuels de survie de l\'armée américaine (domaine public), des consignes de premiers secours grand public et des réglementations nationales. Il ne remplace pas une formation.</p>';
     openSheet("Guide de survie", h);
     lectureChap = c.id;
   }
@@ -2542,7 +2542,7 @@
   $("#btnJournalRec").addEventListener("click", function () {
     var j = getJournal(); j.rec = !j.rec; if (j.rec && !j.t0) j.t0 = Date.now();
     saveJournal(j); renderJournal();
-    if (j.rec) { toast(me ? "Trajet enregistré : garde Sylva ouverte, écran allumé" : "En attente du GPS…"); journalOnPos(); }
+    if (j.rec) { toast(me ? "Trajet enregistré : garde Bivaska ouverte, écran allumé" : "En attente du GPS…"); journalOnPos(); }
   });
   var jrBlob = null;
   $("#btnJournalNote").addEventListener("click", function () {
@@ -2703,13 +2703,13 @@
     }).then(function () {
       if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
       if (navigator.storage && navigator.storage.estimate) navigator.storage.estimate().then(function (e) {
-        if (e && e.usage) $("#prepBox").insertAdjacentHTML("beforeend", '<p class="tiny muted" style="margin:6px 0 0">Sylva occupe environ ' + Math.round(e.usage / 1048576) + " Mo sur ce téléphone.</p>");
+        if (e && e.usage) $("#prepBox").insertAdjacentHTML("beforeend", '<p class="tiny muted" style="margin:6px 0 0">Bivaska occupe environ ' + Math.round(e.usage / 1048576) + " Mo sur ce téléphone.</p>");
       }).catch(function () {});
       var gc = gearNightCheck();
       prepStep("gear", gc ? (gc.cls === "danger" ? "ko" : "ok") : "ok", gc ? "Nuit à " + gc.t + " °C · " + gc.txt : "Matériel : ajoute ton matelas et ton sac dans « Mon matériel » pour le vérifier");
       $("#prepBar").style.width = "100%"; prepRunning = false;
       save("sylva_prep", { t: Date.now(), c: c });
-      $("#prepBox").insertAdjacentHTML("beforeend", '<p class="small" style="margin:10px 0 0"><b>Prêt.</b> Ouvre Sylva une fois en mode avion pour vérifier, et garde ton téléphone chargé.</p>');
+      $("#prepBox").insertAdjacentHTML("beforeend", '<p class="small" style="margin:10px 0 0"><b>Prêt.</b> Ouvre Bivaska une fois en mode avion pour vérifier, et garde ton téléphone chargé.</p>');
       checkBadges();
     });
   }
@@ -2997,7 +2997,7 @@
         '<p class="small">Le ' + esc(new Date(day + "T12:00:00").toLocaleDateString("fr-BE", { weekday: "long", day: "numeric", month: "long" })) + " : soleil levé environ " + hmMin(sd.up) + ", au plus haut à " + Math.round(sd.maxA) + "° au-dessus de l'horizon" +
         (sd.maxA < 25 ? " (soleil bas : les arbres au sud cachent l'essentiel)" : "") + ".</p>" +
         '<div class="alert alert-warn"><strong>Regarde aussi au-dessus de toi</strong><span>Pas de branche morte, ni d\'arbre mort ou penché au-dessus de l\'abri : c\'est l\'un des premiers dangers en forêt, surtout avec du vent.</span></div>' +
-        '<p class="tiny muted">Estimation : les nuages blancs et les reflets faussent un peu le calcul. En bleu, ce que Sylva a compté comme ciel.</p>';
+        '<p class="tiny muted">Estimation : les nuages blancs et les reflets faussent un peu le calcul. En bleu, ce que Bivaska a compté comme ciel.</p>';
       $("#cielRes .eau-thumb").appendChild(o.c);
     }).catch(function () { $("#cielRes").innerHTML = '<p class="muted">Photo illisible, réessaie.</p>'; });
   });
@@ -3065,20 +3065,20 @@
   }
   function buildGpx() {
     var pts = exportPoints(), tr = getJournal().track;
-    var x = '<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Sylva" xmlns="http://www.topografix.com/GPX/1/1">\n';
+    var x = '<?xml version="1.0" encoding="UTF-8"?>\n<gpx version="1.1" creator="Bivaska" xmlns="http://www.topografix.com/GPX/1/1">\n';
     pts.forEach(function (p) { x += '<wpt lat="' + p.lat.toFixed(6) + '" lon="' + p.lon.toFixed(6) + '"><name>' + xmlEsc(p.name) + "</name>" + (p.desc ? "<desc>" + xmlEsc(p.desc) + "</desc>" : "") + (p.t ? "<time>" + new Date(p.t).toISOString() + "</time>" : "") + "</wpt>\n"; });
-    if (tr.length > 1) x += "<trk><name>Trajet Sylva</name><trkseg>\n" + tr.map(function (p) { return '<trkpt lat="' + p[0] + '" lon="' + p[1] + '">' + (p[2] ? "<time>" + new Date(p[2]).toISOString() + "</time>" : "") + "</trkpt>"; }).join("\n") + "\n</trkseg></trk>\n";
+    if (tr.length > 1) x += "<trk><name>Trajet Bivaska</name><trkseg>\n" + tr.map(function (p) { return '<trkpt lat="' + p[0] + '" lon="' + p[1] + '">' + (p[2] ? "<time>" + new Date(p[2]).toISOString() + "</time>" : "") + "</trkpt>"; }).join("\n") + "\n</trkseg></trk>\n";
     return { x: x + "</gpx>\n", n: pts.length, tr: tr.length };
   }
   function buildKml() {
     var pts = exportPoints(), tr = getJournal().track;
-    var x = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Sylva</name>\n';
+    var x = '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>Bivaska</name>\n';
     pts.forEach(function (p) { x += "<Placemark><name>" + xmlEsc(p.name) + "</name>" + (p.desc ? "<description>" + xmlEsc(p.desc) + "</description>" : "") + "<Point><coordinates>" + p.lon.toFixed(6) + "," + p.lat.toFixed(6) + ",0</coordinates></Point></Placemark>\n"; });
-    if (tr.length > 1) x += "<Placemark><name>Trajet Sylva</name><LineString><coordinates>" + tr.map(function (p) { return p[1] + "," + p[0] + ",0"; }).join(" ") + "</coordinates></LineString></Placemark>\n";
+    if (tr.length > 1) x += "<Placemark><name>Trajet Bivaska</name><LineString><coordinates>" + tr.map(function (p) { return p[1] + "," + p[0] + ",0"; }).join(" ") + "</coordinates></LineString></Placemark>\n";
     return { x: x + "</Document></kml>\n", n: pts.length, tr: tr.length };
   }
-  $("#btnExportGpx").addEventListener("click", function () { var g = buildGpx(); if (!g.n && g.tr < 2) { toast("Rien à exporter"); return; } downloadFile("sylva-" + ymd(new Date()) + ".gpx", "application/gpx+xml", g.x); });
-  $("#btnExportKml").addEventListener("click", function () { var g = buildKml(); if (!g.n && g.tr < 2) { toast("Rien à exporter"); return; } downloadFile("sylva-" + ymd(new Date()) + ".kml", "application/vnd.google-earth.kml+xml", g.x); });
+  $("#btnExportGpx").addEventListener("click", function () { var g = buildGpx(); if (!g.n && g.tr < 2) { toast("Rien à exporter"); return; } downloadFile("bivaska-" + ymd(new Date()) + ".gpx", "application/gpx+xml", g.x); });
+  $("#btnExportKml").addEventListener("click", function () { var g = buildKml(); if (!g.n && g.tr < 2) { toast("Rien à exporter"); return; } downloadFile("bivaska-" + ymd(new Date()) + ".kml", "application/vnd.google-earth.kml+xml", g.x); });
 
 
   // Bouton ± : le pavé numérique de l'iPhone n'a pas de touche « - »
@@ -3142,7 +3142,7 @@
   function renderEstime() {
     var st = load("sylva_estime", { x: 0, y: 0, steps: 0, len: 0.75 });
     if (!est) est = { on: false, x: st.x, y: st.y, steps: st.steps, len: st.len || 0.75, head: null, lastPeak: 0, smooth: 9.8, prevUp: false };
-    $("#estBox").innerHTML = '<div class="card"><p style="margin:0 0 10px">Au départ (voiture, camp), touche « Partir ». Garde le téléphone en main, à plat devant toi, écran allumé : Sylva compte tes pas et suit ta direction. Pour revenir, suis la flèche.</p>' +
+    $("#estBox").innerHTML = '<div class="card"><p style="margin:0 0 10px">Au départ (voiture, camp), touche « Partir ». Garde le téléphone en main, à plat devant toi, écran allumé : Bivaska compte tes pas et suit ta direction. Pour revenir, suis la flèche.</p>' +
       '<div class="est-arrow" id="estArrow"><svg viewBox="-60 -60 120 120" width="180" height="180" aria-hidden="true"><circle r="56" class="nd-ring"/><polygon id="estPoly" points="0,-48 14,10 0,0 -14,10" class="est-poly"/></svg></div>' +
       '<div class="auto-big" id="estDist" style="text-align:center">—</div><p class="nord-txt" id="estTxt" style="text-align:center">Pas encore parti</p>' +
       '<p class="tiny muted" id="estInfo" style="text-align:center"></p>' +
@@ -3156,7 +3156,7 @@
     if (!est || !$("#estDist")) return;
     var d = Math.sqrt(est.x * est.x + est.y * est.y), back = (Math.atan2(-est.x, -est.y) * 180 / Math.PI + 360) % 360;
     $("#estDist").textContent = est.steps ? (d >= 1000 ? (d / 1000).toFixed(2).replace(".", ",") + " km" : Math.round(d) + " m") : "—";
-    $("#estTxt").textContent = !est.steps ? (est.on ? "Marche, Sylva compte tes pas" : "Pas encore parti") : "Retour : cap " + Math.round(back) + "° (" + DIR16[Math.round(back / 22.5) % 16] + ")";
+    $("#estTxt").textContent = !est.steps ? (est.on ? "Marche, Bivaska compte tes pas" : "Pas encore parti") : "Retour : cap " + Math.round(back) + "° (" + DIR16[Math.round(back / 22.5) % 16] + ")";
     $("#estInfo").textContent = est.steps + " pas · " + Math.round(est.steps * est.len) + " m marchés" + (est.head != null ? " · tu regardes vers " + Math.round(est.head) + "°" : est.on ? " · boussole indisponible" : "");
     var rot = est.head != null ? back - est.head : back;
     var poly = $("#estPoly"); if (poly) poly.setAttribute("transform", "rotate(" + rot.toFixed(0) + ")");
@@ -3232,7 +3232,7 @@
   function morseStop() { if (!ms) return; cancelAnimationFrame(ms.raf); if (ms.stream) ms.stream.getTracks().forEach(function (t) { t.stop(); }); ms = null; }
   function renderMorse() {
     morseStop();
-    $("#morseBox").innerHTML = '<div class="card"><p style="margin:0 0 10px">Vise la lampe qui clignote au centre du cadre et garde le téléphone immobile (appuie-le contre un arbre). Sylva mesure la lumière et traduit les signaux longs et courts.</p>' +
+    $("#morseBox").innerHTML = '<div class="card"><p style="margin:0 0 10px">Vise la lampe qui clignote au centre du cadre et garde le téléphone immobile (appuie-le contre un arbre). Bivaska mesure la lumière et traduit les signaux longs et courts.</p>' +
       '<div class="morse-cam"><video id="msVid" playsinline muted></video><i class="morse-aim"></i><span id="msLed"></span></div>' +
       '<div class="morse-code" id="msCode"></div><div class="morse-txt" id="msTxt">—</div>' +
       '<div class="row" style="gap:8px;margin-top:10px"><button type="button" class="btn btn-primary" id="msStart">Démarrer la caméra</button><button type="button" class="btn" id="msClear">Effacer</button></div></div>' +
@@ -3285,7 +3285,7 @@
   // ---------- QR codes (sans réseau) ----------
   function planText(d) {
     var p = d.plan;
-    return "Plan d'urgence du foyer (Sylva)\n" + (p.contacts.length ? "\nContacts :\n" + p.contacts.map(function (c) { return "- " + c.nom + " : " + c.tel; }).join("\n") + "\n" : "") +
+    return "Plan d'urgence du foyer (Bivaska)\n" + (p.contacts.length ? "\nContacts :\n" + p.contacts.map(function (c) { return "- " + c.nom + " : " + c.tel; }).join("\n") + "\n" : "") +
       (p.rdv1 ? "\nRendez-vous près de la maison : " + p.rdv1 : "") + (p.rdv2 ? "\nRendez-vous hors du quartier : " + p.rdv2 : "") +
       (p.abri ? "\nAbri / centre d'accueil : " + p.abri : "") + (p.ecole ? "\nEnfants : " + p.ecole : "") + (p.medecin ? "\nMédecin, traitements : " + p.medecin : "") +
       (p.notes ? "\nConsignes : " + p.notes : "") + "\n\nUrgences : 112. Écoute la radio et suis les consignes des autorités.";
@@ -3503,7 +3503,7 @@
       h += '<div class="card"><div class="rv-k">Ajouter au stock</div><form id="formStock" class="pret-form">' +
         '<input type="text" id="stNom" list="stNames" placeholder="Article (eau, conserves, piles…)" autocomplete="off" aria-label="Article"><datalist id="stNames">' + names.map(function (n) { return '<option value="' + esc(n) + '">'; }).join("") + "</datalist>" +
         '<div class="row"><input type="text" id="stQte" placeholder="Quantité" autocomplete="off" aria-label="Quantité"><input type="date" id="stDate" aria-label="Date de péremption"></div>' +
-        '<button class="btn btn-primary" type="submit">Ajouter</button></form><p class="tiny muted" style="margin:8px 0 0">Note la date de péremption : Sylva te prévient un mois avant, ici et sur l\'écran Aujourd\'hui.</p></div>';
+        '<button class="btn btn-primary" type="submit">Ajouter</button></form><p class="tiny muted" style="margin:8px 0 0">Note la date de péremption : Bivaska te prévient un mois avant, ici et sur l\'écran Aujourd\'hui.</p></div>';
       var list = d.stock.slice().sort(function (a, b) { return (a.date || "9999") < (b.date || "9999") ? -1 : 1; });
       h += '<div class="card pret-list">' + (list.length ? list.map(function (s) {
         var ss = stockState(s);
@@ -3541,7 +3541,7 @@
     if ((b = e.target.closest("[data-tech]"))) { openTechnique(b.dataset.tech); return; }
     if (e.target.id === "btnPlanQr") { showQr(planText(d), "Plan familial", "Scanne avec l'appareil photo d'un autre téléphone : le plan s'affiche en texte, sans réseau. Chacun peut ensuite le garder dans ses notes."); return; }
     if (e.target.id === "btnPlanShare") {
-      var p = d.plan, txt = "Plan d'urgence du foyer (Sylva)\n" +
+      var p = d.plan, txt = "Plan d'urgence du foyer (Bivaska)\n" +
         (p.contacts.length ? "\nContacts :\n" + p.contacts.map(function (c) { return "- " + c.nom + " : " + c.tel; }).join("\n") + "\n" : "") +
         (p.rdv1 ? "\nRendez-vous près de la maison : " + p.rdv1 : "") + (p.rdv2 ? "\nRendez-vous hors du quartier : " + p.rdv2 : "") +
         (p.abri ? "\nAbri / centre d'accueil : " + p.abri : "") + (p.ecole ? "\nEnfants : " + p.ecole : "") + (p.medecin ? "\nMédecin, traitements : " + p.medecin : "") +
@@ -3606,7 +3606,7 @@
     $("#gearList").innerHTML = sorted.length ? sorted.map(function (x) {
       return '<div class="gear-row"><label class="gear-take" aria-label="À emporter"><input type="checkbox" data-gtake="' + esc(x.id) + '"' + (x.take ? " checked" : "") + '></label>' +
         '<button type="button" class="gear-main" data-gedit="' + esc(x.id) + '"><b>' + esc(x.nom) + "</b><span>" + esc(gearSub(x)) + "</span></button></div>";
-    }).join("") : '<p class="muted small" style="margin:0">Ajoute ton matos : Sylva calcule le poids du sac, utilise ton matelas et ton sac de couchage dans le calcul de valeur R, et les compare à la météo de la sortie.</p>';
+    }).join("") : '<p class="muted small" style="margin:0">Ajoute ton matos : Bivaska calcule le poids du sac, utilise ton matelas et ton sac de couchage dans le calcul de valeur R, et les compare à la météo de la sortie.</p>';
     if (g.length) {
       var heavy = tk.filter(function (x) { return +x.poids; }).sort(function (a, b) { return b.poids - a.poids; }).slice(0, 3);
       if (heavy.length && w) $("#gearList").insertAdjacentHTML("beforeend", '<p class="tiny muted" style="margin:8px 0 0">Le plus lourd : ' + heavy.map(function (x) { return esc(x.nom) + " (" + Math.round(x.poids / w * 100) + " %)"; }).join(", ") + ".</p>");
@@ -3637,7 +3637,7 @@
   $("#gCat").addEventListener("change", function () { gearFields(); if (!gearEdit && !$("#gSearch").value.trim()) gearBrowse(); });
   function gearItemBtn(p) { return '<button type="button" class="place-item" data-gpick="' + GCAT.indexOf(p) + '"><b>' + esc(p.nom) + "</b><span>" + esc(gearSub(p)) + "</span></button>"; }
   function gearOnline(q, n) {
-    return '<div class="gear-online"><span class="tiny muted">' + (n ? "Pas dans la liste ?" : "Pas dans le catalogue de Sylva.") + "</span>" +
+    return '<div class="gear-online"><span class="tiny muted">' + (n ? "Pas dans la liste ?" : "Pas dans le catalogue de Bivaska.") + "</span>" +
       (q ? ' <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/search?q=' + encodeURIComponent(q + " fiche technique poids") + '">Chercher en ligne</a>' : "") +
       ' <button type="button" class="btn" data-gmanual>Saisir à la main</button></div>';
   }
@@ -3750,7 +3750,7 @@
   function getQuizStats() { return load("sylva_quiz", {}); }
   function renderQuizHome() {
     var st = getQuizStats();
-    $("#quizBox").innerHTML = '<p class="muted">Teste ce que tu sais avant de partir. Les questions viennent des fiches et des espèces de Sylva, et changent à chaque partie.</p>' +
+    $("#quizBox").innerHTML = '<p class="muted">Teste ce que tu sais avant de partir. Les questions viennent des fiches et des espèces de Bivaska, et changent à chaque partie.</p>' +
       '<div class="list">' + Object.keys(QZ_LV).map(function (k, i) {
         var best = st[k] != null ? " · meilleur score " + st[k] + " %" : "";
         return '<button class="item" data-quiz-lv="' + k + '"><span class="quiz-lv quiz-lv' + (i + 1) + '">' + (i + 1) + '</span><span class="item-main"><span class="item-name">Niveau ' + (i + 1) + " · " + QZ_LV[k][0] + '</span><span class="item-sub">' +
@@ -4053,7 +4053,7 @@
       '<div class="lv-deg" id="lvDeg">–</div><p class="center small" id="lvLow"></p><div id="lvVerdict" class="alert"><span>Touche « Activer le niveau ».</span></div>' +
       '<button type="button" class="btn btn-primary" id="lvStart">Activer le niveau</button>' +
       '<div class="sec-head"><h2>Cuvette ou crête ?</h2></div>' +
-      '<div class="card"><p class="small" style="margin-top:0">Sylva compare l\'altitude du point avec 16 points autour (à 75 et 200 m). Point analysé : <b>' + esc(rp ? rp.label : "aucun") + "</b>.</p>" +
+      '<div class="card"><p class="small" style="margin-top:0">Bivaska compare l\'altitude du point avec 16 points autour (à 75 et 200 m). Point analysé : <b>' + esc(rp ? rp.label : "aucun") + "</b>.</p>" +
       '<button type="button" class="btn" id="rlGo"' + (rp ? "" : " disabled") + '>Analyser le relief</button><div id="rlRes"></div></div>';
     if (cached && rp && distKm(cached.c, rp.c) < 0.05) showRelief(cached);
   }
@@ -4244,7 +4244,7 @@
     var res = full.length ? full : near;
     res.sort(function (a, b) { return (b.niveau === "danger") - (a.niveau === "danger"); });
     $("#idCount").textContent = full.length ? full.length + " espèce" + (full.length > 1 ? "s" : "") + " correspond" + (full.length > 1 ? "ent" : "") + " à tes réponses"
-      : near.length ? "Aucune espèce ne correspond à tout. Les plus proches (une réponse différente) :" : "Aucune espèce de Sylva ne correspond. Ce n'est peut-être pas une espèce de l'appli : ne la consomme pas.";
+      : near.length ? "Aucune espèce ne correspond à tout. Les plus proches (une réponse différente) :" : "Aucune espèce de Bivaska ne correspond. Ce n'est peut-être pas une espèce de l'appli : ne la consomme pas.";
     $("#idResults").innerHTML = res.map(function (s) {
       return '<button class="item" data-esp="' + esc(s.id) + '"><span class="item-ico item-photo">' + espVisual(s) + '</span><span class="item-main"><span class="item-name">' + esc(s.nom) +
         '</span><span class="item-sub">' + esc(s.latin) + '</span></span><span class="badge ' + lvClass(s.niveau) + '">' + esc(s.statut) + "</span></button>";

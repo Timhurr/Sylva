@@ -1,8 +1,8 @@
-// Sylva – fiches techniques détaillées (v0.7).
-// Rédigées pour Sylva d'après le manuel de survie de l'armée américaine FM 3-05.70 (2002, domaine public),
+// Bivaska – fiches techniques détaillées (v0.7).
+// Rédigées pour Bivaska d'après le manuel de survie de l'armée américaine FM 3-05.70 (2002, domaine public),
 // complété par les bonnes pratiques actuelles de sécurité et la réglementation européenne.
 (function () {
-  var SRC = "Manuel de survie de l'armée américaine FM 3-05.70 (domaine public), réécrit et adapté pour Sylva";
+  var SRC = "Manuel de survie de l'armée américaine FM 3-05.70 (domaine public), réécrit et adapté pour Bivaska";
   var CATS = window.SYLVA_CATEGORIES;
   if (CATS.indexOf("Déplacement") === -1) CATS.splice(CATS.indexOf("Orientation") + 1, 0, "Déplacement");
 
@@ -190,7 +190,7 @@
 // ---------- v0.8 : premiers secours avancés, nuit sans duvet, chaleur, bois, navigation ----------
 (function () {
   var SRC_PS = "Consignes grand public de premiers secours (Croix-Rouge, ERC) recoupées avec le manuel FM 4-25.11 (domaine public)";
-  var SRC_FM = "Manuel de survie de l'armée américaine FM 3-05.70 (domaine public), réécrit pour Sylva";
+  var SRC_FM = "Manuel de survie de l'armée américaine FM 3-05.70 (domaine public), réécrit pour Bivaska";
   [
     // ===== PREMIERS SECOURS =====
     { id: "ps_pls", cat: "Premiers secours", titre: "Position latérale de sécurité (PLS)", illus: "pls", source: SRC_PS,
@@ -280,7 +280,7 @@
       attention: ["Toujours du bois mort ramassé au sol ou sec sur pied, jamais d'arbre vivant."] },
 
     // ===== DÉPLACEMENT =====
-    { id: "contourner", cat: "Déplacement", titre: "Contourner un obstacle sans perdre le cap", illus: "contourner", source: "Manuels de lecture de carte et navigation de l'armée américaine (domaine public), réécrits pour Sylva",
+    { id: "contourner", cat: "Déplacement", titre: "Contourner un obstacle sans perdre le cap", illus: "contourner", source: "Manuels de lecture de carte et navigation de l'armée américaine (domaine public), réécrits pour Bivaska",
       intro: "Un marécage ou un ravin sur ta route ? Avec la boussole et tes pas, tu peux le contourner et retrouver exactement ta direction.",
       etapes: [
         "Arrivé à l'obstacle, tourner de 90° (à droite par exemple) et marcher en comptant ses pas jusqu'à avoir dépassé l'obstacle.",

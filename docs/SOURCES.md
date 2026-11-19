@@ -1,12 +1,12 @@
-# Sources de Sylva et tri du dépôt « Survival-Data »
+# Sources de Bivaska et tri du dépôt « Survival-Data »
 
-Ce document trace d'où vient le contenu de Sylva et pourquoi certaines sources ne sont **pas** utilisées.
+Ce document trace d'où vient le contenu de Bivaska et pourquoi certaines sources ne sont **pas** utilisées.
 Il ne constitue pas un avis juridique. En cas de lancement commercial, le faire relire par un juriste.
 
 ## Règle de base
 
 - **On reprend des faits, jamais des textes, photos ou illustrations** d'œuvres protégées.
-  Tout le contenu de Sylva est rédigé avec nos propres mots, et les schémas sont dessinés pour Sylva.
+  Tout le contenu de Bivaska est rédigé avec nos propres mots, et les schémas sont dessinés pour Bivaska.
 - Les photos viennent de **Wikimedia Commons** (licences libres), avec le crédit de l'auteur affiché dans l'appli.
 - La licence MIT du dépôt « Survival-Data » ne couvre que le code du dépôt (page web), **pas les PDF**
   qu'il rassemble : ceux-ci restent soumis aux droits de leurs auteurs.
@@ -15,9 +15,9 @@ Il ne constitue pas un avis juridique. En cas de lancement commercial, le faire 
 
 ### ✅ Utilisables comme références (domaine public probable : publications du gouvernement fédéral américain ou œuvres anciennes)
 
-À vérifier une à une avant toute reprise de texte. Sylva les utilise **seulement comme références** pour vérifier des faits.
+À vérifier une à une avant toute reprise de texte. Bivaska les utilise **seulement comme références** pour vérifier des faits.
 
-| Document | Pourquoi | Usage dans Sylva |
+| Document | Pourquoi | Usage dans Bivaska |
 |---|---|---|
 | US Army FM 21-76 / FM 3-05.70 *Survival* (2002) | Publication de l'armée américaine | Techniques eau, feu, abris, orientation, signaux |
 | FM 4-25.11 (FM 21-11) *First Aid* (2002) | Idem, « approved for public release » | Contrôle croisé des premiers secours (les conseils de terrain militaires dépassés ne sont pas repris) |
@@ -42,7 +42,7 @@ livres de cuisine récents, *Pharmako/Poeia* (Dale Pendell), la plupart des guid
 
 ### 🚫 Hors sujet ou à exclure
 
-Manuels de combat et d'armes, fabrication de poudre noire, guérilla, caches militaires : sans rapport avec Sylva,
+Manuels de combat et d'armes, fabrication de poudre noire, guérilla, caches militaires : sans rapport avec Bivaska,
 et contraires aux règles des magasins d'applications.
 
 ### 🌍 Attention à la pertinence géographique
@@ -50,7 +50,7 @@ et contraires aux règles des magasins d'applications.
 Beaucoup de guides de cueillette du dépôt portent sur l'Amérique du Nord (Alaska, Colorado, Ontario, Washington).
 Leurs espèces et leurs sosies ne correspondent pas à la Belgique : **ne jamais les utiliser pour l'identification**.
 
-## Sources utilisées dans Sylva
+## Sources utilisées dans Bivaska
 
 - Manuels de l'armée américaine FM 21-76 / FM 3-05.70 et FM 4-25.11 (domaine public) : techniques de survie.
 - Centre Antipoisons belge, brochure « Champignons » (poisoncentre.be) : espèces dangereuses en Belgique,
@@ -70,7 +70,7 @@ chaque PDF garde le statut de son auteur.
 
 ### ✅ Utilisés comme références (domaine public)
 
-| Document | Statut | Usage dans Sylva (contenu réécrit) |
+| Document | Statut | Usage dans Bivaska (contenu réécrit) |
 |---|---|---|
 | FM 3-05.70 *Survival* (2002) et FM 21-76 | Armée américaine | Structures de feu (appentis, croix, pyramide, trou dakota, mur réflecteur), arc à feu, tissu charbonné, alambic solaire, codes sol-air, miroir de signalisation, traversée de cours d'eau, règle COLD, cordelette naturelle |
 | ATP 3-50.21 *Survival*, FM 31-70 *Basic Cold Weather*, USMC Summer/Winter Survival | Armée et Marines américains | Références pour le froid et la survie générale |

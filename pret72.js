@@ -1,8 +1,8 @@
-/* Sylva – Prêt 72 h : kit d'urgence du foyer, pays et fiches « Crises » (v0.9.72).
-   Contenu rédigé pour Sylva d'après les recommandations officielles : lignes directrices de la Commission européenne
+/* Bivaska – Prêt 72 h : kit d'urgence du foyer, pays et fiches « Crises » (v0.9.72).
+   Contenu rédigé pour Bivaska d'après les recommandations officielles : lignes directrices de la Commission européenne
    sur la préparation de la population (3 novembre 2026, autonomie de 72 h), guide du Centre de crise belge
    (« Prepared together », octobre 2026), listes des gouvernements néerlandais (3 L d'eau par personne et par jour)
-   et luxembourgeois (infocrise.public.lu). Sylva n'est pas un service officiel : en cas de crise, suis les consignes des autorités. */
+   et luxembourgeois (infocrise.public.lu). Bivaska n'est pas un service officiel : en cas de crise, suis les consignes des autorités. */
 (function () {
   "use strict";
   var C = window.SYLVA_CATEGORIES || [];
@@ -64,19 +64,19 @@
     XX: { nom: "Autre pays", alerte: "Renseigne-toi sur le système d'alerte officiel de ton pays et inscris-toi s'il le faut.", liens: [], num: "112 dans toute l'Union européenne" }
   };
 
-  var SRC = "Rédigé pour Sylva d'après les recommandations de la Commission européenne (autonomie de 72 h, 2026), du Centre de crise belge et des services de protection civile. En cas de crise, les consignes des autorités passent avant cette fiche.";
+  var SRC = "Rédigé pour Bivaska d'après les recommandations de la Commission européenne (autonomie de 72 h, 2026), du Centre de crise belge et des services de protection civile. En cas de crise, les consignes des autorités passent avant cette fiche.";
   var T = window.SYLVA_TECHNIQUES || [];
   function add(f) { if (!T.some(function (t) { return t.id === f.id; })) { f.cat = "Crises"; f.source = f.source || SRC; T.push(f); } }
 
   add({ id: "crise_72h", titre: "Être prêt pour 72 heures", illus: "urgence", priorite: true,
     intro: "Lors d'une grosse crise (panne générale, inondation, tempête, accident), les secours ne peuvent pas aider tout le monde tout de suite. L'Union européenne demande à chaque foyer de pouvoir tenir seul au moins 72 heures.",
     etapes: [
-      "Informe-toi : inscris-toi au système d'alerte de ton pays et repère les sources officielles (Sylva > Prêt 72 h > Pays).",
+      "Informe-toi : inscris-toi au système d'alerte de ton pays et repère les sources officielles (Bivaska > Prêt 72 h > Pays).",
       "Fais un plan avec ton foyer : qui appeler, où se retrouver si on est séparés, que faire des enfants à l'école et des personnes fragiles.",
       "Prépare un stock pour rester chez toi 72 heures : eau (3 L par personne et par jour), nourriture qui se mange sans cuisson, lumière, radio, médicaments, argent liquide.",
       "Prépare à part un sac d'évacuation léger, prêt à prendre si on te demande de partir : papiers, médicaments, eau, chargeur, vêtements.",
       "Construis ton stock petit à petit, à chaque course : pas besoin de tout acheter d'un coup ni de matériel cher.",
-      "Fais tourner : consomme ce qui arrive à date et remplace-le. Sylva te prévient des dates dans l'onglet Stock.",
+      "Fais tourner : consomme ce qui arrive à date et remplace-le. Bivaska te prévient des dates dans l'onglet Stock.",
       "Pense aux voisins âgés, malades ou seuls : en crise, l'entraide sauve des vies."
     ],
     attention: ["Garde le stock dans un endroit facile d'accès, connu de tout le foyer.", "Un kit oublié au fond de la cave ne sert à rien : vérifie-le deux fois par an, par exemple au changement d'heure."] });
@@ -164,7 +164,7 @@
       "Écoute la radio à piles : c'est le canal prévu quand tout le reste tombe.",
       "Les SMS passent souvent quand les appels ne passent plus. Fais des messages courts.",
       "Le 112 reste prioritaire sur les réseaux : en urgence, essaie quand même, même sans crédit ni carte SIM.",
-      "Sylva marche sans réseau : carte enregistrée, fiches, SOS, ton plan et ton stock."
+      "Bivaska marche sans réseau : carte enregistrée, fiches, SOS, ton plan et ton stock."
     ],
     attention: ["Recharge tes batteries externes et ton téléphone dès que le courant revient, en prévision d'une nouvelle coupure."] });
 
@@ -174,7 +174,7 @@
     G.splice(1, 0, { id: "crises", titre: "Crises : tenir 72 heures", sections: [
       { titre: "Pourquoi 72 heures", p: ["Lors d'une catastrophe, les secours vont d'abord aux situations les plus graves. Pendant les premiers jours, chaque foyer doit pouvoir se débrouiller : c'est la recommandation de l'Union européenne depuis 2025, confirmée en novembre 2026."] },
       { titre: "Les trois étapes", etapes: ["S'informer : système d'alerte de ton pays, radio, sources officielles.", "Faire un plan : contacts, point de rendez-vous, rôle de chacun.", "Préparer le stock maison et le sac d'évacuation, petit à petit."],
-        encadre: { type: "astuce", titre: "Dans Sylva", texte: "Aujourd'hui > Prêt 72 h : ton foyer, ton kit calculé, ton stock avec les dates et ton plan familial, tout fonctionne hors ligne." } }
+        encadre: { type: "astuce", titre: "Dans Bivaska", texte: "Aujourd'hui > Prêt 72 h : ton foyer, ton kit calculé, ton stock avec les dates et ton plan familial, tout fonctionne hors ligne." } }
     ], fiches: ["crise_72h", "crise_panne", "crise_inondation", "crise_tempete", "crise_canicule", "crise_abri", "crise_evacuer", "crise_sansreseau"] });
   }
 })();

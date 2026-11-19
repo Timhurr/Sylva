@@ -1,6 +1,6 @@
-/* Sylva – recettes du feu inspirées de jeux vidéo (v0.9.30).
-   Recettes originales écrites pour Sylva. Les noms de jeux sont cités comme inspiration :
-   Sylva n'est ni affiliée ni approuvée par leurs éditeurs. Aucun texte ni visuel des jeux n'est repris. */
+/* Bivaska – recettes du feu inspirées de jeux vidéo (v0.9.30).
+   Recettes originales écrites pour Bivaska. Les noms de jeux sont cités comme inspiration :
+   Bivaska n'est ni affiliée ni approuvée par leurs éditeurs. Aucun texte ni visuel des jeux n'est repris. */
 (function () {
   "use strict";
   var T = window.SYLVA_TECHNIQUES || [];
@@ -330,7 +330,7 @@
     if (r.id === "rj_pomme_miel") r.etapes[4] = "Pose-la dans un creux de cendres chaudes au bord du feu, pas sur les braises rouges vives, et recouvre de cendres : 20 à 25 minutes. Elle confit dans son jus.";
   });
 
-  var NOTE = "Non officiel : Sylva n'est affiliée à aucun éditeur des jeux cités, ni approuvée par eux";
+  var NOTE = "Non officiel : Bivaska n'est affiliée à aucun éditeur des jeux cités, ni approuvée par eux";
   function splitButin(e) {
     var t = e.replace(/^Butin[^:]*:\s*/, "").replace(/\.\s*$/, "");
     var out = [], depth = 0, cur = "";
@@ -453,7 +453,7 @@
   R.concat(R2).forEach(function (r) {
     if (T.some(function (t) { return t.id === r.id; })) return;
     T.push({ id: r.id, cat: CAT, titre: r.titre, illus: r.illus, intro: r.intro, recette: r.recette,
-      etapes: r.etapes, attention: r.attention || [], source: "Recette originale Sylva, inspirée de " + r.jeu + ". " + NOTE });
+      etapes: r.etapes, attention: r.attention || [], source: "Recette originale Bivaska, inspirée de " + r.jeu + ". " + NOTE });
   });
   R = R.concat(R2);
 
@@ -466,7 +466,7 @@
       ch.sections.push({
         titre: "Recettes du feu, inspirées des jeux vidéo",
         p: ["Brochettes, ragoûts, pommes au miel : beaucoup de jeux d'aventure font cuisiner leurs héros sur un feu de camp. Ces recettes en sont des versions réelles, faisables au bivouac avec une gamelle, une branche verte et de bonnes braises. Chaque fiche liste le « butin » à prévoir, la cuisson et un petit effet en clin d'œil."],
-        encadre: { type: "retenir", titre: "Non officiel", texte: "Recettes originales écrites pour Sylva. Les jeux cités sont des inspirations : Sylva n'est ni affiliée ni approuvée par leurs éditeurs." }
+        encadre: { type: "retenir", titre: "Non officiel", texte: "Recettes originales écrites pour Bivaska. Les jeux cités sont des inspirations : Bivaska n'est ni affiliée ni approuvée par leurs éditeurs." }
       });
     }
     ch.fiches = ch.fiches || [];
