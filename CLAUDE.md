@@ -307,6 +307,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 
 - **v0.9.100 : audit de sécurité.** Domaine `bivaska.eu` (fichier `CNAME`). Bibliothèques de carte hébergées dans `vendor/` (Leaflet 1.9.4, MapLibre 4.7.1, maplibre-gl-leaflet 0.1.1 : plus de CDN unpkg) et police VT323 locale (plus de Google Fonts, qui transmettait l'IP des utilisateurs). Politique de sécurité du contenu (CSP) en `<meta>` dans `index.html` et `moderation.html` (script de modération déplacé dans `moderation.js`, refus d'être affichée dans un cadre). `safeUrl()` pour les liens venus d'OSM. `supabase/securite.sql` (à lancer après `schema.sql`) : champs sensibles des profils cachés (`rpc/my_profile`), pseudos uniques et noms réservés, spot masqué seulement après 3 membres connectés différents, limites de débit et quotas, avis masqués protégés, chemin des photos contrôlé, 3 Mo et images seulement, suppression de compte réparée. Testé sur un Postgres local.
 
+- **v0.9.102** : écran d'accueil du premier lancement (`#onboard`, `openOnboard`, `obSteps`) : présentation, trois repères (bouton du milieu, Apprendre, Bivouac), choix du pays, autorisation de la position (plus demandée au démarrage avant l'accueil), conseil d'installation sur iPhone, rappel « ne remplace pas les secours ». Affiché seulement si aucune donnée `sylva_*` n'existe (`FIRST_RUN`, drapeau `sylva_onboard`) ; « Revoir la présentation » dans Réglages. Tests : `onboardtest.js` ; les autres tests posent `sylva_onboard`.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.

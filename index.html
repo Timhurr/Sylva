@@ -647,6 +647,14 @@
   </form>
 </div>
 
+<div class="onboard" id="onboard" hidden role="dialog" aria-modal="true" aria-label="Bienvenue dans Bivaska">
+  <div class="ob-top"><button type="button" class="ob-skip" id="obSkip">Passer</button></div>
+  <div class="ob-body" id="obBody"></div>
+  <div class="ob-foot">
+    <div class="ob-dots" id="obDots" aria-hidden="true"></div>
+    <div class="step-nav"><button type="button" class="btn" id="obBack" hidden>Retour</button><button type="button" class="btn btn-next" id="obNext">Suivant</button></div>
+  </div>
+</div>
 <div class="modal" id="modalSettings" hidden role="dialog" aria-modal="true" aria-labelledby="setTitle">
   <form class="modal-box" id="formSettings">
     <h2 id="setTitle">Réglages</h2>
@@ -692,6 +700,7 @@
       <button type="button" class="btn" id="btnExportKml">Exporter en KML</button>
     </div>
     <p class="tiny muted">Spots, lieu du bivouac, voiture et trajet du journal, pour ATAK, iTAK, Garmin, OsmAnd ou Google Earth.</p>
+    <div class="row"><button type="button" class="btn" id="btnOnboard">Revoir la présentation</button></div>
     <div class="row">
       <button type="button" class="btn btn-ghost" data-close>Fermer</button>
       <button type="submit" class="btn btn-primary">Enregistrer</button>

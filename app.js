@@ -2,7 +2,15 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.101";
+  var VERSION = "0.9.102";
+  // Premier lancement : aucune donnée Bivaska encore enregistrée (lu avant que l'initialisation n'en écrive)
+  var FIRST_RUN = (function () {
+    try {
+      if (localStorage.getItem("sylva_onboard")) return false;
+      for (var i = 0; i < localStorage.length; i++) if ((localStorage.key(i) || "").indexOf("sylva_") === 0) { localStorage.setItem("sylva_onboard", "1"); return false; }
+      return true;
+    } catch (e) { return false; }
+  })();
   var ZONE = window.SYLVA_ZONE;
   var ESPECES = window.SYLVA_ESPECES || [];
   var TECHS = window.SYLVA_TECHNIQUES || [];
@@ -4179,9 +4187,80 @@
   setTimeout(function () { prefetchPhotos(false); }, 3000);
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {}); } catch (e) {}
   initMap();
-  startGeo();
+  if (FIRST_RUN) setTimeout(function () { openOnboard(); }, 50); else startGeo();
   setTimeout(function () { drawTrack(); drawCar(); checkBadges(); }, 1500);
   applyEco();
+
+
+  // ---------- Écran d'accueil du premier lancement ----------
+  var OB_PAYS = [["BE", "Belgique"], ["FR", "France"], ["LU", "Luxembourg"], ["NL", "Pays-Bas"], ["DE", "Allemagne"], ["CH", "Suisse"], ["XX", "Autre pays"]];
+  var obStep = 0, obCountry = null;
+  function isIos() { return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1); }
+  function isInstalled() { return navigator.standalone === true || (window.matchMedia && matchMedia("(display-mode: standalone)").matches); }
+  function obSteps() {
+    var c = obCountry || getCountry(), urg = "112"; // numéro européen, marche partout et sans carte SIM
+    var steps = [
+      '<div class="ob-hero"><img src="icons/icon-192.png" alt="" width="96" height="96"></div>' +
+      '<h1 class="ob-title">Bivaska</h1>' +
+      '<p class="ob-lead">Pour bivouaquer, apprendre et faire face à une crise. Même sans réseau.</p>',
+
+      '<h2 class="ob-h">Trois choses à savoir</h2>' +
+      '<div class="ob-row">' + med("alerte", "c-danger") + '<div><b>Le bouton du milieu</b><span>En cas de problème : appeler les secours, guider les gestes pour un blessé, donner ta position. Sans compte et sans réseau.</span></div></div>' +
+      '<div class="ob-row">' + med("apprendre", "c-amber") + '<div><b>Apprendre</b><span>Fiches de survie, premiers secours, plantes et champignons dangereux. À lire avant d\'en avoir besoin.</span></div></div>' +
+      '<div class="ob-row">' + med("tente", "c-forest") + '<div><b>Bivouac</b><span>Carte, préparation de la sortie, sac à dos et journal de bord.</span></div></div>',
+
+      '<h2 class="ob-h">Ton pays</h2>' +
+      '<p class="ob-p">Il règle les numéros d\'urgence, les alertes officielles, les espèces de ta région et la carte.</p>' +
+      '<div class="ob-chips">' + OB_PAYS.map(function (p) { return '<button type="button" class="ob-chip' + (p[0] === c ? " on" : "") + '" data-ob-pays="' + p[0] + '" aria-pressed="' + (p[0] === c) + '">' + esc(p[1]) + "</button>"; }).join("") + "</div>" +
+      '<p class="ob-p tiny">Modifiable plus tard dans Réglages.</p>',
+
+      '<h2 class="ob-h">Avant de partir</h2>' +
+      '<div class="ob-row">' + med("pin", "c-water") + '<div><b>Ta position</b><span>Pour te situer sur la carte et donner tes coordonnées aux secours. Elle reste sur ton téléphone.</span>' +
+        '<button type="button" class="btn ob-geo" id="obGeo">' + ic("pin") + " Autoriser la position</button></div></div>" +
+      (isIos() && !isInstalled() ? '<div class="ob-row">' + med("aujourdhui", "c-amber") + '<div><b>Installe Bivaska</b><span>Touche le bouton Partager de Safari, puis « Sur l\'écran d\'accueil ». Installée, l\'appli marche hors ligne et Safari n\'efface pas tes données.</span></div></div>' : "") +
+      '<p class="ob-warn">Bivaska aide, mais ne remplace pas les secours. En danger, appelle le <b>' + esc(urg) + '</b>.</p>'
+    ];
+    return steps;
+  }
+  function renderOnboard() {
+    var st = obSteps(), last = obStep === st.length - 1;
+    $("#obBody").innerHTML = st[obStep];
+    $("#obDots").innerHTML = st.map(function (x, i) { return '<span class="' + (i === obStep ? "on" : "") + '"></span>'; }).join("");
+    $("#obNext").textContent = last ? "Commencer" : "Suivant";
+    $("#obNext").classList.toggle("is-last", last);
+    $("#obBack").hidden = obStep === 0;
+    $("#obSkip").hidden = last;
+    $("#obBody").scrollTop = 0;
+    var h = $("#obBody").querySelector("h1,h2"); if (h) { h.setAttribute("tabindex", "-1"); h.focus(); }
+  }
+  function openOnboard() {
+    obStep = 0; obCountry = getCountry();
+    $("#onboard").hidden = false; document.documentElement.classList.add("ob-open");
+    renderOnboard();
+  }
+  function closeOnboard() {
+    $("#onboard").hidden = true; document.documentElement.classList.remove("ob-open");
+    try { localStorage.setItem("sylva_onboard", "1"); } catch (e) {}
+    if (obCountry && obCountry !== load("sylva_country", null)) applyCountry(obCountry, true);
+    var sc = $("#setCountry"); if (sc && obCountry) sc.value = obCountry;
+    if (geoWatch == null) startGeo();
+  }
+  document.addEventListener("click", function (e) {
+    if (!e.target.closest("#onboard")) return;
+    var t = e.target.closest("button"); if (!t) return;
+    if (t.id === "obNext") { if (obStep >= obSteps().length - 1) closeOnboard(); else { obStep++; renderOnboard(); } }
+    else if (t.id === "obBack") { if (obStep > 0) { obStep--; renderOnboard(); } }
+    else if (t.id === "obSkip") closeOnboard();
+    else if (t.dataset.obPays) { obCountry = t.dataset.obPays; applyCountry(obCountry, true); renderOnboard(); }
+    else if (t.id === "obGeo") {
+      if (!navigator.geolocation) { t.textContent = "Position indisponible sur cet appareil"; return; }
+      t.disabled = true; t.textContent = "Demande en cours…";
+      navigator.geolocation.getCurrentPosition(function () { t.innerHTML = ic("pin") + " Position autorisée"; t.classList.add("ok"); if (geoWatch == null) startGeo(); },
+        function (err) { t.disabled = false; t.textContent = err && err.code === 1 ? "Refusée : à activer dans Réglages > Safari" : "Réessayer"; },
+        { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
+    }
+  });
+  var obAgain = $("#btnOnboard"); if (obAgain) obAgain.addEventListener("click", function () { closeModal($("#modalSettings")); openOnboard(); });
 
   // ---------- Mode crise (bouton central) ----------
   var CRISE_SIT = [
