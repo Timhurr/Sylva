@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.105";
+  var VERSION = "0.9.106";
   // Premier lancement : aucune donnée Bivaska encore enregistrée (lu avant que l'initialisation n'en écrive)
   var FIRST_RUN = (function () {
     try {
@@ -124,7 +124,7 @@
   function closeModal(el) { el.hidden = true; }
   $all(".modal").forEach(function (m) {
     m.addEventListener("click", function (e) {
-      if (e.target === m || e.target.hasAttribute("data-close")) closeModal(m);
+      if ((e.target === m && m.id !== "modalLegalMaj") || e.target.hasAttribute("data-close")) closeModal(m);
     });
   });
   var sheetStack = [], lectureChap = null;
@@ -4197,14 +4197,45 @@
   setTimeout(function () { prefetchPhotos(false); }, 3000);
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {}); } catch (e) {}
   initMap();
-  if (FIRST_RUN) setTimeout(function () { openOnboard(); }, 50); else startGeo();
+  if (FIRST_RUN) setTimeout(function () { openOnboard(); }, 50); else { startGeo(); setTimeout(checkLegal, 60); }
   setTimeout(function () { drawTrack(); drawCar(); checkBadges(); }, 1500);
   applyEco();
 
 
+  // ---------- Informations légales (legal.js) ----------
+  // Accord enregistré sur le téléphone (sylva_cgu = { v: version acceptée, t: date }). Nouvelle version = accord redemandé.
+  function legalTxt() { return window.SYLVA_LEGAL ? window.SYLVA_LEGAL.get(window.SYLVA_LANG || "fr") : { accept: "", maj: "" }; }
+  function legalOk() { var a = load("sylva_cgu", null); return !window.SYLVA_LEGAL || !!(a && a.v === window.SYLVA_LEGAL.version); }
+  function legalAccept() { if (window.SYLVA_LEGAL) save("sylva_cgu", { v: window.SYLVA_LEGAL.version, t: new Date().toISOString() }); legalInfo(); }
+  function legalInfo() {
+    var el = $("#legalAccepted"); if (!el) return; var a = load("sylva_cgu", null);
+    el.textContent = a && a.t ? tr("Acceptées le") + " " + new Date(a.t).toLocaleDateString(window.SYLVA_LOCALE || "fr-BE", { day: "numeric", month: "long", year: "numeric" }) + "." : "";
+  }
+  function openLegal(k) {
+    var L = window.SYLVA_LEGAL; if (!L) return; var d = L.get(window.SYLVA_LANG || "fr")[k]; if (!d) return;
+    $("#legalBody").innerHTML = '<h1 id="legalTitle" tabindex="-1">' + esc(d.titre) + "</h1>" + d.html + '<p class="tiny muted">' + esc(legalTxt().maj + L.date[window.SYLVA_LANG === "en" ? "en" : "fr"]) + "</p>";
+    $("#modalLegal").hidden = false; $("#legalBody").scrollTop = 0; var h = $("#legalTitle"); if (h) h.focus();
+  }
+  function checkLegal() {
+    if (legalOk() || !$("#modalLegalMaj")) return;
+    $("#legalMajTxt").innerHTML = legalTxt().accept; $("#legalMajChk").checked = false; $("#legalMajOk").disabled = true;
+    $("#modalLegalMaj").hidden = false;
+  }
+  document.addEventListener("click", function (e) {
+    var l = e.target.closest("[data-legal]");
+    if (l) { e.preventDefault(); openLegal(l.dataset.legal); return; }
+    if (e.target.closest("#legalClose")) { $("#modalLegal").hidden = true; return; }
+    if (e.target.closest("#legalMajOk")) { legalAccept(); $("#modalLegalMaj").hidden = true; }
+  });
+  document.addEventListener("change", function (e) {
+    if (e.target.id === "obAccept") { obAccepted = e.target.checked; if (obStep === obSteps().length - 1) $("#obNext").disabled = !obAccepted; }
+    else if (e.target.id === "legalMajChk") $("#legalMajOk").disabled = !e.target.checked;
+  });
+  legalInfo();
+
   // ---------- Écran d'accueil du premier lancement ----------
   var OB_PAYS = [["BE", "Belgique"], ["FR", "France"], ["LU", "Luxembourg"], ["NL", "Pays-Bas"], ["DE", "Allemagne"], ["CH", "Suisse"], ["XX", "Autre pays"]];
-  var obStep = 0, obCountry = null;
+  var obStep = 0, obCountry = null, obAccepted = false;
   function isIos() { return /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1); }
   function isInstalled() { return navigator.standalone === true || (window.matchMedia && matchMedia("(display-mode: standalone)").matches); }
   function obSteps() {
@@ -4239,13 +4270,18 @@
     $("#obDots").innerHTML = st.map(function (x, i) { return '<span class="' + (i === obStep ? "on" : "") + '"></span>'; }).join("");
     $("#obNext").textContent = last ? "Commencer" : "Suivant";
     $("#obNext").classList.toggle("is-last", last);
+    $("#obNext").disabled = last && !obAccepted;
+    // Accord aux conditions : au-dessus des boutons, toujours visible sur la dernière étape
+    var acc = $("#obAcceptBox");
+    acc.hidden = !last;
+    if (last) acc.innerHTML = '<label class="check-row ob-accept"><input type="checkbox" id="obAccept"' + (obAccepted ? " checked" : "") + '> <span data-no-i18n>' + legalTxt().accept + "</span></label>";
     $("#obBack").hidden = obStep === 0;
     $("#obSkip").hidden = last;
     $("#obBody").scrollTop = 0;
     var h = $("#obBody").querySelector("h1,h2"); if (h) { h.setAttribute("tabindex", "-1"); h.focus(); }
   }
   function openOnboard() {
-    obStep = 0; obCountry = getCountry();
+    obStep = 0; obCountry = getCountry(); obAccepted = legalOk();
     $("#onboard").hidden = false; document.documentElement.classList.add("ob-open");
     renderOnboard();
   }
@@ -4259,9 +4295,9 @@
   document.addEventListener("click", function (e) {
     if (!e.target.closest("#onboard")) return;
     var t = e.target.closest("button"); if (!t) return;
-    if (t.id === "obNext") { if (obStep >= obSteps().length - 1) closeOnboard(); else { obStep++; renderOnboard(); } }
+    if (t.id === "obNext") { if (obStep >= obSteps().length - 1) { if (obAccepted) { legalAccept(); closeOnboard(); } } else { obStep++; renderOnboard(); } }
     else if (t.id === "obBack") { if (obStep > 0) { obStep--; renderOnboard(); } }
-    else if (t.id === "obSkip") closeOnboard();
+    else if (t.id === "obSkip") { obStep = obSteps().length - 1; renderOnboard(); }
     else if (t.dataset.obLang) { if (t.dataset.obLang !== (window.SYLVA_LANG || "fr")) { save("sylva_lang", t.dataset.obLang); try { sessionStorage.setItem("sylva_ob_resume", "1"); } catch (er) {} location.reload(); } }
     else if (t.dataset.obPays) { obCountry = t.dataset.obPays; applyCountry(obCountry, true); renderOnboard(); }
     else if (t.id === "obGeo") {

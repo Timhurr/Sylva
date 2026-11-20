@@ -33,7 +33,14 @@ const stub = `(function(){function mk(){var f=function(){return p};var p=new Pro
   await pg.click('#obGeo'); await pg.waitForTimeout(600);
   ok('Position autorisée', (await pg.textContent('#obGeo')).includes('autorisée'));
   await pg.screenshot({ path: path.join(__dirname, 'shots/ob4.png') });
+  ok('Commencer bloqué sans accord', await pg.isDisabled('#obNext'));
+  await pg.click('.ob-accept a[data-legal="cgu"]'); await pg.waitForTimeout(200);
+  ok('Conditions lisibles depuis l\'accueil', await pg.isVisible('#modalLegal') && (await pg.textContent('#legalBody')).includes('112'));
+  await pg.click('#legalClose'); await pg.waitForTimeout(100);
+  ok('Case pas cochée par le lien', !(await pg.isChecked('#obAccept')));
+  await pg.check('#obAccept'); ok('Commencer actif', !(await pg.isDisabled('#obNext')));
   await pg.click('#obNext'); await pg.waitForTimeout(300);
+  ok('Accord enregistré', (await pg.evaluate(() => JSON.parse(localStorage.getItem('sylva_cgu') || '{}').v)) === (await pg.evaluate(() => SYLVA_LEGAL.version)));
   ok('Accueil fermé', !(await pg.isVisible('#onboard')));
   ok('Mémorisé', await pg.evaluate(() => localStorage.getItem('sylva_onboard')) === '1');
   await pg.reload(); await pg.waitForTimeout(800);
@@ -45,11 +52,22 @@ const stub = `(function(){function mk(){var f=function(){return p};var p=new Pro
   await p2.route(/^https?:\/\/(?!localhost)/, r => r.abort());
   await p2.goto('http://localhost:8777/index.html'); await p2.waitForTimeout(800);
   ok('Utilisateur existant : pas d\'accueil', !(await p2.isVisible('#onboard')));
+  ok('Utilisateur existant : accord demandé', await p2.isVisible('#modalLegalMaj') && await p2.isDisabled('#legalMajOk'));
+  await p2.click('#modalLegalMaj', { position: { x: 5, y: 5 } }); ok('Pas fermé en touchant à côté', await p2.isVisible('#modalLegalMaj'));
+  await p2.check('#legalMajChk'); await p2.click('#legalMajOk'); await p2.waitForTimeout(100);
+  ok('Accord mis à jour', !(await p2.isVisible('#modalLegalMaj')) && !!(await p2.evaluate(() => localStorage.getItem('sylva_cgu'))));
+  await p2.reload(); await p2.waitForTimeout(800); ok('Pas redemandé', !(await p2.isVisible('#modalLegalMaj')));
   // Revoir depuis les Réglages
   await pg.click('#btnSettings'); await pg.waitForTimeout(200); await pg.click('#btnOnboard'); await pg.waitForTimeout(200);
   ok('Revoir la présentation', await pg.isVisible('#onboard'));
   await pg.click('#obSkip'); await pg.waitForTimeout(200);
-  ok('Passer ferme', !(await pg.isVisible('#onboard')));
+  ok('Passer va à la dernière étape', (await pg.textContent('#obNext')).trim() === 'Commencer' && await pg.isChecked('#obAccept'));
+  await pg.click('#obNext'); await pg.waitForTimeout(200);
+  ok('Fermé', !(await pg.isVisible('#onboard')));
+  await pg.click('#btnSettings'); await pg.waitForTimeout(200);
+  ok('Date d\'accord dans Réglages', (await pg.textContent('#legalAccepted')).includes('Acceptées le'));
+  await pg.click('#modalSettings [data-legal="mentions"]'); await pg.waitForTimeout(200);
+  ok('Mentions légales', (await pg.textContent('#legalBody')).includes('GitHub'));
   ok('Aucune erreur JS', !errs.length, errs);
   await b.close(); srv.close(); process.exit(fails ? 1 : 0);
 })();

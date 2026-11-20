@@ -14,7 +14,7 @@ const res = []; const ok = (n, c, d) => { res.push(c); console.log((c ? 'OK   ' 
 (async () => {
   const b = await chromium.launch(); const errs = [];
   const ctx = await b.newContext({ ...devices['iPhone 13'], serviceWorkers: 'block' });
-  const pg = await ctx.newPage(); await pg.addInitScript(() => { try { localStorage.setItem('sylva_onboard', '1'); if (!localStorage.getItem('sylva_lang')) localStorage.setItem('sylva_lang', '"fr"'); } catch (e) {} }); pg.on('pageerror', e => errs.push(e.message));
+  const pg = await ctx.newPage(); await pg.addInitScript(() => { try { localStorage.setItem('sylva_onboard', '1'); if (!localStorage.getItem('sylva_cgu')) localStorage.setItem('sylva_cgu', JSON.stringify({ v: '2026-11-20' })); if (!localStorage.getItem('sylva_lang')) localStorage.setItem('sylva_lang', '"fr"'); } catch (e) {} }); pg.on('pageerror', e => errs.push(e.message));
   const db = { user_data: [{ k: 'sylva_trip', v: { lieu: 'Depuis le serveur' }, updated_at: new Date(Date.now() + 60000).toISOString() }], reports: [], ideas: [], posted: [] };
   await pg.route(/unpkg|open-meteo|overpass|openstreetmap|fonts\.|wiki/, r => r.abort());
   await pg.route(/unpkg\.com.*\.js|\/vendor\/(leaflet|maplibre)\/.*\.js/, r => r.fulfill({ contentType: 'text/javascript', body: stub }));

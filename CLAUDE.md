@@ -313,6 +313,8 @@ Phase 2, appli native (Capacitor) : radios Meshtastic en Bluetooth, notification
 
 - **v0.9.104 / v0.9.105 : anglais, tout le contenu.** Guide (18 chapitres), 241 fiches et 139 espèces traduits : `tools/i18n/content_en/{guide_*,techs_*,especes_*}.json` → `python3 tools/i18n/build_content.py` → `i18n/en_content.js` (affiche les comptes, doit dire 139/139, 241/241, 18/18). Les espèces gardent `latin` et `zones` français (clés logiques). Textes composés passés par `tr()` (« Étape # sur # », « Catégorie · # étapes », source, badge). Vérification : ouvrir toutes les fiches, espèces et chapitres en anglais et lister `SYLVA_T_MISS` (`SYLVA_APP.openTechnique/openEspece/openChapitre` exposés pour ça). Nouvelle fiche ou espèce = ajouter sa traduction, sinon elle reste en français en anglais.
 
+- **v0.9.106 : informations légales.** `legal.js` = source unique des conditions, de la confidentialité et des mentions légales (FR + EN), affichées dans l'appli (Réglages > Informations légales, fenêtre `#modalLegal`) et par `docs/conditions.html`, `docs/confidentialite.html`, `docs/mentions.html`. Accord obligatoire à la dernière étape de l'accueil (case au-dessus de « Commencer », « Passer » mène à cette étape) ; utilisateurs existants : fenêtre `#modalLegalMaj` (lien 112 toujours présent). Accord gardé dans `sylva_cgu` (`{v, t}`) : **changer `SYLVA_LEGAL.version` redemande l'accord** (et mettre la même valeur dans l'`addInitScript` des tests). **À compléter par Tim** : identité de l'éditeur (`EDITEUR` dans `legal.js` : nom, adresse ou numéro d'entreprise), puis relecture par un juriste.
+
 ## 11. Basculer sur un autre compte
 
 Voir `docs/BASCULE.md`.

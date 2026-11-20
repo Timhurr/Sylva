@@ -641,7 +641,7 @@
       <label class="check-row"><input type="checkbox" id="shVoit"> Accès voiture</label>
     </div>
     <label class="check-row" id="shPhotoRow"><input type="checkbox" id="shPhoto"> Joindre ma photo (sans personne reconnaissable)</label>
-    <label class="check-row"><input type="checkbox" id="shCgu"> Je confirme que dormir ici est autorisé, que je respecte les lois locales et les <a href="docs/conditions.html" target="_blank" rel="noopener">règles de partage</a>.</label>
+    <label class="check-row"><input type="checkbox" id="shCgu"> Je confirme que dormir ici est autorisé, que je respecte les lois locales et les <a href="#" data-legal="cgu">règles de partage</a>.</label>
     <p class="tiny muted">Tes premiers partages sont vérifiés avant d'être visibles. Seuls ton pseudo et ce formulaire sont publics, jamais ta position en direct.</p>
     <div class="row"><button type="button" class="btn btn-ghost" data-close>Annuler</button><button type="submit" class="btn btn-primary">Partager</button></div>
   </form>
@@ -651,8 +651,24 @@
   <div class="ob-top"><button type="button" class="ob-skip" id="obSkip">Passer</button></div>
   <div class="ob-body" id="obBody"></div>
   <div class="ob-foot">
+    <div id="obAcceptBox" hidden></div>
     <div class="ob-dots" id="obDots" aria-hidden="true"></div>
     <div class="step-nav"><button type="button" class="btn" id="obBack" hidden>Retour</button><button type="button" class="btn btn-next" id="obNext">Suivant</button></div>
+  </div>
+</div>
+<div class="modal modal-legal" id="modalLegal" hidden role="dialog" aria-modal="true" aria-labelledby="legalTitle">
+  <div class="modal-box">
+    <div class="legal-text" id="legalBody" data-no-i18n></div>
+    <div class="row"><button type="button" class="btn" id="legalClose">Fermer</button></div>
+  </div>
+</div>
+<div class="modal" id="modalLegalMaj" hidden role="dialog" aria-modal="true" aria-labelledby="legalMajTitle">
+  <div class="modal-box">
+    <h2 id="legalMajTitle">Conditions mises à jour</h2>
+    <p>Les conditions d'utilisation ou la politique de confidentialité ont changé. Lis-les et accepte-les pour continuer.</p>
+    <label class="check-row"><input type="checkbox" id="legalMajChk"> <span id="legalMajTxt" data-no-i18n></span></label>
+    <div class="row"><button type="button" class="btn btn-next" id="legalMajOk" disabled>Accepter</button></div>
+    <p class="tiny"><a href="tel:112">Urgence ? Appeler le 112</a></p>
   </div>
 </div>
 <div class="modal" id="modalSettings" hidden role="dialog" aria-modal="true" aria-labelledby="setTitle">
@@ -690,7 +706,13 @@
       <button type="button" class="btn" id="btnSources">Sources et crédits</button>
       <button type="button" class="btn" id="btnIdeas" hidden>Idées et retours</button>
     </div>
-    <p class="tiny"><a href="docs/confidentialite.html" target="_blank" rel="noopener">Confidentialité</a> · <a href="docs/conditions.html" target="_blank" rel="noopener">Conditions d'utilisation</a></p>
+    <div class="field-label">Informations légales</div>
+    <div class="row legal-row">
+      <button type="button" class="btn" data-legal="cgu">Conditions d'utilisation</button>
+      <button type="button" class="btn" data-legal="conf">Confidentialité</button>
+      <button type="button" class="btn" data-legal="mentions">Mentions légales</button>
+    </div>
+    <p class="tiny muted" id="legalAccepted"></p>
     <div class="field-label">Mes spots</div>
     <div class="row">
       <button type="button" class="btn" id="btnExportSpots">Copier mes spots</button>
@@ -827,6 +849,7 @@
 <script src="i18n_apply.js"></script>
 <script src="config.js"></script>
 <script src="cloud.js"></script>
+<script src="legal.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

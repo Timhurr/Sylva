@@ -1113,3 +1113,15 @@ html.ob-open, html.ob-open body{overflow:hidden}
 .ob-dots span.on{width:22px;border-radius:5px;background:var(--accent)}
 @media (prefers-reduced-motion:reduce){.ob-dots span{transition:none}}
 .ob-lang{justify-content:center;margin-top:6px}
+
+/* Informations légales (v0.9.106) */
+.modal-legal{z-index:6000}
+.legal-text h1{font-size:1.5rem;margin:0 0 8px}
+.legal-text h3{font-size:1.02rem;margin:16px 0 4px}
+.legal-text p,.legal-text li{line-height:1.5;font-size:14.5px}
+.legal-text ul{padding-left:20px;margin:4px 0}
+.legal-text a,.ob-accept a,#legalMajTxt a{color:var(--accent)}
+.legal-row{flex-wrap:wrap}
+.ob-accept{margin:0;padding:12px 14px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
+#modalLegalMaj{z-index:5500}
+.btn:disabled{opacity:.45;cursor:not-allowed}
