@@ -15,7 +15,7 @@ const stub = `(function(){function mk(){var f=function(){return p};var p=new Pro
   await ctx.route(/unpkg\.com.*\.js|\/vendor\/(leaflet|maplibre)\/.*\.js/, r => r.fulfill({ body: stub, contentType: 'text/javascript', headers: {'access-control-allow-origin':'*'} }));
   await ctx.route(/unpkg\.com|\/vendor\/(leaflet|maplibre)\/.*\.css/, r => r.fulfill({ body: '', contentType: 'text/css', headers: {'access-control-allow-origin':'*'} }));
   await ctx.route(/(fonts\.|openstreetmap|overpass|open-meteo|wikipedia|wikimedia|nominatim)/, r => r.abort());
-  const pg = await ctx.newPage(); await pg.addInitScript(() => { try { localStorage.setItem('sylva_onboard', '1'); } catch (e) {} }); const errs = [];
+  const pg = await ctx.newPage(); await pg.addInitScript(() => { try { localStorage.setItem('sylva_onboard', '1'); if (!localStorage.getItem('sylva_lang')) localStorage.setItem('sylva_lang', '"fr"'); } catch (e) {} }); const errs = [];
   pg.on('pageerror', e => errs.push(e.message));
   await pg.goto('http://localhost:8767/index.html');
   await pg.waitForFunction(() => navigator.serviceWorker && navigator.serviceWorker.controller, null, { timeout: 30000 }).catch(() => {});

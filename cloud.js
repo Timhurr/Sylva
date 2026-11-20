@@ -148,7 +148,7 @@
       return;
     }
     box.innerHTML = '<p class="acc-who">' + ic("rentre", "ic-in") + " Connecté : <b>" + esc(u.email || "") + "</b></p>" +
-      '<p class="tiny muted">Dernière sauvegarde : ' + (m.last ? new Date(m.last).toLocaleString("fr-BE") : "jamais") + ". Tes infos médicales restent uniquement sur ce téléphone.</p>" +
+      '<p class="tiny muted">Dernière sauvegarde : ' + (m.last ? new Date(m.last).toLocaleString((window.SYLVA_LOCALE || "fr-BE")) : "jamais") + ". Tes infos médicales restent uniquement sur ce téléphone.</p>" +
       '<div class="row"><button type="button" class="btn" id="accSync">Synchroniser</button><button type="button" class="btn" id="accOut">Se déconnecter</button></div>' +
       '<button type="button" class="link-btn danger-link" id="accDel">Supprimer mon compte</button>';
   }
@@ -307,7 +307,7 @@
       curSpot = s; var sum = (r[1] && r[1][0]) || {};
       var feats = [[s.eau, "Eau à proximité"], [s.abri, "Abri"], [s.feu_autorise, "Feu autorisé"], [s.acces_voiture, "Accès voiture"]].filter(function (f) { return f[0]; }).map(function (f) { return '<span class="chip">' + f[1] + "</span>"; }).join("");
       var h = "<h2>" + esc(s.titre) + '</h2><p class="com-statut">' + ic("rentre", "ic-in") + " " + esc(STATUTS[s.statut] || s.statut) + "</p>" +
-        (sum.n_avis ? '<p class="com-note"><span class="stars">' + stars(sum.note_moy) + "</span> " + sum.note_moy + " · " + sum.n_avis + " avis" + (sum.dernier_passage ? " · dernier passage " + new Date(sum.dernier_passage).toLocaleDateString("fr-BE") : "") + "</p>" : '<p class="tiny muted">Pas encore d\'avis.</p>') +
+        (sum.n_avis ? '<p class="com-note"><span class="stars">' + stars(sum.note_moy) + "</span> " + sum.note_moy + " · " + sum.n_avis + " avis" + (sum.dernier_passage ? " · dernier passage " + new Date(sum.dernier_passage).toLocaleDateString((window.SYLVA_LOCALE || "fr-BE")) : "") + "</p>" : '<p class="tiny muted">Pas encore d\'avis.</p>') +
         (sum.n_disparu > 0 ? '<div class="alert alert-warn">' + sum.n_disparu + " personne(s) signalent que ce spot n'existe plus ou a changé.</div>" : "") +
         (feats ? '<div class="chips">' + feats + "</div>" : "") +
         (s.description ? "<p>" + esc(s.description) + "</p>" : "") +
@@ -316,7 +316,7 @@
         '<div class="row"><button type="button" class="btn" id="comSave">Ajouter à mes spots</button><button type="button" class="btn btn-primary" id="comReview">Donner mon avis</button></div>' +
         '<h3>Avis</h3>' + ((r[2] || []).length ? r[2].map(function (v) {
           return '<div class="com-rev"><b>' + esc((v.profiles && v.profiles.pseudo) || "Membre") + '</b> <span class="stars">' + stars(v.note) + "</span>" + (v.encore_ok ? "" : ' <span class="idea-st">N\'existe plus</span>') +
-            (v.commentaire ? "<p>" + esc(v.commentaire) + "</p>" : "") + '<small>' + (v.visite ? "Visité le " + new Date(v.visite).toLocaleDateString("fr-BE") : new Date(v.created_at).toLocaleDateString("fr-BE")) +
+            (v.commentaire ? "<p>" + esc(v.commentaire) + "</p>" : "") + '<small>' + (v.visite ? "Visité le " + new Date(v.visite).toLocaleDateString((window.SYLVA_LOCALE || "fr-BE")) : new Date(v.created_at).toLocaleDateString((window.SYLVA_LOCALE || "fr-BE"))) +
             ' · <button type="button" class="link-btn" data-rep-avis="' + v.id + '">Signaler</button></small></div>';
         }).join("") : '<p class="tiny muted">Aucun avis.</p>') +
         '<button type="button" class="link-btn danger-link" id="comReport">Signaler ce spot</button>';

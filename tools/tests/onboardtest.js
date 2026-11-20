@@ -13,7 +13,7 @@ const stub = `(function(){function mk(){var f=function(){return p};var p=new Pro
 (async () => {
   let fails = 0; const ok = (n, c, d) => { console.log((c ? 'OK   ' : 'FAIL ') + n + (c ? '' : ' — ' + JSON.stringify(d || ''))); if (!c) fails++; };
   const b = await chromium.launch();
-  const ctx = await b.newContext({ ...devices['iPhone 13'], serviceWorkers: 'block', permissions: ['geolocation'], geolocation: { latitude: 50.1, longitude: 5.7 } });
+  const ctx = await b.newContext({ ...devices['iPhone 13'], serviceWorkers: 'block', locale: 'fr-BE', permissions: ['geolocation'], geolocation: { latitude: 50.1, longitude: 5.7 } });
   const pg = await ctx.newPage(); const errs = [];
   pg.on('pageerror', e => errs.push(e.message));
   await pg.route(/\/vendor\/(leaflet|maplibre)\/.*\.js/, r => r.fulfill({ body: stub, contentType: 'text/javascript' }));
@@ -39,7 +39,7 @@ const stub = `(function(){function mk(){var f=function(){return p};var p=new Pro
   await pg.reload(); await pg.waitForTimeout(800);
   ok('Pas réaffiché', !(await pg.isVisible('#onboard')));
   // Utilisateur existant (données sans drapeau) : pas d'accueil
-  const ctx2 = await b.newContext({ ...devices['iPhone 13'], serviceWorkers: 'block' });
+  const ctx2 = await b.newContext({ ...devices['iPhone 13'], serviceWorkers: 'block', locale: 'fr-BE' });
   const p2 = await ctx2.newPage(); await p2.addInitScript(() => { if (!sessionStorage.getItem('x')) { sessionStorage.setItem('x', 1); localStorage.setItem('sylva_spots', '[]'); } });
   await p2.route(/\/vendor\/(leaflet|maplibre)\/.*\.js/, r => r.fulfill({ body: stub, contentType: 'text/javascript' }));
   await p2.route(/^https?:\/\/(?!localhost)/, r => r.abort());

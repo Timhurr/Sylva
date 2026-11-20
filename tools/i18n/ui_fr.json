@@ -1,0 +1,8142 @@
+[
+ {
+  "s": "use strict",
+  "o": "code:app.js"
+ },
+ {
+  "s": "initialisation n",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<svg class=\"ic",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" aria-hidden=\"true\"><use href=\"#i-",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<span class=\"med",
+  "o": "code:app.js"
+ },
+ {
+  "s": "OpenStreetMap ou d",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Copié",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Copie impossible",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bivaska v",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· test terrain",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#themeChips .chip",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Localisation refusée : activez-la dans Réglages > Safari",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<div class=\"pin\" style=\"background:",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Carte indisponible",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ouvrez l'appli une première fois avec du réseau pour la mettre en cache.",
+  "o": "code:app.js"
+ },
+ {
+  "s": ".map-chips [data-layer=\"chasse\"]",
+  "o": "code:app.js"
+ },
+ {
+  "s": ".map-chips [data-layer=\"services\"]",
+  "o": "code:app.js"
+ },
+ {
+  "s": ".map-chips [data-layer=\"risques\"]",
+  "o": "code:app.js"
+ },
+ {
+  "s": ".map-chips .chip",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Confirmer ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Point choisi",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vent actuel (indicatif) : souffle vers le",
+  "o": "code:app.js"
+ },
+ {
+  "s": "de toi",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cercle : environ",
+  "o": "code:app.js"
+ },
+ {
+  "s": "km, ordre de grandeur de la zone de planification d'urgence. Seul le plan officiel fait foi.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<p class=\"tiny\" id=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" style=\"margin:0 0 6px\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "En cas d'alerte : entre dans un bâtiment, ferme tout, écoute la radio.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "N'évacue que sur ordre des autorités. Dehors, éloigne-toi en travers du vent.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Que faire ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<a class=\"btn\" target=\"_blank\" rel=\"noopener\" href=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "IGN Belgique",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Topo, sentiers, courbes de niveau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Monde entier · sans clé · routes, chemins, lieux",
+  "o": "code:app.js"
+ },
+ {
+  "s": "&copy; MapTiler",
+  "o": "code:app.js"
+ },
+ {
+  "s": "MapTiler Outdoor",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sentiers, relief, courbes · toute l'Europe",
+  "o": "code:app.js"
+ },
+ {
+  "s": "MapTiler Satellite",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Photo aérienne haute résolution",
+  "o": "code:app.js"
+ },
+ {
+  "s": "&copy; fournisseurs d'imagerie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#basemapList [data-basemap]",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Carte OpenFreeMap indisponible hors ligne la première fois : ouvre-la une fois avec du réseau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "MapTiler refuse la clé : vérifie-la dans Réglages, et le domaine autorisé dans MapTiler",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"basemap-item\" data-basemap=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"basemap-item\" data-skin=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "origine qu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Terminal :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Naturel",
+  "o": "code:app.js"
+ },
+ {
+  "s": "La carte telle quelle",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Terminal",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Écran rétro à phosphore vert, carte vectorielle",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Parchemin",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tons sépia, comme les gravures",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Nuit rouge",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Préserve la vision de nuit",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#skinList [data-skin]",
+  "o": "code:app.js"
+ },
+ {
+  "s": ");out center tags;",
+  "o": "code:app.js"
+ },
+ {
+  "s": "une par l",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas de réseau : zones en cache affichées",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chargement des zones…",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aires de bivouac et points d'eau depuis OpenStreetMap",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Zones mises à jour",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Serveurs OpenStreetMap surchargés : zones en cache affichées, réessaie dans une minute",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Battue",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Affût",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Autre chasse",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chasse",
+  "o": "code:app.js"
+ },
+ {
+  "s": "le serveur a répondu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "erreur du serveur :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "réponse inattendue du serveur",
+  "o": "code:app.js"
+ },
+ {
+  "s": "serveur wallon injoignable depuis l'appli",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Polygon",
+  "o": "code:app.js"
+ },
+ {
+  "s": "chemins fermés",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chasse aujourd'hui",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chasse dans les 2 semaines",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Territoire de chasse",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Territoire",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· lot",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Prochaines dates",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucune date à venir annoncée pour cette saison.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Source : SPW, annonces au DNF. Seules les affiches sur le terrain font foi.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<a href=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" target=\"_blank\" rel=\"noopener\">Carte officielle",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chasse :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chasse sur ton lieu de bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chasse tout près de ton lieu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ton lieu est dans un territoire de chasse",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas de territoire de chasse sur ton lieu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "(chemins fermés)",
+  "o": "code:app.js"
+ },
+ {
+  "s": ". Des chemins seront fermés : change d'endroit ou de date.",
+  "o": "code:app.js"
+ },
+ {
+  "s": ". Porte une couleur vive et respecte les affiches.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucune chasse annoncée le",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Prochaine date annoncée sur ce territoire :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas d'autre date annoncée cette saison.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucun territoire de chasse déclaré sur ce point.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<div class=\"alert",
+  "o": "code:app.js"
+ },
+ {
+  "s": "territoire(s) lus autour du lieu · vérifié le",
+  "o": "code:app.js"
+ },
+ {
+  "s": ". Seules les affiches sur le terrain font foi.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chasse : vérifie avant de partir",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Lecture des chasses impossible (",
+  "o": "code:app.js"
+ },
+ {
+  "s": "). <a href=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" target=\"_blank\" rel=\"noopener\">Ouvrir la carte officielle",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Alimentation",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Santé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Carburant",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Restaurant / café",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Matériel / bricolage",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Distributeur",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Gare",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Toilettes",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Police",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Parking",
+  "o": "code:app.js"
+ },
+ {
+  "s": "en plein air",
+  "o": "code:app.js"
+ },
+ {
+  "s": "à étages",
+  "o": "code:app.js"
+ },
+ {
+  "s": "le long de la route",
+  "o": "code:app.js"
+ },
+ {
+  "s": "sur le toit",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Supermarché",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Épicerie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Boulangerie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Boucherie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Primeur",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vente à la ferme",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Traiteur",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Magasin",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pharmacie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Médecin",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Hôpital",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Clinique",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Dentiste",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Restaurant",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Café",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bar",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Snack",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Magasin outdoor",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Magasin de sport",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Quincaillerie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bricolage",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Banque",
+  "o": "code:app.js"
+ },
+ {
+  "s": ");out center tags 700;",
+  "o": "code:app.js"
+ },
+ {
+  "s": "fériés",
+  "o": "code:app.js"
+ },
+ {
+  "s": "fermé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Services :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "lieux à moins de 8 km",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucun service référencé à moins de 8 km de ce point",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Services : serveurs OpenStreetMap saturés, réessaie dans une minute",
+  "o": "code:app.js"
+ },
+ {
+  "s": "durée max.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "surveillé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tarif :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Réservé aux visiteurs du lieu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Horaires :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tél. : <a href=\"tel:",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" target=\"_blank\" rel=\"noopener\">Site web",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"sa-gps\" data-go-lat=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-go-lon=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-go-name=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\">Y aller",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Infos OpenStreetMap : horaires à vérifier.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Source potable",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Point d'eau potable",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Signalé sur OpenStreetMap. Vérifiez sur place qu'il est en service.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Durée max :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tentes max :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Personnes max :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Feu autorisé :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Eau potable :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Toilettes :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Payant :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Réservation :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "de vous",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aire de bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Camping",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<span style=\"color:",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Camping (souvent fermé en hiver)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<a href=\"https://maps.apple.com/?daddr=",
+  "o": "code:app.js"
+ },
+ {
+  "s": "&dirflg=w\" target=\"_blank\" rel=\"noopener\">Itinéraire à pied",
+  "o": "code:app.js"
+ },
+ {
+  "s": "du centre de la carte",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucune aire de bivouac référencée à 25 km",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Zones pas encore chargées",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Touche ↻ pour charger cette zone · plan B : terrain privé avec l'accord du propriétaire",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ouvre la carte avec du réseau avant de partir",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bivouac le plus proche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "aire(s) à moins de 25 km · toucher pour voir",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plante",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Point d'eau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Emplacement",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Danger",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Animal",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Autre",
+  "o": "code:app.js"
+ },
+ {
+  "s": "(sans note)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<img class=\"popup-photo\" data-spot-photo=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" alt=\"Photo du spot\" hidden>",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button data-gps-spot=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" class=\"sa-gps\">GPS",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button data-edit-spot=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button data-del-spot=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" class=\"sa-del\">Supprimer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button data-share-spot=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" class=\"sa-share\">Partager à la communauté",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"chip",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-sfilt=\"\">Tous",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-sfilt=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucun spot. Touche la carte puis « Ajouter un spot ».",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucun spot ne correspond.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"spot-row\" data-spot-go=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\"><i style=\"background:",
+  "o": "code:app.js"
+ },
+ {
+  "s": "du centre",
+  "o": "code:app.js"
+ },
+ {
+  "s": ".map-chips [data-layer=\"spots\"]",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Spot supprimé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Photo illisible",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Position GPS actuelle (±",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas de GPS : le spot sera placé au centre de la carte.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Nouveau spot",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Modifier le spot",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Position :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "par les chemins",
+  "o": "code:app.js"
+ },
+ {
+  "s": "à pied",
+  "o": "code:app.js"
+ },
+ {
+  "s": "par les chemins et routes",
+  "o": "code:app.js"
+ },
+ {
+  "s": "à vélo",
+  "o": "code:app.js"
+ },
+ {
+  "s": "par la route",
+  "o": "code:app.js"
+ },
+ {
+  "s": "en voiture",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tourne",
+  "o": "code:app.js"
+ },
+ {
+  "s": "new name",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Continue",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pars",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Arrivée",
+  "o": "code:app.js"
+ },
+ {
+  "s": "À la fourche, prends",
+  "o": "code:app.js"
+ },
+ {
+  "s": "end of road",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Au bout du chemin, tourne",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Au rond-point, sors",
+  "o": "code:app.js"
+ },
+ {
+  "s": "à gauche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "à droite",
+  "o": "code:app.js"
+ },
+ {
+  "s": "slight left",
+  "o": "code:app.js"
+ },
+ {
+  "s": "légèrement à gauche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "slight right",
+  "o": "code:app.js"
+ },
+ {
+  "s": "légèrement à droite",
+  "o": "code:app.js"
+ },
+ {
+  "s": "sharp left",
+  "o": "code:app.js"
+ },
+ {
+  "s": "franchement à gauche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "sharp right",
+  "o": "code:app.js"
+ },
+ {
+  "s": "franchement à droite",
+  "o": "code:app.js"
+ },
+ {
+  "s": "tout droit",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tu arrives à destination",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Au rond-point, prends la",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cap",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· flèche orientée vers le nord",
+  "o": "code:app.js"
+ },
+ {
+  "s": "En attente du GPS. Active la localisation.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tu es arrivé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tu es arrivé :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Arrivé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "est à moins de 30 m.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "à vol d'oiseau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· environ",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Dans",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Recalcul de l'itinéraire",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tu t'es écarté du chemin",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· hors ligne : suis la flèche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· recalcul de l'itinéraire",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· tu t'es écarté du chemin",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#navModes [data-navmode]",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Destination",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Guidage vers",
+  "o": "code:app.js"
+ },
+ {
+  "s": "ta destination",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Guidage arrêté",
+  "o": "code:app.js"
+ },
+ {
+  "s": "En voiture : ne touche pas au téléphone en roulant, fixe-le sur un support.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Touche le point suivant",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Touche la carte pour poser le premier point",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· à pied ≈",
+  "o": "code:app.js"
+ },
+ {
+  "s": "(sans dénivelé)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Position GPS pas encore trouvée",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Y aller",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Placer un spot ici",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Point choisi sur la carte (",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Spot enregistré",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Spot enregistré sans photo (stockage indisponible)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Recherche de votre position…",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chargement de la zone affichée…",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas de réseau : recherche impossible.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Accept",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucun lieu trouvé.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"place-item\" data-place=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Service de recherche indisponible, réessayez.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" target=\"_blank\" rel=\"noopener\">Itinéraire",
+  "o": "code:app.js"
+ },
+ {
+  "s": "SOS Bivaska - ma position :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "m) https://maps.apple.com/?ll=",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Latitude :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Longitude :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Précision : ±",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Position pas encore disponible",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cartes MapTiler ajoutées au menu des cartes",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Réglages enregistrés",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Téléchargement des photos…",
+  "o": "code:app.js"
+ },
+ {
+  "s": "À propos",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sources et crédits",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tous les textes de Bivaska sont rédigés pour l'appli, et les schémas des techniques sont dessinés pour elle. Aucun passage de livre protégé n'est reproduit.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Contenu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Techniques de survie : manuels de l'armée américaine FM 21-76 / FM 3-05.70 (domaine public).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Premiers secours : consignes grand public (Croix-Rouge, ULB), recoupées avec le manuel FM 4-25.11.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Champignons dangereux et intoxications : Centre Antipoisons belge (070 245 245).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vipère : Province de Liège. Loup : Service public de Wallonie.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Eau improvisée : revue scientifique medRxiv (2025).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Données et services",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Carte, aires de bivouac, points d'eau et recherche : © contributeurs",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Photos : Wikimedia Commons, licences libres, auteur indiqué sous chaque photo.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Météo :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "(CC BY 4.0).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bivaska est un outil éducatif. Il ne remplace ni un guide de terrain, ni un mycologue, ni une formation aux premiers secours. En cas d'urgence : 112.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucun spot enregistré",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Photo :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "auteur sur Wikimedia",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· <a href=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" target=\"_blank\" rel=\"noopener\">source",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas de réseau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "photos prêtes pour le hors-ligne",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plante comestible",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plante toxique",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Champignon",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Faune",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Poisson et vie aquatique",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plantes comestibles",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plantes toxiques",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Champignons",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Poissons et vie aquatique",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-pays=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-milieu=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Région :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "utilisateur : un seul réglage qui adapte toute l",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pays :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "autre pays",
+  "o": "code:app.js"
+ },
+ {
+  "s": "février",
+  "o": "code:app.js"
+ },
+ {
+  "s": "août",
+  "o": "code:app.js"
+ },
+ {
+  "s": "décembre",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"item\" data-esp=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<span class=\"badge",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucune espèce trouvée.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "espèces présentes en",
+  "o": "code:app.js"
+ },
+ {
+  "s": "dans ta région",
+  "o": "code:app.js"
+ },
+ {
+  "s": "espèces dans ta région ·",
+  "o": "code:app.js"
+ },
+ {
+  "s": "au total",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#catChips .chip",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<img src=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" alt=\"\" loading=\"lazy\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<span class=\"esp-ph",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" alt=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" loading=\"lazy\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<img class=\"sosie-img\" src=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vérifie toujours plusieurs critères avant de cueillir.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Comestible sous conditions : lis les consignes.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ne pas consommer, ne pas porter à la bouche.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Infos et conduite à tenir.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Avec un permis, en respectant tailles et périodes. Toujours bien cuit.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Comestible avec précautions : lis les consignes avant de le garder.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "À relâcher ou à ne pas toucher : protégé, pollué ou venimeux.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Petit poisson à connaître, sans intérêt pour la table.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<div class=\"verdict v-",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<div class=\"cmp",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Dangereux",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sans danger",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"report-btn\" data-report=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-report-id=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-report-title=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Signaler une erreur",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<figure class=\"fiche-hero",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Saison",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Catégorie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Reconnaître",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ne pas la confondre avec",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Elle ou son sosie ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "La bonne",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sosie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Conseils",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pêche et cuisine",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Consignes",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Usages",
+  "o": "code:app.js"
+ },
+ {
+  "s": "En photo",
+  "o": "code:app.js"
+ },
+ {
+  "s": "La gravure aide à retenir ; pour identifier, compare aussi avec de vraies photos.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<figure class=\"real-ph\" data-rp=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Photo disponible en ligne",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Contenu éducatif. Ne consommez jamais une plante ou un champignon sans certitude absolue de son identité. La photo montre l'espèce en général : comparez toujours plusieurs critères.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#realPhotos [data-rp=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "figcaption span",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas de photo libre trouvée",
+  "o": "code:app.js"
+ },
+ {
+  "s": "adresse, sinon l",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Priorités",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"tech-card",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-tech=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Priorité",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"item\" data-tech=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Inspiré de",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<span class=\"rc-chip rc-lvl rc-lvl",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Intérêt",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Butin",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<div class=\"steps\" data-cur=\"0\" data-n=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<img class=\"step-img\" src=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" alt=\"Étape",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<div class=\"step",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Étape",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Précédent",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Étape suivante",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Terminé ✓",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Voir toutes les étapes",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· secours injoignables",
+  "o": "code:app.js"
+ },
+ {
+  "s": "étapes",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fais tout pour sortir ou te faire repérer si :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Seul, sans secours",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Secours joignables",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Source :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Premiers secours",
+  "o": "code:app.js"
+ },
+ {
+  "s": ". Contenu éducatif : il ne remplace pas une formation aux premiers secours.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bien joué ✓",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Revenir au pas à pas",
+  "o": "code:app.js"
+ },
+ {
+  "s": ".step-bar span",
+  "o": "code:app.js"
+ },
+ {
+  "s": "chapitres ·",
+  "o": "code:app.js"
+ },
+ {
+  "s": "fiches pratiques ·",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#guideMode .chip",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chapitres (",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"chap\" data-chap=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chapitre",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Lu ✓",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucun chapitre ne correspond.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fiches pratiques (",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Guide de survie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<section class=\"g-sec\" id=\"gsec",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<div class=\"encadre enc-",
+  "o": "code:app.js"
+ },
+ {
+  "s": "min de lecture",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"chip\" data-anchor=\"gsec",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fiches pratiques",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Espèces liées",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"chip\" data-esp=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"btn btn-primary btn-big\" data-chap=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\">Chapitre suivant :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Guide rédigé pour Bivaska à partir des manuels de survie de l'armée américaine (domaine public), des consignes de premiers secours grand public et des réglementations nationales. Il ne remplace pas une formation.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#sheetBody [data-ps-mode]",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#sheetBody .steps[data-mode]",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chapitre lu ✓",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ciel clair",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Peu nuageux",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Éclaircies",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Couvert",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Brouillard",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Brouillard givrant",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bruine",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bruine forte",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bruine verglaçante",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pluie faible",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pluie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Forte pluie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pluie verglaçante",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Neige faible",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Neige",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Forte neige",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Grains de neige",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Averses",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fortes averses",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Averses de neige",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Orage",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Orage et grêle",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Lieu recherché",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Autour de ma position",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Lever",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Coucher",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rafales en km/h. Monter le camp avant",
+  "o": "code:app.js"
+ },
+ {
+  "s": ", tant qu'il fait jour.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rafales",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Gel la nuit (",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sac de couchage confort sous 0 °C, bonnet pour dormir, gourde dans le sac pour qu'elle ne gèle pas.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Nuit froide (",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Couche chaude et matelas bien isolant. Voir « Prévenir l'hypothermie ».",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fortes pluies annoncées",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bâche, vêtements de rechange au sec dans un sac étanche, éviter le bord de la rivière (montée des eaux).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rafales de",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ne pas camper sous les arbres : risque de chute de branches.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<div class=\"alert alert-",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mis à jour à l'instant",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mis à jour il y a",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· Données",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas de réseau : ouvrez cet onglet une fois connecté pour garder la météo en mémoire.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Météo indisponible pour le moment.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "onglet Bivouac : au lieu de la sortie s",
+  "o": "code:app.js"
+ },
+ {
+  "s": "accueil garde la météo d",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Lieu du bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Prévisions disponibles 2 semaines avant la sortie : en attendant, voici la météo actuelle sur place.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas de réseau : ouvre cet onglet une fois connecté pour garder la météo du lieu en mémoire.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Météo du lieu indisponible pour le moment.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Popote / gamelle",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Poêle de bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Quart (tasse)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cuillère",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bâche (tarp)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cordelette (10 m)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sardines / piquets",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Scie pliante",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Hachette",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pierre à feu (ferro)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Briquet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Allumettes",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sacs étanches / poubelle",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Boussole",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Carte papier",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Lampe frontale",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Gants",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pansements et compresses",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Épingles de sûreté",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Foulard / tissu triangulaire",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Hameçons",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fil de pêche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Permis de pêche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bouteille plastique vide",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pastilles ou filtre à eau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Couteau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"btn",
+  "o": "code:app.js"
+ },
+ {
+  "s": "plan-btn\" data-plan=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "✓ Au programme du bivouac · retirer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "+ Ajouter au prochain bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Relire la fiche avant de partir",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Retiré du prochain bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Recette :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pour :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tout est déjà dans le sac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ajouté au sac du prochain bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"icon-mini danger\" data-unplan=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" aria-label=\"Retirer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "du programme\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Abri et couchage",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tente ou bâche + 10 m de cordelette",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sac de couchage confort ≤ 0 °C",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Matelas isolant (R ≥ 3)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sacs poubelle (déchets + rangement étanche)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vêtements",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sous-couche laine ou synthétique (pas de coton)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Polaire ou doudoune",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Veste et pantalon imperméables",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bonnet et gants",
+  "o": "code:app.js"
+ },
+ {
+  "s": "2 paires de chaussettes de rechange",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tenue sèche réservée à la nuit",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chaussures de marche imperméables",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Eau et repas",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Gourdes (2 L minimum)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Réchaud + combustible + casserole",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Briquet + pierre à feu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Repas + en-cas énergétiques",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sécurité et orientation",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Téléphone chargé + batterie externe",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Lampe frontale + piles",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Carte papier et boussole",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Trousse de secours + tire-tique",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Avant de partir",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Prévenir quelqu'un : itinéraire et heure de retour",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vérifier la météo (ci-dessus)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Parcourir la zone sur la carte (cache hors-ligne)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Télécharger les photos (réglages)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vérifier les règles de l'aire de bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input class=\"edit-input group-input\" data-group-title=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" value=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" aria-label=\"Nom de la catégorie\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"icon-mini danger\" data-del-group=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" aria-label=\"Supprimer la catégorie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<img class=\"check-thumb\" data-check-photo=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" alt=\"\" hidden>",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"icon-mini photo-slot\" data-photo-for=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" aria-label=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Changer la photo",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ajouter une photo",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input class=\"edit-input\" data-item-label=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" aria-label=\"Nom de l'élément\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"icon-mini danger\" data-del-item=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" aria-label=\"Supprimer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<label class=\"check",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\"><input type=\"checkbox\" data-check=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<form class=\"add-row\" data-add-to=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\"><input class=\"edit-input\" placeholder=\"Ajouter un élément…\" aria-label=\"Nouvel élément dans",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ajouter",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Créer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Revenir à la liste par défaut",
+  "o": "code:app.js"
+ },
+ {
+  "s": "prêts",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· sac prêt ✓",
+  "o": "code:app.js"
+ },
+ {
+  "s": "à faire",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Terminé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Modifier",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#checklist [data-check-photo]",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#formAddGroup input",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\"] input",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Supprimer la catégorie «",
+  "o": "code:app.js"
+ },
+ {
+  "s": "» et ses",
+  "o": "code:app.js"
+ },
+ {
+  "s": "éléments ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Remplacer ta liste par la liste par défaut ? Tes éléments et photos perso seront effacés.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Photo impossible à enregistrer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucun spot pour l'instant. Sur la carte, touchez le bouton",
+  "o": "code:app.js"
+ },
+ {
+  "s": "pour noter une trouvaille, avec une photo si vous voulez.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"carnet-item\" data-goto-spot=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<img class=\"carnet-thumb\" data-spot-photo=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" alt=\"\" hidden><span class=\"carnet-pin\" data-ph=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" style=\"background:",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<span class=\"carnet-pin\" style=\"background:",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#carnet [data-spot-photo]",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#carnet [data-ph=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "févr.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "déc.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Prochaine sortie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Demain",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mon bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Modifier la sortie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Choisir la date et le lieu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sans point précis, la météo du bivouac suit ta position ou la carte.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Choisir un spot…",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<option value=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas de réseau : choisis plutôt un spot ou ta position.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"place-item\" data-trip-place=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Recherche indisponible, réessaie.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Enter",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ma position",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sortie enregistrée · services et parkings du lieu gardés pour le hors ligne",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sortie enregistrée",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Date inconnue",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"item hist-item\" data-hist=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<span class=\"hist-stars\" aria-label=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "sur 5\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "recette(s) / fiche(s)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Touche pour ajouter un commentaire",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas encore d'ancien bivouac. Après ta sortie, touche « Terminer ce bivouac » : il arrive ici et tu peux le noter et le commenter.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" role=\"radio\" aria-checked=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "sur 5\" data-star=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ancien bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ajouter un ancien bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Au programme :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#histJournal [data-jr-photo]",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bivouac enregistré",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Supprimer ce bivouac de l'historique ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Terminer «",
+  "o": "code:app.js"
+ },
+ {
+  "s": "ce bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "» ? Il passe dans tes anciens bivouacs, et le sac est remis à zéro pour le prochain.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Météo en chargement…",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Météo disponible avec du réseau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· nuit à",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Lever du soleil",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Coucher du soleil",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Gel cette nuit",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Duvet confort sous 0 °C, bonnet pour dormir, gourde dans le duvet.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Couche chaude et matelas bien isolant.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ne campe pas sous les arbres : chute de branches.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fortes pluies",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bâche, rechange au sec, éloigne-toi du bord de l'eau.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<div class=\"notice",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Gel",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Nuit",
+  "o": "code:app.js"
+ },
+ {
+  "s": "GUIDE · CHAPITRE",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<span style=\"width:",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bonsoir",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bonjour",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Planifie ta prochaine sortie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sac prêt à",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"season-card\" type=\"button\" data-esp=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rien de particulier ce mois-ci.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Espèces",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chapitres du guide",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"item\" data-chap=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rien trouvé pour «",
+  "o": "code:app.js"
+ },
+ {
+  "s": "⏸ Arrêter l'enregistrement",
+  "o": "code:app.js"
+ },
+ {
+  "s": "▶ Reprendre l'enregistrement",
+  "o": "code:app.js"
+ },
+ {
+  "s": "▶ Enregistrer mon trajet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Enregistrement en cours ·",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<img class=\"jr-photo\" data-jr-photo=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"icon-mini danger\" data-jr-del=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" aria-label=\"Supprimer cette note\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Note ce que tu vois, ce qui marche, ce qui ne marche pas. Chaque note garde l'heure et l'endroit.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#journalList [data-jr-photo]",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Trajet enregistré : garde Bivaska ouverte, écran allumé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "En attente du GPS…",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Supprimer cette note ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Journal de bord",
+  "o": "code:app.js"
+ },
+ {
+  "s": "km parcourus",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"link-btn\" data-hist-track=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\">Voir le trajet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Trajet de «",
+  "o": "code:app.js"
+ },
+ {
+  "s": "» affiché en violet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "un coup ce qu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Choisis d'abord le lieu de la sortie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Il faut du réseau pour préparer la sortie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cartes (",
+  "o": "code:app.js"
+ },
+ {
+  "s": "morceaux, 2,5 km autour)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Météo du lieu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chasses annoncées",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Services autour (magasins, santé…)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Relief : cuvette ou crête",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fiches et gravures hors ligne",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ton matériel face à la nuit",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cartes :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "morceaux gardés hors ligne",
+  "o": "code:app.js"
+ },
+ {
+  "s": "en échec)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Météo du lieu gardée",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Météo indisponible",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chasse : hors Wallonie, pas de données",
+  "o": "code:app.js"
+ },
+ {
+  "s": "territoire(s) vérifiés",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chasse : serveur injoignable, vérifie la carte officielle",
+  "o": "code:app.js"
+ },
+ {
+  "s": "lieux, bivouacs et eau :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "gardés",
+  "o": "code:app.js"
+ },
+ {
+  "s": "lieux gardés (bivouacs et eau : serveur saturé)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Services indisponibles",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Relief :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "léger creux",
+  "o": "code:app.js"
+ },
+ {
+  "s": "crête",
+  "o": "code:app.js"
+ },
+ {
+  "s": "position haute",
+  "o": "code:app.js"
+ },
+ {
+  "s": "terrain intermédiaire",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Relief indisponible",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cache indisponible sur ce navigateur",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Gravures :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "hors ligne",
+  "o": "code:app.js"
+ },
+ {
+  "s": "hors ligne (",
+  "o": "code:app.js"
+ },
+ {
+  "s": "ajoutées)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bivaska occupe environ",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mo sur ce téléphone.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Nuit à",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Matériel : ajoute ton matelas et ton sac dans « Mon matériel » pour le vérifier",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Prêt.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ouvre Bivaska une fois en mode avion pour vérifier, et garde ton téléphone chargé.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sortie préparée le",
+  "o": "code:app.js"
+ },
+ {
+  "s": ". Refais-le la veille pour une météo fraîche.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Télécharge d'un coup, pour le hors ligne : cartes, météo, chasse, services et relief autour du lieu de la sortie.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Je pars en bivouac seul",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Lieu :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Retour prévu :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Si tu n'as pas de nouvelles de moi le",
+  "o": "code:app.js"
+ },
+ {
+  "s": ", appelle le 112, donne-leur ce message et dis que je suis seul.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ajoute le numéro de ton proche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Message copié",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Enregistre d'abord le numéro de ton proche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Je suis bien rentré du bivouac. Tout va bien, merci d'avoir veillé !",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ma voiture",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Garée le",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Déplacer ma voiture ici",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ma voiture est garée ici",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Voiture marquée le",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Marque l'endroit où tu te gares en arrivant : le retour marche même sans réseau.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "En attente du GPS : active la localisation",
+  "o": "code:app.js"
+ },
+ {
+  "s": "GPS peu précis (",
+  "o": "code:app.js"
+ },
+ {
+  "s": "m) : attends un peu à découvert si possible",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Voiture marquée",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Économie de batterie : écran sombre, GPS économe",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Économie de batterie désactivée",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Batterie :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "(en charge)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Batterie à",
+  "o": "code:app.js"
+ },
+ {
+  "s": "% : active l'économie et coupe ce qui ne sert pas",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Couper la voix",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Activer la voix",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Guidage vocal activé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "sig-overlay sig-",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sifflet de détresse",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Signal SOS lumineux",
+  "o": "code:app.js"
+ },
+ {
+  "s": "3 coups de sifflet, une pause, en boucle : le signal de détresse. Volume à fond, mode silencieux coupé (bouton sur le côté de l'iPhone).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "SOS en morse (· · · — — — · · ·). Luminosité de l'écran au maximum, écran tourné vers les secours.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Son activé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Son coupé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Nom et prénom",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Date de naissance",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Groupe sanguin",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Allergies",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Traitements en cours",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Problèmes de santé à connaître",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Personne à prévenir",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Son numéro",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Autres infos",
+  "o": "code:app.js"
+ },
+ {
+  "s": "INFOS MÉDICALES D'URGENCE",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<a href=\"tel:",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rien d'enregistré. Remplis tes infos : un secouriste pourra les lire si tu ne peux pas parler.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<textarea rows=\"2\" data-ice=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-ice=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Enregistrer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#iceForm [data-ice]",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Infos d'urgence enregistrées sur ce téléphone",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Une eau claire peut rendre malade",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cet outil mesure seulement la clarté, jamais les microbes. Toute eau trouvée dehors se traite (ébullition 1 minute, filtre ou pastilles).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Remplis une bouteille transparente. Pose-la devant un fond blanc avec un trait noir (une ligne au stylo sur un papier, ou le texte d'un emballage), à la lumière du jour, et prends la photo de face, la bouteille au centre.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Photographier l'eau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Claire",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Le trait reste net : pas de préfiltrage nécessaire. Traite-la quand même : ébullition 1 minute, ou filtre puis pastilles.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Un peu trouble",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Filtre-la dans un tissu propre (t-shirt, chaussette) avant de la traiter. Les pastilles marchent mal dans une eau trouble : l'ébullition est plus sûre.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Trouble",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Laisse reposer 30 minutes pour que la boue tombe, verse doucement le dessus, filtre au tissu, puis fais bouillir 1 minute. Évite les pastilles seules.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Très trouble",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cherche une autre source si possible (plus en amont, source qui sort du sol). Sinon : décanter, filtrer plusieurs fois, puis bouillir. Méfie-toi d'une eau près des champs ou de la route.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Couleur brune ou thé : souvent des tanins de tourbière ou de feuilles. Pas dangereux en soi, mais elle se traite comme les autres.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Légère teinte jaune : tanins probables.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· netteté",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Filtres de fortune",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Estimation à partir de la photo : la lumière et le fond changent le résultat. Une odeur chimique, une mousse ou une couleur verte vive : n'en bois pas, même traitée.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#eauRes .eau-thumb",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Photo illisible, réessaie.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Allonge-toi ou tiens le téléphone à plat, écran vers le sol, caméra vers le ciel, là où tu veux dormir. Prends la photo bien à la verticale.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Photographier le ciel",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Couvert fermé : nuit plus douce et moins de rosée sous les arbres, mais le bois et tes affaires sècheront mal, et un panneau solaire ne servira à rien.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ouverture moyenne : un bon compromis. Un peu de soleil pour sécher, et les arbres limitent la rosée et le froid de la nuit.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ciel très ouvert : bon pour sécher et charger au solaire, mais plus de rosée, de givre et de froid la nuit (le sol perd sa chaleur vers le ciel). Prévois une bâche bien tendue.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ciel visible",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Soleil utile (au-dessus de 15°)",
+  "o": "code:app.js"
+ },
+ {
+  "s": ": soleil levé environ",
+  "o": "code:app.js"
+ },
+ {
+  "s": ", au plus haut à",
+  "o": "code:app.js"
+ },
+ {
+  "s": "° au-dessus de l'horizon",
+  "o": "code:app.js"
+ },
+ {
+  "s": "(soleil bas : les arbres au sud cachent l'essentiel)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Regarde aussi au-dessus de toi",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas de branche morte, ni d'arbre mort ou penché au-dessus de l'abri : c'est l'un des premiers dangers en forêt, surtout avec du vent.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Estimation : les nuages blancs et les reflets faussent un peu le calcul. En bleu, ce que Bivaska a compté comme ciel.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#cielRes .eau-thumb",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-tlmode=\"distance\">Distance d'un objet connu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-tlmode=\"hauteur\">Hauteur d'un arbre",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Hauteur réelle de l'objet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Distance jusqu'au pied (compte tes pas × 0,75)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"text\" inputmode=\"decimal\" id=\"tlKnown\" value=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Repères : une personne 1,75 m ; une porte 2 m ; une voiture 1,5 m ; un étage 3 m ; un poteau électrique 9 m.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tiens le téléphone droit devant toi, à hauteur des yeux, et vise avec la croix.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Viser le sommet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Viser la base",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Visée trop serrée ou valeur manquante : recommence en visant bien le haut puis le bas.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Distance",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Angle visé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Précision de l'ordre de 10 à 20 % à quelques dizaines de mètres, moins bonne au-delà ou sous 2° d'angle visé : prends un repère plus grand ou rapproche-toi.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Hauteur",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chute possible jusqu'à",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Un arbre peut tomber à une distance égale à sa hauteur, plus les branches : garde au moins",
+  "o": "code:app.js"
+ },
+ {
+  "s": "m entre ton abri et un arbre mort ou penché.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Visée",
+  "o": "code:app.js"
+ },
+ {
+  "s": "°. Plus l'objet est loin et petit, moins c'est précis.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Capteurs de mouvement indisponibles : autorise-les",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sommet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Base",
+  "o": "code:app.js"
+ },
+ {
+  "s": "']/g, function (c) { return {",
+  "o": "code:app.js"
+ },
+ {
+  "s": ": \"&quot;\", \"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bivouac :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Lieu de la sortie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<wpt lat=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" lon=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Trajet Bivaska",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<trkpt lat=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bivaska",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rien à exporter",
+  "o": "code:app.js"
+ },
+ {
+  "s": "iPhone n",
+  "o": "code:app.js"
+ },
+ {
+  "s": "ta dernière position GPS",
+  "o": "code:app.js"
+ },
+ {
+  "s": "le lieu de ta sortie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "le centre de ton pays (précision moindre)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Soleil couché",
+  "o": "code:app.js"
+ },
+ {
+  "s": "La nuit, cherche l'étoile polaire : elle indique le nord à moins d'un degré près.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "juste devant toi (le soleil est presque au nord)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "juste derrière toi",
+  "o": "code:app.js"
+ },
+ {
+  "s": "° sur ta droite",
+  "o": "code:app.js"
+ },
+ {
+  "s": "° sur ta gauche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<text x=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" class=\"nd-l",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fais face au soleil :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "le nord est",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Soleil au",
+  "o": "code:app.js"
+ },
+ {
+  "s": "° de hauteur, à",
+  "o": "code:app.js"
+ },
+ {
+  "s": ". Calculé pour",
+  "o": "code:app.js"
+ },
+ {
+  "s": "et l'heure du téléphone.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Soleil très haut : la direction est moins précise. Recommence dans une heure ou utilise le bâton et l'ombre.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ne regarde jamais le soleil en face : repère sa direction à ton ombre (le soleil est à l'opposé). Vérifie avec une autre méthode quand tu peux.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "La fiche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Au départ (voiture, camp), touche « Partir ». Garde le téléphone en main, à plat devant toi, écran allumé : Bivaska compte tes pas et suit ta direction. Pour revenir, suis la flèche.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas encore parti",
+  "o": "code:app.js"
+ },
+ {
+  "s": "En cours…",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Partir d'ici",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pause",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Remettre à zéro",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Longueur d'un pas (m)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"text\" inputmode=\"decimal\" id=\"estLen\" value=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mesure-la : compte tes pas sur 50 m, puis 50 ÷ nombre de pas. En moyenne 0,7 à 0,8 m sur le plat, moins en montée.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Repère approximatif : l'erreur grandit avec la distance (souvent 5 à 10 %). L'écran doit rester allumé : l'iPhone coupe les capteurs quand il se verrouille. Si tu as du réseau ou du GPS, préfère « Retour à la voiture ». Fiche : « Revenir sur ses pas à la boussole ».",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Marche, Bivaska compte tes pas",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Retour : cap",
+  "o": "code:app.js"
+ },
+ {
+  "s": "pas ·",
+  "o": "code:app.js"
+ },
+ {
+  "s": "m marchés",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· tu regardes vers",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· boussole indisponible",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Autorise les capteurs de mouvement pour compter les pas",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Reprendre",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Point de départ : ici",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Entre 0,3 et 1,5 m",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Hauteur des antennes au-dessus du terrain alentour",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Toi (m)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"text\" inputmode=\"decimal\" id=\"rdH1\" value=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "L'autre (m)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"text\" inputmode=\"decimal\" id=\"rdH2\" value=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Debout",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Étage, arbre",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Colline",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"chip\" data-rdh=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "C'est la limite de la ligne droite à cause de la rondeur de la Terre. La portée réelle d'un talkie-walkie PMR446 (0,5 W) est souvent bien plus courte : quelques centaines de mètres en ville ou en forêt dense, 1 à 3 km en campagne. Monte en hauteur pour gagner beaucoup.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fiche radio : canaux et règles",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Horizon radio maximal entre les deux antennes, sans obstacle (relief, bâtiments, arbres).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vise la lampe qui clignote au centre du cadre et garde le téléphone immobile (appuie-le contre un arbre). Bivaska mesure la lumière et traduit les signaux longs et courts.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Démarrer la caméra",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Effacer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Expérimental : marche mieux de nuit, avec une lumière nette et un rythme régulier. « ...---... » = SOS. Pour émettre toi-même : bouton SOS > Signal lumineux.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Caméra indisponible sur cet appareil",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Caméra active",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Autorise la caméra pour lire le morse",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plan d'urgence du foyer (Bivaska)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Contacts :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rendez-vous près de la maison :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rendez-vous hors du quartier :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Abri / centre d'accueil :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Enfants :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Médecin, traitements :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Consignes :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Urgences : 112. Écoute la radio et suis les consignes des autorités.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "QR indisponible",
+  "o": "code:app.js"
+ },
+ {
+  "s": "(Texte raccourci : trop long pour un seul QR.)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Scanne avec un autre téléphone : il ouvre ma position dans son application de cartes. Coordonnées :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Trouve la vanne de gaz de ton logement et vérifie que tu sais la fermer.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Trouve le tableau électrique et l'interrupteur général. Ta lampe de poche est-elle à côté ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Trouve la vanne d'arrivée d'eau principale.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Apprends par cœur le numéro d'un proche. Sans téléphone, c'est le seul que tu auras.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vérifie la date de péremption d'un article de ton stock (eau, conserve, piles).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Allume ta radio à piles et trouve la radio publique. Note sa fréquence sur ton plan.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Recharge tes batteries externes.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fixe avec ton foyer un point de rendez-vous hors du quartier, et écris-le dans le plan.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mets un peu d'argent liquide en petites coupures avec ton kit.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Relis les gestes en cas d'hémorragie : où poser un garrot ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Relis la position latérale de sécurité et fais-la mentalement, étape par étape.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Relis la réanimation : rythme et profondeur des compressions.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Repère la pièce de ta maison la plus adaptée pour te calfeutrer.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Où est l'eau cachée dans ton logement ? Repère ton ballon d'eau chaude et son robinet de vidange.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Inscris-toi au système d'alerte de ton pays si ce n'est pas fait.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fais l'exercice : trouve le nord avec le soleil dans Outils de terrain.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Prépare un sac d'évacuation pour une personne : est-il prêt à prendre en 2 minutes ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Note le nom d'un voisin fragile ou isolé dont tu prendrais des nouvelles en crise.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vérifie ta trousse de premiers secours : il manque quelque chose ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Teste ta lampe de poche et ses piles de rechange.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Exercice en famille (10 min) : chacun dit où est le kit, le point de rendez-vous, et comment couper le gaz. Puis testez la radio et la lampe.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Exercice du jour · 2 min",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<p class=\"drill-q",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fait aujourd'hui. À demain !",
+  "o": "code:app.js"
+ },
+ {
+  "s": "C'est fait",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"btn\" data-tech=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\">La fiche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bien joué !",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Y a-t-il un danger autour (circulation, feu, chute, courant, eau) ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ne t'approche pas tant que ce n'est pas sûr pour toi.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Supprime ou balise le danger seulement si tu peux le faire sans risque.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Appelle le 112.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Saignement abondant : le sang coule en flot, gicle, ou imbibe vite les vêtements ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Où saigne-t-il ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bras ou jambe",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cou, aisselle, aine, ventre ou dos",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Garrot",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Appuie très fort directement sur la plaie pendant que tu prépares le garrot (ou fais appuyer quelqu'un).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pose le garrot 5 à 7 cm au-dessus de la plaie, jamais sur une articulation. À défaut : bande large d'au moins 4 cm (ceinture, foulard) avec un bâton pour tourner.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Serre jusqu'à ce que le saignement s'arrête, puis bloque le bâton.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Note l'heure de pose : touche le bouton ci-dessous.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ne le desserre jamais toi-même. Laisse-le visible et dis-le aux secours.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Compression",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Appuie de toutes tes forces directement sur la plaie avec un tissu propre (ou ta main, gantée si possible).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plaie profonde au cou, à l'aisselle ou à l'aine : bourre-la de tissu en l'enfonçant, puis appuie au moins 3 minutes sans relâcher.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Garde la pression jusqu'aux secours, ou fais un pansement compressif bien serré (jamais serré autour du cou).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Parle-lui fort et touche ses épaules : réagit-elle ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bascule doucement sa tête en arrière, menton soulevé. Respire-t-elle normalement (regarde 10 secondes) ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Réanimation",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Appelle le 112 (haut-parleur) et fais chercher un défibrillateur.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mains au centre de la poitrine, bras tendus : enfonce de 5 à 6 cm, 100 à 120 fois par minute.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Formé : 30 compressions puis 2 insufflations. Sinon, compressions seules sans t'arrêter.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Défibrillateur : allume-le et suis sa voix.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Continue jusqu'aux secours ou jusqu'à ce qu'elle respire normalement.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Position latérale de sécurité",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mets-la sur le côté en position latérale de sécurité, bouche vers le sol.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Couvre-la et isole-la du sol.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vérifie sa respiration chaque minute. Si elle s'arrête : réanimation.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Respire-t-elle avec difficulté, ou a-t-elle une plaie à la poitrine ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Respiration",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Installe-la assise ou demi-assise, dans la position où elle respire le mieux.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plaie à la poitrine : ne la bouche pas hermétiquement, couvre-la d'un pansement non serré. Si la respiration s'aggrave, retire le pansement.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Desserre ses vêtements, rassure-la, appelle le 112.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Est-elle pâle, froide, moite, assoiffée, agitée ou somnolente ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Allonge-la à plat. Surélève ses jambes d'environ 30 cm seulement si elle n'a pas de blessure aux jambes, au bassin ou au dos.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ne lui donne ni à boire ni à manger.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Surveille sa respiration et sa conscience toutes les quelques minutes.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "A-t-elle chuté ou reçu un choc à la tête, au cou ou au dos ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tête et colonne",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ne la bouge pas sauf danger : maintiens sa tête dans l'axe du corps, mains de chaque côté.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Surveille : somnolence, vomissements, confusion, pupilles différentes, liquide au nez ou aux oreilles = urgence, 112.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Si elle vomit ou perd connaissance en respirant : position latérale de sécurité en gardant la tête dans l'axe.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Protéger du froid",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Isole-la du sol (sac, matelas, branches), couvre-la (couverture de survie, vêtements secs), protège sa tête.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Remplace les vêtements mouillés si tu peux.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rassure-la et reste avec elle.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Et maintenant",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Continue de surveiller la respiration, la conscience et les saignements.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Note ce qui s'est passé et les heures (chute, garrot, réveil…) pour les secours.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas de secours possibles ? Fiche « Laisser une victime pour chercher les secours ».",
+  "o": "code:app.js"
+ },
+ {
+  "s": "⏱ Garrot posé à",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"btn btn-big bl-ans\" data-blgo=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"btn btn-big btn-danger\" data-blgo=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"btn btn-big\" data-blgo=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<p class=\"bl-t",
+  "o": "code:app.js"
+ },
+ {
+  "s": "⏱ Garrot posé : noter l'heure",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\">Voir la fiche détaillée",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"btn btn-primary btn-big\" data-blgo=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\">Étape suivante →",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Appeler le 112",
+  "o": "code:app.js"
+ },
+ {
+  "s": "← Retour",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Recommencer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#modalBlesse .modal-box",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Heure du garrot notée",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Effacer l'heure du garrot ? Fais-le seulement quand les secours ont pris le relais.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "sans date",
+  "o": "code:app.js"
+ },
+ {
+  "s": "périmé depuis",
+  "o": "code:app.js"
+ },
+ {
+  "s": "périme aujourd'hui",
+  "o": "code:app.js"
+ },
+ {
+  "s": "périme dans",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Nourriture",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Téléphones",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cuisson",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<span class=\"pret-ring\" style=\"--p:",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Prépare ton foyer pour une crise",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Autonomie :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "kit complet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Panne, inondation, tempête : l'UE demande à chaque foyer de tenir 72 h seul.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "périmé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "dans ton stock",
+  "o": "code:app.js"
+ },
+ {
+  "s": "à renouveler ce mois-ci",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plan familial à compléter",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Stock à jour, plan familial prêt",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" data-fst=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-dir=\"-1\" aria-label=\"Moins de",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-dir=\"1\" aria-label=\"Plus de",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<i style=\"width:",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Kit",
+  "o": "code:app.js"
+ },
+ {
+  "s": "à surveiller",
+  "o": "code:app.js"
+ },
+ {
+  "s": "stock à jour",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· plan",
+  "o": "code:app.js"
+ },
+ {
+  "s": "prêt",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#pretTabs [data-ptab]",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Eau en réserve",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Repas en réserve",
+  "o": "code:app.js"
+ },
+ {
+  "s": "repas d'une personne",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Batteries externes",
+  "o": "code:app.js"
+ },
+ {
+  "s": "charges de téléphone",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cartouches de gaz",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mon autonomie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<div class=\"auto-big",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Indique tes réserves",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"text\" inputmode=\"decimal\" data-res=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" placeholder=\"0\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Objectif : au moins 3 jours partout. Calcul : 3 L d'eau et 3 repas par personne et par jour, une charge de téléphone par adulte et par jour, une cartouche de gaz pour environ 1,5 jour de cuisine pour deux.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mon foyer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Adultes",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Enfants",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bébés",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Animaux",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"checkbox\" data-ftog=\"med\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "> Quelqu'un suit un traitement",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"checkbox\" data-ftog=\"mob\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "> Mobilité réduite ou appareil médical",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rester chez soi : 72 h d'autonomie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sac d'évacuation, prêt à partir",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<label class=\"pret-item",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\"><input type=\"checkbox\" data-have=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ajouter au stock",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Note la date de péremption : Bivaska te prévient un mois avant, ici et sur l'écran Aujourd'hui.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<small class=\"st-",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"date\" value=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-stdate=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" aria-label=\"Changer la date de",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\"><button type=\"button\" class=\"icon-mini\" data-stdel=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rien encore. Ajoute ce que tu as déjà à la maison : eau, conserves, piles, médicaments.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Qui prévenir",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<a class=\"btn\" href=\"tel:",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"icon-mini\" data-pcdel=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ajoute aussi un contact hors de ta région : si le réseau local sature, il sert de relais pour toute la famille.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Point de rendez-vous près de chez toi",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ex. : devant l'école, chez un voisin",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Point de rendez-vous hors du quartier",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Si le quartier est évacué : chez un proche, une salle communale…",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Abri ou centre d'accueil le plus proche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Demande à ta commune",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Écoles et crèches : qui va chercher les enfants ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Nom de l'école, qui y va, plan B",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Médecin, pharmacie, traitements",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Autres consignes du foyer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Couper le gaz : vanne au garage…",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<textarea rows=\"2\" data-pfield=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" placeholder=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Partager le plan au foyer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "QR code (sans réseau)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Imprime-le ou recopie-le aussi sur papier : il doit servir sans téléphone.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mon pays",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Urgences",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Alertes officielles",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sans internet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Garde une radio à piles ou à manivelle : en cas de crise, les autorités diffusent les consignes à la radio publique.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Crises",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"pret-crise\" data-tech=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plan familial",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Scanne avec l'appareil photo d'un autre téléphone : le plan s'affiche en texte, sans réseau. Chacun peut ensuite le garder dans ses notes.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plan d'urgence du foyer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plan copié : colle-le dans un message",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plan enregistré",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Indique l'article",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ajouté au stock",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Nom et téléphone",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Matelas",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sac de couchage",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Abri, tente, bâche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Réchaud",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cuisine",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vêtement",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mon matériel",
+  "o": "code:app.js"
+ },
+ {
+  "s": "à emporter ·",
+  "o": "code:app.js"
+ },
+ {
+  "s": "sans poids)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"checkbox\" data-gtake=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"gear-main\" data-gedit=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ajoute ton matos : Bivaska calcule le poids du sac, utilise ton matelas et ton sac de couchage dans le calcul de valeur R, et les compare à la météo de la sortie.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Le plus lourd :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Valeurs : <a href=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ajouter du matériel",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"place-item\" data-gpick=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas dans la liste ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas dans le catalogue de Bivaska.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<a class=\"btn\" target=\"_blank\" rel=\"noopener\" href=\"https://www.google.com/search?q=",
+  "o": "code:app.js"
+ },
+ {
+  "s": "fiche technique poids",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\">Chercher en ligne",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Saisir à la main",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-gcatpick=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rien dans le catalogue pour cette catégorie : tape la marque et le modèle, ou saisis à la main.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Donne un nom (marque et modèle)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#gSrc a",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Matériel enregistré",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Supprimer cet objet de ton matériel ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "pas de météo pour vérifier ton matelas et ton sac.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Matelas : R",
+  "o": "code:app.js"
+ },
+ {
+  "s": "pour R",
+  "o": "code:app.js"
+ },
+ {
+  "s": "conseillé",
+  "o": "code:app.js"
+ },
+ {
+  "s": ": ajoute une couche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sac : confort",
+  "o": "code:app.js"
+ },
+ {
+  "s": "°C, bon pour",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sac : entre confort et limite, dors avec bonnet et une couche sèche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sac : limite",
+  "o": "code:app.js"
+ },
+ {
+  "s": "°C, trop juste pour",
+  "o": "code:app.js"
+ },
+ {
+  "s": "°C (risque d'hypothermie)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Novice",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Apprenti",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Maître trappeur",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Comestible avec précautions",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Toxique ou mortel",
+  "o": "code:app.js"
+ },
+ {
+  "s": ") : que faut-il savoir ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Quelle fiche illustre cette gravure ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "De quelle fiche vient ce passage ? «",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fiche «",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Quel sosie dangereux peut se confondre avec «",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Seul et sans secours, ce signe doit te faire sortir au plus vite : «",
+  "o": "code:app.js"
+ },
+ {
+  "s": "» À quelle fiche correspond-il ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Les signes d'alerte sont en haut de la fiche «",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Teste ce que tu sais avant de partir. Les questions viennent des fiches et des espèces de Bivaska, et changent à chaque partie.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· meilleur score",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button class=\"item\" data-quiz-lv=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\"><span class=\"quiz-lv quiz-lv",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Niveau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Question",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Score",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" alt=\"\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"quiz-opt\" data-qopt=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#quizBox .quiz-opt",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bien vu !",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Raté :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"btn\" data-qtech=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\">Voir la fiche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"btn\" data-qesp=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\">Voir l'espèce",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Question suivante",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Voir mon score",
+  "o": "code:app.js"
+ },
+ {
+  "s": "% · niveau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Parfait. Tu es prêt pour le terrain.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Très bien. Relis les fiches ratées et tu y es.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas mal. Revois les fiches avant de partir.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Il reste du travail : les fiches sont là pour ça.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Changer de niveau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"btn btn-primary\" data-quiz-lv=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Allumer un feu sans briquet ni allumettes",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Monter un abri en bâche en moins de 10 minutes",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rendre potable de l'eau trouvée dehors",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Passer une nuit seul en bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cuisiner une recette du feu sur place",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Retrouver son chemin avec carte et boussole, sans téléphone",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Faire 5 nœuds les yeux fermés",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Repartir sans laisser aucune trace",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Premier repère",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Placer un spot sur la carte",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cartographe",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Placer 10 spots",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Première nuit",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Terminer un bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vétéran",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Terminer 5 bivouacs",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Nuit sous zéro",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Terminer un bivouac où il a gelé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Marcheur",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Enregistrer 10 km de trajet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Explorateur",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Enregistrer 50 km de trajet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Carnet de bord",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Écrire 10 notes de journal",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Studieux",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Lire 25 fiches",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Encyclopédie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Lire 100 fiches",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Matelot",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Étudier 10 fiches de nœuds",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chef du feu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Prévoir 5 recettes du feu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Novice confirmé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "80 % au quiz Novice",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Apprenti confirmé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "80 % au quiz Apprenti",
+  "o": "code:app.js"
+ },
+ {
+  "s": "80 % au quiz Maître trappeur",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Débrouillard",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Réussir 4 défis de terrain",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Survivant",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Réussir les 8 défis de terrain",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Badge débloqué :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<div class=\"badge-tile",
+  "o": "code:app.js"
+ },
+ {
+  "s": "fiches lues ·",
+  "o": "code:app.js"
+ },
+ {
+  "s": "km enregistrés",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Défis de terrain",
+  "o": "code:app.js"
+ },
+ {
+  "s": "à cocher toi-même",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\"><input type=\"checkbox\" data-defi=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tiques actives",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pantalon dans les chaussettes, et inspection complète le soir. Retire une tique au tire-tique, sans l'écraser.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Champignons mortels de saison",
+  "o": "code:app.js"
+ },
+ {
+  "s": "L'amanite phalloïde pousse en ce moment. Ne mange jamais un champignon sauvage sans certitude absolue.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chasse en battue",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Respecte les panneaux « Chasse » à l'entrée des bois : l'accès est interdit ce jour-là. Porte une couleur vive. Les dates annoncées sont sur la carte (couche « Chasse »).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Brame du cerf",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Les cerfs sont agités la nuit, surtout en Ardenne. Garde tes distances, ne campe pas sur les places de brame.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ail des ours et sosies",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Le muguet et la colchique, mortels, poussent au même endroit. Froisse la feuille : l'ail des ours sent l'ail, pas les autres.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vipères au soleil",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Regarde où tu poses les mains et les pieds sur les rochers ensoleillés. Morsure : reste calme et immobile.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Chaleur et orages",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bois plus que tu n'as soif. En cas d'orage, quitte les crêtes et les arbres isolés.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ne laisse pas de sucré ouvert au camp. Une piqûre dans la bouche ou la gorge est une urgence.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Nuits froides",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Le gel arrive vite la nuit. Couche-toi au sec et au chaud, et garde une tenue sèche pour dormir.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Nuit qui tombe tôt",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Il fait sombre en forêt bien avant le coucher du soleil. Monte le camp avec au moins une heure de jour.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "En ce moment",
+  "o": "code:app.js"
+ },
+ {
+  "s": "alertes de saison",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<a class=\"season-alert sa-",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" href=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" target=\"_blank\" rel=\"noopener\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Carte officielle des chasses ›",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"season-alert sa-",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Voir la fiche ›",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Très lent",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sous 40 au repos, surtout avec froid, somnolence ou confusion : hypothermie ou état grave possible. Réchauffe, isole du sol, et fais tout pour te faire secourir.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Normal chez un sportif reposé. Avec froid, frissons qui s'arrêtent ou confusion : pense à l'hypothermie.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Normal",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Entre 50 et 100 au repos, c'est normal pour un adulte.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Normal juste après un effort ou un stress. Reprends ta mesure après 5 minutes de repos assis.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Très rapide",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Au-dessus de 120 au repos, avec pâleur, sueurs froides ou malaise : état de choc possible. Allonge-toi, jambes surélevées, couvre-toi.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pose deux doigts (pas le pouce) sur le côté du cou, sous la mâchoire, ou à l'intérieur du poignet côté pouce. Reste assis, au calme.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Touche « Démarrer », puis le gros bouton à chaque battement",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Démarrer (30 s)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Caméra (expérimental)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mesures précédentes",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<span class=\"pl-tag pl-",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· caméra",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Repère, pas un diagnostic médical. Note l'heure et répète la mesure toutes les 15 à 30 minutes pour suivre un blessé.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "battements par minute ·",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Hypothermie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Trop peu de battements comptés",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cherche bien le pouls avant de démarrer, puis tape à chaque battement.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Caméra indisponible sur cet appareil.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mode expérimental",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Couvre entièrement la caméra arrière du bout de l'index, sans appuyer fort, dans un endroit éclairé. Ne bouge plus pendant 20 secondes. Peu fiable avec des doigts froids : préfère le comptage au doigt.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Démarrage de la caméra…",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Arrêter",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Doigt mal placé : couvre toute la caméra (l'image doit être rouge).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Signal trop faible : réessaie avec plus de lumière, ou compte au doigt.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Accès à la caméra refusé. Autorise-le dans Réglages > Safari > Caméra, ou utilise le comptage au doigt.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "le haut du téléphone",
+  "o": "code:app.js"
+ },
+ {
+  "s": "le bas du téléphone",
+  "o": "code:app.js"
+ },
+ {
+  "s": "la droite",
+  "o": "code:app.js"
+ },
+ {
+  "s": "la gauche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plat : parfait pour dormir.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Légère pente : bon. Dors la tête du côté le plus haut, pieds vers la descente.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pente marquée : tu vas glisser la nuit. Cherche plus plat, ou cale le matelas.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Trop pentu pour dormir. L'eau de pluie coulera aussi vers toi.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "alert alert-",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Le sol descend vers",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Autorise les capteurs de mouvement pour le niveau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "lieu du bivouac",
+  "o": "code:app.js"
+ },
+ {
+  "s": "ta position",
+  "o": "code:app.js"
+ },
+ {
+  "s": "centre de la carte",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pose le téléphone à plat sur le sol, là où tu veux dormir.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Touche « Activer le niveau ».",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Activer le niveau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cuvette ou crête ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bivaska compare l'altitude du point avec 16 points autour (à 75 et 200 m). Point analysé :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"btn\" id=\"rlGo\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": ">Analyser le relief",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Cuvette",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ton point est",
+  "o": "code:app.js"
+ },
+ {
+  "s": "m plus bas que les alentours. L'eau de pluie et l'air froid s'y accumulent la nuit : monte un peu sur une pente douce ou un replat.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Léger creux",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Un peu plus bas que les alentours : vérifie qu'aucune rigole ne passe sous l'abri, et creuse un petit fossé côté pente si la pluie est annoncée.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Crête ou sommet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ton point domine les alentours de",
+  "o": "code:app.js"
+ },
+ {
+  "s": "m : très exposé au vent et à la foudre. Descends un peu sous la crête, côté abrité du vent.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Position haute",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Un peu exposée au vent : oriente l'entrée de l'abri dos au vent et tends bien la bâche.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Terrain intermédiaire",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ni creux ni crête : une bonne position pour bivouaquer.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Attention, la pente autour est forte (environ",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" style=\"margin-top:10px\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "· altitude",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Modèle d'altitude à environ 90 m de précision (Open-Meteo / Copernicus) : vérifie toujours le terrain sur place.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Niveau actif",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas de réseau : fais l'analyse avant de partir (elle reste en mémoire pour ce lieu).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Service d'altitude indisponible, réessaie.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mousse fermée fine (8 à 10 mm)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mousse fermée épaisse (15 à 20 mm)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Autogonflant 2,5 cm",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Autogonflant 5 cm",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Gonflable sans isolant",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Gonflable isolé 3 saisons",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Gonflable hiver",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Lit de feuilles ou fougères sèches (30 cm) · estimation",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sac à dos et corde sous les jambes · estimation",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mon matelas (valeur R inscrite dessus)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "la météo de ta sortie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "la météo d'ici",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<option value=\"gear:",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ajoute tout ce que tu mets entre toi et le sol. Les valeurs R s'additionnent.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Comprendre la valeur R",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sous toi",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<select data-rv-k=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"text\" inputmode=\"decimal\" data-rv-r=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" placeholder=\"R\" aria-label=\"Valeur R\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"icon-mini danger\" data-rv-del=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" aria-label=\"Retirer\">",
+  "o": "code:app.js"
+ },
+ {
+  "s": "+ Ajouter une couche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "La nuit",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Température minimale",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"text\" inputmode=\"decimal\" id=\"rvT\" value=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "D'après",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Saisie à la main.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Reprendre la météo",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"checkbox\" id=\"rvFri\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Je suis frileux (+1)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"checkbox\" id=\"rvWet\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sol mouillé ou neige (+1)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Mon sac de couchage (facultatif)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Choisir dans mon matériel…",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Température confort",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"text\" inputmode=\"decimal\" id=\"rvComf\" value=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Température limite",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<input type=\"text\" inputmode=\"decimal\" id=\"rvLim\" value=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Inscrites sur l'étiquette (norme EN 13537 ou ISO 23537).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ton isolation suffit pour cette nuit.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Un peu juste : tu risques d'avoir froid au petit matin. Ajoute une couche (mousse, lit de feuilles sèches).",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Insuffisant : le sol va te refroidir toute la nuit. Ajoute une mousse sous ton matelas, ou un lit épais de feuilles sèches.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<div class=\"rv-score rv-",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ton total",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Conseillé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bon pour",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pour",
+  "o": "code:app.js"
+ },
+ {
+  "s": "La nuit prévue est au-dessus de la température confort : tu dormiras bien.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Entre confort et limite : garde bonnet, chaussettes et une couche sèche pour dormir",
+  "o": "code:app.js"
+ },
+ {
+  "s": ". Frileux : c'est trop juste, prévois plus chaud.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sous la température limite de ton sac : risque d'hypothermie. Prends un sac plus chaud ou un drap de sac, et dors tout habillé au sec.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sous la température confort : prévois des vêtements chauds pour dormir.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Repères indicatifs basés sur les valeurs ASTM F3340 et les recommandations des fabricants. La sensation de froid varie selon la fatigue, le repas du soir et le vent.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Luxembourg",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Autre pays",
+  "o": "code:app.js"
+ },
+ {
+  "s": "(display-mode: standalone)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pour bivouaquer, apprendre et faire face à une crise. Même sans réseau.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Trois choses à savoir",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Le bouton du milieu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "En cas de problème : appeler les secours, guider les gestes pour un blessé, donner ta position. Sans compte et sans réseau.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Apprendre",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Fiches de survie, premiers secours, plantes et champignons dangereux. À lire avant d'en avoir besoin.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Carte, préparation de la sortie, sac à dos et journal de bord.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ton pays",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Il règle les numéros d'urgence, les alertes officielles, les espèces de ta région et la carte.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"ob-chip",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-ob-pays=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" aria-pressed=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Modifiable plus tard dans Réglages.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ta position",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pour te situer sur la carte et donner tes coordonnées aux secours. Elle reste sur ton téléphone.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Autoriser la position",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Installe Bivaska",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Touche le bouton Partager de Safari, puis « Sur l'écran d'accueil ». Installée, l'appli marche hors ligne et Safari n'efface pas tes données.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Bivaska aide, mais ne remplace pas les secours. En danger, appelle le",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<span class=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Commencer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Suivant",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Position indisponible sur cet appareil",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Demande en cours…",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Position autorisée",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Refusée : à activer dans Réglages > Safari",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Réessayer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Coupure de courant",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Panne qui dure",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Tempête",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Se mettre à l'abri (alerte, nucléaire, chimique)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "On me dit d'évacuer",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plus de réseau ni d'internet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Plus d'eau au robinet",
+  "o": "code:app.js"
+ },
+ {
+  "s": "J'ai froid, hypothermie",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Malade : fièvre, diarrhée",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Je panique, je n'en peux plus",
+  "o": "code:app.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"crise-item\" data-open-tech=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Recherche de la position… Sors à découvert si ça dure.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Précision ±",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Quelle allure a-t-elle ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Un arbre",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Un arbuste, un buisson",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Une herbe, une plante basse",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Elle grimpe ou rampe",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Les pieds dans l'eau",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Ses feuilles ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Une seule pièce",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Découpées ou en folioles",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Des aiguilles",
+  "o": "code:app.js"
+ },
+ {
+  "s": "En rosette au ras du sol",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Longues, en ruban",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Pas de vraies feuilles",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Quelle couleur vois-tu (fleur ou fruit) ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rouge",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Noir ou bleu foncé",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Jaune ou orange",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Blanc ou crème",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rose, violet ou bleu",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vert",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Brun",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Sous le chapeau ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Des lames",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Une éponge (pores)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Des plis épais",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Des aiguillons",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Rien de tout ça (boule, oreille, alvéoles…)",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Couleur du chapeau ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Blanc",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Brun ou beige",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Jaune",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Orange",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Vert ou olive",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Gris ou noir",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Violet ou lilas",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Un anneau sur le pied ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Oui",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Non",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Un sac ou un bulbe à la base (dégage le pied) ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Il pousse sur ?",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Le sol",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Du bois, une souche",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-q=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "\" data-v=\"",
+  "o": "code:app.js"
+ },
+ {
+  "s": "espèces possibles : réponds à une question pour commencer.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "espèce",
+  "o": "code:app.js"
+ },
+ {
+  "s": "à tes réponses",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucune espèce ne correspond à tout. Les plus proches (une réponse différente) :",
+  "o": "code:app.js"
+ },
+ {
+  "s": "Aucune espèce de Bivaska ne correspond. Ce n'est peut-être pas une espèce de l'appli : ne la consomme pas.",
+  "o": "code:app.js"
+ },
+ {
+  "s": "#idKind .chip",
+  "o": "code:app.js"
+ },
+ {
+  "s": "installer : on recharge une fois pour l",
+  "o": "code:app.js"
+ },
+ {
+  "s": "appli installée sur l",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "accueil de l",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Bearer",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "abord mes photos par l",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Pas d'adresse e-mail dans un texte public.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Pas de numéro de téléphone dans un texte public.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Pas de lien dans un texte public.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Merci de rester correct.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "app.js : on garde la référence et on branche la couche une fois l",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Synchronisation impossible :",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Tes données ont été restaurées",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Code envoyé à",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": ". Regarde aussi les courriers indésirables.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Valider",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Changer d'adresse",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Facultatif : sauvegarde tes spots, ton journal, ton kit et tes progrès, et retrouve-les sur un autre téléphone. Bivaska marche aussi sans compte.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Recevoir un code",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Connecté :",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Dernière sauvegarde :",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": ". Tes infos médicales restent uniquement sur ce téléphone.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Synchroniser",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Se déconnecter",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Supprimer mon compte",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Adresse e-mail invalide",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Il faut du réseau pour se connecter",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Envoi impossible :",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Entre le code reçu par e-mail",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Connecté",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Code incorrect ou expiré",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Synchronisé",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Déconnecté. Tes données restent sur ce téléphone.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Confirmer : tout supprimer en ligne (spots partagés, avis, sauvegarde)",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Compte supprimé. Les données de ce téléphone sont conservées.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Suppression impossible :",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Choisis un pseudo public (2 à 30 caractères, pas ton nom complet) :",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Pseudo refusé",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Ce pseudo est déjà pris",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Pseudo refusé (lettres, chiffres, espaces ; pas de nom réservé)",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Crée un compte gratuit (Réglages) pour participer",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Décris l'erreur en quelques mots",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Pas de réseau : réessaie plus tard",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Merci ! Ton signalement sera vérifié.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Prévu",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Fait",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "En relecture",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "<button type=\"button\" class=\"idea-vote",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "\" data-vote=\"",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "\" aria-label=\"Voter\">▲",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Aucune idée pour l'instant : sois le premier !",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Idées indisponibles hors ligne.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Crée un compte gratuit pour voter",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Crée un compte gratuit pour proposer une idée",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Titre trop court",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Merci ! Ton idée sera visible après relecture.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Aire de bivouac officielle",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Terrain privé, avec accord du propriétaire",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Zone où le bivouac est autorisé ou toléré",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Belgique : bivouac interdit en forêt hors des aires prévues (Wallonie : aires de bivouac du DNF ; Flandre : « paalkampeerplaatsen »).",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "France : réglementation variable (souvent toléré une nuit, du coucher au lever du soleil, loin des routes ; interdit dans de nombreux parcs et réserves).",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Luxembourg : camping sauvage interdit, utiliser les campings et aires prévues.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Pays-Bas : camping sauvage interdit, utiliser les « paalkampeerplaatsen » et campings.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Allemagne : camping sauvage en principe interdit, règles différentes selon les Länder.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Suisse : souvent toléré au-dessus de la limite des forêts, interdit dans les réserves et districts francs.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Renseigne-toi sur les règles locales avant de dormir quelque part.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": ".map-chips [data-layer=\"communaute\"]",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Ce spot n'est plus disponible.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Eau à proximité",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Abri",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Feu autorisé",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Accès voiture",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "· dernier passage",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Pas encore d'avis.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "personne(s) signalent que ce spot n'existe plus ou a changé.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Partagé par",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "un membre",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Ajouter à mes spots",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Donner mon avis",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Avis",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Membre",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "N'existe plus",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Visité le",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "· <button type=\"button\" class=\"link-btn\" data-rep-avis=\"",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Aucun avis.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Signaler ce spot",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Photo du spot",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Impossible de charger ce spot (réseau ?).",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Ajouté à tes spots (disponible hors ligne)",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Crée un compte gratuit pour donner ton avis",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Avis sur",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Merci pour ton avis !",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Crée un compte gratuit pour partager un spot",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Choisis le statut du lieu",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Donne un titre au spot",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Accepte les règles de partage",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Il faut du réseau pour partager",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Spot publié, merci !",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Merci ! Ton spot sera visible après une rapide vérification.",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Partage impossible :",
+  "o": "code:cloud.js"
+ },
+ {
+  "s": "Eau en bouteilles",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "L (3 L par personne et par jour)",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Pour boire et cuisiner. Prévois plus pour l'hygiène si tu peux. Change-la selon la date sur les bouteilles.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Nourriture qui se garde et se mange sans cuisson",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "3 jours pour",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Conserves, pain longue conservation, fruits secs, beurre de cacahuète, barres. Choisis ce que vous mangez déjà, et fais tourner.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Ouvre-boîte manuel",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Indispensable si tes conserves n'ont pas d'ouverture facile.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Radio à piles ou à manivelle",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Si le réseau mobile et internet tombent, c'est par la radio que les autorités informent.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Lampes de poche et piles de rechange",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Préfère les lampes aux bougies : moins de risque d'incendie.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Batteries externes chargées",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Recharge-les tous les 3 mois.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Bougies, allumettes ou briquet",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Jamais sans surveillance, loin des rideaux, hors de portée des enfants.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Trousse de premiers secours",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Pansements, compresses, désinfectant, bande, ciseaux, gants, antidouleur.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "au moins 7 jours d'avance si possible",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Demande à ton médecin ou ton pharmacien comment garder une petite réserve. Garde aussi une copie des ordonnances.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Argent liquide en petites coupures et pièces",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Sans électricité ni réseau, les cartes et les distributeurs ne marchent plus.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Copies des papiers importants",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Pièces d'identité, assurances, ordonnances, dans une pochette étanche.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Liste papier des numéros importants",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Famille, voisins, médecin, école, assurance : ton téléphone peut être vide.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Couvertures ou sacs de couchage",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "(un par personne)",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Pour garder la chaleur si le chauffage s'arrête.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Hygiène",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Papier toilette, lingettes, savon ou gel, protections hygiéniques, sacs poubelle solides.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Outils de base",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Couteau multifonction, ruban adhésif, pince, gants de travail.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Double des clés de la maison et de la voiture",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Réchaud de camping et cartouches",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "À n'utiliser que dehors : à l'intérieur, risque d'intoxication au monoxyde de carbone (gaz mortel et sans odeur).",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Pour te signaler aux secours sans t'épuiser à crier.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Pour le bébé",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "lait infantile, biberons,",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "couches environ",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Prévois aussi de l'eau en bouteille adaptée pour les biberons.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Jeux, livres, doudou",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Occuper et rassurer les enfants compte autant que le reste.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Pour les animaux",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "3 jours de nourriture et d'eau pour",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Avec laisse, caisse de transport, carnet de vaccination.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Énergie de secours pour les appareils médicaux",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Batteries de rechange, plan avec ton prestataire si l'électricité est coupée longtemps, lunettes ou aides de rechange.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Pour l'hiver : vêtements chauds et bonnets",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "une tenue chaude par personne",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Si le chauffage s'arrête, on perd la chaleur en quelques heures : couches de laine, bonnet, chaussettes épaisses.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Pour l'été : de quoi se rafraîchir",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Brumisateur, ventilateur à piles, chapeau, crème solaire. Prévois plus d'eau en cas de canicule.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Comprimés d'iode (si ton pays en distribue)",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "À prendre uniquement quand les autorités le demandent. Voir la fiche « Accident nucléaire ou chimique ».",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Papiers, copies et argent liquide",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Pièces d'identité, cartes, copies des documents, cash.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Médicaments et ordonnances",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Le traitement en cours de chacun, pour plusieurs jours.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Eau et en-cas faciles à transporter",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "sur la route",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Téléphone, chargeur et batterie externe",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Lampe de poche ou frontale",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Vêtements de rechange et imperméable",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "un change par personne",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Petite trousse de secours",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Clés",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Hygiène de base",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Brosse à dents, gel, mouchoirs, protections.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Ton plan familial et la liste des contacts, sur papier",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Doudou, jeu, de quoi occuper les enfants",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Laisse, caisse et nourriture des animaux",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "alerte et sources officielles par pays (112 fonctionne dans toute l",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "BE-Alert : inscris-toi gratuitement pour recevoir les alertes par SMS, e-mail ou appel.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "risquenucleaire.be (comprimés d'iode)",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "112 (secours), 101 (police)",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "FR-Alert : les alertes arrivent seules sur les téléphones de la zone, sans inscription.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "georisques.gouv.fr (risques près de chez toi)",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "112, 15 (SAMU), 18 (pompiers), 17 (police)",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "LU-Alert : les alertes arrivent sur les téléphones de la zone.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "112, 113 (police)",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "NL-Alert : les alertes arrivent sur les téléphones de la zone, sans inscription.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "NINA : installe l'application d'alerte officielle. Les alertes arrivent aussi sur les téléphones de la zone (Cell Broadcast).",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "112 (secours, pompiers), 110 (police)",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Alertswiss : installe l'application officielle pour recevoir les alertes.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "112, 117 (police), 118 (feu), 144 (ambulance)",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Renseigne-toi sur le système d'alerte officiel de ton pays et inscris-toi s'il le faut.",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "112 dans toute l'Union européenne",
+  "o": "code:pret72.js"
+ },
+ {
+  "s": "Doel",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Centrale nucléaire",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Tihange",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Mol-Dessel (SCK CEN, Belgoprocess)",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Site nucléaire de recherche",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Fleurus (IRE)",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Production de radio-isotopes",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Borssele",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Gravelines",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Chooz",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Cattenom",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Penly",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Paluel",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Flamanville",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Chinon",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Civaux",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Le Blayais",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Golfech",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Bugey",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Tricastin",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "La Hague (Orano)",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Usine de retraitement",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Beznau",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Gösgen",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Leibstadt",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Wallonie : géoportail (sites Seveso)",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Géorisques : risques près de chez toi",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Infocrise : risques",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "BBK : Gefahren",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Alertswiss : dangers",
+  "o": "code:risques.js"
+ },
+ {
+  "s": "Therm-a-Rest Z Lite SOL (regular)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Therm-a-Rest NeoAir XLite NXT (regular)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Therm-a-Rest NeoAir XTherm NXT (regular)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Therm-a-Rest NeoAir UberLite (regular)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "NEMO Tensor All-Season (regular)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "NEMO Tensor Insulated (regular)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "NEMO Switchback (regular)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Sea to Summit Ether Light XT Insulated (regular)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Sea to Summit Ether Light XT Extreme (regular)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Sea to Summit Ultralight Insulated (regular)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Exped SynMat HL (M)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Big Agnes Q-Core SLX (regular)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Klymit Static V Insulated",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "REI Co-op Flash Insulated (regular)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Decathlon Forclaz MT500 mousse isolante 195 × 55 cm",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Decathlon Forclaz MT500 Air (L)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Valeur R annoncée sans précision de norme.",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Decathlon Forclaz MT500 0 °C synthétique (M)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Decathlon Forclaz MT500 5 °C (L)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Decathlon Forclaz MT500 10 °C (L)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Decathlon Forclaz Trek 900 0 °C duvet (L)",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "DD Hammocks Tarp 3 × 3",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Sans sardines ni tendeurs.",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "MSR PocketRocket 2",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Soto WindMaster",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Jetboil Stash",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "MSR WhisperLite",
+  "o": "code:materiel.js"
+ },
+ {
+  "s": "Équipement",
+  "o": "code:rvalue.js"
+ },
+ {
+  "s": "Hors-ligne",
+  "o": "html"
+ },
+ {
+  "s": "Aujourd'hui",
+  "o": "html"
+ },
+ {
+  "s": "Vendredi 20 novembre",
+  "o": "html"
+ },
+ {
+  "s": "Réglages",
+  "o": "html"
+ },
+ {
+  "s": "Vallée de l'Ourthe · Nisramont",
+  "o": "html"
+ },
+ {
+  "s": "Prêt pour 72 heures ?",
+  "o": "html"
+ },
+ {
+  "s": "Ouvrir",
+  "o": "html"
+ },
+ {
+  "s": "Ton prochain bivouac",
+  "o": "html"
+ },
+ {
+  "s": "Voir",
+  "o": "html"
+ },
+ {
+  "s": "date",
+  "o": "html"
+ },
+ {
+  "s": "Sac prêt à 0 % · 0 / 28",
+  "o": "html"
+ },
+ {
+  "s": "De saison près de toi",
+  "o": "html"
+ },
+ {
+  "s": "Tout voir",
+  "o": "html"
+ },
+ {
+  "s": "Continuer le guide",
+  "o": "html"
+ },
+ {
+  "s": "GUIDE · CHAPITRE 1 SUR 18",
+  "o": "html"
+ },
+ {
+  "s": "Prêt 72 heures",
+  "o": "html"
+ },
+ {
+  "s": "Retour",
+  "o": "html"
+ },
+ {
+  "s": "Être prêt en cas de crise",
+  "o": "html"
+ },
+ {
+  "s": "Prêt 72 h",
+  "o": "html"
+ },
+ {
+  "s": "Sections",
+  "o": "html"
+ },
+ {
+  "s": "Stock",
+  "o": "html"
+ },
+ {
+  "s": "Plan",
+  "o": "html"
+ },
+ {
+  "s": "Pays",
+  "o": "html"
+ },
+ {
+  "s": "Bivaska n'est pas un service officiel. Les listes suivent les recommandations de l'Union européenne et des centres de crise (autonomie de 72 heures). En cas de crise, suis toujours les consignes des autorités.",
+  "o": "html"
+ },
+ {
+  "s": "Carte",
+  "o": "html"
+ },
+ {
+  "s": "A JavaScript library for interactive maps",
+  "o": "html"
+ },
+ {
+  "s": "Leaflet",
+  "o": "html"
+ },
+ {
+  "s": "(CartoWeb)",
+  "o": "html"
+ },
+ {
+  "s": "Rechercher un lieu",
+  "o": "html"
+ },
+ {
+  "s": "Où vas-tu dormir ?",
+  "o": "html"
+ },
+ {
+  "s": "Couches",
+  "o": "html"
+ },
+ {
+  "s": "Eau potable",
+  "o": "html"
+ },
+ {
+  "s": "Mes spots",
+  "o": "html"
+ },
+ {
+  "s": "Services",
+  "o": "html"
+ },
+ {
+  "s": "Risques",
+  "o": "html"
+ },
+ {
+  "s": "Communauté",
+  "o": "html"
+ },
+ {
+  "s": "Fond de carte",
+  "o": "html"
+ },
+ {
+  "s": "OpenFreeMap",
+  "o": "html"
+ },
+ {
+  "s": "Style",
+  "o": "html"
+ },
+ {
+  "s": "Chercher (note, type)…",
+  "o": "html"
+ },
+ {
+  "s": "Chercher un spot",
+  "o": "html"
+ },
+ {
+  "s": "Parcourir mes spots",
+  "o": "html"
+ },
+ {
+  "s": "Changer de fond de carte",
+  "o": "html"
+ },
+ {
+  "s": "Me localiser",
+  "o": "html"
+ },
+ {
+  "s": "Mesurer une distance",
+  "o": "html"
+ },
+ {
+  "s": "Recharger les zones autour de moi",
+  "o": "html"
+ },
+ {
+  "s": "Ajouter un spot",
+  "o": "html"
+ },
+ {
+  "s": "Mesure de distance",
+  "o": "html"
+ },
+ {
+  "s": "Fermer la mesure",
+  "o": "html"
+ },
+ {
+  "s": "Depuis moi",
+  "o": "html"
+ },
+ {
+  "s": "Guidage",
+  "o": "html"
+ },
+ {
+  "s": "Vers",
+  "o": "html"
+ },
+ {
+  "s": "Moyen de transport",
+  "o": "html"
+ },
+ {
+  "s": "À pied",
+  "o": "html"
+ },
+ {
+  "s": "Vélo",
+  "o": "html"
+ },
+ {
+  "s": "Voiture",
+  "o": "html"
+ },
+ {
+  "s": "Suivre",
+  "o": "html"
+ },
+ {
+  "s": "Plans",
+  "o": "html"
+ },
+ {
+  "s": "Google",
+  "o": "html"
+ },
+ {
+  "s": "Mode crise",
+  "o": "html"
+ },
+ {
+  "s": "Fonctionne sans réseau",
+  "o": "html"
+ },
+ {
+  "s": "En crise",
+  "o": "html"
+ },
+ {
+  "s": "Urgence vitale, incendie, accident",
+  "o": "html"
+ },
+ {
+  "s": "Quelqu'un est blessé",
+  "o": "html"
+ },
+ {
+  "s": "Signaler ma présence",
+  "o": "html"
+ },
+ {
+  "s": "Où je suis",
+  "o": "html"
+ },
+ {
+  "s": "Recherche de la position…",
+  "o": "html"
+ },
+ {
+  "s": "Copier",
+  "o": "html"
+ },
+ {
+  "s": "SMS",
+  "o": "html"
+ },
+ {
+  "s": "QR",
+  "o": "html"
+ },
+ {
+  "s": "Que faire maintenant ?",
+  "o": "html"
+ },
+ {
+  "s": "Mes infos d'urgence",
+  "o": "html"
+ },
+ {
+  "s": "Mon kit 72 h",
+  "o": "html"
+ },
+ {
+  "s": "Suis toujours les consignes des autorités (radio, BE-Alert, FR-Alert…). Bivaska aide à tenir, il ne remplace pas les secours.",
+  "o": "html"
+ },
+ {
+  "s": "Identifier",
+  "o": "html"
+ },
+ {
+  "s": "Sans réseau · par questions",
+  "o": "html"
+ },
+ {
+  "s": "Que veux-tu identifier ?",
+  "o": "html"
+ },
+ {
+  "s": "Une plante",
+  "o": "html"
+ },
+ {
+  "s": "Un champignon",
+  "o": "html"
+ },
+ {
+  "s": "Cette clé aide à chercher, elle ne prouve rien.",
+  "o": "html"
+ },
+ {
+  "s": "Ne mange jamais une plante ou un champignon identifié ainsi : ouvre la fiche, compare tous les critères et les sosies. Dans le doute, abstiens-toi.",
+  "o": "html"
+ },
+ {
+  "s": "Disponible hors-ligne",
+  "o": "html"
+ },
+ {
+  "s": "Rechercher",
+  "o": "html"
+ },
+ {
+  "s": "Une plante, un nœud, le feu…",
+  "o": "html"
+ },
+ {
+  "s": "Un problème maintenant ?",
+  "o": "html"
+ },
+ {
+  "s": "J'ai froid",
+  "o": "html"
+ },
+ {
+  "s": "Perdu",
+  "o": "html"
+ },
+ {
+  "s": "Blessé",
+  "o": "html"
+ },
+ {
+  "s": "Identifier une plante ou un champignon",
+  "o": "html"
+ },
+ {
+  "s": "Quelques questions, sans réseau",
+  "o": "html"
+ },
+ {
+  "s": "De saison",
+  "o": "html"
+ },
+ {
+  "s": "Comestibles",
+  "o": "html"
+ },
+ {
+  "s": "Toxiques",
+  "o": "html"
+ },
+ {
+  "s": "Poissons",
+  "o": "html"
+ },
+ {
+  "s": "Savoir-faire",
+  "o": "html"
+ },
+ {
+  "s": "Toutes les fiches",
+  "o": "html"
+ },
+ {
+  "s": "Feu",
+  "o": "html"
+ },
+ {
+  "s": "Nœuds",
+  "o": "html"
+ },
+ {
+  "s": "Orienter",
+  "o": "html"
+ },
+ {
+  "s": "Bouger",
+  "o": "html"
+ },
+ {
+  "s": "Soigner",
+  "o": "html"
+ },
+ {
+  "s": "Alerter",
+  "o": "html"
+ },
+ {
+  "s": "Manger",
+  "o": "html"
+ },
+ {
+  "s": "Pêche",
+  "o": "html"
+ },
+ {
+  "s": "Recettes",
+  "o": "html"
+ },
+ {
+  "s": "Traces",
+  "o": "html"
+ },
+ {
+  "s": "Fabriquer",
+  "o": "html"
+ },
+ {
+  "s": "Éthique",
+  "o": "html"
+ },
+ {
+  "s": "Tout",
+  "o": "html"
+ },
+ {
+  "s": "Outils de terrain",
+  "o": "html"
+ },
+ {
+  "s": "Prendre le pouls",
+  "o": "html"
+ },
+ {
+  "s": "Minuteur guidé, ou caméra",
+  "o": "html"
+ },
+ {
+  "s": "Niveau et relief",
+  "o": "html"
+ },
+ {
+  "s": "Pente du sol, cuvette ou crête",
+  "o": "html"
+ },
+ {
+  "s": "Valeur R",
+  "o": "html"
+ },
+ {
+  "s": "Ton matelas suffit-il pour la nuit ?",
+  "o": "html"
+ },
+ {
+  "s": "Clarté de l'eau",
+  "o": "html"
+ },
+ {
+  "s": "Faut-il la préfiltrer ?",
+  "o": "html"
+ },
+ {
+  "s": "Ciel et soleil",
+  "o": "html"
+ },
+ {
+  "s": "Ouverture des arbres, soleil utile",
+  "o": "html"
+ },
+ {
+  "s": "Trouver le nord",
+  "o": "html"
+ },
+ {
+  "s": "Avec le soleil et l'heure, sans GPS",
+  "o": "html"
+ },
+ {
+  "s": "Revenir sans GPS",
+  "o": "html"
+ },
+ {
+  "s": "Pas et boussole : la route du retour",
+  "o": "html"
+ },
+ {
+  "s": "Portée radio",
+  "o": "html"
+ },
+ {
+  "s": "Jusqu'où porte ton talkie-walkie",
+  "o": "html"
+ },
+ {
+  "s": "Lire le morse",
+  "o": "html"
+ },
+ {
+  "s": "Décode une lampe avec la caméra",
+  "o": "html"
+ },
+ {
+  "s": "Télémètre",
+  "o": "html"
+ },
+ {
+  "s": "Distance ou hauteur par visée",
+  "o": "html"
+ },
+ {
+  "s": "S'entraîner",
+  "o": "html"
+ },
+ {
+  "s": "Quiz de survie",
+  "o": "html"
+ },
+ {
+  "s": "3 niveaux, questions tirées des fiches",
+  "o": "html"
+ },
+ {
+  "s": "Défis et badges",
+  "o": "html"
+ },
+ {
+  "s": "Ta progression sur le terrain",
+  "o": "html"
+ },
+ {
+  "s": "Sommaire",
+  "o": "html"
+ },
+ {
+  "s": "72 espèces présentes en novembre dans ta région",
+  "o": "html"
+ },
+ {
+  "s": "Plaines, collines et forêts",
+  "o": "html"
+ },
+ {
+  "s": "Changer",
+  "o": "html"
+ },
+ {
+  "s": "Rechercher une espèce",
+  "o": "html"
+ },
+ {
+  "s": "Châtaigne, sanglier, amanite…",
+  "o": "html"
+ },
+ {
+  "s": "Catégories",
+  "o": "html"
+ },
+ {
+  "s": "18 chapitres · 241 fiches pratiques · 0 chapitre lu",
+  "o": "html"
+ },
+ {
+  "s": "Rechercher dans le guide",
+  "o": "html"
+ },
+ {
+  "s": "Feu, abri, orage, nœud, eau…",
+  "o": "html"
+ },
+ {
+  "s": "Affichage",
+  "o": "html"
+ },
+ {
+  "s": "Chapitres",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 1 · 3 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 2 · 2 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 3 · 3 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 4 · 4 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 5 · 5 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 6 · 5 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 7 · 2 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 8 · 3 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 9 · 2 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 10 · 3 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 11 · 3 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 12 · 2 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 13 · 2 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 14 · 2 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 15 · 2 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 16 · 2 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 17 · 2 min",
+  "o": "html"
+ },
+ {
+  "s": "Chapitre 18 · 2 min",
+  "o": "html"
+ },
+ {
+  "s": "Terminer ce bivouac",
+  "o": "html"
+ },
+ {
+  "s": "⬇ Préparer la sortie (hors ligne)",
+  "o": "html"
+ },
+ {
+  "s": "Prévenir un proche",
+  "o": "html"
+ },
+ {
+  "s": "Je suis rentré",
+  "o": "html"
+ },
+ {
+  "s": "Retour à la voiture",
+  "o": "html"
+ },
+ {
+  "s": "Économie de batterie",
+  "o": "html"
+ },
+ {
+  "s": "(écran sombre, GPS économe hors guidage)",
+  "o": "html"
+ },
+ {
+  "s": "Batterie : 100 % (en charge)",
+  "o": "html"
+ },
+ {
+  "s": "Météo",
+  "o": "html"
+ },
+ {
+  "s": "Au programme",
+  "o": "html"
+ },
+ {
+  "s": "recettes et fiches ajoutées",
+  "o": "html"
+ },
+ {
+  "s": "+ Note / photo",
+  "o": "html"
+ },
+ {
+  "s": "+ Ajouter",
+  "o": "html"
+ },
+ {
+  "s": "Coche ce que tu emportes : ça s'ajoute au sac à dos et compte dans le poids.",
+  "o": "html"
+ },
+ {
+  "s": "Sac à dos",
+  "o": "html"
+ },
+ {
+  "s": "Tout décocher",
+  "o": "html"
+ },
+ {
+  "s": "Anciens bivouacs",
+  "o": "html"
+ },
+ {
+  "s": "Carnet de spots",
+  "o": "html"
+ },
+ {
+  "s": "Fermer",
+  "o": "html"
+ },
+ {
+  "s": "Position en cours de recherche…",
+  "o": "html"
+ },
+ {
+  "s": "Copier ma position",
+  "o": "html"
+ },
+ {
+  "s": "Envoyer par SMS",
+  "o": "html"
+ },
+ {
+  "s": "Donnez ces coordonnées au secouriste. Si l'appel ne passe pas, montez sur une hauteur pour chercher du réseau.",
+  "o": "html"
+ },
+ {
+  "s": "Quelqu'un est blessé : que faire ?",
+  "o": "html"
+ },
+ {
+  "s": "Signal lumineux SOS",
+  "o": "html"
+ },
+ {
+  "s": "QR de ma position",
+  "o": "html"
+ },
+ {
+  "s": "Marque et modèle",
+  "o": "html"
+ },
+ {
+  "s": "Ex. : Therm-a-Rest, Forclaz MT500…",
+  "o": "html"
+ },
+ {
+  "s": "Nom",
+  "o": "html"
+ },
+ {
+  "s": "Poids (g)",
+  "o": "html"
+ },
+ {
+  "s": "Confort (°C)",
+  "o": "html"
+ },
+ {
+  "s": "Changer le signe (moins)",
+  "o": "html"
+ },
+ {
+  "s": "Limite (°C)",
+  "o": "html"
+ },
+ {
+  "s": "Vérifie les valeurs sur l'étiquette : elles changent selon la taille et l'année du modèle.",
+  "o": "html"
+ },
+ {
+  "s": "Supprimer",
+  "o": "html"
+ },
+ {
+  "s": "Annuler",
+  "o": "html"
+ },
+ {
+  "s": "Blessé : étape par étape",
+  "o": "html"
+ },
+ {
+  "s": "Repères de premiers secours pour le grand public, inspirés des recommandations européennes (ERC) et de la méthode MARCHE. Ne remplace pas une formation : apprends ces gestes avec la Croix-Rouge ou la protection civile. Appelle le 112 dès que possible.",
+  "o": "html"
+ },
+ {
+  "s": "QR code",
+  "o": "html"
+ },
+ {
+  "s": "Ces infos restent uniquement sur ce téléphone. Remplis aussi la",
+  "o": "html"
+ },
+ {
+  "s": "fiche médicale de l'iPhone",
+  "o": "html"
+ },
+ {
+  "s": "(appli Santé), lisible par un secouriste même téléphone verrouillé.",
+  "o": "html"
+ },
+ {
+  "s": "Signal SOS",
+  "o": "html"
+ },
+ {
+  "s": "Blanc / rouge",
+  "o": "html"
+ },
+ {
+  "s": "Son",
+  "o": "html"
+ },
+ {
+  "s": "Ma région",
+  "o": "html"
+ },
+ {
+  "s": "Milieux (plusieurs choix possibles)",
+  "o": "html"
+ },
+ {
+  "s": "Milieux",
+  "o": "html"
+ },
+ {
+  "s": "Les espèces affichées et les numéros d'urgence s'adaptent à ce choix.",
+  "o": "html"
+ },
+ {
+  "s": "Type",
+  "o": "html"
+ },
+ {
+  "s": "Plante / cueillette",
+  "o": "html"
+ },
+ {
+  "s": "Bon emplacement",
+  "o": "html"
+ },
+ {
+  "s": "Animal / traces",
+  "o": "html"
+ },
+ {
+  "s": "Photo (facultative)",
+  "o": "html"
+ },
+ {
+  "s": "Aperçu de la photo du spot",
+  "o": "html"
+ },
+ {
+  "s": "Note",
+  "o": "html"
+ },
+ {
+  "s": "Ex. : châtaigniers au bord du sentier, beaucoup de bogues au sol",
+  "o": "html"
+ },
+ {
+  "s": "Sur :",
+  "o": "html"
+ },
+ {
+  "s": "Conseil dangereux ou faux",
+  "o": "html"
+ },
+ {
+  "s": "Erreur d'identification (plante, champignon…)",
+  "o": "html"
+ },
+ {
+  "s": "Image fausse ou trompeuse",
+  "o": "html"
+ },
+ {
+  "s": "Contenu inapproprié",
+  "o": "html"
+ },
+ {
+  "s": "Lieu illégal ou privé",
+  "o": "html"
+ },
+ {
+  "s": "Faute ou imprécision",
+  "o": "html"
+ },
+ {
+  "s": "Explique en quelques mots",
+  "o": "html"
+ },
+ {
+  "s": "Ce qui est faux, et si possible ta source",
+  "o": "html"
+ },
+ {
+  "s": "Pas besoin de compte. Ne mets pas d'informations personnelles.",
+  "o": "html"
+ },
+ {
+  "s": "Envoyer",
+  "o": "html"
+ },
+ {
+  "s": "Idées et retours",
+  "o": "html"
+ },
+ {
+  "s": "Vote pour les idées qui t'intéressent : les plus demandées passent en premier.",
+  "o": "html"
+ },
+ {
+  "s": "Proposer une idée",
+  "o": "html"
+ },
+ {
+  "s": "En une phrase",
+  "o": "html"
+ },
+ {
+  "s": "Détails (facultatif)",
+  "o": "html"
+ },
+ {
+  "s": "Proposer",
+  "o": "html"
+ },
+ {
+  "s": "Spot de la communauté",
+  "o": "html"
+ },
+ {
+  "s": "Mon avis",
+  "o": "html"
+ },
+ {
+  "s": "Date",
+  "o": "html"
+ },
+ {
+  "s": "Calme",
+  "o": "html"
+ },
+ {
+  "s": "Très calme",
+  "o": "html"
+ },
+ {
+  "s": "Moyen",
+  "o": "html"
+ },
+ {
+  "s": "Bruyant",
+  "o": "html"
+ },
+ {
+  "s": "Propreté",
+  "o": "html"
+ },
+ {
+  "s": "Propre",
+  "o": "html"
+ },
+ {
+  "s": "Sale",
+  "o": "html"
+ },
+ {
+  "s": "Le spot existe toujours et correspond à la description",
+  "o": "html"
+ },
+ {
+  "s": "Commentaire (facultatif)",
+  "o": "html"
+ },
+ {
+  "s": "Publier",
+  "o": "html"
+ },
+ {
+  "s": "Partager ce spot",
+  "o": "html"
+ },
+ {
+  "s": "Titre",
+  "o": "html"
+ },
+ {
+  "s": "Ex. Aire de bivouac du bois de…",
+  "o": "html"
+ },
+ {
+  "s": "Ce lieu est…",
+  "o": "html"
+ },
+ {
+  "s": "Choisis le statut",
+  "o": "html"
+ },
+ {
+  "s": "Une aire de bivouac officielle",
+  "o": "html"
+ },
+ {
+  "s": "Un terrain privé, avec l'accord du propriétaire",
+  "o": "html"
+ },
+ {
+  "s": "Un camping",
+  "o": "html"
+ },
+ {
+  "s": "Une zone où le bivouac est autorisé ou toléré",
+  "o": "html"
+ },
+ {
+  "s": "Description (facultatif)",
+  "o": "html"
+ },
+ {
+  "s": "Accès, sol, ombre, conseils…",
+  "o": "html"
+ },
+ {
+  "s": "Joindre ma photo (sans personne reconnaissable)",
+  "o": "html"
+ },
+ {
+  "s": "Je confirme que dormir ici est autorisé, que je respecte les lois locales et les",
+  "o": "html"
+ },
+ {
+  "s": "règles de partage",
+  "o": "html"
+ },
+ {
+  "s": "Tes premiers partages sont vérifiés avant d'être visibles. Seuls ton pseudo et ce formulaire sont publics, jamais ta position en direct.",
+  "o": "html"
+ },
+ {
+  "s": "Partager",
+  "o": "html"
+ },
+ {
+  "s": "Bienvenue dans Bivaska",
+  "o": "html"
+ },
+ {
+  "s": "Passer",
+  "o": "html"
+ },
+ {
+  "s": "Mon compte",
+  "o": "html"
+ },
+ {
+  "s": "ton@adresse.be",
+  "o": "html"
+ },
+ {
+  "s": "Comptes, sauvegarde en ligne et communauté : bientôt.",
+  "o": "html"
+ },
+ {
+  "s": "Pays-Bas",
+  "o": "html"
+ },
+ {
+  "s": "Langue",
+  "o": "html"
+ },
+ {
+  "s": "Français",
+  "o": "html"
+ },
+ {
+  "s": "English (bientôt)",
+  "o": "html"
+ },
+ {
+  "s": "Nederlands (bientôt)",
+  "o": "html"
+ },
+ {
+  "s": "Deutsch (bientôt)",
+  "o": "html"
+ },
+ {
+  "s": "Español (bientôt)",
+  "o": "html"
+ },
+ {
+  "s": "Le pays adapte les numéros d'urgence et les alertes officielles (Prêt 72 h), les espèces de ta région et la carte.",
+  "o": "html"
+ },
+ {
+  "s": "Clé API MapTiler",
+  "o": "html"
+ },
+ {
+  "s": "Collez votre clé ici",
+  "o": "html"
+ },
+ {
+  "s": "Ajoute les cartes MapTiler Outdoor (sentiers, relief) et Satellite. Clé sur cloud.maptiler.com, rubrique API keys. Elle reste uniquement sur ce téléphone.",
+  "o": "html"
+ },
+ {
+  "s": "Thème",
+  "o": "html"
+ },
+ {
+  "s": "Auto",
+  "o": "html"
+ },
+ {
+  "s": "Jour",
+  "o": "html"
+ },
+ {
+  "s": "Auto : passe en mode nuit au coucher du soleil.",
+  "o": "html"
+ },
+ {
+  "s": "Photos des espèces",
+  "o": "html"
+ },
+ {
+  "s": "Télécharger pour le hors-ligne",
+  "o": "html"
+ },
+ {
+  "s": "Photos sous licence libre (Wikimedia Commons). À faire avec du réseau avant de partir.",
+  "o": "html"
+ },
+ {
+  "s": "Confidentialité",
+  "o": "html"
+ },
+ {
+  "s": "Conditions d'utilisation",
+  "o": "html"
+ },
+ {
+  "s": "Copier mes spots",
+  "o": "html"
+ },
+ {
+  "s": "Exporter en GPX",
+  "o": "html"
+ },
+ {
+  "s": "Exporter en KML",
+  "o": "html"
+ },
+ {
+  "s": "Spots, lieu du bivouac, voiture et trajet du journal, pour ATAK, iTAK, Garmin, OsmAnd ou Google Earth.",
+  "o": "html"
+ },
+ {
+  "s": "Revoir la présentation",
+  "o": "html"
+ },
+ {
+  "s": "Bivaska v0.9.102 · test terrain",
+  "o": "html"
+ },
+ {
+  "s": "Avant de partir seul, envoie ce message à quelqu'un de confiance. S'il n'a pas de nouvelles, il saura où te chercher.",
+  "o": "html"
+ },
+ {
+  "s": "Prénom du proche",
+  "o": "html"
+ },
+ {
+  "s": "Retour prévu",
+  "o": "html"
+ },
+ {
+  "s": "À ajouter (facultatif)",
+  "o": "html"
+ },
+ {
+  "s": "Ex. : voiture garée au parking du barrage",
+  "o": "html"
+ },
+ {
+  "s": "Message",
+  "o": "html"
+ },
+ {
+  "s": "L'alerte est fixée 2 h après ton retour prévu. Pense à envoyer « Je suis rentré » en revenant.",
+  "o": "html"
+ },
+ {
+  "s": "Partager…",
+  "o": "html"
+ },
+ {
+  "s": "Note de journal",
+  "o": "html"
+ },
+ {
+  "s": "Ce que tu vois, fais ou ressens",
+  "o": "html"
+ },
+ {
+  "s": "Ex. : arrivée au barrage, vent du nord, source à sec…",
+  "o": "html"
+ },
+ {
+  "s": "Prendre ou choisir une photo",
+  "o": "html"
+ },
+ {
+  "s": "L'heure et ta position sont ajoutées automatiquement.",
+  "o": "html"
+ },
+ {
+  "s": "Lieu",
+  "o": "html"
+ },
+ {
+  "s": "Ex. : Nisramont",
+  "o": "html"
+ },
+ {
+  "s": "Ma note",
+  "o": "html"
+ },
+ {
+  "s": "Note sur 5",
+  "o": "html"
+ },
+ {
+  "s": "Commentaire",
+  "o": "html"
+ },
+ {
+  "s": "Météo, emplacement, ce qui a marché, ce qu'il faudra changer…",
+  "o": "html"
+ },
+ {
+  "s": "Ma prochaine sortie",
+  "o": "html"
+ },
+ {
+  "s": "Chercher",
+  "o": "html"
+ },
+ {
+  "s": "Ou un de mes spots",
+  "o": "html"
+ },
+ {
+  "s": "Utiliser ma position actuelle",
+  "o": "html"
+ },
+ {
+  "s": "Date d'arrivée",
+  "o": "html"
+ },
+ {
+  "s": "Navigation principale",
+  "o": "html"
+ },
+ {
+  "s": "0,00 km · 0 note",
+  "o": "vue:bivouac"
+ },
+ {
+  "s": "0 sur 28 prêts · 28 à faire",
+  "o": "vue:bivouac"
+ }
+]

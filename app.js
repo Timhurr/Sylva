@@ -2,10 +2,11 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.102";
+  var VERSION = "0.9.103";
   // Premier lancement : aucune donnée Bivaska encore enregistrée (lu avant que l'initialisation n'en écrive)
   var FIRST_RUN = (function () {
     try {
+      if (sessionStorage.getItem("sylva_ob_resume")) { sessionStorage.removeItem("sylva_ob_resume"); return true; }
       if (localStorage.getItem("sylva_onboard")) return false;
       for (var i = 0; i < localStorage.length; i++) if ((localStorage.key(i) || "").indexOf("sylva_") === 0) { localStorage.setItem("sylva_onboard", "1"); return false; }
       return true;
@@ -21,6 +22,13 @@
   function ic(n, cls) { return '<svg class="ic' + (cls ? " " + cls : "") + '" aria-hidden="true"><use href="#i-' + n + '"/></svg>'; }
   function med(n, c) { return '<span class="med ' + (c || "c-amber") + '">' + ic(n) + "</span>"; }
   // Lien externe sûr : seulement http(s), sinon « # » (bloque les liens javascript: venus d'OpenStreetMap ou d'ailleurs)
+  // Traduction d'un texte qui ne passe pas par l'écran (SMS, partage, voix) : voir i18n.js
+  function tr(x) { return window.T ? window.T(x) : x; }
+  var NAV_EN = [[/^Tu es arrivé : /, "You have arrived: "], [/^Guidage vers /, "Guiding to "], [/ta destination/, "your destination"], [/^Dans /, "In "], [/ virgule /g, " point "],
+    [/Au rond-point, prends la (\d+)e sortie/i, "At the roundabout, take exit $1"], [/Au rond-point, sors/i, "At the roundabout, exit"], [/Au bout du chemin, tourne/i, "At the end of the path, turn"], [/À la fourche, prends/i, "At the fork, keep"],
+    [/franchement à gauche/g, "sharp left"], [/franchement à droite/g, "sharp right"], [/légèrement à gauche/g, "slightly left"], [/légèrement à droite/g, "slightly right"],
+    [/à gauche/g, "left"], [/à droite/g, "right"], [/tout droit/g, "straight on"], [/^tourne/i, "turn"], [/^continue/i, "continue"], [/^pars/i, "set off"], [/ sur /g, " onto "], [/Tu arrives à destination/i, "You are arriving at your destination"]];
+  function navEn(t) { if (window.SYLVA_LANG !== "en") return t; var x = tr(t); if (x !== t) return x; NAV_EN.forEach(function (r) { t = t.replace(r[0], r[1]); }); return t; }
   function safeUrl(u) { u = String(u || "").trim(); return /^https?:\/\//i.test(u) ? u : "#"; }
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -573,7 +581,7 @@
       throw e;
     });
   }
-  function frDate(d) { return new Date(d + "T12:00:00").toLocaleDateString("fr-BE", { weekday: "short", day: "numeric", month: "short" }); }
+  function frDate(d) { return new Date(d + "T12:00:00").toLocaleDateString((window.SYLVA_LOCALE || "fr-BE"), { weekday: "short", day: "numeric", month: "short" }); }
   function pointIn(pt, geom) {
     if (!geom) return false;
     var polys = geom.type === "Polygon" ? [geom.coordinates] : geom.type === "MultiPolygon" ? geom.coordinates : [];
@@ -646,7 +654,7 @@
       } else txt = "Aucun territoire de chasse déclaré sur ce point.";
       box.innerHTML = '<div class="alert ' + cls + ' meteo-alert"><strong>' + esc(title) + "</strong><span>" + esc(txt) +
         ' <a href="' + CHASSE_OFFICIEL + '" target="_blank" rel="noopener">Carte officielle</a><br><small>' + terrs.length + " territoire(s) lus autour du lieu · vérifié le " +
-        new Date(when).toLocaleString("fr-BE", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + ". Seules les affiches sur le terrain font foi.</small></span></div>";
+        new Date(when).toLocaleString((window.SYLVA_LOCALE || "fr-BE"), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + ". Seules les affiches sur le terrain font foi.</small></span></div>";
     };
     if (cached && cached.key === key) show(cached.f, cached.t);
     if ((cached && cached.key === key && Date.now() - cached.t < 6 * 3600e3) || !navigator.onLine) return;
@@ -831,7 +839,7 @@
       var ty = SPOT_TYPES[s.type] || SPOT_TYPES.autre;
       var html = "<b>" + esc(ty[2]) + "</b><br>" + esc(s.note || "(sans note)") +
         (s.photo ? '<img class="popup-photo" data-spot-photo="' + esc(s.id) + '" alt="Photo du spot" hidden>' : "") +
-        '<br><span style="color:#A9B3A6;font-size:12px">' + esc(new Date(s.date).toLocaleString("fr-BE")) + "</span>" +
+        '<br><span style="color:#A9B3A6;font-size:12px">' + esc(new Date(s.date).toLocaleString((window.SYLVA_LOCALE || "fr-BE"))) + "</span>" +
         '<div class="spot-actions"><button data-gps-spot="' + esc(s.id) + '" class="sa-gps">GPS</button>' +
         '<button data-edit-spot="' + esc(s.id) + '">Modifier</button>' +
         '<button data-del-spot="' + esc(s.id) + '" class="sa-del">Supprimer</button></div>' +
@@ -1243,8 +1251,8 @@
   // ---------- SOS ----------
   function sosText() {
     if (!me) return null;
-    return "SOS Bivaska - ma position : " + me[0].toFixed(5) + ", " + me[1].toFixed(5) +
-      " (precision " + Math.round(me[2]) + " m) https://maps.apple.com/?ll=" + me[0].toFixed(5) + "," + me[1].toFixed(5);
+    return tr("SOS Bivaska - ma position :") + " " + me[0].toFixed(5) + ", " + me[1].toFixed(5) +
+      " (" + (window.SYLVA_LANG === "en" ? "accuracy" : "precision") + " " + Math.round(me[2]) + " m) https://maps.apple.com/?ll=" + me[0].toFixed(5) + "," + me[1].toFixed(5);
   }
   function updateSosCoords() {
     if (!me) return;
@@ -1260,7 +1268,7 @@
   // ---------- Réglages ----------
   $("#btnSettings").addEventListener("click", function () {
     $("#mtKey").value = load("sylva_mtkey", "") || "";
-    $("#setCountry").value = getCountry(); $("#setLang").value = "fr"; openModal("#modalSettings");
+    $("#setCountry").value = getCountry(); $("#setLang").value = window.SYLVA_LANG || "fr"; openModal("#modalSettings");
   });
   $("#formSettings").addEventListener("submit", function (e) {
     e.preventDefault();
@@ -1895,7 +1903,7 @@
       '<p class="tiny muted" style="margin:4px 0 0">Rafales en km/h. Monter le camp avant ' + (setH - 1) + " h " + setM + ", tant qu'il fait jour.</p>";
     h += '<div class="meteo-days">' + days.map(function (i) {
       var date = new Date(d.time[i] + "T12:00:00");
-      var label = d.time[i] === today ? "Aujourd'hui" : date.toLocaleDateString("fr-BE", { weekday: "long", day: d.time[0] === today ? undefined : "numeric" });
+      var label = d.time[i] === today ? "Aujourd'hui" : date.toLocaleDateString((window.SYLVA_LOCALE || "fr-BE"), { weekday: "long", day: d.time[0] === today ? undefined : "numeric" });
       return '<div class="day"><span class="d">' + esc(label) + '</span><span class="w">' + esc(WMO[d.weather_code[i]] || "—") + "</span>" +
         '<span class="tt">' + Math.round(d.temperature_2m_max[i]) + "° <small>/ " + Math.round(d.temperature_2m_min[i]) + "°</small></span>" +
         '<span class="x">' + ic("eau", "ic-in") + ' ' + (d.precipitation_sum[i] || 0).toFixed(0) + " mm · " + (d.precipitation_probability_max[i] == null ? "–" : d.precipitation_probability_max[i]) + "%</span>" +
@@ -2177,7 +2185,7 @@
         (s.photo ? '<img class="carnet-thumb" data-spot-photo="' + esc(s.id) + '" alt="" hidden><span class="carnet-pin" data-ph="' + esc(s.id) + '" style="background:' + ty[0] + '">' + esc(ty[1]) + "</span>"
                  : '<span class="carnet-pin" style="background:' + ty[0] + '">' + esc(ty[1]) + "</span>") +
         '<span class="item-main"><span class="item-name">' + esc(ty[2]) + '</span><span class="item-sub">' + esc(s.note || "(sans note)") + "</span>" +
-        '<span class="item-sub">' + esc(new Date(s.date).toLocaleString("fr-BE", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })) + esc(dist) + "</span></span></button>";
+        '<span class="item-sub">' + esc(new Date(s.date).toLocaleString((window.SYLVA_LOCALE || "fr-BE"), { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })) + esc(dist) + "</span></span></button>";
     }).join("") + "</div>";
     $all("#carnet [data-spot-photo]").forEach(function (img) {
       var id = img.getAttribute("data-spot-photo");
@@ -2301,7 +2309,7 @@
   function renderHist() {
     var hs = getHist().slice().sort(function (a, b) { return (b.date || "").localeCompare(a.date || "") || b.fin - a.fin; });
     $("#histList").innerHTML = hs.length ? '<div class="list">' + hs.map(function (x) {
-      var d = x.date ? new Date(x.date + "T12:00:00").toLocaleDateString("fr-BE", { day: "numeric", month: "long", year: "numeric" }) : "Date inconnue";
+      var d = x.date ? new Date(x.date + "T12:00:00").toLocaleDateString((window.SYLVA_LOCALE || "fr-BE"), { day: "numeric", month: "long", year: "numeric" }) : "Date inconnue";
       return '<button class="item hist-item" data-hist="' + esc(x.id) + '"><span class="item-main"><span class="item-name">' + esc(x.lieu || "Bivouac") +
         (x.stars ? ' <span class="hist-stars" aria-label="' + x.stars + ' sur 5">' + starsTxt(x.stars) + "</span>" : "") + "</span>" +
         '<span class="item-sub">' + esc(d) + (x.plan && x.plan.length ? " · " + x.plan.length + " recette(s) / fiche(s)" : "") + "</span>" +
@@ -2407,7 +2415,7 @@
   function renderAccueil() {
     renderPretCard(); renderDrill();
     var now = new Date(), h = now.getHours();
-    var j = now.toLocaleDateString("fr-BE", { weekday: "long", day: "numeric", month: "long" });
+    var j = now.toLocaleDateString((window.SYLVA_LOCALE || "fr-BE"), { weekday: "long", day: "numeric", month: "long" });
     $("#todayDate").textContent = j.charAt(0).toUpperCase() + j.slice(1);
     $("#hello").textContent = h < 5 || h >= 18 ? "Bonsoir" : "Bonjour";
     renderHero();
@@ -2541,7 +2549,7 @@
     var list = j.entries.slice().reverse();
     $("#journalList").innerHTML = list.length ? list.map(function (e) {
       return '<div class="jr-entry">' + (e.photo ? '<img class="jr-photo" data-jr-photo="' + esc(e.id) + '" alt="" hidden>' : "") +
-        '<div class="jr-main"><span class="jr-time">' + esc(new Date(e.t).toLocaleString("fr-BE", { weekday: "short", hour: "2-digit", minute: "2-digit" })) + "</span>" +
+        '<div class="jr-main"><span class="jr-time">' + esc(new Date(e.t).toLocaleString((window.SYLVA_LOCALE || "fr-BE"), { weekday: "short", hour: "2-digit", minute: "2-digit" })) + "</span>" +
         (e.txt ? "<p>" + esc(e.txt) + "</p>" : "") + "</div>" +
         '<button class="icon-mini danger" data-jr-del="' + esc(e.id) + '" aria-label="Supprimer cette note"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>';
     }).join("") : '<p class="muted small" style="margin:6px 0 0">Note ce que tu vois, ce qui marche, ce qui ne marche pas. Chaque note garde l\'heure et l\'endroit.</p>';
@@ -2596,7 +2604,7 @@
       (x.track && x.track.length > 1 ? ' <button type="button" class="link-btn" data-hist-track="' + esc(x.id) + '">Voir le trajet</button>' : "");
     (x.entries || []).forEach(function (e) {
       h += '<div class="jr-entry">' + (e.photo ? '<img class="jr-photo" data-jr-photo="' + esc(e.id) + '" alt="" hidden>' : "") +
-        '<div class="jr-main"><span class="jr-time">' + esc(new Date(e.t).toLocaleString("fr-BE", { weekday: "short", hour: "2-digit", minute: "2-digit" })) + "</span>" +
+        '<div class="jr-main"><span class="jr-time">' + esc(new Date(e.t).toLocaleString((window.SYLVA_LOCALE || "fr-BE"), { weekday: "short", hour: "2-digit", minute: "2-digit" })) + "</span>" +
         (e.txt ? "<p>" + esc(e.txt) + "</p>" : "") + "</div></div>";
     });
     return h + "</div>";
@@ -2726,20 +2734,21 @@
   function renderPrepState() {
     var p = load("sylva_prep", null), t = getTrip(), box = $("#prepBox"); if (!box || prepRunning) return;
     box.innerHTML = p && t.lat != null && distKm(p.c, [t.lat, t.lon]) < 0.5
-      ? '<p class="small muted" style="margin:0">Sortie préparée le ' + new Date(p.t).toLocaleString("fr-BE", { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + ". Refais-le la veille pour une météo fraîche.</p>"
+      ? '<p class="small muted" style="margin:0">Sortie préparée le ' + new Date(p.t).toLocaleString((window.SYLVA_LOCALE || "fr-BE"), { weekday: "short", day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + ". Refais-le la veille pour une météo fraîche.</p>"
       : '<p class="small muted" style="margin:0">Télécharge d\'un coup, pour le hors ligne : cartes, météo, chasse, services et relief autour du lieu de la sortie.</p>';
   }
   $("#btnPrep").addEventListener("click", runPrep);
 
   // --- Prévenir un proche ---
-  function fmtHeure(v) { return v ? new Date(v).toLocaleString("fr-BE", { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) : ""; }
+  function fmtHeure(v) { return v ? new Date(v).toLocaleString((window.SYLVA_LOCALE || "fr-BE"), { weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" }) : ""; }
   function safetyMsg() {
     var t = getTrip(), ret = $("#safeRet").value, alarm = ret ? new Date(new Date(ret).getTime() + 2 * 3600e3) : null;
     var pt = t.lat != null ? [t.lat, t.lon] : me ? [me[0], me[1]] : null;
-    var m = "Je pars en bivouac seul" + (t.lieu ? " à " + t.lieu : "") + ".";
-    if (pt) m += "\nLieu : " + pt[0].toFixed(5) + ", " + pt[1].toFixed(5) + "\nhttps://maps.google.com/?q=" + pt[0].toFixed(5) + "," + pt[1].toFixed(5);
-    if (ret) m += "\nRetour prévu : " + fmtHeure(ret) + ".";
-    if (alarm) m += "\nSi tu n'as pas de nouvelles de moi le " + fmtHeure(alarm) + ", appelle le 112, donne-leur ce message et dis que je suis seul.";
+    var en = window.SYLVA_LANG === "en";
+    var m = tr("Je pars en bivouac seul") + (t.lieu ? (en ? " at " : " à ") + t.lieu : "") + ".";
+    if (pt) m += "\n" + tr("Lieu :") + " " + pt[0].toFixed(5) + ", " + pt[1].toFixed(5) + "\nhttps://maps.google.com/?q=" + pt[0].toFixed(5) + "," + pt[1].toFixed(5);
+    if (ret) m += "\n" + tr("Retour prévu :") + " " + fmtHeure(ret) + ".";
+    if (alarm) m += "\n" + tr("Si tu n'as pas de nouvelles de moi le") + " " + fmtHeure(alarm) + tr(", appelle le 112, donne-leur ce message et dis que je suis seul.");
     var extra = $("#safeExtra").value.trim(); if (extra) m += "\n" + extra;
     return m;
   }
@@ -2777,13 +2786,13 @@
     if (!map || !window.L) return;
     var c = load("sylva_car", null);
     if (carMarker) { map.removeLayer(carMarker); carMarker = null; }
-    if (c) carMarker = L.marker([c.lat, c.lon], { icon: pinIcon("#33497A", ic("voiture")), zIndexOffset: 900 }).bindPopup("<b>Ma voiture</b><br><span style=\"font-size:12px;opacity:.75\">Garée le " + esc(new Date(c.t).toLocaleString("fr-BE", { weekday: "short", hour: "2-digit", minute: "2-digit" })) + "</span>").addTo(map);
+    if (c) carMarker = L.marker([c.lat, c.lon], { icon: pinIcon("#33497A", ic("voiture")), zIndexOffset: 900 }).bindPopup("<b>Ma voiture</b><br><span style=\"font-size:12px;opacity:.75\">Garée le " + esc(new Date(c.t).toLocaleString((window.SYLVA_LOCALE || "fr-BE"), { weekday: "short", hour: "2-digit", minute: "2-digit" })) + "</span>").addTo(map);
   }
   function renderCar() {
     var c = load("sylva_car", null);
     $("#btnCarGo").hidden = !c;
     $("#btnCarSet").innerHTML = ic("voiture") + (c ? "Déplacer ma voiture ici" : "Ma voiture est garée ici");
-    $("#carInfo").textContent = c ? "Voiture marquée le " + new Date(c.t).toLocaleString("fr-BE", { weekday: "short", hour: "2-digit", minute: "2-digit" }) + (me ? " · à " + fmtKm(distKm([me[0], me[1]], [c.lat, c.lon])) : "") : "Marque l'endroit où tu te gares en arrivant : le retour marche même sans réseau.";
+    $("#carInfo").textContent = c ? "Voiture marquée le " + new Date(c.t).toLocaleString((window.SYLVA_LOCALE || "fr-BE"), { weekday: "short", hour: "2-digit", minute: "2-digit" }) + (me ? " · à " + fmtKm(distKm([me[0], me[1]], [c.lat, c.lon])) : "") : "Marque l'endroit où tu te gares en arrivant : le retour marche même sans réseau.";
   }
   $("#btnCarSet").addEventListener("click", function () {
     if (!me) { toast("En attente du GPS : active la localisation"); return; }
@@ -2817,8 +2826,9 @@
   // --- Annonces vocales du guidage ---
   var voiceOn = !!load("sylva_voice", true);
   function say(txt) {
+    txt = navEn(txt);
     if (!voiceOn || !window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
-    try { var u = new SpeechSynthesisUtterance(txt); u.lang = "fr-FR"; u.rate = 1; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
+    try { var u = new SpeechSynthesisUtterance(txt); u.lang = window.SYLVA_LANG === "en" ? "en-GB" : "fr-FR"; u.rate = 1; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
   }
   function renderVoiceBtn() { var b = $("#navVoice"); if (b) { b.innerHTML = ic(voiceOn ? "son" : "muet"); b.setAttribute("aria-label", voiceOn ? "Couper la voix" : "Activer la voix"); } }
   $("#navVoice").addEventListener("click", function () { voiceOn = !voiceOn; save("sylva_voice", voiceOn); renderVoiceBtn(); if (voiceOn) say("Guidage vocal activé"); else if (window.speechSynthesis) speechSynthesis.cancel(); });
@@ -3004,7 +3014,7 @@
         : "Ciel très ouvert : bon pour sécher et charger au solaire, mais plus de rosée, de givre et de froid la nuit (le sol perd sa chaleur vers le ciel). Prévois une bâche bien tendue.";
       $("#cielRes").innerHTML = '<div class="eau-thumb"></div><div class="rv-score"><div><span>Ciel visible</span><b>' + pct + ' %</b></div><div><span>Soleil utile (au-dessus de 15°)</span><b>' + hmMin(real) + "</b></div></div>" +
         '<div class="alert alert-' + cls + '"><span>' + msg + "</span></div>" +
-        '<p class="small">Le ' + esc(new Date(day + "T12:00:00").toLocaleDateString("fr-BE", { weekday: "long", day: "numeric", month: "long" })) + " : soleil levé environ " + hmMin(sd.up) + ", au plus haut à " + Math.round(sd.maxA) + "° au-dessus de l'horizon" +
+        '<p class="small">Le ' + esc(new Date(day + "T12:00:00").toLocaleDateString((window.SYLVA_LOCALE || "fr-BE"), { weekday: "long", day: "numeric", month: "long" })) + " : soleil levé environ " + hmMin(sd.up) + ", au plus haut à " + Math.round(sd.maxA) + "° au-dessus de l'horizon" +
         (sd.maxA < 25 ? " (soleil bas : les arbres au sud cachent l'essentiel)" : "") + ".</p>" +
         '<div class="alert alert-warn"><strong>Regarde aussi au-dessus de toi</strong><span>Pas de branche morte, ni d\'arbre mort ou penché au-dessus de l\'abri : c\'est l\'un des premiers dangers en forêt, surtout avec du vent.</span></div>' +
         '<p class="tiny muted">Estimation : les nuages blancs et les reflets faussent un peu le calcul. En bleu, ce que Bivaska a compté comme ciel.</p>';
@@ -3134,7 +3144,7 @@
         ["N", "E", "S", "O"].map(function (l, i) { var a = (i * 90 - az) * Math.PI / 180; return '<text x="' + (Math.sin(a) * 82).toFixed(1) + '" y="' + (-Math.cos(a) * 82 + 6).toFixed(1) + '" class="nd-l' + (i ? "" : " nd-n") + '">' + l + "</text>"; }).join("") +
         '<circle cx="0" cy="-60" r="13" class="nd-sun"/><line x1="0" y1="40" x2="0" y2="-40" class="nd-you"/><polygon points="0,-48 -7,-34 7,-34" class="nd-you-h"/></svg>' +
         '<p class="nord-txt">Fais face au soleil : <b>le nord est ' + side + "</b>.</p>" +
-        '<p class="tiny muted">Soleil au ' + DIR16[Math.round(az / 22.5) % 16] + " (" + az + "°), à " + Math.round(s.alt) + "° de hauteur, à " + now.toLocaleTimeString("fr-BE", { hour: "2-digit", minute: "2-digit" }) + ". Calculé pour " + src + " et l'heure du téléphone.</p>" +
+        '<p class="tiny muted">Soleil au ' + DIR16[Math.round(az / 22.5) % 16] + " (" + az + "°), à " + Math.round(s.alt) + "° de hauteur, à " + now.toLocaleTimeString((window.SYLVA_LOCALE || "fr-BE"), { hour: "2-digit", minute: "2-digit" }) + ". Calculé pour " + src + " et l'heure du téléphone.</p>" +
         (s.alt > 60 ? '<p class="tiny" style="color:#B7791F">Soleil très haut : la direction est moins précise. Recommence dans une heure ou utilise le bâton et l\'ombre.</p>' : "") + "</div>";
     }
     h += '<div class="card"><p style="margin:0 0 8px">Ne regarde jamais le soleil en face : repère sa direction à ton ombre (le soleil est à l\'opposé). Vérifie avec une autre méthode quand tu peux.</p><button type="button" class="btn" data-tech="baton">Méthode du bâton et de l\'ombre</button> <button type="button" class="btn" data-tech="crise_nord_soleil">La fiche</button></div>';
@@ -3295,10 +3305,10 @@
   // ---------- QR codes (sans réseau) ----------
   function planText(d) {
     var p = d.plan;
-    return "Plan d'urgence du foyer (Bivaska)\n" + (p.contacts.length ? "\nContacts :\n" + p.contacts.map(function (c) { return "- " + c.nom + " : " + c.tel; }).join("\n") + "\n" : "") +
-      (p.rdv1 ? "\nRendez-vous près de la maison : " + p.rdv1 : "") + (p.rdv2 ? "\nRendez-vous hors du quartier : " + p.rdv2 : "") +
-      (p.abri ? "\nAbri / centre d'accueil : " + p.abri : "") + (p.ecole ? "\nEnfants : " + p.ecole : "") + (p.medecin ? "\nMédecin, traitements : " + p.medecin : "") +
-      (p.notes ? "\nConsignes : " + p.notes : "") + "\n\nUrgences : 112. Écoute la radio et suis les consignes des autorités.";
+    return tr("Plan d'urgence du foyer (Bivaska)") + "\n" + (p.contacts.length ? "\n" + tr("Contacts :") + "\n" + p.contacts.map(function (c) { return "- " + c.nom + " : " + c.tel; }).join("\n") + "\n" : "") +
+      (p.rdv1 ? "\n" + tr("Rendez-vous près de la maison :") + " " + p.rdv1 : "") + (p.rdv2 ? "\n" + tr("Rendez-vous hors du quartier :") + " " + p.rdv2 : "") +
+      (p.abri ? "\n" + tr("Abri / centre d'accueil :") + " " + p.abri : "") + (p.ecole ? "\n" + tr("Enfants :") + " " + p.ecole : "") + (p.medecin ? "\n" + tr("Médecin, traitements :") + " " + p.medecin : "") +
+      (p.notes ? "\n" + tr("Consignes :") + " " + p.notes : "") + "\n\n" + tr("Urgences : 112. Écoute la radio et suis les consignes des autorités.");
   }
   function showQr(text, title, note) {
     if (!window.qrcode) { toast("QR indisponible"); return; }
@@ -3391,7 +3401,7 @@
   function garrotTxt() {
     var g = load("sylva_garrot", null); if (!g) return "";
     var m = Math.floor((Date.now() - g.t) / 60000);
-    return "⏱ Garrot posé à " + new Date(g.t).toLocaleTimeString("fr-BE", { hour: "2-digit", minute: "2-digit" }) + " · il y a " + (m >= 60 ? Math.floor(m / 60) + " h " + String(m % 60).padStart(2, "0") : m + " min") +
+    return "⏱ Garrot posé à " + new Date(g.t).toLocaleTimeString((window.SYLVA_LOCALE || "fr-BE"), { hour: "2-digit", minute: "2-digit" }) + " · il y a " + (m >= 60 ? Math.floor(m / 60) + " h " + String(m % 60).padStart(2, "0") : m + " min") +
       ' <button type="button" class="link-btn" data-gclear>Effacer</button>';
   }
   function renderGarrot() {
@@ -3451,7 +3461,7 @@
     var days = Math.round((new Date(s.date + "T00:00:00") - new Date().setHours(0, 0, 0, 0)) / 864e5);
     if (days < 0) return { cls: "danger", txt: "périmé depuis " + (-days) + " j", d: days };
     if (days <= 30) return { cls: "warn", txt: days === 0 ? "périme aujourd'hui" : "périme dans " + days + " j", d: days };
-    return { cls: "ok", txt: "jusqu'au " + new Date(s.date + "T00:00:00").toLocaleDateString("fr-BE"), d: days };
+    return { cls: "ok", txt: "jusqu'au " + new Date(s.date + "T00:00:00").toLocaleDateString((window.SYLVA_LOCALE || "fr-BE")), d: days };
   }
   // Autonomie : combien de jours tient le foyer avec ses réserves (eau 3 L/pers/j, 3 repas/pers/j, 1 charge de téléphone par adulte et par jour)
   function autonomie(d) {
@@ -3556,7 +3566,7 @@
         (p.rdv1 ? "\nRendez-vous près de la maison : " + p.rdv1 : "") + (p.rdv2 ? "\nRendez-vous hors du quartier : " + p.rdv2 : "") +
         (p.abri ? "\nAbri / centre d'accueil : " + p.abri : "") + (p.ecole ? "\nEnfants : " + p.ecole : "") + (p.medecin ? "\nMédecin, traitements : " + p.medecin : "") +
         (p.notes ? "\nConsignes : " + p.notes : "") + "\n\nUrgences : 112. Écoute la radio et suis les consignes des autorités.";
-      if (navigator.share) navigator.share({ title: "Plan d'urgence du foyer", text: txt }).catch(function () {});
+      if (navigator.share) navigator.share({ title: tr("Plan d'urgence du foyer"), text: txt }).catch(function () {});
       else if (navigator.clipboard) navigator.clipboard.writeText(txt).then(function () { toast("Plan copié : colle-le dans un message"); });
     }
   });
@@ -3926,7 +3936,7 @@
       '<div class="row"><button type="button" class="btn btn-primary" id="plStart">Démarrer (30 s)</button><button type="button" class="btn" id="plCam">Caméra (expérimental)</button></div>' +
       '<div id="plResult"></div><div id="plCamBox"></div>' +
       (hs.length ? '<div class="sec-head"><h2>Mesures précédentes</h2></div><div class="card">' + hs.map(function (x) {
-        var v = poulsVerdict(x.bpm); return '<div class="pl-hist"><b>' + x.bpm + ' bpm</b><span class="pl-tag pl-' + v[0] + '">' + v[1] + "</span><span>" + esc(new Date(x.t).toLocaleString("fr-BE", { weekday: "short", hour: "2-digit", minute: "2-digit" })) + (x.cam ? " · caméra" : "") + "</span></div>";
+        var v = poulsVerdict(x.bpm); return '<div class="pl-hist"><b>' + x.bpm + ' bpm</b><span class="pl-tag pl-' + v[0] + '">' + v[1] + "</span><span>" + esc(new Date(x.t).toLocaleString((window.SYLVA_LOCALE || "fr-BE"), { weekday: "short", hour: "2-digit", minute: "2-digit" })) + (x.cam ? " · caméra" : "") + "</span></div>";
       }).join("") + "</div>" : "") +
       '<p class="tiny muted">Repère, pas un diagnostic médical. Note l\'heure et répète la mesure toutes les 15 à 30 minutes pour suivre un blessé.</p>';
   }
@@ -4202,7 +4212,8 @@
     var steps = [
       '<div class="ob-hero"><img src="icons/icon-192.png" alt="" width="96" height="96"></div>' +
       '<h1 class="ob-title">Bivaska</h1>' +
-      '<p class="ob-lead">Pour bivouaquer, apprendre et faire face à une crise. Même sans réseau.</p>',
+      '<p class="ob-lead">Pour bivouaquer, apprendre et faire face à une crise. Même sans réseau.</p>' +
+      '<div class="ob-chips ob-lang" data-no-i18n>' + [["fr", "Français"], ["en", "English"]].map(function (l) { return '<button type="button" class="ob-chip' + ((window.SYLVA_LANG || "fr") === l[0] ? " on" : "") + '" data-ob-lang="' + l[0] + '" lang="' + l[0] + '">' + l[1] + "</button>"; }).join("") + "</div>",
 
       '<h2 class="ob-h">Trois choses à savoir</h2>' +
       '<div class="ob-row">' + med("alerte", "c-danger") + '<div><b>Le bouton du milieu</b><span>En cas de problème : appeler les secours, guider les gestes pour un blessé, donner ta position. Sans compte et sans réseau.</span></div></div>' +
@@ -4251,6 +4262,7 @@
     if (t.id === "obNext") { if (obStep >= obSteps().length - 1) closeOnboard(); else { obStep++; renderOnboard(); } }
     else if (t.id === "obBack") { if (obStep > 0) { obStep--; renderOnboard(); } }
     else if (t.id === "obSkip") closeOnboard();
+    else if (t.dataset.obLang) { if (t.dataset.obLang !== (window.SYLVA_LANG || "fr")) { save("sylva_lang", t.dataset.obLang); try { sessionStorage.setItem("sylva_ob_resume", "1"); } catch (er) {} location.reload(); } }
     else if (t.dataset.obPays) { obCountry = t.dataset.obPays; applyCountry(obCountry, true); renderOnboard(); }
     else if (t.id === "obGeo") {
       if (!navigator.geolocation) { t.textContent = "Position indisponible sur cet appareil"; return; }
@@ -4260,6 +4272,9 @@
         { enableHighAccuracy: false, timeout: 15000, maximumAge: 600000 });
     }
   });
+  // Langue : enregistrée puis rechargement (l'interface et le contenu sont choisis au démarrage)
+  function setLang(l) { if (l === (window.SYLVA_LANG || "fr")) return; save("sylva_lang", l); location.reload(); }
+  var selLang = $("#setLang"); if (selLang) selLang.addEventListener("change", function () { setLang(selLang.value); });
   var obAgain = $("#btnOnboard"); if (obAgain) obAgain.addEventListener("click", function () { closeModal($("#modalSettings")); openOnboard(); });
 
   // ---------- Mode crise (bouton central) ----------

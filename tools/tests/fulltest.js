@@ -15,7 +15,7 @@ const PLANTNET = {results:[{score:0.91,species:{scientificNameWithoutAuthor:'Urt
 (async () => {
   const b = await chromium.launch();
   const ctx = await b.newContext({ ...devices['iPhone 13'], serviceWorkers: 'block' });
-  const pg = await ctx.newPage(); await pg.addInitScript(() => { try { localStorage.setItem('sylva_onboard', '1'); } catch (e) {} });
+  const pg = await ctx.newPage(); await pg.addInitScript(() => { try { localStorage.setItem('sylva_onboard', '1'); if (!localStorage.getItem('sylva_lang')) localStorage.setItem('sylva_lang', '"fr"'); } catch (e) {} });
   const errs = [], missing = new Set();
   pg.on('pageerror', e => errs.push('PAGEERR ' + e.message));
   pg.on('console', m => { if (m.type() === 'error' && !/ERR_FAILED|Failed to load resource/.test(m.text())) errs.push('CONSOLE ' + m.text()); });

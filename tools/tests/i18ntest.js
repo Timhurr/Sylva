@@ -1,0 +1,38 @@
+const { chromium, devices } = require('playwright');
+const http = require('http'), fs = require('fs'), path = require('path');
+const root = path.resolve(__dirname, '../..');
+fs.mkdirSync(path.join(__dirname, 'shots'), { recursive: true });
+const srv = http.createServer((q, r) => {
+  let u = decodeURIComponent(q.url.split('?')[0]);
+  let f = path.join(root, u);
+  if (u.endsWith('/')) f += 'index.html';
+  fs.readFile(f, (e, d) => { if (e) { r.writeHead(404); r.end(); return; }
+    const ext = path.extname(f); r.writeHead(200, {'Content-Type': {'.js':'text/javascript','.css':'text/css','.html':'text/html','.json':'application/json','.webp':'image/webp','.png':'image/png','.webmanifest':'application/manifest+json'}[ext]||'application/octet-stream'}); r.end(d); });
+}).listen(8783);
+const stub = `(function(){function mk(){var f=function(){return p};var p=new Proxy(f,{get:function(t,k){if(k==='getCenter')return function(){return{lat:50.1,lng:5.7}};if(k==='getBounds')return function(){return{getSouth:()=>50,getWest:()=>5,getNorth:()=>50.2,getEast:()=>5.8,contains:()=>true}};if(k==='getZoom')return function(){return 12};if(k==='then')return undefined;if(k==='distance')return function(a,b){a=a.lat!=null?[a.lat,a.lng]:a;b=b.lat!=null?[b.lat,b.lng]:b;var R=6371e3,r=Math.PI/180,dl=(b[0]-a[0])*r,dn=(b[1]-a[1])*r,h=Math.sin(dl/2)**2+Math.cos(a[0]*r)*Math.cos(b[0]*r)*Math.sin(dn/2)**2;return 2*R*Math.asin(Math.sqrt(h))};if(k==='on')return function(ev,fn){(window.__mh=window.__mh||{})[ev]=fn;return p};if(k==='divIcon')return function(o){(window.__icons=window.__icons||[]).push(o.html);return p};return p},apply:function(){return p}});return p}window.L=mk();})();`;
+(async () => {
+  let fails = 0; const ok = (n, c, d) => { console.log((c ? 'OK   ' : 'FAIL ') + n + (c ? '' : ' — ' + JSON.stringify(d || ''))); if (!c) fails++; };
+  const b = await chromium.launch();
+  const ctx = await b.newContext({ ...devices['iPhone 13'], serviceWorkers: 'block', locale: 'en-GB' });
+  const pg = await ctx.newPage(); const errs = [];
+  pg.on('pageerror', e => errs.push(e.message));
+  await pg.addInitScript(() => { if (!localStorage.getItem('sylva_onboard')) localStorage.setItem('sylva_onboard', '1'); });
+  await pg.route(/\/vendor\/(leaflet|maplibre)\/.*\.js/, r => r.fulfill({ body: stub, contentType: 'text/javascript' }));
+  await pg.route(/^https?:\/\/(?!localhost)/, r => r.abort());
+  await pg.goto('http://localhost:8783/index.html'); await pg.waitForTimeout(1500);
+  ok('Téléphone en anglais → appli en anglais', await pg.evaluate(() => window.SYLVA_LANG === 'en' && document.documentElement.lang === 'en'));
+  ok('Onglets traduits', (await pg.textContent('.tab[data-view="accueil"]')).includes('Today'));
+  await pg.click('.tab[data-view="crise"]'); await pg.waitForTimeout(400);
+  ok('Mode crise traduit', (await pg.textContent('#view-crise')).includes('Call 112'));
+  ok('Modèle avec nombre', await pg.evaluate(() => T('Chapitre 3 · 5 min')) === 'Chapter 3 · 5 min');
+  ok('Modèle avec mois', await pg.evaluate(() => T('12 espèces présentes en mars dans ta région')) === '12 species present in March in your region');
+  ok('Date seule', await pg.evaluate(() => T('Vendredi 20 novembre')) === 'Friday 20 November');
+  ok('Texte inconnu inchangé', await pg.evaluate(() => T('Zorglub') === 'Zorglub'));
+  await pg.click('.tab[data-view="accueil"]'); await pg.click('#btnSettings'); await pg.waitForTimeout(300);
+  ok('Réglages : langue English', await pg.inputValue('#setLang') === 'en');
+  await Promise.all([pg.waitForNavigation(), pg.selectOption('#setLang', 'fr')]); await pg.waitForTimeout(1200);
+  ok('Retour au français', await pg.evaluate(() => window.SYLVA_LANG === 'fr' && !window.SYLVA_EN.ui['Copier']));
+  ok('Onglet en français', (await pg.textContent('.tab[data-view="accueil"]')).includes("Aujourd'hui"));
+  ok('Aucune erreur JS', !errs.length, errs);
+  await b.close(); srv.close(); process.exit(fails ? 1 : 0);
+})();

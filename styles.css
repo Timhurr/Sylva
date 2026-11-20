@@ -1112,3 +1112,4 @@ html.ob-open, html.ob-open body{overflow:hidden}
 .ob-dots span{width:8px;height:8px;border-radius:50%;background:var(--line);transition:width .2s}
 .ob-dots span.on{width:22px;border-radius:5px;background:var(--accent)}
 @media (prefers-reduced-motion:reduce){.ob-dots span{transition:none}}
+.ob-lang{justify-content:center;margin-top:6px}
