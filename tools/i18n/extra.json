@@ -21,5 +21,16 @@
  "Suisse": "Switzerland",
  "Belgique": "Belgium",
  "France": "France",
- "Luxembourg": "Luxembourg"
+ "Luxembourg": "Luxembourg",
+ "Eau": "Water",
+ "Orientation": "Navigation",
+ "Déplacement": "Moving",
+ "Secours": "Rescue",
+ "Recettes du feu": "Campfire recipes",
+ "Faune et traces": "Wildlife and tracks",
+ "# étapes": "# steps",
+ "secours injoignables": "emergency services unreachable",
+ "Étape # sur #": "Step # of #",
+ "Vallée de l'Ourthe · Nisramont": "Ourthe Valley · Nisramont",
+ ". Contenu éducatif : il ne remplace pas une formation aux premiers secours.": ". Educational content: it does not replace first-aid training."
 }

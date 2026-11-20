@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.104";
+  var VERSION = "0.9.105";
   // Premier lancement : aucune donnée Bivaska encore enregistrée (lu avant que l'initialisation n'en écrive)
   var FIRST_RUN = (function () {
     try {
@@ -1647,7 +1647,7 @@
       etapes.map(function (x, i) {
         var key = tid ? tid + (mode === "isole" ? "_seul_" : "_") + (i + 1) : "";
         var si = key && IMGS[key] ? '<img class="step-img" src="' + IMGS[key] + '" alt="Étape ' + (i + 1) + '"' + (i ? ' loading="lazy"' : "") + ">" : "";
-        return '<div class="step' + (i === 0 ? " on" : "") + (si ? " has-img" : "") + '">' + si + '<span class="step-k"><span class="step-n">' + (i + 1) + "</span>Étape " + (i + 1) + " sur " + n + "</span><p>" + esc(x) + "</p></div>";
+        return '<div class="step' + (i === 0 ? " on" : "") + (si ? " has-img" : "") + '">' + si + '<span class="step-k"><span class="step-n">' + (i + 1) + "</span>" + tr("Étape " + (i + 1) + " sur " + n) + "</span><p>" + esc(x) + "</p></div>";
       }).join("") +
       '<div class="step-nav"><button type="button" class="btn" data-step="-1" disabled>Précédent</button><button type="button" class="btn btn-next" data-step="1">' + (n > 1 ? "Étape suivante" : "Terminé ✓") + "</button></div>" +
       '<button type="button" class="link-btn steps-toggle" data-step-all>Voir toutes les étapes</button></div>';
@@ -1662,7 +1662,7 @@
     var main = t.isole || t.etapes, n = main.length;
     var h = (stepPics ? "" : t.wiki ? '<div id="heroSlot" class="knot">' + (tp ? heroHtml(tp, t.titre) : "") + "</div>"
                     : heroIllus(t.id, t.illus, t.titre)) +
-      '<div class="chap-k">' + esc(t.cat) + (t.isole ? " · secours injoignables" : " · " + n + " étapes") + '</div><h1 id="sheetTitle">' + esc(t.titre) + "</h1><p>" + esc(t.intro) + "</p>";
+      '<div class="chap-k">' + esc(tr(t.cat)) + " · " + esc(tr(t.isole ? "secours injoignables" : n + " étapes")) + '</div><h1 id="sheetTitle">' + esc(t.titre) + "</h1><p>" + esc(t.intro) + "</p>";
     if (t.recette) h += recetteHtml(t.recette);
     h += planBtnHtml(t.id);
     if (t.alerte && t.alerte.length) {
@@ -1676,7 +1676,7 @@
     (t.attentionIsole || []).forEach(function (a) { h += '<div class="alert alert-warn"><span>' + esc(a) + "</span></div>"; });
     (t.attention || []).forEach(function (a) { h += '<div class="alert alert-warn"><span>' + esc(a) + "</span></div>"; });
     h += reportBtn("fiche", t.id, t.titre);
-    if (t.source) h += '<p class="disclaimer">Source : ' + esc(t.source) + (t.cat === "Premiers secours" ? ". Contenu éducatif : il ne remplace pas une formation aux premiers secours." : ".") + "</p>";
+    if (t.source) h += '<p class="disclaimer">' + tr("Source :") + " " + esc(t.source) + (t.cat === "Premiers secours" ? tr(". Contenu éducatif : il ne remplace pas une formation aux premiers secours.") : ".") + "</p>";
     openSheet(t.cat, h);
     if (t.wiki && !tp && !stepPics && navigator.onLine) {
       fetchPhoto(t.wiki, ["en"]).then(function (p) {
@@ -3857,7 +3857,7 @@
   function checkBadges() {
     var s = badgeStats(), seen = load("sylva_badges", []), fresh = [];
     BADGES.forEach(function (b) { if (b[4](s) && seen.indexOf(b[0]) === -1) { seen.push(b[0]); fresh.push(b); } });
-    if (fresh.length) { save("sylva_badges", seen); toast("Badge débloqué : " + fresh[0][2] + (fresh.length > 1 ? " (+" + (fresh.length - 1) + ")" : "")); }
+    if (fresh.length) { save("sylva_badges", seen); toast(tr("Badge débloqué :") + " " + tr(fresh[0][2]) + (fresh.length > 1 ? " (+" + (fresh.length - 1) + ")" : "")); }
     if ($("#panelBadges") && !$("#panelBadges").hidden) renderBadges();
   }
   function renderBadges() {
@@ -4363,7 +4363,7 @@
   // ---------- Passerelle pour cloud.js (comptes, communauté) ----------
   window.SYLVA_APP = { $: $, $all: $all, esc: esc, ic: ic, toast: toast, load: load, save: save, openModal: openModal, closeModal: closeModal,
     pinIcon: pinIcon, getSpots: getSpots, renderSpots: renderSpots, spotPhotoUrl: spotPhotoUrl, getCountry: getCountry, distKm: distKm, fmtKm: fmtKm, uid: uid,
-    version: VERSION, getMap: function () { return map; }, getLayers: function () { return layers; }, getMe: function () { return me; } };
+    version: VERSION, getMap: function () { return map; }, getLayers: function () { return layers; }, getMe: function () { return me; }, openTechnique: openTechnique, openEspece: openEspece, openChapitre: openChapitre };
 
   if ("serviceWorker" in navigator) {
     var hadController = !!navigator.serviceWorker.controller, reloaded = false;
