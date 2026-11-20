@@ -6,11 +6,11 @@
   "use strict";
   var MAIL = '<a href="mailto:contact@bivaska.eu">contact@bivaska.eu</a>';
   // Identité de l'éditeur : à compléter (nom, adresse, numéro d'entreprise) avant la sortie publique.
-  var EDITEUR = { fr: "Bivaska", en: "Bivaska" };
+  var EDITEUR = { fr: "Bivaska", en: "Bivaska", nl: "Bivaska" };
 
   window.SYLVA_LEGAL = {
     version: "2026-11-20",
-    date: { fr: "20 novembre 2026", en: "20 November 2026" },
+    date: { fr: "20 novembre 2026", en: "20 November 2026", nl: "20 november 2026" },
     fr: {
       cgu: { titre: "Conditions d'utilisation", html:
         "<p>En utilisant Bivaska, tu acceptes ces conditions. Si tu ne les acceptes pas, n'utilise pas l'appli.</p>" +
@@ -66,6 +66,62 @@
         "<p>Bivaska est un outil éducatif. En cas d'urgence : 112.</p>" },
       accept: "J'ai lu et j'accepte les <a href=\"#\" data-legal=\"cgu\">conditions d'utilisation</a> et la <a href=\"#\" data-legal=\"conf\">politique de confidentialité</a>.",
       maj: "Dernière mise à jour : "
+    },
+    nl: {
+      cgu: { titre: "Gebruiksvoorwaarden", html:
+        "<p>Door Bivaska te gebruiken, aanvaard je deze voorwaarden. Aanvaard je ze niet, gebruik de app dan niet.</p>" +
+        "<h3>1. Een hulpmiddel, niet de hulpdiensten</h3>" +
+        "<p>Bivaska geeft educatieve informatie over de natuur, bivakkeren, eerste hulp en voorbereiding op crisissen. Ze vervangt <b>niet de hulpdiensten, geen arts, geen opleiding eerste hulp en niet de instructies van de overheid</b>. Bel in nood 112.</p>" +
+        "<p>Eet nooit een plant, paddenstoel of dier alleen op basis van de app: verwarring kan dodelijk zijn. Metingen met de telefoon (pols, helling, afstand, morse, helderheid van water…) zijn richtwaarden, geen betrouwbare metingen.</p>" +
+        "<h3>2. De wet naleven</h3>" +
+        "<p>Jij alleen bent verantwoordelijk voor het naleven van de wetten van de plaats waar je bent: bivakkeren, vuur, plukken, vissen, jacht, toegang tot privéterrein en natuurreservaten, verkeer. De getoonde regels en informatie (jachten, bivakzones, visreglementering…) zijn richtwaarden en kunnen onvolledig of verouderd zijn: alleen officiële bronnen en de borden ter plaatse zijn bindend.</p>" +
+        "<h3>3. Account (optioneel)</h3>" +
+        "<p>De app werkt zonder account. Een account dient om je gegevens te bewaren en deel te nemen aan de gemeenschap. Het is voorbehouden aan personen van 13 jaar en ouder. Jij bent verantwoordelijk voor de toegang tot je e-mailadres, waarmee je inlogt.</p>" +
+        "<h3>4. Deelregels (gemeenschap)</h3>" +
+        "<ul>" +
+        "<li>Deel alleen plaatsen waar slapen <b>toegelaten</b> is: officiële bivakzone, privéterrein met toestemming van de eigenaar, camping, of een zone waar de wet het toelaat of gedoogt.</li>" +
+        "<li>Geen woningen, privé-eigendom zonder toestemming, integrale natuurreservaten of gevaarlijke plaatsen.</li>" +
+        "<li>Geen foto waarop een persoon of nummerplaat herkenbaar is, en geen gewelddadige, seksuele of haatdragende inhoud.</li>" +
+        "<li>Geen persoonlijke contactgegevens (telefoon, adres, e-mail), reclame of links.</li>" +
+        "<li>Geen medisch advies, en geen consumptie van planten of paddenstoelen voorgesteld als veilig.</li>" +
+        "<li>Blijf respectvol: bekritiseer een plaats, geen persoon.</li>" +
+        "</ul>" +
+        "<p>De eerste bijdragen van elk lid worden nagekeken voor publicatie. Elke inhoud kan gemeld worden met de knop « Melden »; ze wordt gecontroleerd en verwijderd als ze deze regels of de wet overtreedt. Een account dat de regels herhaaldelijk overtreedt, kan geschorst worden.</p>" +
+        "<h3>5. Inhoud van leden</h3>" +
+        "<p>Spots, beoordelingen en foto's worden gepubliceerd onder de verantwoordelijkheid van hun auteur. Door ze te delen geef je Bivaska het kosteloze recht om ze in de app te tonen, en garandeer je dat je daartoe het recht hebt (een foto die je zelf nam).</p>" +
+        "<h3>6. Intellectuele eigendom</h3>" +
+        "<p>De teksten, gravures en schema's van Bivaska zijn beschermd. Gegevens van derden (OpenStreetMap, Wikimedia, overheidsdiensten…) blijven onder hun eigen licentie, vermeld in Instellingen > Bronnen en credits.</p>" +
+        "<h3>7. Aansprakelijkheid</h3>" +
+        "<p>Bivaska wordt geleverd « zoals ze is », zonder garantie op beschikbaarheid of juistheid. Ondanks de zorg kunnen er fouten zijn: meld ze. Binnen de grenzen van de wet kan de uitgever niet aansprakelijk gesteld worden voor schade door verkeerd gebruik van de informatie, een plaats gedeeld door een lid, foute gegevens van derden of een storing van de app, de telefoon of het netwerk.</p>" +
+        "<h3>8. Gratis functies en abonnement</h3>" +
+        "<p>De veiligheidsfuncties (crisismodus, eerste hulp, giftige planten, Klaar 72 u) blijven gratis en zonder account. De voorwaarden van een eventueel abonnement worden bij de lancering meegedeeld en moeten apart aanvaard worden.</p>" +
+        "<h3>9. Wijzigingen en toepasselijk recht</h3>" +
+        "<p>Deze voorwaarden kunnen veranderen: bij een belangrijke wijziging vraagt de app je ze opnieuw te aanvaarden. Ze vallen onder het Belgisch recht. Contact: " + MAIL + ".</p>" },
+      conf: { titre: "Privacybeleid", html:
+        "<p>Bivaska is ontworpen om te werken zonder account en zonder netwerk. Standaard <b>blijven al je gegevens op je telefoon</b>: de uitgever heeft er geen toegang toe. Er is geen reclame, geen reclamecookie en geen bezoekersmeting.</p>" +
+        "<h3>Zonder account</h3>" +
+        "<p>Spots, logboek, tocht, rugzak, 72-urenkit, voorraad, vorderingen, foto's en « Mijn noodinfo » worden alleen op je toestel bewaard (lokale opslag van de browser). Je gps-positie wordt op de telefoon gebruikt en nooit naar Bivaska verstuurd.</p>" +
+        "<p>Om te werken raadpleegt de app diensten van derden zonder je te identificeren: kaarten (NGI België, OpenFreeMap, MapTiler als je je sleutel toevoegt), weer en hoogte (Open-Meteo), plaatsen (OpenStreetMap / Overpass, Nominatim), routes (OSRM), jacht (Waalse Overheidsdienst), foto's van soorten (Wikimedia). Deze diensten ontvangen je IP-adres en de bekeken zone, zoals bij elke website.</p>" +
+        "<h3>Met een account (optioneel)</h3>" +
+        "<ul>" +
+        "<li><b>Wat bewaard wordt</b>: je e-mailadres (om in te loggen), een openbare gebruikersnaam als je deelneemt, een back-up van je Bivaska-gegevens (spots, tocht, rugzak, kit, voorraad, logboek zonder foto's, vorderingen).</li>" +
+        "<li><b>Wat nooit verstuurd wordt</b>: « Mijn noodinfo » (gezondheid, bloedgroep, behandelingen), de tourniquettimer, je API-sleutels, je live positie.</li>" +
+        "<li><b>Waar</b>: servers van Supabase in de Europese Unie (Frankfurt), gegevens versleuteld tijdens transport en in rust. Inlogcodes worden per e-mail verstuurd via Brevo (Frankrijk).</li>" +
+        "<li><b>Waarom</b>: alleen om je gegevens te bewaren en te synchroniseren en de gemeenschap te laten werken (rechtsgrond: de uitvoering van de dienst die je vraagt). Geen doorverkoop, geen profilering.</li>" +
+        "<li><b>Hoe lang</b>: zolang je account bestaat. Alles wordt gewist als je het verwijdert.</li>" +
+        "</ul>" +
+        "<h3>Gemeenschap</h3>" +
+        "<p>Wat je vrijwillig deelt (spot, beoordeling, foto, idee) is openbaar met je gebruikersnaam. Foutmeldingen kunnen zonder account verstuurd worden; ze bevatten alleen je bericht, het betrokken element en de versie van de app.</p>" +
+        "<h3>Je rechten</h3>" +
+        "<p>Je kunt op elk moment uitloggen, of <b>je account verwijderen via Instellingen</b>: je back-up, gedeelde spots, beoordelingen, foto's en stemmen worden dan definitief gewist. Je hebt ook het recht op inzage, verbetering, wissing, bezwaar en overdraagbaarheid (AVG): schrijf naar " + MAIL + ". Je kunt een klacht indienen bij de Gegevensbeschermingsautoriteit (gegevensbeschermingsautoriteit.be).</p>" },
+      mentions: { titre: "Wettelijke vermeldingen", html:
+        "<p><b>Uitgever</b>: " + EDITEUR.nl + ", " + MAIL + ".</p>" +
+        "<p><b>Hosting van de app</b>: GitHub Pages (GitHub, Inc., San Francisco, Verenigde Staten).</p>" +
+        "<p><b>Accounts en gemeenschap</b>: Supabase (servers in de Europese Unie, Frankfurt). E-mails: Brevo (Frankrijk).</p>" +
+        "<p><b>Inhoud van derden</b>: kaarten en plaatsen © bijdragers van OpenStreetMap (ODbL), NGI België, OpenFreeMap; foto's van Wikimedia Commons (auteur en licentie onder elke foto); weer van Open-Meteo (CC BY 4.0). Details in Instellingen > Bronnen en credits.</p>" +
+        "<p>Bivaska is een educatief hulpmiddel. In nood: 112.</p>" },
+      accept: "Ik heb de <a href=\"#\" data-legal=\"cgu\">gebruiksvoorwaarden</a> en het <a href=\"#\" data-legal=\"conf\">privacybeleid</a> gelezen en aanvaard ze.",
+      maj: "Laatst bijgewerkt: "
     },
     en: {
       cgu: { titre: "Terms of use", html:

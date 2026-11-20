@@ -33,6 +33,19 @@ const stub = `(function(){function mk(){var f=function(){return p};var p=new Pro
   await Promise.all([pg.waitForNavigation(), pg.selectOption('#setLang', 'fr')]); await pg.waitForTimeout(1200);
   ok('Retour au français', await pg.evaluate(() => window.SYLVA_LANG === 'fr' && !window.SYLVA_EN.ui['Copier']));
   ok('Onglet en français', (await pg.textContent('.tab[data-view="accueil"]')).includes("Aujourd'hui"));
+  // Néerlandais : choisi dans les Réglages
+  await pg.click('#btnSettings'); await pg.waitForTimeout(300);
+  await Promise.all([pg.waitForNavigation(), pg.selectOption('#setLang', 'nl')]); await pg.waitForTimeout(1200);
+  ok('Néerlandais choisi', await pg.evaluate(() => window.SYLVA_LANG === 'nl' && window.SYLVA_LOCALE === 'nl-BE' && document.documentElement.lang === 'nl'));
+  ok('Onglet en néerlandais', (await pg.textContent('.tab[data-view="accueil"]')).includes('Vandaag'));
+  await pg.click('.tab[data-view="crise"]'); await pg.waitForTimeout(400);
+  ok('Mode crise en néerlandais', (await pg.textContent('#view-crise')).includes('112 bellen'));
+  ok('Modèle NL avec mois', await pg.evaluate(() => T('12 espèces présentes en mars dans ta région')) === '12 soorten aanwezig in maart in jouw regio');
+  ok('Date seule NL', await pg.evaluate(() => T('Vendredi 20 novembre')) === 'Vrijdag 20 november');
+  ok('Étape NL', await pg.evaluate(() => T('Étape 2 sur 5')) === 'Stap 2 van 5');
+  await pg.click('.tab[data-view="accueil"]'); await pg.click('#btnSettings'); await pg.waitForTimeout(200);
+  await pg.click('#modalSettings [data-legal="cgu"]'); await pg.waitForTimeout(200);
+  ok('Conditions en néerlandais', (await pg.textContent('#legalBody')).includes('Gebruiksvoorwaarden'));
   ok('Aucune erreur JS', !errs.length, errs);
   await b.close(); srv.close(); process.exit(fails ? 1 : 0);
 })();

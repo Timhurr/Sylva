@@ -1,4 +1,4 @@
-/* Bivaska – interface en anglais : texte français exact → anglais ; « # » = nombre, « % » = mois ou jour.
+/* Bivaska – interface en : texte français exact → traduction ; « # » = nombre, « % » = mois ou jour.
    Généré par tools/i18n/build.py (ne pas modifier à la main : corriger tools/i18n/tr/*.json ou extra.json). */
 window.SYLVA_EN = window.SYLVA_EN || { ui: {}, content: {} };
 window.SYLVA_EN.ui = {

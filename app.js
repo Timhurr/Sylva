@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.106";
+  var VERSION = "0.9.107";
   // Premier lancement : aucune donnée Bivaska encore enregistrée (lu avant que l'initialisation n'en écrive)
   var FIRST_RUN = (function () {
     try {
@@ -28,7 +28,16 @@
     [/Au rond-point, prends la (\d+)e sortie/i, "At the roundabout, take exit $1"], [/Au rond-point, sors/i, "At the roundabout, exit"], [/Au bout du chemin, tourne/i, "At the end of the path, turn"], [/À la fourche, prends/i, "At the fork, keep"],
     [/franchement à gauche/g, "sharp left"], [/franchement à droite/g, "sharp right"], [/légèrement à gauche/g, "slightly left"], [/légèrement à droite/g, "slightly right"],
     [/à gauche/g, "left"], [/à droite/g, "right"], [/tout droit/g, "straight on"], [/^tourne/i, "turn"], [/^continue/i, "continue"], [/^pars/i, "set off"], [/ sur /g, " onto "], [/Tu arrives à destination/i, "You are arriving at your destination"]];
-  function navEn(t) { if (window.SYLVA_LANG !== "en") return t; var x = tr(t); if (x !== t) return x; NAV_EN.forEach(function (r) { t = t.replace(r[0], r[1]); }); return t; }
+  var NAV_NL = [[/^Tu es arrivé : /, "Je bent aangekomen: "], [/^Guidage vers /, "Navigatie naar "], [/ta destination/, "je bestemming"], [/^Dans /, "Over "], [/ virgule /g, " komma "],
+    [/Au rond-point, prends la (\d+)e sortie/i, "Neem op de rotonde de $1e afslag"], [/Au rond-point, sors/i, "Verlaat de rotonde"], [/Au bout du chemin, tourne/i, "Aan het einde van de weg:"], [/À la fourche, prends/i, "Bij de splitsing:"],
+    [/franchement à gauche/g, "scherp linksaf"], [/franchement à droite/g, "scherp rechtsaf"], [/légèrement à gauche/g, "flauw linksaf"], [/légèrement à droite/g, "flauw rechtsaf"],
+    [/à gauche/g, "linksaf"], [/à droite/g, "rechtsaf"], [/tout droit/g, "rechtdoor"], [/^tourne/i, "sla"], [/^continue/i, "ga"], [/^pars/i, "vertrek"], [/ sur /g, " naar "], [/Tu arrives à destination/i, "Je komt aan op je bestemming"]];
+  // Guidage vocal dans la langue choisie : dictionnaire d'abord, sinon règles ci-dessus
+  function navEn(t) {
+    var L = window.SYLVA_LANG, R = L === "en" ? NAV_EN : L === "nl" ? NAV_NL : null; if (!R) return t;
+    var x = tr(t); if (x !== t) return x; R.forEach(function (r) { t = t.replace(r[0], r[1]); }); return t.charAt(0).toUpperCase() + t.slice(1);
+  }
+  var SPEECH_LANG = { fr: "fr-FR", en: "en-GB", nl: "nl-BE" };
   function safeUrl(u) { u = String(u || "").trim(); return /^https?:\/\//i.test(u) ? u : "#"; }
   function esc(s) {
     return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
@@ -1252,7 +1261,7 @@
   function sosText() {
     if (!me) return null;
     return tr("SOS Bivaska - ma position :") + " " + me[0].toFixed(5) + ", " + me[1].toFixed(5) +
-      " (" + (window.SYLVA_LANG === "en" ? "accuracy" : "precision") + " " + Math.round(me[2]) + " m) https://maps.apple.com/?ll=" + me[0].toFixed(5) + "," + me[1].toFixed(5);
+      " (" + ({ en: "accuracy", nl: "nauwkeurigheid" }[window.SYLVA_LANG] || "précision") + " " + Math.round(me[2]) + " m) https://maps.apple.com/?ll=" + me[0].toFixed(5) + "," + me[1].toFixed(5);
   }
   function updateSosCoords() {
     if (!me) return;
@@ -2745,7 +2754,7 @@
     var t = getTrip(), ret = $("#safeRet").value, alarm = ret ? new Date(new Date(ret).getTime() + 2 * 3600e3) : null;
     var pt = t.lat != null ? [t.lat, t.lon] : me ? [me[0], me[1]] : null;
     var en = window.SYLVA_LANG === "en";
-    var m = tr("Je pars en bivouac seul") + (t.lieu ? (en ? " at " : " à ") + t.lieu : "") + ".";
+    var m = tr("Je pars en bivouac seul") + (t.lieu ? ({ en: " at ", nl: " in " }[window.SYLVA_LANG] || " à ") + t.lieu : "") + ".";
     if (pt) m += "\n" + tr("Lieu :") + " " + pt[0].toFixed(5) + ", " + pt[1].toFixed(5) + "\nhttps://maps.google.com/?q=" + pt[0].toFixed(5) + "," + pt[1].toFixed(5);
     if (ret) m += "\n" + tr("Retour prévu :") + " " + fmtHeure(ret) + ".";
     if (alarm) m += "\n" + tr("Si tu n'as pas de nouvelles de moi le") + " " + fmtHeure(alarm) + tr(", appelle le 112, donne-leur ce message et dis que je suis seul.");
@@ -2828,7 +2837,7 @@
   function say(txt) {
     txt = navEn(txt);
     if (!voiceOn || !window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
-    try { var u = new SpeechSynthesisUtterance(txt); u.lang = window.SYLVA_LANG === "en" ? "en-GB" : "fr-FR"; u.rate = 1; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
+    try { var u = new SpeechSynthesisUtterance(txt); u.lang = SPEECH_LANG[window.SYLVA_LANG] || "fr-FR"; u.rate = 1; speechSynthesis.cancel(); speechSynthesis.speak(u); } catch (e) {}
   }
   function renderVoiceBtn() { var b = $("#navVoice"); if (b) { b.innerHTML = ic(voiceOn ? "son" : "muet"); b.setAttribute("aria-label", voiceOn ? "Couper la voix" : "Activer la voix"); } }
   $("#navVoice").addEventListener("click", function () { voiceOn = !voiceOn; save("sylva_voice", voiceOn); renderVoiceBtn(); if (voiceOn) say("Guidage vocal activé"); else if (window.speechSynthesis) speechSynthesis.cancel(); });
@@ -4213,7 +4222,7 @@
   }
   function openLegal(k) {
     var L = window.SYLVA_LEGAL; if (!L) return; var d = L.get(window.SYLVA_LANG || "fr")[k]; if (!d) return;
-    $("#legalBody").innerHTML = '<h1 id="legalTitle" tabindex="-1">' + esc(d.titre) + "</h1>" + d.html + '<p class="tiny muted">' + esc(legalTxt().maj + L.date[window.SYLVA_LANG === "en" ? "en" : "fr"]) + "</p>";
+    $("#legalBody").innerHTML = '<h1 id="legalTitle" tabindex="-1">' + esc(d.titre) + "</h1>" + d.html + '<p class="tiny muted">' + esc(legalTxt().maj + (L.date[window.SYLVA_LANG] || L.date.fr)) + "</p>";
     $("#modalLegal").hidden = false; $("#legalBody").scrollTop = 0; var h = $("#legalTitle"); if (h) h.focus();
   }
   function checkLegal() {
@@ -4244,7 +4253,7 @@
       '<div class="ob-hero"><img src="icons/icon-192.png" alt="" width="96" height="96"></div>' +
       '<h1 class="ob-title">Bivaska</h1>' +
       '<p class="ob-lead">Pour bivouaquer, apprendre et faire face à une crise. Même sans réseau.</p>' +
-      '<div class="ob-chips ob-lang" data-no-i18n>' + [["fr", "Français"], ["en", "English"]].map(function (l) { return '<button type="button" class="ob-chip' + ((window.SYLVA_LANG || "fr") === l[0] ? " on" : "") + '" data-ob-lang="' + l[0] + '" lang="' + l[0] + '">' + l[1] + "</button>"; }).join("") + "</div>",
+      '<div class="ob-chips ob-lang" data-no-i18n>' + [["fr", "Français"], ["nl", "Nederlands"], ["en", "English"]].map(function (l) { return '<button type="button" class="ob-chip' + ((window.SYLVA_LANG || "fr") === l[0] ? " on" : "") + '" data-ob-lang="' + l[0] + '" lang="' + l[0] + '">' + l[1] + "</button>"; }).join("") + "</div>",
 
       '<h2 class="ob-h">Trois choses à savoir</h2>' +
       '<div class="ob-row">' + med("alerte", "c-danger") + '<div><b>Le bouton du milieu</b><span>En cas de problème : appeler les secours, guider les gestes pour un blessé, donner ta position. Sans compte et sans réseau.</span></div></div>' +

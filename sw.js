@@ -1,12 +1,12 @@
 /* Bivaska – service worker : appli et fiches hors-ligne, tuiles de carte vues gardées en cache */
-var VERSION = "sylva-v0.9.106";
+var VERSION = "sylva-v0.9.107";
 var SHELL = VERSION + "-shell";
 var TILES = "sylva-tiles";
 var PHOTOS = "sylva-photos";
 var MAX_TILES = 4000;
 
 var LOCAL = [
-  "./", "index.html", "styles.css", "config.js", "i18n.js", "i18n_apply.js", "i18n/en_ui.js", "i18n/en_content.js", "cloud.js", "app.js", "legal.js", "data.js", "especes_plus.js", "especes_champignons.js", "especes_regions.js", "techniques_plus.js", "illus.js", "images.js", "guide.js", "secours_isole.js", "noeuds_plus.js", "classiques.js", "abris_plus.js", "poissons.js", "astuces.js", "cuisine_jeux.js", "rvalue.js", "materiel.js", "vendor/qrcode.js", "vendor/leaflet/leaflet.js", "vendor/leaflet/leaflet.css", "vendor/leaflet/images/marker-icon.png", "vendor/leaflet/images/marker-shadow.png", "vendor/leaflet/images/layers.png", "fonts/fraunces.woff", "fonts/instrument-sans.woff", "fonts/vt323.woff", "pret72.js", "crise_plus.js", "crise_vie.js", "fabriquer.js", "identifier.js", "risques.js", "manifest.webmanifest",
+  "./", "index.html", "styles.css", "config.js", "i18n.js", "i18n_apply.js", "i18n/en_ui.js", "i18n/en_content.js", "i18n/nl_ui.js", "i18n/nl_content.js", "cloud.js", "app.js", "legal.js", "data.js", "especes_plus.js", "especes_champignons.js", "especes_regions.js", "techniques_plus.js", "illus.js", "images.js", "guide.js", "secours_isole.js", "noeuds_plus.js", "classiques.js", "abris_plus.js", "poissons.js", "astuces.js", "cuisine_jeux.js", "rvalue.js", "materiel.js", "vendor/qrcode.js", "vendor/leaflet/leaflet.js", "vendor/leaflet/leaflet.css", "vendor/leaflet/images/marker-icon.png", "vendor/leaflet/images/marker-shadow.png", "vendor/leaflet/images/layers.png", "fonts/fraunces.woff", "fonts/instrument-sans.woff", "fonts/vt323.woff", "pret72.js", "crise_plus.js", "crise_vie.js", "fabriquer.js", "identifier.js", "risques.js", "manifest.webmanifest",
   "icons/icon-180.png", "icons/icon-192.png", "icons/icon-512.png", "icons/icon-maskable-512.png"
 ];
 // Bibliothèques de carte hébergées avec l'appli (plus de CDN : rien d'extérieur ne peut injecter de code)

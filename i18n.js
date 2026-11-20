@@ -1,4 +1,4 @@
-/* Bivaska – langues (v0.9.103).
+/* Bivaska – langues (v0.9.103, néerlandais v0.9.107).
    L'appli est écrite en français. En anglais, on traduit :
    - le contenu (fiches, espèces, guide) au niveau des données : fichiers i18n/en_*.js (SYLVA_EN.content), fusionnés par i18n_apply.js juste avant app.js ;
    - l'interface au niveau de l'écran : chaque texte affiché est cherché dans le dictionnaire SYLVA_EN.ui (texte français exact → anglais).
@@ -8,22 +8,26 @@
   "use strict";
   var lang = null;
   try { lang = JSON.parse(localStorage.getItem("sylva_lang") || "null"); } catch (e) {}
-  if (lang !== "fr" && lang !== "en") lang = /^fr\b/i.test(navigator.language || "fr") ? "fr" : "en";
+  var LANGS = { fr: "fr-BE", en: "en-GB", nl: "nl-BE" };
+  var NL_AUTO = true; // téléphone en néerlandais → appli en néerlandais (tout le contenu est traduit depuis v0.9.107)
+  if (!LANGS[lang]) { var nav = navigator.language || "fr"; lang = /^fr\b/i.test(nav) ? "fr" : (NL_AUTO && /^nl\b/i.test(nav)) ? "nl" : "en"; }
   window.SYLVA_LANG = lang;
-  window.SYLVA_LOCALE = lang === "en" ? "en-GB" : "fr-BE";
+  window.SYLVA_LOCALE = LANGS[lang];
   document.documentElement.lang = lang;
   window.SYLVA_EN = window.SYLVA_EN || { ui: {}, content: {} };
   if (lang === "fr") { window.T = function (s) { return s; }; return; }
 
-  // Dictionnaires anglais : chargés seulement en anglais (bloquant, avant les données)
-  ["i18n/en_ui.js", "i18n/en_content.js"].forEach(function (f) { document.write('<script src="' + f + '"><\/script>'); });
+  // Dictionnaires de la langue choisie (bloquant, avant les données). Ils remplissent SYLVA_EN (nom historique : « la langue active »).
+  ["i18n/" + lang + "_ui.js", "i18n/" + lang + "_content.js"].forEach(function (f) { document.write('<script src="' + f + '"><\/script>'); });
 
   var NUM = /\d+(?:[.,]\d+)?/g;
   // Mois et jours : « % » dans les modèles (« # espèces présentes en % » → « # species present in % »)
   var FR_W = ["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre","lundi","mardi","mercredi","jeudi","vendredi","samedi","dimanche"];
-  var EN_W = ["January","February","March","April","May","June","July","August","September","October","November","December","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+  var EN_W = lang === "nl"
+    ? ["januari","februari","maart","april","mei","juni","juli","augustus","september","oktober","november","december","maandag","dinsdag","woensdag","donderdag","vrijdag","zaterdag","zondag"]
+    : ["January","February","March","April","May","June","July","August","September","October","November","December","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
   var WRE = new RegExp("\\b(" + FR_W.join("|") + ")\\b", "gi");
-  function wEn(w) { var i = FR_W.indexOf(w.toLowerCase()); if (i < 0) return w; var e = EN_W[i]; return w[0] === w[0].toUpperCase() ? e : e; }
+  function wEn(w) { var i = FR_W.indexOf(w.toLowerCase()); if (i < 0) return w; var e = EN_W[i]; return w[0] === w[0].toUpperCase() ? e[0].toUpperCase() + e.slice(1) : e; }
   function norm(s) { return s.replace(/\s+/g, " ").trim(); }
   function lookup(s) {
     var D = window.SYLVA_EN.ui, k = norm(s);

@@ -1,14 +1,14 @@
 <!doctype html><html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Bivaska · Mentions légales</title>
 <style>body{max-width:720px;margin:0 auto;padding:24px 18px 60px;font:16px/1.6 system-ui,sans-serif;background:#F7F4EC;color:#1D2A24}h1,h3{font-family:Georgia,serif;font-weight:500}h3{margin-top:28px;font-size:1.25em}.lang{font-size:14px}.lang a{margin-right:10px}@media(prefers-color-scheme:dark){body{background:#0E1310;color:#EDE6D6}a{color:#F0A848}}</style></head><body>
-<p class="lang"><a href="?lang=fr">Français</a><a href="?lang=en">English</a></p>
+<p class="lang"><a href="?lang=fr">Français</a><a href="?lang=nl">Nederlands</a><a href="?lang=en">English</a></p>
 <main id="t"></main>
 <script src="../legal.js"></script>
 <script>
 (function () {
-  var q = /[?&]lang=(\w+)/.exec(location.search), l = q ? q[1] : null;
+  var L0 = { fr: 1, en: 1, nl: 1 }, q = /[?&]lang=(\w+)/.exec(location.search), l = q ? q[1] : null;
   if (!l) { try { l = JSON.parse(localStorage.getItem("sylva_lang") || "null"); } catch (e) {} }
-  if (l !== "fr" && l !== "en") l = /^fr\b/i.test(navigator.language || "fr") ? "fr" : "en";
+  if (!L0[l]) { var n = navigator.language || "fr"; l = /^fr\b/i.test(n) ? "fr" : /^nl\b/i.test(n) ? "nl" : "en"; }
   var L = window.SYLVA_LEGAL, d = L.get(l)["mentions"];
   document.documentElement.lang = l; document.title = "Bivaska · " + d.titre;
   document.getElementById("t").innerHTML = "<h1>" + d.titre + "</h1>" + d.html + '<p style="font-size:13px;opacity:.7">' + L.get(l).maj + L.date[l] + "</p>";

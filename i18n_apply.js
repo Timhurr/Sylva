@@ -1,6 +1,6 @@
 /* Bivaska – applique la traduction du contenu (fiches, espèces, guide) avant app.js. Rien en français. */
 (function () {
-  if (window.SYLVA_LANG !== "en") return;
+  if (!window.SYLVA_LANG || window.SYLVA_LANG === "fr") return;
   var C = (window.SYLVA_EN && window.SYLVA_EN.content) || {};
   function merge(list, tr) {
     if (!list || !tr) return;
