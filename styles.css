@@ -1125,3 +1125,11 @@ html.ob-open, html.ob-open body{overflow:hidden}
 .ob-accept{margin:0;padding:12px 14px;border-radius:14px;background:var(--surface);border:1px solid var(--line)}
 #modalLegalMaj{z-index:5500}
 .btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* Compte : e-mail et mot de passe (v0.9.108) */
+.acc-form{display:flex;flex-direction:column;gap:8px;margin:6px 0}
+.acc-form input{width:100%;min-width:0}
+.pw-row{position:relative;display:flex}
+.pw-row input{flex:1;padding-right:84px}
+.pw-eye{position:absolute;right:6px;top:50%;transform:translateY(-50%);min-height:36px;padding:0 10px}
+.acc-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin-top:2px}

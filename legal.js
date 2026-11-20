@@ -9,7 +9,7 @@
   var EDITEUR = { fr: "Bivaska", en: "Bivaska", nl: "Bivaska" };
 
   window.SYLVA_LEGAL = {
-    version: "2026-11-20",
+    version: "2026-11-20b",
     date: { fr: "20 novembre 2026", en: "20 November 2026", nl: "20 november 2026" },
     fr: {
       cgu: { titre: "Conditions d'utilisation", html:
@@ -42,18 +42,20 @@
         "<h3>9. Modifications et droit applicable</h3>" +
         "<p>Ces conditions peuvent évoluer : en cas de changement important, l'appli te demandera de les accepter à nouveau. Elles sont soumises au droit belge. Contact : " + MAIL + ".</p>" },
       conf: { titre: "Politique de confidentialité", html:
-        "<p>Bivaska est conçue pour fonctionner sans compte et sans réseau. Par défaut, <b>toutes tes données restent sur ton téléphone</b> : l'éditeur n'y a pas accès. Il n'y a ni publicité, ni cookie publicitaire, ni outil de mesure d'audience.</p>" +
+        "<p>Bivaska est conçue pour fonctionner sans compte et sans réseau. Par défaut, <b>toutes tes données restent sur ton téléphone</b> : l'éditeur n'y a pas accès. Il n'y a ni publicité dans l'appli, ni cookie publicitaire, ni outil de mesure d'audience.</p>" +
         "<h3>Sans compte</h3>" +
         "<p>Spots, journal, sortie, sac, kit 72 h, stock, progrès, photos et « Mes infos d'urgence » sont enregistrés uniquement dans ton appareil (stockage local du navigateur). Ta position GPS est utilisée sur le téléphone et n'est jamais envoyée à Bivaska.</p>" +
         "<p>Pour fonctionner, l'appli interroge des services tiers sans t'identifier : cartes (IGN Belgique, OpenFreeMap, MapTiler si tu ajoutes ta clé), météo et altitude (Open-Meteo), lieux (OpenStreetMap / Overpass, Nominatim), itinéraires (OSRM), chasse (Service public de Wallonie), photos d'espèces (Wikimedia). Ces services reçoivent ton adresse IP et la zone consultée, comme pour n'importe quel site.</p>" +
         "<h3>Avec un compte (facultatif)</h3>" +
         "<ul>" +
-        "<li><b>Ce qui est stocké</b> : ton adresse e-mail (pour te connecter), un pseudo public si tu participes, une copie de sauvegarde de tes données Bivaska (spots, sortie, sac, kit, stock, journal sans photos, progrès).</li>" +
+        "<li><b>Ce qui est stocké</b> : ton adresse e-mail et ton mot de passe (pour te connecter ; le mot de passe est chiffré, personne ne peut le lire), un pseudo public si tu participes, une copie de sauvegarde de tes données Bivaska (spots, sortie, sac, kit, stock, journal sans photos, progrès).</li>" +
         "<li><b>Ce qui n'est jamais envoyé</b> : « Mes infos d'urgence » (santé, groupe sanguin, traitements), le minuteur de garrot, tes clés d'API, ta position en direct.</li>" +
         "<li><b>Où</b> : serveurs Supabase situés dans l'Union européenne (Francfort), données chiffrées en transit et au repos. Les codes de connexion sont envoyés par e-mail via Brevo (France).</li>" +
         "<li><b>Pourquoi</b> : uniquement pour sauvegarder et synchroniser tes données et faire fonctionner la communauté (base légale : l'exécution du service que tu demandes). Aucune revente, aucun profilage.</li>" +
         "<li><b>Combien de temps</b> : tant que ton compte existe. Tout est effacé quand tu le supprimes.</li>" +
         "</ul>" +
+        "<h3>Nouvelles par e-mail (facultatif)</h3>" +
+        "<p>Si tu coches la case prévue (elle n'est jamais cochée d'office), Bivaska peut t'envoyer quelques e-mails par an : nouveautés de l'appli, conseils de saison. Sans cet accord, tu ne reçois que les e-mails nécessaires au compte (code de confirmation, mot de passe oublié). Tu peux retirer ton accord à tout moment dans Réglages > Mon compte, ou par le lien de désinscription présent dans chaque e-mail. Ces e-mails sont envoyés par Brevo (France) ; l'adresse n'est jamais vendue ni donnée à des tiers.</p>" +
         "<h3>Communauté</h3>" +
         "<p>Ce que tu partages volontairement (spot, avis, photo, idée) est public avec ton pseudo. Les signalements d'erreur peuvent être envoyés sans compte ; ils ne contiennent que ton message, l'élément concerné et la version de l'appli.</p>" +
         "<h3>Tes droits</h3>" +
@@ -98,18 +100,20 @@
         "<h3>9. Wijzigingen en toepasselijk recht</h3>" +
         "<p>Deze voorwaarden kunnen veranderen: bij een belangrijke wijziging vraagt de app je ze opnieuw te aanvaarden. Ze vallen onder het Belgisch recht. Contact: " + MAIL + ".</p>" },
       conf: { titre: "Privacybeleid", html:
-        "<p>Bivaska is ontworpen om te werken zonder account en zonder netwerk. Standaard <b>blijven al je gegevens op je telefoon</b>: de uitgever heeft er geen toegang toe. Er is geen reclame, geen reclamecookie en geen bezoekersmeting.</p>" +
+        "<p>Bivaska is ontworpen om te werken zonder account en zonder netwerk. Standaard <b>blijven al je gegevens op je telefoon</b>: de uitgever heeft er geen toegang toe. Er is geen reclame in de app, geen reclamecookie en geen bezoekersmeting.</p>" +
         "<h3>Zonder account</h3>" +
         "<p>Spots, logboek, tocht, rugzak, 72-urenkit, voorraad, vorderingen, foto's en « Mijn noodinfo » worden alleen op je toestel bewaard (lokale opslag van de browser). Je gps-positie wordt op de telefoon gebruikt en nooit naar Bivaska verstuurd.</p>" +
         "<p>Om te werken raadpleegt de app diensten van derden zonder je te identificeren: kaarten (NGI België, OpenFreeMap, MapTiler als je je sleutel toevoegt), weer en hoogte (Open-Meteo), plaatsen (OpenStreetMap / Overpass, Nominatim), routes (OSRM), jacht (Waalse Overheidsdienst), foto's van soorten (Wikimedia). Deze diensten ontvangen je IP-adres en de bekeken zone, zoals bij elke website.</p>" +
         "<h3>Met een account (optioneel)</h3>" +
         "<ul>" +
-        "<li><b>Wat bewaard wordt</b>: je e-mailadres (om in te loggen), een openbare gebruikersnaam als je deelneemt, een back-up van je Bivaska-gegevens (spots, tocht, rugzak, kit, voorraad, logboek zonder foto's, vorderingen).</li>" +
+        "<li><b>Wat bewaard wordt</b>: je e-mailadres en wachtwoord (om in te loggen; het wachtwoord is versleuteld en niemand kan het lezen), een openbare gebruikersnaam als je deelneemt, een back-up van je Bivaska-gegevens (spots, tocht, rugzak, kit, voorraad, logboek zonder foto's, vorderingen).</li>" +
         "<li><b>Wat nooit verstuurd wordt</b>: « Mijn noodinfo » (gezondheid, bloedgroep, behandelingen), de tourniquettimer, je API-sleutels, je live positie.</li>" +
         "<li><b>Waar</b>: servers van Supabase in de Europese Unie (Frankfurt), gegevens versleuteld tijdens transport en in rust. Inlogcodes worden per e-mail verstuurd via Brevo (Frankrijk).</li>" +
         "<li><b>Waarom</b>: alleen om je gegevens te bewaren en te synchroniseren en de gemeenschap te laten werken (rechtsgrond: de uitvoering van de dienst die je vraagt). Geen doorverkoop, geen profilering.</li>" +
         "<li><b>Hoe lang</b>: zolang je account bestaat. Alles wordt gewist als je het verwijdert.</li>" +
         "</ul>" +
+        "<h3>Nieuws per e-mail (optioneel)</h3>" +
+        "<p>Als je het voorziene vakje aanvinkt (het is nooit standaard aangevinkt), kan Bivaska je enkele e-mails per jaar sturen: nieuws over de app en seizoenstips. Zonder dit akkoord ontvang je alleen de e-mails die nodig zijn voor je account (bevestigingscode, wachtwoord vergeten). Je kunt je akkoord op elk moment intrekken in Instellingen > Mijn account, of via de uitschrijflink in elke e-mail. Deze e-mails worden verstuurd via Brevo (Frankrijk); je adres wordt nooit verkocht of aan derden gegeven.</p>" +
         "<h3>Gemeenschap</h3>" +
         "<p>Wat je vrijwillig deelt (spot, beoordeling, foto, idee) is openbaar met je gebruikersnaam. Foutmeldingen kunnen zonder account verstuurd worden; ze bevatten alleen je bericht, het betrokken element en de versie van de app.</p>" +
         "<h3>Je rechten</h3>" +
@@ -154,18 +158,20 @@
         "<h3>9. Changes and governing law</h3>" +
         "<p>These terms may change: if there is a significant change, the app will ask you to accept them again. They are governed by Belgian law. Contact: " + MAIL + ".</p>" },
       conf: { titre: "Privacy policy", html:
-        "<p>Bivaska is designed to work without an account and without a network. By default, <b>all your data stays on your phone</b>: the publisher has no access to it. There is no advertising, no advertising cookie and no audience tracking.</p>" +
+        "<p>Bivaska is designed to work without an account and without a network. By default, <b>all your data stays on your phone</b>: the publisher has no access to it. There is no advertising in the app, no advertising cookie and no audience tracking.</p>" +
         "<h3>Without an account</h3>" +
         "<p>Spots, journal, trip, pack, 72-hour kit, stock, progress, photos and “My emergency info” are stored only on your device (the browser's local storage). Your GPS position is used on the phone and is never sent to Bivaska.</p>" +
         "<p>To work, the app queries third-party services without identifying you: maps (IGN Belgium, OpenFreeMap, MapTiler if you add your key), weather and altitude (Open-Meteo), places (OpenStreetMap / Overpass, Nominatim), routes (OSRM), hunting (Public Service of Wallonia), species photos (Wikimedia). These services receive your IP address and the area you look at, as with any website.</p>" +
         "<h3>With an account (optional)</h3>" +
         "<ul>" +
-        "<li><b>What is stored</b>: your e-mail address (to sign in), a public username if you take part, a backup copy of your Bivaska data (spots, trip, pack, kit, stock, journal without photos, progress).</li>" +
+        "<li><b>What is stored</b>: your e-mail address and password (to sign in; the password is encrypted and nobody can read it), a public username if you take part, a backup copy of your Bivaska data (spots, trip, pack, kit, stock, journal without photos, progress).</li>" +
         "<li><b>What is never sent</b>: “My emergency info” (health, blood group, medication), the tourniquet timer, your API keys, your live position.</li>" +
         "<li><b>Where</b>: Supabase servers in the European Union (Frankfurt), data encrypted in transit and at rest. Sign-in codes are sent by e-mail through Brevo (France).</li>" +
         "<li><b>Why</b>: only to back up and sync your data and run the community (legal basis: providing the service you ask for). No selling, no profiling.</li>" +
         "<li><b>How long</b>: as long as your account exists. Everything is erased when you delete it.</li>" +
         "</ul>" +
+        "<h3>News by e-mail (optional)</h3>" +
+        "<p>If you tick the box provided (it is never ticked by default), Bivaska may send you a few e-mails a year: app news and seasonal tips. Without this consent, you only receive the e-mails needed for your account (confirmation code, forgotten password). You can withdraw your consent at any time in Settings > My account, or with the unsubscribe link in every e-mail. These e-mails are sent through Brevo (France); your address is never sold or given to third parties.</p>" +
         "<h3>Community</h3>" +
         "<p>What you choose to share (spot, review, photo, idea) is public with your username. Error reports can be sent without an account; they contain only your message, the item concerned and the app version.</p>" +
         "<h3>Your rights</h3>" +

@@ -16,7 +16,7 @@ const stub = `(function(){function mk(){var f=function(){return p};var p=new Pro
   const ctx = await b.newContext({ ...devices['iPhone 13'], serviceWorkers: 'block', locale: 'en-GB' });
   const pg = await ctx.newPage(); const errs = [];
   pg.on('pageerror', e => errs.push(e.message));
-  await pg.addInitScript(() => { if (!localStorage.getItem('sylva_onboard')) localStorage.setItem('sylva_onboard', '1'); if (!localStorage.getItem('sylva_cgu')) localStorage.setItem('sylva_cgu', JSON.stringify({ v: '2026-11-20' })); });
+  await pg.addInitScript(() => { if (!localStorage.getItem('sylva_onboard')) localStorage.setItem('sylva_onboard', '1'); if (!localStorage.getItem('sylva_cgu')) localStorage.setItem('sylva_cgu', JSON.stringify({ v: '2026-11-20b' })); });
   await pg.route(/\/vendor\/(leaflet|maplibre)\/.*\.js/, r => r.fulfill({ body: stub, contentType: 'text/javascript' }));
   await pg.route(/^https?:\/\/(?!localhost)/, r => r.abort());
   await pg.goto('http://localhost:8783/index.html'); await pg.waitForTimeout(1500);

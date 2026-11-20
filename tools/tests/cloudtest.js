@@ -14,7 +14,7 @@ const res = []; const ok = (n, c, d) => { res.push(c); console.log((c ? 'OK   ' 
 (async () => {
   const b = await chromium.launch(); const errs = [];
   const ctx = await b.newContext({ ...devices['iPhone 13'], serviceWorkers: 'block' });
-  const pg = await ctx.newPage(); await pg.addInitScript(() => { try { localStorage.setItem('sylva_onboard', '1'); if (!localStorage.getItem('sylva_cgu')) localStorage.setItem('sylva_cgu', JSON.stringify({ v: '2026-11-20' })); if (!localStorage.getItem('sylva_lang')) localStorage.setItem('sylva_lang', '"fr"'); } catch (e) {} }); pg.on('pageerror', e => errs.push(e.message));
+  const pg = await ctx.newPage(); await pg.addInitScript(() => { try { localStorage.setItem('sylva_onboard', '1'); if (!localStorage.getItem('sylva_cgu')) localStorage.setItem('sylva_cgu', JSON.stringify({ v: '2026-11-20b' })); if (!localStorage.getItem('sylva_lang')) localStorage.setItem('sylva_lang', '"fr"'); } catch (e) {} }); pg.on('pageerror', e => errs.push(e.message));
   const db = { user_data: [{ k: 'sylva_trip', v: { lieu: 'Depuis le serveur' }, updated_at: new Date(Date.now() + 60000).toISOString() }], reports: [], ideas: [], posted: [] };
   await pg.route(/unpkg|open-meteo|overpass|openstreetmap|fonts\.|wiki/, r => r.abort());
   await pg.route(/unpkg\.com.*\.js|\/vendor\/(leaflet|maplibre)\/.*\.js/, r => r.fulfill({ contentType: 'text/javascript', body: stub }));
@@ -22,6 +22,7 @@ const res = []; const ok = (n, c, d) => { res.push(c); console.log((c ? 'OK   ' 
     const u = new URL(route.request().url()), m = route.request().method(), body = route.request().postData();
     const J = (o, s) => route.fulfill({ status: s || 200, contentType: 'application/json', body: JSON.stringify(o) });
     if (u.pathname === '/auth/v1/otp') return J({});
+    if (u.pathname === '/auth/v1/token' && u.search.includes('password')) { const b2 = JSON.parse(body); return b2.password === 'motdepasse1' ? J({ access_token: 'tok', refresh_token: 'ref', expires_in: 3600, user: { id: 'u1', email: 'a@b.be' } }) : J({ error: 'invalid_grant', error_description: 'Invalid login credentials' }, 400); }
     if (u.pathname === '/auth/v1/verify') return JSON.parse(body).token === '123456' ? J({ access_token: 'tok', refresh_token: 'ref', expires_in: 3600, user: { id: 'u1', email: 'a@b.be' } }) : J({ msg: 'bad' }, 403);
     if (u.pathname === '/rest/v1/user_data' && m === 'GET') return J(db.user_data);
     if (u.pathname === '/rest/v1/user_data' && m === 'POST') { db.posted.push(...JSON.parse(body)); return route.fulfill({ status: 201, body: '' }); }
@@ -43,9 +44,9 @@ const res = []; const ok = (n, c, d) => { res.push(c); console.log((c ? 'OK   ' 
 
   await pg.click('.tab[data-view="accueil"]'); await pg.click('#btnSettings'); await pg.waitForTimeout(200);
   ok('Réglages : section compte visible', await pg.isVisible('#accountBox #accEmail'));
-  await pg.fill('#accEmail', 'a@b.be'); await pg.click('#accSend'); await pg.waitForTimeout(300);
-  ok('Code demandé', await pg.isVisible('#accCode'));
-  await pg.fill('#accCode', '123456'); await pg.click('#accVerify');
+  await pg.fill('#accEmail', 'a@b.be'); await pg.fill('#accPw', 'mauvais12'); await pg.click('#accLogin'); await pg.waitForTimeout(300);
+  ok('Mauvais mot de passe : refusé', !(await pg.evaluate(() => !!localStorage.getItem('sylva_session'))) && (await pg.textContent('body')).includes('E-mail ou mot de passe incorrect'));
+  await pg.fill('#accPw', 'motdepasse1'); await pg.click('#accLogin');
   await pg.waitForTimeout(2500);
   const trip = await pg.evaluate(() => JSON.parse(localStorage.getItem('sylva_trip') || 'null'));
   ok('Synchro : données du serveur restaurées', trip && trip.lieu === 'Depuis le serveur', JSON.stringify(trip));

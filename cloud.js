@@ -1,6 +1,8 @@
 /* Bivaska – compte, sauvegarde, signalements, idées et carte communautaire (v0.9.96).
    Client Supabase minimal sans dépendance (fetch). L'appli reste 100 % utilisable sans compte ni réseau.
-   - Connexion par code reçu par e-mail (marche aussi dans l'appli installée sur l'écran d'accueil de l'iPhone).
+   - Connexion par e-mail et mot de passe (v0.9.108). Les codes reçus par e-mail ne servent plus qu'à confirmer l'adresse,
+     à retrouver un mot de passe oublié, ou à se connecter sans mot de passe. Jamais de lien : sur iPhone il s'ouvrirait dans Safari.
+   - Nouvelles par e-mail : seulement avec accord explicite (profiles.news_optin, case non cochée par défaut).
    - Synchronisation : clés listées dans SYNC_KEYS, la plus récente gagne. Les infos médicales (sylva_ice),
      le garrot, les clés d'API et les caches ne quittent jamais le téléphone.
    - Communauté : spots avec statut légal obligatoire, avis, photos relues, signalements. */
@@ -51,6 +53,25 @@
   C.verifyCode = function (email, code) {
     return http("POST", "/auth/v1/verify", { type: "email", email: email, token: code }, { anon: true }).then(function (j) { setSess(fromToken(j)); return j; });
   };
+  // Mot de passe (v0.9.108) : connexion, création de compte (confirmée par un code), mot de passe oublié (code + nouveau mot de passe)
+  C.login = function (email, pw) {
+    return http("POST", "/auth/v1/token?grant_type=password", { email: email, password: pw }, { anon: true }).then(function (j) { setSess(fromToken(j)); return j; });
+  };
+  C.signup = function (email, pw, news) {
+    return http("POST", "/auth/v1/signup", { email: email, password: pw, data: { news_optin: !!news } }, { anon: true }).then(function (j) {
+      if (j && j.access_token) setSess(fromToken(j)); // confirmation désactivée côté Supabase : déjà connecté
+      return j;
+    });
+  };
+  C.verifySignup = function (email, code) {
+    return http("POST", "/auth/v1/verify", { type: "signup", email: email, token: code }, { anon: true }).then(function (j) { setSess(fromToken(j)); return j; });
+  };
+  C.resendSignup = function (email) { return http("POST", "/auth/v1/resend", { type: "signup", email: email }, { anon: true }); };
+  C.recover = function (email) { return http("POST", "/auth/v1/recover", { email: email }, { anon: true }); };
+  C.verifyRecovery = function (email, code) {
+    return http("POST", "/auth/v1/verify", { type: "recovery", email: email, token: code }, { anon: true }).then(function (j) { setSess(fromToken(j)); return j; });
+  };
+  C.setPassword = function (pw) { return fresh().then(function () { return http("PUT", "/auth/v1/user", { password: pw }); }); };
   C.logout = function () { var p = getSess() ? http("POST", "/auth/v1/logout", {}).catch(function () {}) : Promise.resolve(); return p.then(function () { setSess(null); }); };
   // Supprime d'abord mes photos par l'API de stockage (Supabase interdit l'effacement direct en SQL), puis le compte
   C.deleteAccount = function () {
@@ -86,6 +107,7 @@
   (window.SYLVA_MAP_HOOKS = window.SYLVA_MAP_HOOKS || []).push(function (map, layers) { mapRef = { map: map, layers: layers }; if (uiReady) setupMap(); });
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", initUI); else setTimeout(initUI, 0);
   var A, $, esc, ic, toast;
+  function tr(x) { return window.T ? window.T(x) : x; }
   function initUI() {
   if (!window.SYLVA_APP) return;   // page de modération : seulement le cœur
   A = window.SYLVA_APP; $ = A.$; esc = A.esc; ic = A.ic; toast = A.toast;
@@ -134,46 +156,151 @@
   document.addEventListener("visibilitychange", function () { if (!document.hidden && C.user()) C.sync(); });
 
   // ---------------- Réglages > Mon compte ----------------
-  var pendingEmail = "";
+  // Écrans : login (e-mail + mot de passe), signup, code (confirmation de l'adresse), forgot (code + nouveau mot de passe), otp (connexion par code)
+  var acc = { mode: "login", email: "", news: false };
+  var PW_MIN = 8;
+  function pwField(id, ph, ac) {
+    return '<div class="pw-row"><input type="password" id="' + id + '" autocomplete="' + ac + '" placeholder="' + ph + '" minlength="' + PW_MIN + '">' +
+      '<button type="button" class="link-btn pw-eye" data-pw-eye="' + id + '" aria-pressed="false">Afficher</button></div>';
+  }
+  function emailField(v) { return '<input type="email" id="accEmail" autocomplete="email" autocapitalize="off" spellcheck="false" placeholder="ton@adresse.be" value="' + esc(v || "") + '">'; }
+  function errMsg(er) {
+    var m = String((er && er.message) || "");
+    if (/invalid login credentials/i.test(m)) return "E-mail ou mot de passe incorrect";
+    if (/already registered|already exists/i.test(m)) return "Un compte existe déjà avec cette adresse : connecte-toi, ou utilise « Mot de passe oublié »";
+    if (/email not confirmed/i.test(m)) return "Adresse pas encore confirmée : entre le code reçu par e-mail";
+    if (/password.*(at least|short|characters)|weak/i.test(m)) return "Mot de passe trop court ou trop simple (8 caractères minimum)";
+    if (/rate limit|too many|security purposes/i.test(m)) return "Trop d'essais : attends une minute et réessaie";
+    if (/expired|invalid.*(otp|token)|token.*(invalid|expired)/i.test(m)) return "Code incorrect ou expiré";
+    return m || "Erreur";
+  }
   function renderAccount() {
     var box = $("#accountBox"); if (!box) return;
-    var u = C.user(), m = meta();
-    if (!u) {
-      box.innerHTML = pendingEmail
-        ? '<p class="tiny muted">Code envoyé à <b>' + esc(pendingEmail) + "</b>. Regarde aussi les courriers indésirables.</p>" +
-          '<div class="row"><input type="text" id="accCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Code à 6 chiffres" style="flex:1"><button type="button" class="btn btn-primary" id="accVerify">Valider</button></div>' +
-          '<button type="button" class="link-btn" id="accBack">Changer d\'adresse</button>'
-        : '<p class="tiny muted">Facultatif : sauvegarde tes spots, ton journal, ton kit et tes progrès, et retrouve-les sur un autre téléphone. Bivaska marche aussi sans compte.</p>' +
-          '<div class="row"><input type="email" id="accEmail" autocomplete="email" placeholder="ton@adresse.be" style="flex:1"><button type="button" class="btn btn-primary" id="accSend">Recevoir un code</button></div>';
-      return;
+    var u = C.user(), m = meta(), h = "";
+    if (u) {
+      h = '<p class="acc-who">' + ic("rentre", "ic-in") + " " + esc(tr("Connecté :")) + " <b>" + esc(u.email || "") + "</b></p>" +
+        '<p class="tiny muted">' + esc(tr("Dernière sauvegarde :")) + " " + esc(m.last ? new Date(m.last).toLocaleString((window.SYLVA_LOCALE || "fr-BE")) : tr("jamais")) + ". " + esc(tr("Tes infos médicales restent uniquement sur ce téléphone.")) + "</p>" +
+        '<div class="row"><button type="button" class="btn" id="accSync">Synchroniser</button><button type="button" class="btn" id="accOut">Se déconnecter</button></div>' +
+        '<label class="check-row"><input type="checkbox" id="accNews"' + (profile && profile.news_optin ? " checked" : "") + '> <span>Recevoir les nouvelles de Bivaska par e-mail (quelques fois par an, désinscription en un clic)</span></label>' +
+        (acc.mode === "newpw" ? pwField("accPw", "Nouveau mot de passe", "new-password") + '<div class="row"><button type="button" class="btn btn-primary" id="accPwSave">Enregistrer le mot de passe</button><button type="button" class="link-btn" data-acc="login">Annuler</button></div>'
+          : '<button type="button" class="link-btn" data-acc="newpw">Changer de mot de passe</button>') +
+        '<button type="button" class="link-btn danger-link" id="accDel">Supprimer mon compte</button>';
+      box.innerHTML = h; return;
     }
-    box.innerHTML = '<p class="acc-who">' + ic("rentre", "ic-in") + " Connecté : <b>" + esc(u.email || "") + "</b></p>" +
-      '<p class="tiny muted">Dernière sauvegarde : ' + (m.last ? new Date(m.last).toLocaleString((window.SYLVA_LOCALE || "fr-BE")) : "jamais") + ". Tes infos médicales restent uniquement sur ce téléphone.</p>" +
-      '<div class="row"><button type="button" class="btn" id="accSync">Synchroniser</button><button type="button" class="btn" id="accOut">Se déconnecter</button></div>' +
-      '<button type="button" class="link-btn danger-link" id="accDel">Supprimer mon compte</button>';
+    var intro = '<p class="tiny muted">Facultatif : sauvegarde tes spots, ton journal, ton kit et tes progrès, et retrouve-les sur un autre téléphone. Bivaska marche aussi sans compte.</p>';
+    var codeIn = '<input type="text" id="accCode" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="Code à 6 chiffres">';
+    var sent = '<p class="tiny muted">' + esc(tr("Code envoyé à")) + " <b>" + esc(acc.email) + "</b>. " + esc(tr("Regarde aussi les courriers indésirables.")) + "</p>";
+    if (acc.mode === "signup") {
+      h = intro + '<div class="acc-form">' + emailField(acc.email) + pwField("accPw", "Mot de passe (8 caractères minimum)", "new-password") +
+        '<label class="check-row"><input type="checkbox" id="accNewsNew"' + (acc.news ? " checked" : "") + '> <span>Recevoir les nouvelles de Bivaska par e-mail (facultatif, désinscription en un clic)</span></label>' +
+        '<button type="button" class="btn btn-primary" id="accSignup">Créer mon compte</button></div>' +
+        '<p class="tiny muted">Un code de confirmation sera envoyé à ton adresse.</p>' +
+        '<button type="button" class="link-btn" data-acc="login">J\'ai déjà un compte</button>';
+    } else if (acc.mode === "code") {
+      h = sent + '<div class="acc-form">' + codeIn + '<button type="button" class="btn btn-primary" id="accConfirm">Confirmer</button></div>' +
+        '<button type="button" class="link-btn" id="accResend">Renvoyer le code</button> <button type="button" class="link-btn" data-acc="login">Changer d\'adresse</button>';
+    } else if (acc.mode === "forgot") {
+      h = acc.sentForgot
+        ? sent + '<div class="acc-form">' + codeIn + pwField("accPw", "Nouveau mot de passe", "new-password") + '<button type="button" class="btn btn-primary" id="accReset">Changer le mot de passe</button></div>' +
+          '<button type="button" class="link-btn" data-acc="login">Annuler</button>'
+        : '<p class="tiny muted">Entre ton adresse : tu recevras un code pour choisir un nouveau mot de passe.</p><div class="acc-form">' + emailField(acc.email) +
+          '<button type="button" class="btn btn-primary" id="accForgot">Recevoir un code</button></div><button type="button" class="link-btn" data-acc="login">Annuler</button>';
+    } else if (acc.mode === "otp") {
+      h = acc.sentOtp
+        ? sent + '<div class="acc-form">' + codeIn + '<button type="button" class="btn btn-primary" id="accVerify">Valider</button></div><button type="button" class="link-btn" data-acc="login">Annuler</button>'
+        : '<p class="tiny muted">Sans mot de passe : un code à usage unique est envoyé à chaque connexion.</p><div class="acc-form">' + emailField(acc.email) +
+          '<button type="button" class="btn btn-primary" id="accSend">Recevoir un code</button></div><button type="button" class="link-btn" data-acc="login">Annuler</button>';
+    } else {
+      h = intro + '<div class="acc-form">' + emailField(acc.email) + pwField("accPw", "Mot de passe", "current-password") +
+        '<button type="button" class="btn btn-primary" id="accLogin">Se connecter</button></div>' +
+        '<div class="acc-links"><button type="button" class="link-btn" data-acc="signup">Créer un compte</button>' +
+        '<button type="button" class="link-btn" data-acc="forgot">Mot de passe oublié ?</button>' +
+        '<button type="button" class="link-btn" data-acc="otp">Recevoir un code à la place</button></div>';
+    }
+    box.innerHTML = h;
   }
+  function readEmail() {
+    var el = $("#accEmail"), em = ((el && el.value) || acc.email || "").trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { toast("Adresse e-mail invalide"); return null; }
+    if (!navigator.onLine) { toast("Il faut du réseau pour se connecter"); return null; }
+    acc.email = em; return em;
+  }
+  function readPw() { var pw = ($("#accPw") || {}).value || ""; if (pw.length < PW_MIN) { toast("Mot de passe trop court ou trop simple (8 caractères minimum)"); return null; } return pw; }
+  function readCode() { var c = (($("#accCode") || {}).value || "").replace(/\s/g, ""); if (c.length < 6) { toast("Entre le code reçu par e-mail"); return null; } return c; }
+  function loggedIn(msg) {
+    acc = { mode: "login", email: "", news: false }; profile = null;
+    toast(msg || "Connecté");
+    ensureProfile().then(function (p) {
+      // Accord donné à la création du compte : enregistré dans le profil (avec la date, par la base)
+      var u = getSess() || {}; var want = u.newsAtSignup;
+      if (p && want && !p.news_optin) return setNews(true);
+    }).then(renderAccount);
+    renderAccount(); C.sync({ reloadOnChange: true, verbose: true });
+  }
+  function setNews(on) {
+    return ensureProfile().then(function (p) {
+      if (!p) throw new Error("profil");
+      return api("PATCH", "profiles?id=eq." + p.id, { news_optin: !!on }, { prefer: "return=minimal" }).then(function () { p.news_optin = !!on; });
+    });
+  }
+  function busy(t, p) { t.disabled = true; return p.catch(function (er) { toast(errMsg(er)); }).then(function () { if (document.body.contains(t)) t.disabled = false; }); }
   document.addEventListener("click", function (e) {
+    var eye = e.target.closest("[data-pw-eye]");
+    if (eye) { var f = document.getElementById(eye.dataset.pwEye); if (f) { var show = f.type === "password"; f.type = show ? "text" : "password"; eye.textContent = tr(show ? "Masquer" : "Afficher"); eye.setAttribute("aria-pressed", String(show)); } return; }
+    var go = e.target.closest("[data-acc]");
+    if (go && go.closest("#accountBox")) { var em0 = $("#accEmail"); if (em0 && em0.value) acc.email = em0.value.trim().toLowerCase(); acc.mode = go.dataset.acc; acc.sentForgot = acc.sentOtp = false; renderAccount(); return; }
     var t = e.target.closest("button"); if (!t) return;
-    if (t.id === "accSend") {
-      var em = ($("#accEmail").value || "").trim().toLowerCase();
-      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { toast("Adresse e-mail invalide"); return; }
-      if (!navigator.onLine) { toast("Il faut du réseau pour se connecter"); return; }
-      t.disabled = true;
-      C.sendCode(em).then(function () { pendingEmail = em; renderAccount(); }).catch(function (er) { toast("Envoi impossible : " + er.message); t.disabled = false; });
+    var em, pw, code;
+    if (t.id === "accLogin") {
+      if (!(em = readEmail()) || !(pw = readPw())) return;
+      busy(t, C.login(em, pw).then(function () { loggedIn(); }).catch(function (er) {
+        if (/email not confirmed/i.test(er.message)) { acc.mode = "code"; C.resendSignup(em).catch(function () {}); renderAccount(); }
+        throw er;
+      }));
+    } else if (t.id === "accSignup") {
+      if (!(em = readEmail()) || !(pw = readPw())) return;
+      acc.news = !!($("#accNewsNew") || {}).checked;
+      busy(t, C.signup(em, pw, acc.news).then(function (j) {
+        if (C.user()) { var s1 = getSess(); s1.newsAtSignup = acc.news; setSess(s1); loggedIn("Compte créé"); return; }
+        acc.mode = "code"; renderAccount();
+      }));
+    } else if (t.id === "accConfirm") {
+      if (!(code = readCode())) return;
+      busy(t, C.verifySignup(acc.email, code).then(function () { var s2 = getSess(); s2.newsAtSignup = acc.news; setSess(s2); loggedIn("Compte confirmé"); }));
+    } else if (t.id === "accResend") {
+      busy(t, C.resendSignup(acc.email).then(function () { toast("Code renvoyé"); }));
+    } else if (t.id === "accForgot") {
+      if (!(em = readEmail())) return;
+      busy(t, C.recover(em).then(function () { acc.sentForgot = true; renderAccount(); }));
+    } else if (t.id === "accReset") {
+      if (!(code = readCode()) || !(pw = readPw())) return;
+      busy(t, C.verifyRecovery(acc.email, code).then(function () { return C.setPassword(pw); }).then(function () { loggedIn("Mot de passe changé"); }));
+    } else if (t.id === "accSend") {
+      if (!(em = readEmail())) return;
+      busy(t, C.sendCode(em).then(function () { acc.sentOtp = true; renderAccount(); }));
     } else if (t.id === "accVerify") {
-      var code = ($("#accCode").value || "").replace(/\s/g, "");
-      if (code.length < 6) { toast("Entre le code reçu par e-mail"); return; }
-      t.disabled = true;
-      C.verifyCode(pendingEmail, code).then(function () {
-        pendingEmail = ""; toast("Connecté"); renderAccount(); ensureProfile(); C.sync({ reloadOnChange: true, verbose: true });
-      }).catch(function () { toast("Code incorrect ou expiré"); t.disabled = false; });
-    } else if (t.id === "accBack") { pendingEmail = ""; renderAccount(); }
-    else if (t.id === "accSync") { C.sync({ verbose: true, reloadOnChange: true }).then(function () { toast("Synchronisé"); }); }
-    else if (t.id === "accOut") { C.logout().then(function () { toast("Déconnecté. Tes données restent sur ce téléphone."); renderAccount(); }); }
-    else if (t.id === "accDel") {
-      if (!t.dataset.sure) { t.dataset.sure = "1"; t.textContent = "Confirmer : tout supprimer en ligne (spots partagés, avis, sauvegarde)"; return; }
-      C.deleteAccount().then(function () { toast("Compte supprimé. Les données de ce téléphone sont conservées."); renderAccount(); }).catch(function (er) { toast("Suppression impossible : " + er.message); });
+      if (!(code = readCode())) return;
+      busy(t, C.verifyCode(acc.email, code).then(function () { loggedIn(); }));
+    } else if (t.id === "accPwSave") {
+      if (!(pw = readPw())) return;
+      busy(t, C.setPassword(pw).then(function () { acc.mode = "login"; toast("Mot de passe enregistré"); renderAccount(); }));
     }
+    else if (t.id === "accSync") { C.sync({ verbose: true, reloadOnChange: true }).then(function () { toast("Synchronisé"); }); }
+    else if (t.id === "accOut") { C.logout().then(function () { profile = null; toast("Déconnecté. Tes données restent sur ce téléphone."); renderAccount(); }); }
+    else if (t.id === "accDel") {
+      if (!t.dataset.sure) { t.dataset.sure = "1"; t.textContent = tr("Confirmer : tout supprimer en ligne (spots partagés, avis, sauvegarde)"); return; }
+      C.deleteAccount().then(function () { profile = null; toast("Compte supprimé. Les données de ce téléphone sont conservées."); renderAccount(); }).catch(function (er) { toast("Suppression impossible : " + er.message); });
+    }
+  });
+  document.addEventListener("change", function (e) {
+    if (e.target.id !== "accNews") return;
+    var on = e.target.checked;
+    setNews(on).then(function () { toast(on ? "Inscrit aux nouvelles par e-mail" : "Désinscrit des nouvelles par e-mail"); })
+      .catch(function () { e.target.checked = !on; toast("Impossible pour l'instant : réessaie avec du réseau"); });
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Enter" || !e.target.closest || !e.target.closest("#accountBox")) return;
+    var b = $("#accountBox .btn-primary"); if (b) { e.preventDefault(); b.click(); }
   });
 
   // Pseudo public (obligatoire pour partager)
@@ -182,7 +309,7 @@
     var u = C.user(); if (!u) return Promise.resolve(null);
     if (profile && profile.id === u.id) return Promise.resolve(profile);
     // rpc/my_profile (securite.sql) ; ancienne lecture directe en secours tant que le SQL n'est pas passé
-    return api("POST", "rpc/my_profile", {}).catch(function () { return api("GET", "profiles?select=id,pseudo,trusted,is_admin,banned&id=eq." + u.id); })
+    return api("POST", "rpc/my_profile", {}).catch(function () { return api("GET", "profiles?select=id,pseudo,trusted,is_admin,banned,news_optin&id=eq." + u.id); })
       .then(function (r) { profile = (r && r[0]) || { id: u.id }; return profile; }).catch(function () { return null; });
   }
   function askPseudo() {
