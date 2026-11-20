@@ -1,5 +1,5 @@
 /* Bivaska – service worker : appli et fiches hors-ligne, tuiles de carte vues gardées en cache */
-var VERSION = "sylva-v0.9.108";
+var VERSION = "sylva-v0.9.109";
 var SHELL = VERSION + "-shell";
 var TILES = "sylva-tiles";
 var PHOTOS = "sylva-photos";

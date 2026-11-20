@@ -60,6 +60,9 @@
   C.signup = function (email, pw, news) {
     return http("POST", "/auth/v1/signup", { email: email, password: pw, data: { news_optin: !!news } }, { anon: true }).then(function (j) {
       if (j && j.access_token) setSess(fromToken(j)); // confirmation désactivée côté Supabase : déjà connecté
+      // Adresse déjà inscrite : Supabase répond « OK » avec un faux compte sans identité et n'envoie aucun e-mail
+      var u = j && (j.user || j);
+      if (u && Array.isArray(u.identities) && !u.identities.length) throw new Error("User already registered");
       return j;
     });
   };

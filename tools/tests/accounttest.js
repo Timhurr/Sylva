@@ -17,7 +17,7 @@ const stub = `(function(){function mk(){var f=function(){return p};var p=new Pro
     const url = route.request().url(); if (!url.startsWith(SB)) return route.abort();
     const u = new URL(url), m = route.request().method(), body = route.request().postData(); const J = (o, s) => route.fulfill({ status: s || 200, contentType: 'application/json', body: JSON.stringify(o) });
     const bd = body ? JSON.parse(body) : {}; calls.push(m + ' ' + u.pathname + u.search + ' ' + (body || ''));
-    if (u.pathname === '/auth/v1/signup') return bd.email === 'deja@b.be' ? J({ msg: 'User already registered' }, 422) : J({ id: 'u1', email: bd.email });
+    if (u.pathname === '/auth/v1/signup') return bd.email === 'deja@b.be' ? J({ id: 'fake', email: bd.email, identities: [] }) : J({ id: 'u1', email: bd.email });
     if (u.pathname === '/auth/v1/verify') return bd.token === '123456' ? J(SESS) : J({ msg: 'Token has expired or is invalid' }, 403);
     if (u.pathname === '/auth/v1/resend' || u.pathname === '/auth/v1/recover' || u.pathname === '/auth/v1/otp') return J({});
     if (u.pathname === '/auth/v1/user' && m === 'PUT') return J({ id: 'u1' });

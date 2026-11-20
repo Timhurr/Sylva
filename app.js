@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  var VERSION = "0.9.108";
+  var VERSION = "0.9.109";
   // Premier lancement : aucune donnée Bivaska encore enregistrée (lu avant que l'initialisation n'en écrive)
   var FIRST_RUN = (function () {
     try {
